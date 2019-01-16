@@ -31,7 +31,7 @@ const RadioInput: React.FunctionComponent<Props> = ({
         value={value}
         checked={checked}
         disabled={disabled}
-        className={`sr-only ${styles.input} ${className}`}
+        className={`screenreader-only ${styles.input} ${className}`}
         onChange={onChange}
       />
       <label htmlFor={id.current}>{label}</label>

@@ -1,0 +1,10 @@
+@import "styles/_base.scss";
+
+.main {
+  padding: $gutter;
+}
+
+.editorContainer {
+  display: flex;
+  flex-direction: column;
+}

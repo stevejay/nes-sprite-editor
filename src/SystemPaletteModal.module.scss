@@ -2,27 +2,10 @@
 
 $background-color: $md-white;
 
-// .positionContainer {
-//   pointer-events: none;
-//   position: relative;
-//   width: auto;
-//   margin: $gutter;
-
-//   // centered
-//   display: flex;
-//   align-items: center;
-//   min-height: calc(100% - (#{$gutter} * 2));
-// }
-
 .positionContainer {
   position: fixed;
-  // top: 20px;
-  // left: 20px;
-  // height: 100%;
   transform: translateY(-50%);
   outline: none;
-  // background-color: rgba(#333, 0.25);
-  // will-change: opacity;
 }
 
 .modalChrome {
@@ -34,14 +17,10 @@ $background-color: $md-white;
   background-color: $background-color;
   border-radius: rem(3);
   background-clip: padding-box;
-  // Remove focus outline from opened modal
   outline: 0;
   will-change: opacity, transform;
-  // box-shadow: $box-shadow;
   filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.3));
   padding: rem(8);
-
-  // height: 200px;
 }
 
 .modalChrome::after {
@@ -53,7 +32,6 @@ $background-color: $md-white;
   width: 0;
   position: absolute;
   pointer-events: none;
-  // border-color: rgba(136, 183, 213, 0);
   border-right-color: $background-color;
   border-width: 12px;
   margin-top: -12px;

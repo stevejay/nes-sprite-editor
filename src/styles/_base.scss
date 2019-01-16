@@ -1,27 +1,37 @@
+// ***** Colors *****
+
 @import "material-colors/dist/colors.scss";
-
-$font-family-display: "Source Code Pro", monospace;
-$font-family-body: "Source Sans Pro", sans-serif;
-$font-weight-light: 300;
-$font-weight-regular: 400;
-$font-weight-semibold: 600;
-
 $fallback-focus-ring-color: rgb(94, 158, 215);
 
 $focus-outline: auto 4px $fallback-focus-ring-color;
 $webkit-focus-outline: auto 4px -webkit-focus-ring-color;
 
-$gutter: 2.5rem;
-
 $box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.5);
 
+// ***** Typography *****
+
+$font-family-display: "Source Code Pro", monospace;
+$font-family-body: "Source Sans Pro", sans-serif;
+
+$font-weight-light: 300;
+$font-weight-regular: 400;
+$font-weight-semibold: 600;
+
+// ***** Layout *****
+
+$gutter: 2.5rem;
+
+// ***** Functions *****
+
+// converts pxval to rem unit where 1rem == 16px:
 @function rem($pxval) {
   $base: 16;
   @return ($pxval / $base) * 1rem;
 }
 
-// Screenreader only
-@mixin sr-only() {
+// ***** Mixins *****
+
+@mixin screenreader-only() {
   position: absolute;
   width: 1px;
   height: 1px;

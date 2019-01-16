@@ -5,8 +5,8 @@ type Props = {
   opacity: number;
 };
 
-const ModalBackdrop: React.FunctionComponent<Props> = ({ opacity }) => (
-  <div className={styles.backdrop} tabIndex={-1} style={{ opacity }} />
+const ModalBackdrop: React.FunctionComponent<Props> = props => (
+  <div className={styles.backdrop} tabIndex={-1} style={props} />
 );
 
 export default ModalBackdrop;
