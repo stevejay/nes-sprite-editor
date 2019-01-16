@@ -1,14 +1,10 @@
 import React from "react";
 import styles from "./EditorSidebar.module.scss";
-import {
-  SystemPalette as SystemPaletteType,
-  Color,
-  GamePaletteColors
-} from "./types";
+import { SystemPalette as SystemPaletteType, Color } from "./types";
 import PaletteContainer from "./PaletteContainer";
 import PaletteColorInput from "./PaletteColorInput";
 import RadioInput from "./RadioInput";
-import { GamePaletteChange } from "./reducer";
+import { GamePaletteChange, GamePaletteWithColors } from "./reducer";
 
 type Props = {
   systemPalettes: Array<SystemPaletteType>;
@@ -16,8 +12,8 @@ type Props = {
   onSystemPaletteChange: (id: SystemPaletteType["id"]) => void;
   backgroundColor: Color;
   onBackgroundColorChange: (color: Color) => void;
-  backgroundPalettes: Array<GamePaletteColors>;
-  spritePalettes: Array<GamePaletteColors>;
+  backgroundPalettes: Array<GamePaletteWithColors>;
+  spritePalettes: Array<GamePaletteWithColors>;
   onGamePaletteChange: (gamePaletteChange: GamePaletteChange) => void;
 };
 

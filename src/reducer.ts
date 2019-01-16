@@ -21,6 +21,10 @@ export type GamePaletteChange = {
   newColor: Color;
 };
 
+export type GamePaletteWithColors = GamePalette & {
+  colors: Array<Color>;
+};
+
 export type Action =
   | { type: ActionTypes.CHANGE_SYSTEM_PALETTE; payload: SystemPalette["id"] }
   | { type: ActionTypes.CHANGE_BACKGROUND_COLOR; payload: number }
@@ -127,7 +131,7 @@ export const selectSpritePalettes = createSelector(
 function mapToGamePaletteColors(
   gamePalette: GamePalette,
   systemPalette: SystemPalette
-) {
+): GamePaletteWithColors {
   return {
     ...gamePalette,
     colors: gamePalette.values.map(colorId => systemPalette.values[colorId])

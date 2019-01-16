@@ -32,12 +32,8 @@ export type GamePalette = {
   values: Tuple<ColorId, 3>;
 };
 
-export type GamePaletteColors = GamePalette & {
-  colors: Array<Color>;
-};
-
 export type SystemPalette = {
-  id: string | number; // TODO remove string or number
+  id: string;
   label: string;
   values: Tuple<Color, 64>;
 };

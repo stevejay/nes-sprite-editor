@@ -3,14 +3,14 @@ import { uniqueId } from "lodash";
 import RadioInput from "./RadioInput";
 import styles from "./RadioInputGroup.module.scss";
 
-type Props = {
+type Props<IdType> = {
   legend: string;
-  options: Array<{ id: string | number; label: string }>;
-  selectedId: string | number;
-  onChange: (id: string | number) => void;
+  options: Array<{ id: IdType; label: string }>;
+  selectedId: IdType;
+  onChange: (id: IdType) => void;
 };
 
-const RadioInputGroup: React.FunctionComponent<Props> = ({
+const RadioInputGroup: React.FunctionComponent<Props<string>> = ({
   legend,
   options,
   selectedId,
