@@ -1,19 +1,27 @@
 import React from "react";
-import { Color, SystemPalette } from "./types";
-import styles from "./PaletteColorInput.module.scss";
+import ColorPickerModal from "./ColorPickerModal";
 import PaletteColor from "./PaletteColor";
-import SystemPaletteModal from "./SystemPaletteModal";
+import styles from "./PaletteColorInput.module.scss";
+import { Color, SystemPalette } from "./types";
 
 type Props = {
   color: Color;
-  systemPalette: SystemPalette;
+  systemPalette: SystemPalette; // TODO remove this when using redux
   onChange: (color: Color) => void;
 };
 
 type State = {
   isOpen: boolean;
+  originElement: HTMLElement | null;
   originX: number;
   originY: number;
+};
+
+const initialState: State = {
+  isOpen: false,
+  originElement: null,
+  originX: 0,
+  originY: 0
 };
 
 const PaletteColorInput: React.FunctionComponent<Props> = ({
@@ -23,23 +31,26 @@ const PaletteColorInput: React.FunctionComponent<Props> = ({
 }) => {
   const buttonRef = React.useRef<HTMLButtonElement>(null);
 
-  const [dialogState, setDialogState] = React.useState<State>({
-    isOpen: false,
-    originX: 0,
-    originY: 0
-  });
+  const [dialogState, setDialogState] = React.useState<State>(initialState);
 
   const handleClick = () => {
-    if (!dialogState.isOpen && buttonRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect();
+    const originElement = buttonRef.current;
+
+    if (!dialogState.isOpen && originElement) {
+      const rect = originElement.getBoundingClientRect();
       const originY = rect.top + rect.height / 2;
       const originX = rect.left + rect.width / 2;
-      setDialogState({ isOpen: true, originX, originY });
+      setDialogState({
+        isOpen: true,
+        originElement,
+        originX,
+        originY
+      });
     }
   };
 
   const handleClose = () => {
-    setDialogState({ ...dialogState, isOpen: false });
+    setDialogState(initialState);
   };
 
   return (
@@ -50,7 +61,7 @@ const PaletteColorInput: React.FunctionComponent<Props> = ({
           srLabel={`Color ${color.id}. Click to change.`}
         />
       </button>
-      <SystemPaletteModal
+      <ColorPickerModal
         {...dialogState}
         color={color}
         systemPalette={systemPalette}

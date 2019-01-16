@@ -14,6 +14,7 @@ $svg-dimension: rem(16);
   position: relative;
   width: $container-width;
   height: $container-height;
+  transition: background-color 150ms;
 }
 
 .selected {

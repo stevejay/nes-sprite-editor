@@ -1,10 +1,10 @@
 import React from "react";
 import styles from "./EditorSidebar.module.scss";
-import { SystemPalette as SystemPaletteType, Color } from "./types";
-import PaletteContainer from "./PaletteContainer";
 import PaletteColorInput from "./PaletteColorInput";
+import PaletteContainer from "./PaletteContainer";
 import RadioInput from "./RadioInput";
 import { GamePaletteChange, GamePaletteWithColors } from "./reducer";
+import { Color, SystemPalette as SystemPaletteType } from "./types";
 
 type Props = {
   systemPalettes: Array<SystemPaletteType>;

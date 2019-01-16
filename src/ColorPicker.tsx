@@ -1,31 +1,26 @@
-import React from "react";
-import { SystemPalette, Color, ColorId } from "./types";
-import styles from "./PaletteInput.module.scss";
-import PaletteColor from "./PaletteColor";
 import classNames from "classnames";
+import React from "react";
+import styles from "./ColorPicker.module.scss";
+import PaletteColor from "./PaletteColor";
+import { Color, ColorId, SystemPalette } from "./types";
 
 type Props = {
   palette: SystemPalette;
-  selectedColorId: ColorId; // 0 to 63 inclusive
+  selectedColorId: ColorId;
   onChange: (color: Color) => void;
 };
 
-const PaletteInput: React.FunctionComponent<Props> = ({
+const ColorPicker: React.FunctionComponent<Props> = ({
   palette,
   selectedColorId,
   onChange
 }) => (
-  <div className={styles.radioGroup}>
+  <div className={styles.container}>
     {palette.values.map(color => {
       const id = `palette_color_${color.id}`;
       const checked = selectedColorId === color.id;
-
-      const labelClassName = classNames(styles.radioButton, {
-        [styles.checked]: checked
-      });
-
       return (
-        <label key={color.id} htmlFor={id} className={labelClassName}>
+        <label key={color.id} htmlFor={id} className={styles.label}>
           <input
             type="radio"
             value={color.id}
@@ -47,4 +42,4 @@ const PaletteInput: React.FunctionComponent<Props> = ({
   </div>
 );
 
-export default PaletteInput;
+export default ColorPicker;
