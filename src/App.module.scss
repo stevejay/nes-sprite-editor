@@ -1,0 +1,23 @@
+@import "styles/_base.scss";
+
+.header {
+  background-color: rgba($md-light-green-a200, 0.25);
+  padding: 0 $gutter;
+  box-shadow: $box-shadow;
+}
+
+.header h1 {
+  font-weight: $font-weight-light;
+  font-size: 1.5rem;
+  padding: 0.5em 0;
+  margin: 0;
+}
+
+.main {
+  padding: $gutter;
+}
+
+.editorContainer {
+  display: flex;
+  flex-direction: column;
+}

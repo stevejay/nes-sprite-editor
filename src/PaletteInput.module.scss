@@ -1,0 +1,44 @@
+@import "styles/_base.scss";
+
+$container-width: rem(26);
+$container-height: $container-width;
+
+.radioGroup {
+  display: flex;
+  flex-wrap: wrap;
+  width: $container-width * 16;
+}
+
+.radioButton {
+  display: block;
+  position: relative;
+  width: $container-width;
+  height: $container-height;
+  margin: 0;
+}
+
+.checked {
+  z-index: 1;
+}
+
+.radioButton input {
+  position: absolute;
+  z-index: -1;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.radioButton:hover input:focus {
+  outline: none;
+  border: 0px;
+}
+
+.radioButton input:focus + * {
+  outline: $focus-outline;
+}
+
+// http://browserhacks.com/#hack-f4ade0540d8e891e8190065f75acb186 for webkit browsers
+.radioButton input:focus + *:not(*:root) {
+  outline: $webkit-focus-outline;
+}

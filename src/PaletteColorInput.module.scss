@@ -1,0 +1,31 @@
+@import "styles/_base.scss";
+
+$container-width: rem(48);
+
+.button {
+  width: $container-width;
+  height: 100%;
+  cursor: pointer;
+  margin: 0;
+  padding: 0;
+  border: none;
+  line-height: 0;
+  text-decoration: none;
+
+  &::-moz-focus-inner {
+    border: 0; /* remove dotted line in Firefox */
+  }
+}
+
+.button:focus {
+  z-index: 1;
+}
+
+.dialog {
+  width: 200px;
+  height: 100px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: papayawhip;
+}

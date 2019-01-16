@@ -1,0 +1,51 @@
+@import "styles/_base.scss";
+
+$container-width: rem(48);
+$container-width-compact: rem(26);
+$container-height: rem(36);
+$container-height-compact: $container-width-compact;
+$svg-dimension: rem(16);
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  width: $container-width;
+  height: $container-height;
+}
+
+.selected {
+  z-index: 1;
+}
+
+.compact {
+  width: $container-width-compact;
+  height: $container-height-compact;
+}
+
+.label {
+  display: block;
+  align-self: flex-end;
+  padding: rem(2) rem(3);
+  margin-right: rem(5);
+  background: rgba($md-white, 0.5);
+  font-size: rem(18);
+  font-weight: $font-weight-semibold;
+  line-height: 1;
+  border-radius: rem(2);
+}
+
+.container svg {
+  width: $svg-dimension;
+  height: $svg-dimension;
+}
+
+.notAvailable {
+  background-color: $md-grey-200;
+
+  .label {
+    display: none;
+  }
+}

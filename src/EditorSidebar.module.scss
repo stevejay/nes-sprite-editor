@@ -1,0 +1,42 @@
+@import "styles/_base.scss";
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  max-width: 16rem;
+}
+
+.section {
+  border-bottom: 1px solid $md-grey-300;
+  padding: 0 $gutter / 2 $gutter / 4;
+  margin-bottom: $gutter / 2;
+}
+
+.section:last-of-type {
+  border-bottom: none;
+}
+
+.section h2 {
+  font-size: 1rem;
+  font-weight: $font-weight-regular;
+  padding-bottom: rem(4);
+  border-bottom: 1px dashed $md-grey-500;
+  text-transform: uppercase;
+}
+
+.palette {
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+
+  & + :not(.palette) {
+    margin-top: 1rem;
+  }
+}
+
+.palette h3 {
+  font-size: rem(21);
+  font-weight: $font-weight-regular;
+  width: 2.25rem;
+  margin: 0;
+}

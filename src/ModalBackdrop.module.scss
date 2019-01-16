@@ -1,0 +1,12 @@
+@import "styles/_base.scss";
+
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  outline: none;
+  background-color: rgba($md-black, 0.15);
+  will-change: opacity;
+}

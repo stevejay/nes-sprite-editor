@@ -1,0 +1,60 @@
+@import "styles/_base.scss";
+
+$input-color: $md-grey-800;
+$disabled-color: $md-grey-200;
+
+.input + label {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  padding-left: rem(25);
+}
+
+.input + label::before,
+.input + label::after {
+  content: "";
+  position: absolute;
+  left: rem(9);
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: rem(9);
+}
+
+.input + label::before {
+  height: rem(18);
+  width: rem(18);
+  border: 2px solid $input-color;
+}
+
+.input + label::after {
+  height: rem(10);
+  width: rem(10);
+  background-color: transparent;
+  transition: background-color 0.3s;
+}
+
+input:checked + label::after {
+  background-color: $input-color;
+}
+
+.input:disabled + label {
+  cursor: not-allowed;
+
+  &::before {
+    border-color: darken($disabled-color, 30%);
+    background-color: $disabled-color;
+  }
+
+  &::after {
+    background-color: darken($disabled-color, 10%);
+  }
+}
+
+.input:focus + label::before {
+  outline: $focus-outline;
+}
+
+// http://browserhacks.com/#hack-f4ade0540d8e891e8190065f75acb186 for webkit browsers
+.input:focus + label:not(*:root)::before {
+  outline: $webkit-focus-outline;
+}

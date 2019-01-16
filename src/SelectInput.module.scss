@@ -1,0 +1,42 @@
+@import "styles/_base.scss";
+
+.container {
+  position: relative;
+  color: inherit;
+
+  &::after {
+    content: "\25BE";
+    position: absolute;
+    top: rem(10);
+    right: rem(15);
+    color: $md-grey-600;
+    pointer-events: none;
+  }
+}
+
+.container > select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  height: rem(39);
+  width: 100%;
+  padding-left: rem(10);
+  margin-bottom: rem(10);
+  font-family: inherit;
+  font-size: 1rem;
+
+  // border: rem(1) solid lighten($sassy-base-color, 10%);
+  // border-radius: rem(3);
+  // outline: none;
+
+  background-color: $md-white;
+
+  // &:focus {
+  //   border-color: $sassy-accent-color;
+  // }
+
+  &:disabled {
+    background-color: $md-grey-200;
+    cursor: not-allowed;
+  }
+}
