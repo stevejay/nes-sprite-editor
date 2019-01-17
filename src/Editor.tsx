@@ -1,16 +1,20 @@
 import React from "react";
+import styles from "./Editor.module.scss";
+import EditorSidebar from "./EditorSidebar";
 import {
-  State,
+  Action,
+  ActionTypes,
+  selectBackgroundColor,
   selectBackgroundPalettes,
   selectSpritePalettes,
   selectSystemPalette,
-  selectBackgroundColor,
-  ActionTypes,
   selectSystemPalettes,
-  Action
+  State,
+  selectCurrentBackgroundTileGrid,
+  selectGamePalettes,
+  selectBackgroundTileGridScaling
 } from "./reducer";
-import EditorSidebar from "./EditorSidebar";
-import styles from "./Editor.module.scss";
+import BackgroundTileGrid from "./BackgroundTileGrid";
 
 type Props = {
   state: State;
@@ -18,8 +22,7 @@ type Props = {
 };
 
 const Editor: React.FunctionComponent<Props> = ({ state, dispatch }) => (
-  <main className={styles.main}>
-    <div className={styles.editorContainer} />
+  <div className={styles.container}>
     <EditorSidebar
       systemPalettes={selectSystemPalettes(state)}
       systemPalette={selectSystemPalette(state)}
@@ -45,7 +48,14 @@ const Editor: React.FunctionComponent<Props> = ({ state, dispatch }) => (
         })
       }
     />
-  </main>
+    <div className={styles.editorMain}>
+      <BackgroundTileGrid
+        backgroundTileGrid={selectCurrentBackgroundTileGrid(state)}
+        backgroundPalettes={selectBackgroundPalettes(state)}
+        gridScaling={selectBackgroundTileGridScaling(state)}
+      />
+    </div>
+  </div>
 );
 
 export default Editor;

@@ -26,5 +26,5 @@
     "relativeDownLevel"
   ],
   "typescript.extension.sortImports.quoteStyle": "double",
-  "typescript.extension.sortImports.sortOnSave": true
+  "typescript.extension.sortImports.sortOnSave": false
 }

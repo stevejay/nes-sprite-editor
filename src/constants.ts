@@ -1,4 +1,8 @@
-import { SystemPalette } from "./types";
+import { range, random } from "lodash";
+import { SystemPalette, Tile, TileGrid } from "./types";
+
+// TODO alternative system palette color values here:
+// http://nesdev.com/NESTechFAQ.htm#howmanycolours
 
 const PALETTE_2C02_PPU: SystemPalette = {
   id: "2C02-ppu",
@@ -79,7 +83,7 @@ const PALETTE_2C02_PPU: SystemPalette = {
       rgb: [0, 50, 60]
     },
     { id: 13, available: false },
-    { id: 14, available: false },
+    { id: 14, available: false }, // change to black
     { id: 15, available: true, name: "Black #1", rgb: [0, 0, 0] },
     // Luminosity=1
     { id: 16, available: true, name: "Light Grey #1", rgb: [152, 150, 152] },
@@ -156,8 +160,8 @@ const PALETTE_2C02_PPU: SystemPalette = {
       rgb: [0, 102, 120]
     },
     { id: 29, available: true, name: "Black #2", rgb: [0, 0, 0] },
-    { id: 30, available: false },
-    { id: 31, available: false },
+    { id: 30, available: false }, // change to black
+    { id: 31, available: false }, // change to black
     // Luminosity=2
     { id: 32, available: true, name: "Almost White #1", rgb: [236, 238, 236] },
     {
@@ -233,8 +237,8 @@ const PALETTE_2C02_PPU: SystemPalette = {
       rgb: [56, 180, 204]
     },
     { id: 45, available: true, name: "Mid Grey #2", rgb: [60, 60, 60] },
-    { id: 46, available: false },
-    { id: 47, available: false },
+    { id: 46, available: false }, // change to black
+    { id: 47, available: false }, // change to black
     // Luminosity=3
     { id: 48, available: true, name: "Almost White #2", rgb: [236, 238, 236] },
     {
@@ -310,8 +314,8 @@ const PALETTE_2C02_PPU: SystemPalette = {
       rgb: [160, 214, 228]
     },
     { id: 61, available: true, name: "Light Grey #2", rgb: [160, 162, 160] },
-    { id: 62, available: false },
-    { id: 63, available: false }
+    { id: 62, available: false }, // change to black
+    { id: 63, available: false } // change to black
   ]
 };
 
@@ -322,3 +326,99 @@ if (process.env.NODE_ENV === "development") {
 }
 
 export { SYSTEM_PALETTE_OPTIONS };
+
+const HEART_TILE_PIXELS: Tile["pixels"] = [
+  // 0
+  0,
+  3,
+  3,
+  0,
+  0,
+  3,
+  3,
+  0,
+  // 1
+  0,
+  3,
+  1,
+  3,
+  3,
+  3,
+  3,
+  3,
+  // 2
+  3,
+  1,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  // 3
+  3,
+  1,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  // 4
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  // 5
+  0,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  0,
+  // 6
+  0,
+  0,
+  3,
+  3,
+  3,
+  3,
+  0,
+  0,
+  // 7
+  0,
+  0,
+  0,
+  3,
+  3,
+  0,
+  0,
+  0
+];
+
+const BACKGROUND_TILE_GRID_OPTIONS: Array<TileGrid> = [
+  {
+    id: "grid1",
+    label: "Grid 1",
+    tiles: range(0, 256).map(index => ({
+      rowIndex: Math.floor(index / 16),
+      columnIndex: index % 16,
+      gamePaletteId: random(0, 3),
+      pixels: HEART_TILE_PIXELS
+    })) as TileGrid["tiles"]
+  }
+];
+
+if (process.env.NODE_ENV === "development") {
+  Object.freeze(BACKGROUND_TILE_GRID_OPTIONS);
+}
+
+console.log(BACKGROUND_TILE_GRID_OPTIONS);
+
+export { BACKGROUND_TILE_GRID_OPTIONS };

@@ -1,6 +1,17 @@
 import { createSelector } from "reselect";
-import { GamePalette, SystemPalette, Color, GamePaletteTypes } from "./types";
-import { SYSTEM_PALETTE_OPTIONS } from "./constants";
+import { find } from "lodash";
+import {
+  GamePalette,
+  SystemPalette,
+  Color,
+  GamePaletteTypes,
+  TileGrid,
+  Tile
+} from "./types";
+import {
+  SYSTEM_PALETTE_OPTIONS,
+  BACKGROUND_TILE_GRID_OPTIONS
+} from "./constants";
 
 export enum ActionTypes {
   CHANGE_SYSTEM_PALETTE = "CHANGE_SYSTEM_PALETTE",
@@ -13,6 +24,9 @@ export type State = {
   systemPaletteId: SystemPalette["id"];
   backgroundColorId: Color["id"];
   gamePalettes: Array<GamePalette>;
+  backgroundTileGrids: Array<TileGrid>;
+  backgroundTileGridId: TileGrid["id"];
+  backgroundTileGridScaling: number;
 };
 
 export type GamePaletteChange = {
@@ -25,12 +39,19 @@ export type GamePaletteWithColors = GamePalette & {
   colors: Array<Color>;
 };
 
+// export type TileWithColors = Tile & {
+//   gamePaletteWithColors: GamePaletteWithColors;
+// };
+
+// export type TileGridWithColors =
+
 export type Action =
   | { type: ActionTypes.CHANGE_SYSTEM_PALETTE; payload: SystemPalette["id"] }
   | { type: ActionTypes.CHANGE_BACKGROUND_COLOR; payload: number }
   | { type: ActionTypes.CHANGE_GAME_PALETTE_COLOR; payload: GamePaletteChange };
 
 export const initialState: State = {
+  // palettes
   systemPalettes: SYSTEM_PALETTE_OPTIONS,
   systemPaletteId: SYSTEM_PALETTE_OPTIONS[0].id,
   backgroundColorId: 0,
@@ -43,7 +64,11 @@ export const initialState: State = {
     { type: GamePaletteTypes.SPRITE, id: 1, values: [2, 24, 6] },
     { type: GamePaletteTypes.SPRITE, id: 2, values: [3, 35, 7] },
     { type: GamePaletteTypes.SPRITE, id: 3, values: [4, 39, 8] }
-  ]
+  ],
+  // background
+  backgroundTileGrids: BACKGROUND_TILE_GRID_OPTIONS,
+  backgroundTileGridId: BACKGROUND_TILE_GRID_OPTIONS[0].id,
+  backgroundTileGridScaling: 3
 };
 
 export function reducer(state: State, action: Action) {
@@ -96,14 +121,15 @@ export function selectGamePalettes(state: State) {
 export function selectSystemPalette(state: State) {
   const systemPalettes = selectSystemPalettes(state);
   const systemPaletteId = selectSystemPaletteId(state);
-  return systemPalettes.find(x => x.id === systemPaletteId) as SystemPalette;
+  return find(systemPalettes, x => x.id === systemPaletteId) as SystemPalette;
 }
 
 export const selectBackgroundColor = createSelector(
   selectSystemPalette,
   selectBackgroundColorId,
   (systemPalette, backgroundColorId) =>
-    systemPalette.values.find(
+    find(
+      systemPalette.values,
       element => element.id === backgroundColorId
     ) as Color
 );
@@ -137,3 +163,31 @@ function mapToGamePaletteColors(
     colors: gamePalette.values.map(colorId => systemPalette.values[colorId])
   };
 }
+
+export function selectBackgroundTileGrids(state: State) {
+  return state.backgroundTileGrids;
+}
+
+export function selectCurrentBackgroundTileGridId(state: State) {
+  return state.backgroundTileGridId;
+}
+
+export function selectCurrentBackgroundTileGrid(state: State) {
+  const backgroundTileGrids = selectBackgroundTileGrids(state);
+  const currentBackgroundTileGridId = selectCurrentBackgroundTileGridId(state);
+  return find(
+    backgroundTileGrids,
+    x => x.id === currentBackgroundTileGridId
+  ) as TileGrid;
+}
+
+export function selectBackgroundTileGridScaling(state: State) {
+  return state.backgroundTileGridScaling;
+}
+
+// export const selectCurrentBackgroundTileGridWithColors = createSelector(
+//   selectCurrentBackgroundTileGrid,
+//   (backgroundTileGrid) => {
+//     return
+//   }
+// );

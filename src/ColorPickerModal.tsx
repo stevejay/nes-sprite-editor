@@ -1,14 +1,14 @@
 import FocusTrap from "focus-trap-react";
 import React from "react";
 import { Portal } from "react-portal";
-import { Transition } from "react-spring";
 import ColorPicker from "./ColorPicker";
-import styles from "./ColorPickerModal.module.scss";
 import ModalBackdrop from "./ModalBackdrop";
 import PointingModalContainer from "./PointingModalContainer";
 import { Color, SystemPalette } from "./types";
 import useAriaHidden from "./use-aria-hidden";
 import usePreventBodyScroll from "./use-prevent-body-scroll";
+// import { Transition } from "react-spring";
+// import styles from "./ColorPickerModal.module.scss";
 
 type Props = {
   isOpen: boolean;
@@ -21,9 +21,9 @@ type Props = {
   onClose: () => void;
 };
 
-const CONFIG = { duration: 0 };
-const FROM_AND_LEAVE = { opacity: 0 };
-const ENTER = { opacity: 1 };
+// const CONFIG = { duration: 0 };
+// const FROM_AND_LEAVE = { opacity: 0 };
+// const ENTER = { opacity: 1 };
 
 const ColorPickerModal: React.FunctionComponent<Props> = ({
   isOpen,
@@ -58,13 +58,11 @@ const ColorPickerModal: React.FunctionComponent<Props> = ({
             originY={originY}
             originElement={originElement}
           >
-            <div className={styles.modalChrome}>
-              <ColorPicker
-                palette={systemPalette}
-                selectedColorId={color.id}
-                onChange={onChange}
-              />
-            </div>
+            <ColorPicker
+              palette={systemPalette}
+              selectedColorId={color.id}
+              onChange={onChange}
+            />
           </PointingModalContainer>
         </FocusTrap>
       </>

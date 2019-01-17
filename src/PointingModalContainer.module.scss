@@ -1,7 +1,32 @@
 @import "styles/_base.scss";
 
+$background-color: $md-white;
+
 .container {
   position: fixed;
   transform: translateY(-50%);
-  outline: none;
+  display: flex;
+  flex-direction: column;
+  pointer-events: auto;
+  background-color: $background-color;
+  border-radius: rem(3);
+  background-clip: padding-box;
+  outline: 0;
+  will-change: opacity, transform;
+  filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.3));
+  padding: rem(8);
+}
+
+.container::after {
+  right: 100%;
+  top: 50%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+  border-right-color: $background-color;
+  border-width: 12px;
+  margin-top: -12px;
 }
