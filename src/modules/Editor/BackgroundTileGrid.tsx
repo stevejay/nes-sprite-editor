@@ -69,8 +69,8 @@ const BackgroundTileGrid: React.FunctionComponent<Props> = ({
 
               ctx.fillStyle = rgbString;
               ctx.fillRect(
-                (tile.rowIndex * 8 + rowIndex) * gridScaling,
                 (tile.columnIndex * 8 + columnIndex) * gridScaling,
+                (tile.rowIndex * 8 + rowIndex) * gridScaling,
                 gridScaling,
                 gridScaling
               );

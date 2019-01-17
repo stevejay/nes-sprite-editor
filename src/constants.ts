@@ -419,6 +419,4 @@ if (process.env.NODE_ENV === "development") {
   Object.freeze(BACKGROUND_TILE_GRID_OPTIONS);
 }
 
-console.log(BACKGROUND_TILE_GRID_OPTIONS);
-
 export { BACKGROUND_TILE_GRID_OPTIONS };

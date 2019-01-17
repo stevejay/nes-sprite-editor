@@ -48,11 +48,11 @@ export const initialState: State = {
   // palettes
   systemPalettes: SYSTEM_PALETTE_OPTIONS,
   systemPaletteId: SYSTEM_PALETTE_OPTIONS[0].id,
-  backgroundColorId: 0,
+  backgroundColorId: 0x0f,
   gamePalettes: [
     { type: GamePaletteTypes.BACKGROUND, id: 0, values: [19, 20, 21] },
     { type: GamePaletteTypes.BACKGROUND, id: 1, values: [23, 24, 25] },
-    { type: GamePaletteTypes.BACKGROUND, id: 2, values: [34, 35, 36] },
+    { type: GamePaletteTypes.BACKGROUND, id: 2, values: [0x30, 0x23, 0x16] },
     { type: GamePaletteTypes.BACKGROUND, id: 3, values: [38, 39, 40] },
     { type: GamePaletteTypes.SPRITE, id: 0, values: [1, 20, 5] },
     { type: GamePaletteTypes.SPRITE, id: 1, values: [2, 24, 6] },

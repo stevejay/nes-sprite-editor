@@ -119,5 +119,6 @@ const ColorPickerModal: React.FunctionComponent<Props> = ({
 
 export default React.memo(
   ColorPickerModal,
-  (prevProps, nextProps) => prevProps.isOpen === nextProps.isOpen
+  (prevProps, nextProps) =>
+    prevProps.isOpen === nextProps.isOpen && prevProps.color === nextProps.color
 );

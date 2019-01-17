@@ -14,6 +14,7 @@ const ColorPicker: React.FunctionComponent<Props> = ({
   selectedColorId,
   onChange
 }) => (
+  // TODO remove return
   <div className={styles.container}>
     {palette.values.map(color => {
       const id = `palette_color_${color.id}`;
