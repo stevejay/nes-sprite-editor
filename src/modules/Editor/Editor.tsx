@@ -14,6 +14,7 @@ import {
   selectBackgroundTileGridScaling
 } from "../../reducer";
 import BackgroundTileGrid from "./BackgroundTileGrid";
+import Section from "./Section";
 
 type Props = {
   state: State;
@@ -47,13 +48,18 @@ const Editor: React.FunctionComponent<Props> = ({ state, dispatch }) => (
         })
       }
     />
-    <div className={styles.editorMain}>
+    <Section>
+      <header>
+        <h1>Background Tiles</h1>
+      </header>
+      <h2>Tiles Grid</h2>
       <BackgroundTileGrid
         backgroundTileGrid={selectCurrentBackgroundTileGrid(state)}
+        backgroundColor={selectBackgroundColor(state)}
         backgroundPalettes={selectBackgroundPalettes(state)}
         gridScaling={selectBackgroundTileGridScaling(state)}
       />
-    </div>
+    </Section>
   </div>
 );
 

@@ -1,4 +1,4 @@
-import { range, random } from "lodash";
+import { range } from "lodash";
 import { SystemPalette, Tile, TileGrid } from "./types";
 
 // TODO alternative system palette color values here:
@@ -409,7 +409,7 @@ const BACKGROUND_TILE_GRID_OPTIONS: Array<TileGrid> = [
     tiles: range(0, 256).map(index => ({
       rowIndex: Math.floor(index / 16),
       columnIndex: index % 16,
-      gamePaletteId: random(0, 3),
+      gamePaletteId: 2,
       pixels: HEART_TILE_PIXELS
     })) as TileGrid["tiles"]
   }

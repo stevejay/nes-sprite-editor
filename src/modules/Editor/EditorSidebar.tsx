@@ -4,6 +4,7 @@ import PaletteColorInput from "../../shared/PaletteColorInput";
 import RadioInput from "../../shared/RadioInput";
 import { GamePaletteChange, GamePaletteWithColors } from "../../reducer";
 import { Color, SystemPalette as SystemPaletteType } from "../../types";
+import Section from "./Section";
 
 type Props = {
   systemPalettes: Array<SystemPaletteType>;
@@ -27,7 +28,7 @@ const EditorSidebar: React.FunctionComponent<Props> = ({
   onGamePaletteChange
 }) => (
   <div className={styles.sidebar}>
-    <section className={styles.section}>
+    <Section>
       <header>
         <h1>System Palette</h1>
       </header>
@@ -37,8 +38,8 @@ const EditorSidebar: React.FunctionComponent<Props> = ({
         selectedId={systemPalette.id}
         onChange={onSystemPaletteChange}
       />
-    </section>
-    <section className={styles.section}>
+    </Section>
+    <Section>
       <header>
         <h1>Game Palette</h1>
       </header>
@@ -96,7 +97,7 @@ const EditorSidebar: React.FunctionComponent<Props> = ({
           </PaletteColorInput.Container>
         </div>
       ))}
-    </section>
+    </Section>
   </div>
 );
 

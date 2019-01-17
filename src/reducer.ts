@@ -39,12 +39,6 @@ export type GamePaletteWithColors = GamePalette & {
   colors: Array<Color>;
 };
 
-// export type TileWithColors = Tile & {
-//   gamePaletteWithColors: GamePaletteWithColors;
-// };
-
-// export type TileGridWithColors =
-
 export type Action =
   | { type: ActionTypes.CHANGE_SYSTEM_PALETTE; payload: SystemPalette["id"] }
   | { type: ActionTypes.CHANGE_BACKGROUND_COLOR; payload: number }
@@ -184,10 +178,3 @@ export function selectCurrentBackgroundTileGrid(state: State) {
 export function selectBackgroundTileGridScaling(state: State) {
   return state.backgroundTileGridScaling;
 }
-
-// export const selectCurrentBackgroundTileGridWithColors = createSelector(
-//   selectCurrentBackgroundTileGrid,
-//   (backgroundTileGrid) => {
-//     return
-//   }
-// );

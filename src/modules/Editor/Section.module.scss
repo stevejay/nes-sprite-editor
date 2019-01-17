@@ -1,0 +1,19 @@
+@import "styles/_base.scss";
+
+.section {
+  border-bottom: 1px solid $md-grey-300;
+  padding: 0 $gutter / 2 $gutter / 4;
+  margin-bottom: $gutter / 2;
+}
+
+.section:last-of-type {
+  border-bottom: none;
+}
+
+.section h2 {
+  font-size: 1rem;
+  font-weight: $font-weight-regular;
+  padding-bottom: rem(4);
+  border-bottom: 1px dashed $md-grey-500;
+  text-transform: uppercase;
+}
