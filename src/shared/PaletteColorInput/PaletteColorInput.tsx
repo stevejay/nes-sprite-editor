@@ -2,7 +2,7 @@ import React from "react";
 import ColorPickerModal from "./ColorPickerModal";
 import PaletteColor from "./PaletteColor";
 import styles from "./PaletteColorInput.module.scss";
-import { Color, SystemPalette } from "./types";
+import { Color, SystemPalette } from "../../types";
 
 type Props = {
   color: Color;

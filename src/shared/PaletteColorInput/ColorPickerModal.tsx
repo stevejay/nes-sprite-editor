@@ -2,11 +2,13 @@ import FocusTrap from "focus-trap-react";
 import React from "react";
 import { Portal } from "react-portal";
 import ColorPicker from "./ColorPicker";
-import ModalBackdrop from "./ModalBackdrop";
-import PointingModalContainer from "./PointingModalContainer";
-import { Color, SystemPalette } from "./types";
-import useAriaHidden from "./use-aria-hidden";
-import usePreventBodyScroll from "./use-prevent-body-scroll";
+import { Color, SystemPalette } from "../../types";
+import {
+  useAriaHidden,
+  usePreventBodyScroll,
+  PointingModalContainer,
+  ModalBackdrop
+} from "../Modal";
 // import { Transition } from "react-spring";
 // import styles from "./ColorPickerModal.module.scss";
 

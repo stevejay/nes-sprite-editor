@@ -1,11 +1,11 @@
 import React from "react";
-import CodeContainer from "./CodeContainer";
 import {
   selectBackgroundColor,
   selectBackgroundPalettes,
   selectSpritePalettes,
   State
-} from "./reducer";
+} from "../../reducer";
+import CodeContainer from "./CodeContainer";
 import createGameDataText from "./create-game-data-text";
 
 type Props = {

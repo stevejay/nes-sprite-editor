@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./BackgroundTileGrid.module.scss";
-import { TileGrid } from "./types";
-import { GamePaletteWithColors } from "./reducer";
+import { TileGrid } from "../../types";
+import { GamePaletteWithColors } from "../../reducer";
 
 const TILE_PIXEL_WIDTH = 8;
 const TILE_PIXEL_HEIGHT = 8;

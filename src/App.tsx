@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./App.module.scss";
-import Editor from "./Editor";
-import GameDataOutput from "./GameDataOutput";
+import Editor from "./modules/Editor";
+import DataOutput from "./modules/DataOutput";
 import { Action, initialState, reducer, State } from "./reducer";
 
 const App: React.FunctionComponent = () => {
@@ -18,7 +18,7 @@ const App: React.FunctionComponent = () => {
       <main className={styles.main}>
         <Editor state={state} dispatch={dispatch} />
         <hr className={styles.hr} />
-        <GameDataOutput state={state} />
+        <DataOutput state={state} />
       </main>
     </>
   );

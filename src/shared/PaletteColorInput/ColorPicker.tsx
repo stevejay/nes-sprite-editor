@@ -1,8 +1,7 @@
-import classNames from "classnames";
 import React from "react";
 import styles from "./ColorPicker.module.scss";
 import PaletteColor from "./PaletteColor";
-import { Color, ColorId, SystemPalette } from "./types";
+import { Color, ColorId, SystemPalette } from "../../types";
 
 type Props = {
   palette: SystemPalette;

@@ -1,9 +1,9 @@
 import React from "react";
 import classNames from "classnames";
 import { FaRegEyeSlash } from "react-icons/fa";
-import { Color } from "./types";
-import formatRgb from "./format-rgb";
-import formatHex from "./format-hex";
+import { Color } from "../../types";
+import formatRgbValueAsString from "../../shared/utils/format-rgb-value-as-string";
+import formatIntegerAsHex from "../../shared/utils/format-integer-as-hex";
 import styles from "./PaletteColor.module.scss";
 
 type Props = {
@@ -16,7 +16,7 @@ type Props = {
 const PaletteColor: React.FunctionComponent<Props> = React.memo(
   ({ color, srLabel, selected = false, compact = false }) => {
     const containerStyle = color.available
-      ? { backgroundColor: formatRgb(color.rgb) }
+      ? { backgroundColor: formatRgbValueAsString(color.rgb) }
       : undefined;
 
     const containerClassName = classNames(styles.container, {
@@ -29,7 +29,7 @@ const PaletteColor: React.FunctionComponent<Props> = React.memo(
       <div className={containerClassName} style={containerStyle}>
         {!color.available && <FaRegEyeSlash />}
         {!compact && (
-          <span className={styles.label}>{formatHex(color.id)}</span>
+          <span className={styles.label}>{formatIntegerAsHex(color.id)}</span>
         )}
         <span className="screenreader-only">{srLabel || name}</span>
       </div>

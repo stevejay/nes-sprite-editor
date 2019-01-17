@@ -11,9 +11,8 @@ import {
   selectSystemPalettes,
   State,
   selectCurrentBackgroundTileGrid,
-  selectGamePalettes,
   selectBackgroundTileGridScaling
-} from "./reducer";
+} from "../../reducer";
 import BackgroundTileGrid from "./BackgroundTileGrid";
 
 type Props = {

@@ -1,0 +1,7 @@
+@import "styles/_base.scss";
+
+.positionContainer {
+  position: fixed;
+  transform: translateY(-50%);
+  outline: none;
+}

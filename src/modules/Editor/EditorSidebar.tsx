@@ -1,10 +1,9 @@
 import React from "react";
 import styles from "./EditorSidebar.module.scss";
-import PaletteColorInput from "./PaletteColorInput";
-import PaletteContainer from "./PaletteContainer";
-import RadioInput from "./RadioInput";
-import { GamePaletteChange, GamePaletteWithColors } from "./reducer";
-import { Color, SystemPalette as SystemPaletteType } from "./types";
+import PaletteColorInput from "../../shared/PaletteColorInput";
+import RadioInput from "../../shared/RadioInput";
+import { GamePaletteChange, GamePaletteWithColors } from "../../reducer";
+import { Color, SystemPalette as SystemPaletteType } from "../../types";
 
 type Props = {
   systemPalettes: Array<SystemPaletteType>;
@@ -45,19 +44,19 @@ const EditorSidebar: React.FunctionComponent<Props> = ({
       </header>
       <h2>Background Color</h2>
       <div className={styles.palette}>
-        <PaletteContainer className={styles.paletteContainer}>
+        <PaletteColorInput.Container className={styles.paletteContainer}>
           <PaletteColorInput
             color={backgroundColor}
             systemPalette={systemPalette}
             onChange={onBackgroundColorChange}
           />
-        </PaletteContainer>
+        </PaletteColorInput.Container>
       </div>
       <h2>Background Palettes</h2>
       {backgroundPalettes.map(palette => (
         <div key={palette.id} className={styles.palette}>
           <h3>#{palette.id}</h3>
-          <PaletteContainer>
+          <PaletteColorInput.Container>
             {palette.colors.map((color, index) => (
               <PaletteColorInput
                 key={index}
@@ -72,14 +71,14 @@ const EditorSidebar: React.FunctionComponent<Props> = ({
                 }
               />
             ))}
-          </PaletteContainer>
+          </PaletteColorInput.Container>
         </div>
       ))}
       <h2>Sprite Palettes</h2>
       {spritePalettes.map(palette => (
         <div key={palette.id} className={styles.palette}>
           <h3>#{palette.id}</h3>
-          <PaletteContainer>
+          <PaletteColorInput.Container>
             {palette.colors.map((color, index) => (
               <PaletteColorInput
                 key={index}
@@ -94,7 +93,7 @@ const EditorSidebar: React.FunctionComponent<Props> = ({
                 }
               />
             ))}
-          </PaletteContainer>
+          </PaletteColorInput.Container>
         </div>
       ))}
     </section>

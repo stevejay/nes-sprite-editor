@@ -1,16 +1,6 @@
-import { GamePaletteWithColors } from "./reducer";
-import formatHex from "./format-hex";
-import { Color } from "./types";
-
-function createGamePaletteData(
-  gamePalette: GamePaletteWithColors,
-  backgroundColor: Color
-): string {
-  const gamePaletteColors = gamePalette.values
-    .map(value => `$${formatHex(value)}`)
-    .join(",");
-  return `$${formatHex(backgroundColor.id)},${gamePaletteColors}`;
-}
+import { GamePaletteWithColors } from "../../reducer";
+import formatIntegerAsHex from "../../shared/utils/format-integer-as-hex";
+import { Color } from "../../types";
 
 export default function createGameDataText(
   backgroundColor: Color,
@@ -36,4 +26,14 @@ PaletteData:
   .db ${createGamePaletteData(spritePalettes[2], backgroundColor)}
   .db ${createGamePaletteData(spritePalettes[3], backgroundColor)}
   `;
+}
+
+function createGamePaletteData(
+  gamePalette: GamePaletteWithColors,
+  backgroundColor: Color
+): string {
+  const gamePaletteColors = gamePalette.values
+    .map(value => `$${formatIntegerAsHex(value)}`)
+    .join(",");
+  return `$${formatIntegerAsHex(backgroundColor.id)},${gamePaletteColors}`;
 }
