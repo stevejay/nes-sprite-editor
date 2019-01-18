@@ -1,0 +1,32 @@
+@import "styles/_base.scss";
+
+.button {
+  border: 0px solid;
+  padding: rem(12) rem(24);
+  margin: 0;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-appearance: none;
+  background-clip: padding-box;
+  cursor: pointer;
+  display: inline-block;
+  border: none;
+  border-radius: rem(3);
+  font-style: normal;
+  text-align: center;
+  text-decoration: none;
+  user-select: none;
+  min-height: rem(39);
+  font-size: rem(16);
+  color: $md-white;
+  background-color: $md-light-green-800;
+  will-change: background-color;
+  transition: background-color $transition-fast;
+
+  &::-moz-focus-inner {
+    border: 0; /* Removes dotted line in Firefox */
+  }
+
+  &:hover {
+    background-color: darken($md-light-green-800, 5);
+  }
+}

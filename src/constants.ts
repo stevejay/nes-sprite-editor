@@ -404,8 +404,8 @@ const HEART_TILE_PIXELS: Tile["pixels"] = [
 
 const BACKGROUND_TILE_GRID_OPTIONS: Array<TileGrid> = [
   {
-    id: "grid1",
-    label: "Grid 1",
+    id: "background-1",
+    label: "Background Grid 1",
     tiles: range(0, 256).map(index => ({
       rowIndex: Math.floor(index / 16),
       columnIndex: index % 16,
