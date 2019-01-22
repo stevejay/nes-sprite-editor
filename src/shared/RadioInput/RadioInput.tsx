@@ -20,7 +20,6 @@ const RadioInput: React.FunctionComponent<Props> = ({
   disabled = false
 }) => {
   const id = React.useRef(uniqueId("radio-input_"));
-  console.log(value, checked, !!onChange);
   return (
     <>
       <input

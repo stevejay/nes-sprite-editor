@@ -31,13 +31,13 @@ const RadioInputGroup: React.FunctionComponent<Props> = ({
       <p id={labelId.current}>{legend}</p>
       <div
         role="radiogroup"
-        className={styles.radioGroup}
+        className={styles.groupContainer}
         aria-labelledby={labelId.current}
       >
         {options.map(option => (
           <div
             key={option.id}
-            className={inline ? styles.inlineGroup : styles.blockGroup}
+            className={inline ? styles.inlineInput : styles.blockInput}
           >
             <RadioInput
               value={option.id}

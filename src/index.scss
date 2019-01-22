@@ -74,3 +74,17 @@ body {
 section > header > h1 {
   font-size: 1.4rem;
 }
+
+// Fast tapping by default
+// https://webkit.org/blog/5610/more-responsive-tapping-on-ios/
+[role="button"],
+a,
+area,
+button,
+input,
+label,
+select,
+summary,
+textarea {
+  touch-action: manipulation;
+}

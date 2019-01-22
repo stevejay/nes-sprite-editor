@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, SyntheticEvent } from "react";
 import styles from "./Toolbar.module.scss";
 
 const ARROW_LEFT = 37;
@@ -20,17 +20,17 @@ const Toolbar: React.FunctionComponent<Props> = ({
   const divRef = React.useRef<HTMLDivElement>(null);
   const [tabIndex, setTabIndex] = React.useState(-1);
 
-  React.useLayoutEffect(
-    () => {
-      if (divRef && divRef.current) {
-        const childNodes = divRef.current.children;
-        if (tabIndex >= 0 && tabIndex < childNodes.length) {
-          (childNodes[tabIndex] as HTMLElement).focus();
-        }
-      }
-    },
-    [tabIndex]
-  );
+  // React.useLayoutEffect(
+  //   () => {
+  //     if (divRef && divRef.current) {
+  //       const childNodes = divRef.current.children;
+  //       if (tabIndex >= 0 && tabIndex < childNodes.length) {
+  //         (childNodes[tabIndex] as HTMLElement).focus();
+  //       }
+  //     }
+  //   },
+  //   [tabIndex]
+  // );
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.keyCode === ARROW_LEFT) {
@@ -48,6 +48,10 @@ const Toolbar: React.FunctionComponent<Props> = ({
     }
   };
 
+  // const handleClick = () => {
+  //   console.log("got click");
+  // };
+
   return (
     <div
       ref={divRef}
@@ -56,11 +60,18 @@ const Toolbar: React.FunctionComponent<Props> = ({
       className={`${styles.toolbar} ${className}`}
       role="toolbar"
       onKeyDown={handleKeyDown}
+      // onClick={handleClick}
     >
       {React.Children.map(children, (child, index) =>
         React.cloneElement(child as ReactElement<any>, {
           tabIndex:
-            tabIndex === -1 && index === 0 ? 0 : index === tabIndex ? 0 : -1
+            tabIndex === -1 && index === 0 ? 0 : index === tabIndex ? 0 : -1,
+          "data-toolbar-index": index,
+          onClick: (event: any) => {
+            setTabIndex(
+              parseInt(event.target.getAttribute("data-toolbar-index"), 10)
+            );
+          }
         })
       )}
     </div>
