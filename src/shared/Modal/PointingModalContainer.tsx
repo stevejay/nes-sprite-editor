@@ -8,7 +8,7 @@ type Props = {
   originY: number;
 };
 
-// Note: implemented as a class component to allow focus trap to get ref.
+// Note: implemented as a class component to allow focus trap to get a ref.
 class PointingModalContainer extends React.Component<Props> {
   render() {
     const { children, originX, originY } = this.props;

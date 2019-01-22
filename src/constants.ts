@@ -9,317 +9,324 @@ const PALETTE_2C02_PPU: SystemPalette = {
   label: "2C02 PPU (NES)",
   values: [
     // Luminosity=0
-    { id: 0, available: true, name: "Mid Grey #1", rgb: [84, 84, 84] },
+    { id: 0, available: true, name: "Mid Grey #1", rgb: "#545454" },
     {
       id: 1,
       available: true,
       name: "Blue Luminosity Level 0",
-      rgb: [0, 30, 116]
+      rgb: "#001E74"
     },
     {
       id: 2,
       available: true,
       name: "Indigo Luminosity Level 0",
-      rgb: [8, 16, 144]
+      rgb: "#081090"
     },
     {
       id: 3,
       available: true,
       name: "Violet Luminosity Level 0",
-      rgb: [48, 0, 136]
+      rgb: "#300088"
     },
     {
       id: 4,
       available: true,
       name: "Grape Luminosity Level 0",
-      rgb: [68, 0, 100]
+      rgb: "#440064"
     },
     {
       id: 5,
       available: true,
       name: "Cranberry Luminosity Level 0",
-      rgb: [92, 0, 48]
+      rgb: "#5C0030"
     },
     {
       id: 6,
       available: true,
       name: "Pink Luminosity Level 0",
-      rgb: [84, 4, 0]
+      rgb: "#540400"
     },
     {
       id: 7,
       available: true,
       name: "Orange Luminosity Level 0",
-      rgb: [60, 24, 0]
+      rgb: "#3C1800"
     },
     {
       id: 8,
       available: true,
       name: "Mustard Luminosity Level 0",
-      rgb: [32, 42, 0]
+      rgb: "#202A00"
     },
     {
       id: 9,
       available: true,
       name: "Yellow Green Luminosity Level 0",
-      rgb: [8, 58, 0]
+      rgb: "#083A00"
     },
     {
       id: 10,
       available: true,
       name: "Green Luminosity Level 0",
-      rgb: [0, 64, 0]
+      rgb: "#004000"
     },
     {
       id: 11,
       available: true,
       name: "Jade Luminosity Level 0",
-      rgb: [0, 60, 0]
+      rgb: "#003C00"
     },
     {
       id: 12,
       available: true,
       name: "Aqua Luminosity Level 0",
-      rgb: [0, 50, 60]
+      rgb: "#00323C"
     },
     { id: 13, available: false },
-    { id: 14, available: false }, // change to black
-    { id: 15, available: true, name: "Black #1", rgb: [0, 0, 0] },
+    { id: 14, available: true, name: "Black Copy #1", rgb: "#000" },
+    { id: 15, available: true, name: "Canonical Black", rgb: "#000" },
     // Luminosity=1
-    { id: 16, available: true, name: "Light Grey #1", rgb: [152, 150, 152] },
+    { id: 16, available: true, name: "Light Grey #1", rgb: "#989698" },
     {
       id: 17,
       available: true,
       name: "Blue Luminosity Level 1",
-      rgb: [8, 76, 196]
+      rgb: "#084CC4"
     },
     {
       id: 18,
       available: true,
       name: "Indigo Luminosity Level 1",
-      rgb: [48, 50, 236]
+      rgb: "#3032EC"
     },
     {
       id: 19,
       available: true,
       name: "Violet Luminosity Level 1",
-      rgb: [92, 30, 228]
+      rgb: "#5C1EE4"
     },
     {
       id: 20,
       available: true,
       name: "Grape Luminosity Level 1",
-      rgb: [136, 20, 176]
+      rgb: "#8814B0"
     },
     {
       id: 21,
       available: true,
       name: "Cranberry Luminosity Level 1",
-      rgb: [160, 20, 100]
+      rgb: "#A01464"
     },
     {
       id: 22,
       available: true,
       name: "Pink Luminosity Level 1",
-      rgb: [152, 34, 32]
+      rgb: "#982220"
     },
     {
       id: 23,
       available: true,
       name: "Orange Luminosity Level 1",
-      rgb: [120, 60, 0]
+      rgb: "#783C00"
     },
     {
       id: 24,
       available: true,
       name: "Mustard Luminosity Level 1",
-      rgb: [84, 90, 0]
+      rgb: "#545A00"
     },
     {
       id: 25,
       available: true,
       name: "Yellow Green Luminosity Level 1",
-      rgb: [40, 114, 0]
+      rgb: "#287200"
     },
     {
       id: 26,
       available: true,
       name: "Green Luminosity Level 1",
-      rgb: [8, 124, 0]
+      rgb: "#087C00"
     },
     {
       id: 27,
       available: true,
       name: "Jade Luminosity Level 1",
-      rgb: [0, 118, 40]
+      rgb: "#007628"
     },
     {
       id: 28,
       available: true,
       name: "Aqua Luminosity Level 1",
-      rgb: [0, 102, 120]
+      rgb: "#006678"
     },
-    { id: 29, available: true, name: "Black #2", rgb: [0, 0, 0] },
-    { id: 30, available: false }, // change to black
-    { id: 31, available: false }, // change to black
+    { id: 29, available: true, name: "Black Copy #2", rgb: "#000" },
+    { id: 30, available: true, name: "Black Copy #3", rgb: "#000" },
+    { id: 31, available: true, name: "Black Copy #4", rgb: "#000" },
     // Luminosity=2
-    { id: 32, available: true, name: "Almost White #1", rgb: [236, 238, 236] },
+    { id: 32, available: true, name: "Almost White #1", rgb: "#ECEEEC" },
     {
       id: 33,
       available: true,
       name: "Blue Luminosity Level 2",
-      rgb: [76, 154, 236]
+      rgb: "#4C9AEC"
     },
     {
       id: 34,
       available: true,
       name: "Indigo Luminosity Level 2",
-      rgb: [120, 124, 236]
+      rgb: "#787CEC"
     },
     {
       id: 35,
       available: true,
       name: "Violet Luminosity Level 2",
-      rgb: [176, 98, 236]
+      rgb: "#B062EC"
     },
     {
       id: 36,
       available: true,
       name: "Grape Luminosity Level 2",
-      rgb: [228, 84, 236]
+      rgb: "#E454EC"
     },
     {
       id: 37,
       available: true,
       name: "Cranberry Luminosity Level 2",
-      rgb: [236, 88, 180]
+      rgb: "#EC58B4"
     },
     {
       id: 38,
       available: true,
       name: "Pink Luminosity Level 2",
-      rgb: [236, 106, 100]
+      rgb: "#EC6A64"
     },
     {
       id: 39,
       available: true,
       name: "Orange Luminosity Level 2",
-      rgb: [212, 136, 32]
+      rgb: "#D48820"
     },
     {
       id: 40,
       available: true,
       name: "Mustard Luminosity Level 2",
-      rgb: [160, 170, 0]
+      rgb: "#A0AA00"
     },
     {
       id: 41,
       available: true,
       name: "Yellow Green Luminosity Level 2",
-      rgb: [116, 196, 0]
+      rgb: "#74C400"
     },
     {
       id: 42,
       available: true,
       name: "Green Luminosity Level 2",
-      rgb: [76, 208, 32]
+      rgb: "#4CD020"
     },
     {
       id: 43,
       available: true,
       name: "Jade Luminosity Level 2",
-      rgb: [56, 204, 108]
+      rgb: "#38CC6C"
     },
     {
       id: 44,
       available: true,
       name: "Aqua Luminosity Level 2",
-      rgb: [56, 180, 204]
+      rgb: "#38B4CC"
     },
-    { id: 45, available: true, name: "Mid Grey #2", rgb: [60, 60, 60] },
-    { id: 46, available: false }, // change to black
-    { id: 47, available: false }, // change to black
+    { id: 45, available: true, name: "Mid Grey #2", rgb: "#3C3C3C" },
+    { id: 46, available: true, name: "Black Copy #5", rgb: "#000" },
+    { id: 47, available: true, name: "Black Copy #6", rgb: "#000" },
     // Luminosity=3
-    { id: 48, available: true, name: "Almost White #2", rgb: [236, 238, 236] },
+    { id: 48, available: true, name: "Almost White #2", rgb: "#ECEEEC" },
     {
       id: 49,
       available: true,
       name: "Blue Luminosity Level 3",
-      rgb: [168, 204, 236]
+      rgb: "#A8CCEC"
     },
     {
       id: 50,
       available: true,
       name: "Indigo Luminosity Level 3",
-      rgb: [188, 188, 236]
+      rgb: "#BCBCEC"
     },
     {
       id: 51,
       available: true,
       name: "Violet Luminosity Level 3",
-      rgb: [212, 178, 236]
+      rgb: "#D4B2EC"
     },
     {
       id: 52,
       available: true,
       name: "Grape Luminosity Level 3",
-      rgb: [236, 174, 236]
+      rgb: "#ECAEEC"
     },
     {
       id: 53,
       available: true,
       name: "Cranberry Luminosity Level 3",
-      rgb: [236, 174, 212]
+      rgb: "#ECAED4"
     },
     {
       id: 54,
       available: true,
       name: "Pink Luminosity Level 3",
-      rgb: [236, 180, 176]
+      rgb: "#ECB4B0"
     },
     {
       id: 55,
       available: true,
       name: "Orange Luminosity Level 3",
-      rgb: [228, 196, 144]
+      rgb: "#E4C490"
     },
     {
       id: 56,
       available: true,
       name: "Mustard Luminosity Level 3",
-      rgb: [204, 210, 120]
+      rgb: "#CCD278"
     },
     {
       id: 57,
       available: true,
       name: "Yellow Green Luminosity Level 3",
-      rgb: [180, 222, 120]
+      rgb: "#B4DE78"
     },
     {
       id: 58,
       available: true,
       name: "Green Luminosity Level 3",
-      rgb: [168, 226, 144]
+      rgb: "#A8E290"
     },
     {
       id: 59,
       available: true,
       name: "Jade Luminosity Level 3",
-      rgb: [152, 226, 180]
+      rgb: "#98E2B4"
     },
     {
       id: 60,
       available: true,
       name: "Aqua Luminosity Level 3",
-      rgb: [160, 214, 228]
+      rgb: "#A0D6E4"
     },
-    { id: 61, available: true, name: "Light Grey #2", rgb: [160, 162, 160] },
-    { id: 62, available: false }, // change to black
-    { id: 63, available: false } // change to black
+    { id: 61, available: true, name: "Light Grey #2", rgb: "#A0A2A0" },
+    { id: 62, available: true, name: "Black Copy #7", rgb: "#000" },
+    { id: 63, available: true, name: "Black Copy #8", rgb: "#000" }
   ]
 };
 
-const SYSTEM_PALETTE_OPTIONS: Array<SystemPalette> = [PALETTE_2C02_PPU];
+const SYSTEM_PALETTE_OPTIONS: Array<SystemPalette> = [
+  PALETTE_2C02_PPU,
+  {
+    ...PALETTE_2C02_PPU,
+    id: "test",
+    label: "Test"
+  }
+];
 
 if (process.env.NODE_ENV === "development") {
   Object.freeze(SYSTEM_PALETTE_OPTIONS);
@@ -327,7 +334,7 @@ if (process.env.NODE_ENV === "development") {
 
 export { SYSTEM_PALETTE_OPTIONS };
 
-const HEART_TILE_PIXELS: Tile["pixels"] = [
+const HEART_TILE_PIXELS: Tile["pixels"] = new Uint8Array([
   // 0
   0,
   3,
@@ -400,7 +407,7 @@ const HEART_TILE_PIXELS: Tile["pixels"] = [
   0,
   0,
   0
-];
+]);
 
 const BACKGROUND_TILE_GRID_OPTIONS: Array<TileGrid> = [
   {

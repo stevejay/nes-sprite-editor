@@ -45,4 +45,11 @@ $transition-fast: 150ms;
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   border: 0;
+  outline: none;
+}
+
+@mixin focus-ring($borderRadius: 2) {
+  outline: none;
+  box-shadow: 0 0 1px 3px $fallback-focus-ring-color;
+  border-radius: rem($borderRadius);
 }

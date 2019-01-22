@@ -19,13 +19,11 @@ $container-width: rem(48);
 
 .button:focus {
   z-index: 1;
+  @include focus-ring(0);
+  // outline: $focus-outline;
 }
 
-.dialog {
-  width: 200px;
-  height: 100px;
-  position: fixed;
-  top: 0;
-  left: 0;
-  background-color: papayawhip;
-}
+// // http://browserhacks.com/#hack-f4ade0540d8e891e8190065f75acb186 for webkit browsers
+// .button:focus:not(*:root) {
+//   outline: $webkit-focus-outline;
+// }

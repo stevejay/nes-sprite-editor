@@ -7,6 +7,8 @@ type Props = {
   legend: string;
   options: Array<{ id: string; label: string }>;
   selectedId: string;
+  disabled?: boolean;
+  inline?: boolean;
   onChange: (id: string) => void;
 };
 
@@ -14,9 +16,11 @@ const RadioInputGroup: React.FunctionComponent<Props> = ({
   legend,
   options,
   selectedId,
+  disabled,
+  inline,
   onChange
 }) => {
-  const labelId = React.useRef(uniqueId("radio-group-label_"));
+  const labelId = React.useRef(uniqueId("radio-group_"));
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.value);
@@ -31,15 +35,19 @@ const RadioInputGroup: React.FunctionComponent<Props> = ({
         aria-labelledby={labelId.current}
       >
         {options.map(option => (
-          <React.Fragment key={option.id}>
+          <div
+            key={option.id}
+            className={inline ? styles.inlineGroup : styles.blockGroup}
+          >
             <RadioInput
               value={option.id}
               label={option.label}
+              groupName={labelId.current}
               checked={selectedId === option.id}
+              disabled={disabled}
               onChange={handleChange}
             />
-            <br />
-          </React.Fragment>
+          </div>
         ))}
       </div>
     </>

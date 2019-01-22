@@ -3,13 +3,14 @@
 .toolbar {
   display: flex;
   justify-content: flex-start;
-  margin-bottom: 1rem;
-
-  & > * {
-    margin-right: $gutter / 3;
-  }
-
-  & > *:last-child {
-    margin-right: 0;
-  }
 }
+
+// .toolbar.toolbar {
+//   & > * {
+//     margin-right: $gutter / 3;
+//   }
+
+//   & > *:last-child {
+//     margin-right: 0;
+//   }
+// }

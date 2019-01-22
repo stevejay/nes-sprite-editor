@@ -5,8 +5,7 @@ import { Color, TileGrid } from "../../types";
 export default function createGameDataText(
   backgroundColor: Color,
   backgroundPalettes: Array<GamePaletteWithColors>,
-  spritePalettes: Array<GamePaletteWithColors>,
-  backgroundTileGrid: TileGrid
+  spritePalettes: Array<GamePaletteWithColors>
 ): string {
   // Note: might be '.byte' instead of '.db':
 

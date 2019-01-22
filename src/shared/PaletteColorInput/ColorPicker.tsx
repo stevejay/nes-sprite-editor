@@ -14,7 +14,7 @@ const ColorPicker: React.FunctionComponent<Props> = ({
   selectedColorId,
   onChange
 }) => (
-  <div className={styles.container}>
+  <div className={styles.container} id="color-picker">
     {palette.values.map(color => {
       const id = `palette_color_${color.id}`;
       const checked = selectedColorId === color.id;

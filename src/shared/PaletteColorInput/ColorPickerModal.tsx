@@ -41,11 +41,12 @@ const ColorPickerModal: React.FunctionComponent<Props> = ({
   return (
     <Portal>
       <>
-        <ModalBackdrop opacity={0} />
+        <ModalBackdrop opacity={0} onClose={onClose} />
         <FocusTrap
           focusTrapOptions={{
-            returnFocusOnDeactivate: true,
-            clickOutsideDeactivates: true,
+            //returnFocusOnDeactivate: true,
+            //escapeDeactivates: true,
+            //clickOutsideDeactivates: false, // true
             onDeactivate: onClose
           }}
         >

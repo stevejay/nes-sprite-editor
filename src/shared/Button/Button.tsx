@@ -9,7 +9,7 @@ type Props = {
 
 const Button: React.FunctionComponent<Props> = ({
   children,
-  tabIndex = -1,
+  tabIndex = 0,
   onClick
 }) => (
   <button className={styles.button} tabIndex={tabIndex} onClick={onClick}>

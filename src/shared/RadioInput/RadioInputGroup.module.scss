@@ -1,11 +1,22 @@
+@import "styles/_base.scss";
+
 .radioGroup {
   margin-bottom: 1rem;
+}
 
-  label {
-    margin-bottom: 0.5rem;
+.inlineGroup {
+  display: inline-block;
+  margin-right: rem(8);
 
-    &:last-of-type {
-      margin-bottom: 0;
-    }
+  &:last-of-type {
+    margin-right: 0;
+  }
+}
+
+.blockGroup {
+  margin-bottom: rem(8);
+
+  &:last-of-type {
+    margin-bottom: 0;
   }
 }

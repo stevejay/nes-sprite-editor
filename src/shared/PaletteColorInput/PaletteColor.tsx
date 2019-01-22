@@ -2,7 +2,6 @@ import React from "react";
 import classNames from "classnames";
 import { FaRegEyeSlash } from "react-icons/fa";
 import { Color } from "../../types";
-import formatRgbValueAsString from "../../shared/utils/format-rgb-value-as-string";
 import formatIntegerAsHex from "../../shared/utils/format-integer-as-hex";
 import styles from "./PaletteColor.module.scss";
 
@@ -16,7 +15,7 @@ type Props = {
 const PaletteColor: React.FunctionComponent<Props> = React.memo(
   ({ color, srLabel, selected = false, compact = false }) => {
     const containerStyle = color.available
-      ? { backgroundColor: formatRgbValueAsString(color.rgb) }
+      ? { backgroundColor: color.rgb }
       : undefined;
 
     const containerClassName = classNames(styles.container, {

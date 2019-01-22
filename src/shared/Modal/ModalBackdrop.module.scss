@@ -7,7 +7,7 @@
   width: 100vw;
   height: 100vh;
   outline: none;
-  background-color: rgba($md-black, 0.15);
+  background-color: $md-black;
   will-change: opacity;
-  pointer-events: none;
+  pointer-events: all;
 }

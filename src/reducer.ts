@@ -12,12 +12,16 @@ import {
   SYSTEM_PALETTE_OPTIONS,
   BACKGROUND_TILE_GRID_OPTIONS
 } from "./constants";
+import { Tuple } from "./typescript";
 
 export enum ActionTypes {
   CHANGE_SYSTEM_PALETTE = "CHANGE_SYSTEM_PALETTE",
   CHANGE_BACKGROUND_COLOR = "CHANGE_BACKGROUND_COLOR",
-  CHANGE_GAME_PALETTE_COLOR = "CHANGE_GAME_PALETTE_COLOR"
+  CHANGE_GAME_PALETTE_COLOR = "CHANGE_GAME_PALETTE_COLOR",
+  CHANGE_SELECTED_BACKGROUND_TILE = "CHANGE_SELECTED_BACKGROUND_TILE"
 }
+
+export type Position = Tuple<number, 2>;
 
 export type State = {
   systemPalettes: Array<SystemPalette>;
@@ -27,6 +31,7 @@ export type State = {
   backgroundTileGrids: Array<TileGrid>;
   backgroundTileGridId: TileGrid["id"];
   backgroundTileGridScaling: number;
+  selectedBackgroundTile: Position;
 };
 
 export type GamePaletteChange = {
@@ -42,7 +47,11 @@ export type GamePaletteWithColors = GamePalette & {
 export type Action =
   | { type: ActionTypes.CHANGE_SYSTEM_PALETTE; payload: SystemPalette["id"] }
   | { type: ActionTypes.CHANGE_BACKGROUND_COLOR; payload: number }
-  | { type: ActionTypes.CHANGE_GAME_PALETTE_COLOR; payload: GamePaletteChange };
+  | { type: ActionTypes.CHANGE_GAME_PALETTE_COLOR; payload: GamePaletteChange }
+  | {
+      type: ActionTypes.CHANGE_SELECTED_BACKGROUND_TILE;
+      payload: Position;
+    };
 
 export const initialState: State = {
   // palettes
@@ -62,7 +71,8 @@ export const initialState: State = {
   // background
   backgroundTileGrids: BACKGROUND_TILE_GRID_OPTIONS,
   backgroundTileGridId: BACKGROUND_TILE_GRID_OPTIONS[0].id,
-  backgroundTileGridScaling: 3
+  backgroundTileGridScaling: 3,
+  selectedBackgroundTile: [0, 0]
 };
 
 export function reducer(state: State, action: Action) {
@@ -90,6 +100,11 @@ export function reducer(state: State, action: Action) {
           }
           return element;
         })
+      };
+    case ActionTypes.CHANGE_SELECTED_BACKGROUND_TILE:
+      return {
+        ...state,
+        selectedBackgroundTile: action.payload
       };
     default:
       return state;
@@ -177,4 +192,8 @@ export function selectCurrentBackgroundTileGrid(state: State) {
 
 export function selectBackgroundTileGridScaling(state: State) {
   return state.backgroundTileGridScaling;
+}
+
+export function selectSelectedBackgroundTile(state: State) {
+  return state.selectedBackgroundTile;
 }

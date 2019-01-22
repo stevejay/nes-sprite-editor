@@ -7,6 +7,7 @@ import { Color, SystemPalette } from "../../types";
 type Props = {
   color: Color;
   systemPalette: SystemPalette; // TODO remove this when using redux
+  tabIndex?: number;
   onChange: (color: Color) => void;
 };
 
@@ -27,6 +28,7 @@ const initialState: State = {
 const PaletteColorInput: React.FunctionComponent<Props> = ({
   color,
   systemPalette,
+  tabIndex = 0,
   onChange
 }) => {
   const buttonRef = React.useRef<HTMLButtonElement>(null);
@@ -36,10 +38,18 @@ const PaletteColorInput: React.FunctionComponent<Props> = ({
   const handleClick = () => {
     const originElement = buttonRef.current;
 
+    // if (!dialogState.isOpen) {
+    //   console.log(
+    //     ' && document.getElementById("color-picker")',
+    //     document.getElementById("color-picker")
+    //   );
+    // }
+
     if (!dialogState.isOpen && originElement) {
       const rect = originElement.getBoundingClientRect();
       const originY = rect.top + rect.height / 2;
       const originX = rect.left + rect.width / 2;
+
       setDialogState({
         isOpen: true,
         originElement,
@@ -55,7 +65,12 @@ const PaletteColorInput: React.FunctionComponent<Props> = ({
 
   return (
     <>
-      <button ref={buttonRef} className={styles.button} onClick={handleClick}>
+      <button
+        ref={buttonRef}
+        className={styles.button}
+        onClick={handleClick}
+        tabIndex={tabIndex}
+      >
         <PaletteColor
           color={color}
           srLabel={`Color ${color.id}. Click to change.`}

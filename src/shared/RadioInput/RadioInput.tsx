@@ -8,7 +8,6 @@ type Props = {
   checked: boolean;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   groupName?: string;
-  className?: string;
   disabled?: boolean;
 };
 
@@ -18,10 +17,10 @@ const RadioInput: React.FunctionComponent<Props> = ({
   checked,
   onChange,
   groupName,
-  className = "",
   disabled = false
 }) => {
   const id = React.useRef(uniqueId("radio-input_"));
+  console.log(value, checked, !!onChange);
   return (
     <>
       <input
@@ -31,7 +30,7 @@ const RadioInput: React.FunctionComponent<Props> = ({
         value={value}
         checked={checked}
         disabled={disabled}
-        className={`screenreader-only ${styles.input} ${className}`}
+        className={styles.input}
         onChange={onChange}
       />
       <label htmlFor={id.current}>{label}</label>

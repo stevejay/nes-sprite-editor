@@ -15,6 +15,7 @@ $svg-dimension: rem(16);
   width: $container-width;
   height: $container-height;
   transition: background-color $transition-fast;
+  color: $md-black;
 }
 
 .selected {

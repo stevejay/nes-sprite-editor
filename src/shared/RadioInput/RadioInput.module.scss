@@ -3,18 +3,22 @@
 $input-color: $md-grey-800;
 $disabled-color: $md-grey-200;
 
+.input {
+  @include screenreader-only;
+}
+
 .input + label {
   position: relative;
   display: inline-block;
   cursor: pointer;
-  padding-left: rem(25);
+  padding: rem(2) rem(1) rem(2) rem(25);
 }
 
 .input + label::before,
 .input + label::after {
   content: "";
   position: absolute;
-  left: rem(9);
+  left: rem(10);
   top: 50%;
   transform: translate(-50%, -50%);
   border-radius: rem(9);
@@ -39,22 +43,17 @@ input:checked + label::after {
 
 .input:disabled + label {
   cursor: not-allowed;
-
-  &::before {
-    border-color: darken($disabled-color, 30%);
-    background-color: $disabled-color;
-  }
-
-  &::after {
-    background-color: darken($disabled-color, 10%);
-  }
 }
 
-.input:focus + label::before {
-  outline: $focus-outline;
+.input:disabled + label::before {
+  border-color: darken($disabled-color, 30%);
+  background-color: $disabled-color;
 }
 
-// http://browserhacks.com/#hack-f4ade0540d8e891e8190065f75acb186 for webkit browsers
-.input:focus + label:not(*:root)::before {
-  outline: $webkit-focus-outline;
+.input:disabled + label::after {
+  background-color: darken($disabled-color, 10%);
+}
+
+.input:focus + label {
+  @include focus-ring;
 }

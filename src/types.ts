@@ -1,7 +1,6 @@
 import { Tuple } from "./typescript";
 
 export type ColorId = number;
-export type RGBValue = [number, number, number];
 
 export type Color =
   | {
@@ -12,7 +11,7 @@ export type Color =
       available: true;
       id: ColorId;
       name: string;
-      rgb: RGBValue;
+      rgb: string;
     };
 
 export enum GamePaletteTypes {
@@ -37,7 +36,7 @@ export type Tile = {
   rowIndex: number; // 0 to 15
   columnIndex: number; // 0 to 15
   gamePaletteId: GamePalette["id"]; // 0 to 3
-  pixels: Tuple<number, 64>; // 64 pixels, each value 0 to 3 (palette index)
+  pixels: Uint8Array; // 64 pixels, each value 0 to 3 (palette index)
 };
 
 export type TileGrid = {

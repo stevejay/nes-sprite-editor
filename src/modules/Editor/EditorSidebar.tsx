@@ -5,6 +5,7 @@ import RadioInput from "../../shared/RadioInput";
 import { GamePaletteChange, GamePaletteWithColors } from "../../reducer";
 import { Color, SystemPalette as SystemPaletteType } from "../../types";
 import Section from "./Section";
+import Toolbar from "../../shared/Toolbar";
 
 type Props = {
   systemPalettes: Array<SystemPaletteType>;
@@ -58,20 +59,22 @@ const EditorSidebar: React.FunctionComponent<Props> = ({
         <div key={palette.id} className={styles.palette}>
           <h3>#{palette.id}</h3>
           <PaletteColorInput.Container>
-            {palette.colors.map((color, index) => (
-              <PaletteColorInput
-                key={index}
-                color={color}
-                systemPalette={systemPalette}
-                onChange={color =>
-                  onGamePaletteChange({
-                    gamePalette: palette,
-                    valueIndex: index,
-                    newColor: color
-                  })
-                }
-              />
-            ))}
+            <Toolbar ariaLabel={`Background palette #${palette.id}`}>
+              {palette.colors.map((color, index) => (
+                <PaletteColorInput
+                  key={index}
+                  color={color}
+                  systemPalette={systemPalette}
+                  onChange={color =>
+                    onGamePaletteChange({
+                      gamePalette: palette,
+                      valueIndex: index,
+                      newColor: color
+                    })
+                  }
+                />
+              ))}
+            </Toolbar>
           </PaletteColorInput.Container>
         </div>
       ))}

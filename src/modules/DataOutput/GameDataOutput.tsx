@@ -25,12 +25,7 @@ const GameDataOutput: React.FunctionComponent<Props> = ({ state }) => {
 
   const gameDataText = React.useMemo(
     () =>
-      createGameDataText(
-        backgroundColor,
-        backgroundPalettes,
-        spritePalettes,
-        backgroundTileGrid
-      ),
+      createGameDataText(backgroundColor, backgroundPalettes, spritePalettes),
     [dataVersion]
   );
 
@@ -39,7 +34,7 @@ const GameDataOutput: React.FunctionComponent<Props> = ({ state }) => {
       <header>
         <h1>ASM Output</h1>
       </header>
-      <Toolbar>
+      <Toolbar ariaLabel="Output actions toolbar" ariaOrientation="horizontal">
         <Button onClick={() => setDataVersion(Date.now())}>Update</Button>
         <Button onClick={() => downloadTileGrid(backgroundTileGrid)}>
           Download background tiles pattern file
