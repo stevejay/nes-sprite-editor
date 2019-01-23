@@ -3,6 +3,7 @@ import styles from "./Toolbar.module.scss";
 
 const ARROW_LEFT = 37;
 const ARROW_RIGHT = 39;
+export const TOOLBAR_CHILD_CLASS_NAME = "toolbar-child";
 
 type Props = {
   ariaLabel: string;
@@ -11,6 +12,7 @@ type Props = {
   children: React.ReactNode;
 };
 
+// has roving tab index
 const Toolbar: React.FunctionComponent<Props> = ({
   ariaLabel,
   ariaOrientation,
@@ -19,41 +21,69 @@ const Toolbar: React.FunctionComponent<Props> = ({
 }) => {
   const divRef = React.useRef<HTMLDivElement>(null);
   const [tabIndex, setTabIndex] = React.useState(-1);
-  const childRefs = React.useRef<Array<React.RefObject<any>>>([]);
 
-  React.useLayoutEffect(
-    () => {
-      if (
-        tabIndex >= 0 &&
-        childRefs &&
-        childRefs.current &&
-        childRefs.current.length > tabIndex
-      ) {
-        const childRef: any = childRefs.current[tabIndex];
-        childRef.focus && childRef.focus();
-      }
-    },
-    [tabIndex]
-  );
+  React.useLayoutEffect(() => {
+    if (tabIndex < 0 || !divRef || !divRef.current) {
+      return;
+    }
+
+    const elements = divRef.current.getElementsByClassName(
+      TOOLBAR_CHILD_CLASS_NAME
+    );
+
+    if (elements && elements.length > tabIndex) {
+      (elements[tabIndex] as any).focus();
+    }
+  });
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (!divRef || !divRef.current) {
+      return;
+    }
+
+    const elements = divRef.current.getElementsByClassName(
+      TOOLBAR_CHILD_CLASS_NAME
+    );
+
     switch (event.keyCode) {
       case ARROW_LEFT:
-        setTabIndex(
-          tabIndex <= 0 ? React.Children.count(children) - 1 : tabIndex - 1
-        );
+        setTabIndex(tabIndex <= 0 ? elements.length - 1 : tabIndex - 1);
         break;
       case ARROW_RIGHT:
-        setTabIndex(
-          tabIndex >= React.Children.count(children) - 1
-            ? 0
-            : tabIndex === -1
-            ? 1
-            : tabIndex + 1
-        );
+        if (tabIndex >= elements.length - 1) {
+          setTabIndex(0);
+        } else if (tabIndex === -1) {
+          if (elements.length > 1) {
+            setTabIndex(1);
+          }
+        } else {
+          setTabIndex(tabIndex + 1);
+        }
         break;
       default:
         break;
+    }
+  };
+
+  const handleContainerClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (!divRef || !divRef.current) {
+      return;
+    }
+
+    const elements = divRef.current.getElementsByClassName(
+      TOOLBAR_CHILD_CLASS_NAME
+    );
+
+    for (let i = 0; i < elements.length; ++i) {
+      if (elements[i] !== event.target) {
+        continue;
+      }
+
+      if (i !== tabIndex) {
+        setTabIndex(i);
+      }
+
+      break;
     }
   };
 
@@ -65,13 +95,12 @@ const Toolbar: React.FunctionComponent<Props> = ({
       className={`${styles.toolbar} ${className}`}
       role="toolbar"
       onKeyDown={handleKeyDown}
+      onClick={handleContainerClick}
     >
       {React.Children.map(children, (child, index) =>
         React.cloneElement(child as ReactElement<any>, {
           tabIndex:
-            tabIndex === -1 && index === 0 ? 0 : index === tabIndex ? 0 : -1,
-          ref: (ref: any) => childRefs.current.push(ref),
-          onClick: () => setTabIndex(index)
+            tabIndex === -1 && index === 0 ? 0 : index === tabIndex ? 0 : -1
         })
       )}
     </div>

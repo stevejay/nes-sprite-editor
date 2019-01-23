@@ -1,10 +1,8 @@
-import { noop } from "lodash";
 import * as React from "react";
 import { host } from "storybook-host";
-// import { withKnobs, boolean } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/react";
-import styles from "./temp.module.scss";
-import Toolbar from "..";
+import styles from "./Toolbar.stories.module.scss";
+import Toolbar, { TOOLBAR_CHILD_CLASS_NAME } from "..";
 import "../../../index.scss";
 
 const buttonHost = host({
@@ -12,24 +10,15 @@ const buttonHost = host({
   backdrop: "transparent"
 });
 
-class Button extends React.Component {
-  _ref: HTMLButtonElement | null = null;
-  focus = () => {
-    this._ref && this._ref.focus();
-  };
-  render() {
-    const { children, ...rest } = this.props;
-    return (
-      <button
-        ref={ref => (this._ref = ref)}
-        {...rest}
-        className={styles.button}
-      >
-        {children}
-      </button>
-    );
-  }
-}
+type Props = {
+  children: React.ReactNode;
+};
+
+const Button: React.FunctionComponent<Props> = ({ children, ...rest }) => (
+  <button {...rest} className={`${styles.button} ${TOOLBAR_CHILD_CLASS_NAME}`}>
+    {children}
+  </button>
+);
 
 storiesOf("Toolbar", module)
   .addDecorator(buttonHost)
