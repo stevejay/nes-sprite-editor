@@ -30,7 +30,7 @@ const PaletteColor: React.FunctionComponent<Props> = React.memo(
         {!compact && (
           <span className={styles.label}>{formatIntegerAsHex(color.id)}</span>
         )}
-        <span className="screenreader-only">{srLabel || name}</span>
+        <span className="screen-reader-only">{srLabel || name}</span>
       </div>
     );
   }

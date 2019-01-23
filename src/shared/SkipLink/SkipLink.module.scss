@@ -1,0 +1,17 @@
+@import "styles/_base.scss";
+
+.link {
+  @include screen-reader-only;
+
+  // from: https://gomakethings.com/hidden-content-for-better-a11y/#hiding-the-link
+  &:active,
+  &:focus {
+    clip: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    position: static;
+    white-space: normal;
+    width: auto;
+  }
+}

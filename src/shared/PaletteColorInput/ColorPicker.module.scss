@@ -27,7 +27,7 @@ $container-height: $container-width;
 }
 
 .label:hover input:focus {
-  outline: none;
+  outline: 0;
   border: 0px;
 }
 

@@ -6,6 +6,11 @@ $fallback-focus-ring-color: rgb(94, 158, 215);
 $focus-outline: auto 4px $fallback-focus-ring-color;
 $webkit-focus-outline: auto 4px -webkit-focus-ring-color;
 
+// TODO box-shadow used as alternative for outline for focus
+// will not work in Windows High Contrast mode:
+// https://webdesign.tutsplus.com/tutorials/how-to-make-custom-accessible-checkboxes-and-radio-buttons--cms-32074
+// outline: 3px solid transparent; /* For Windows high contrast mode */
+
 $box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.5);
 
 // ***** Typography *****
@@ -36,20 +41,22 @@ $transition-fast: 150ms;
 
 // ***** Mixins *****
 
-@mixin screenreader-only() {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
+// source: https://gomakethings.com/hidden-content-for-better-a11y/#hiding-the-link
+@mixin screen-reader-only() {
   border: 0;
-  outline: none;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  outline: 0;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
 }
 
 @mixin focus-ring($borderRadius: 2) {
-  outline: none;
+  outline: 0;
   box-shadow: 0 0 1px 3px $fallback-focus-ring-color;
   border-radius: rem($borderRadius);
 }

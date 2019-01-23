@@ -4,7 +4,7 @@ $input-color: $md-grey-800;
 $disabled-color: $md-grey-200;
 
 .input {
-  @include screenreader-only;
+  @include screen-reader-only;
 }
 
 .input + label {

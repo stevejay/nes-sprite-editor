@@ -79,9 +79,9 @@ const Toolbar: React.FunctionComponent<Props> = ({
         continue;
       }
 
-      if (i !== tabIndex) {
-        setTabIndex(i);
-      }
+      // if (i !== tabIndex) {
+      setTabIndex(i);
+      // }
 
       break;
     }

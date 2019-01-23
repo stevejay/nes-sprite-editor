@@ -49,8 +49,8 @@ fieldset {
 // GLOBAL CLASSES
 // ----------------------------
 
-.screenreader-only {
-  @include screenreader-only();
+.screen-reader-only {
+  @include screen-reader-only();
 }
 
 // ----------------------------
@@ -87,4 +87,10 @@ select,
 summary,
 textarea {
   touch-action: manipulation;
+}
+
+a {
+  text-decoration: underline;
+  text-decoration-skip: ink;
+  text-decoration-skip-ink: auto;
 }
