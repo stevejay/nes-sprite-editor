@@ -1,0 +1,15 @@
+.button {
+  user-select: none;
+  touch-action: manipulation;
+
+  &::-moz-focus-inner {
+    border: 0; /* Removes dotted line in Firefox */
+  }
+
+  &:focus {
+    outline: 0;
+    box-shadow: 0 0 1px 3px rgb(94, 158, 215);
+    border-radius: 2px;
+    z-index: 1;
+  }
+}

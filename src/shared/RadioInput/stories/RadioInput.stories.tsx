@@ -6,7 +6,7 @@ import { storiesOf } from "@storybook/react";
 import RadioInput from "..";
 import "../../../index.scss";
 
-const buttonHost = host({
+const storyHost = host({
   align: "center middle",
   backdrop: "transparent"
 });
@@ -27,7 +27,7 @@ const options = [
 ];
 
 storiesOf("RadioInput", module)
-  .addDecorator(buttonHost)
+  .addDecorator(storyHost)
   .addDecorator(withKnobs)
   .add("Radio input group", () => (
     <State store={store}>

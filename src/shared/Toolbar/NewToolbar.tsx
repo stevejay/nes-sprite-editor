@@ -10,8 +10,13 @@ type Props = {
   className?: string;
   reducer: (tabIndex: number) => number;
   children: (
-    tabIndex: number,
-    setTabIndex: React.Dispatch<React.SetStateAction<number>>
+    tabIndex: { tabIndex: number; origin: string },
+    setTabIndex: React.Dispatch<
+      React.SetStateAction<{
+        tabIndex: number;
+        origin: string;
+      }>
+    >
   ) => React.ReactNode;
 };
 
@@ -23,7 +28,11 @@ const Toolbar: React.FunctionComponent<Props> = ({
   children
 }) => {
   const divRef = React.useRef<HTMLDivElement>(null);
-  const [tabIndex, setTabIndex] = React.useState(-1);
+
+  const [tabIndex, setTabIndex] = React.useState({
+    tabIndex: 0,
+    origin: "mouse"
+  });
 
   // React.useLayoutEffect(() => {
   //   if (tabIndex < 0 || !divRef || !divRef.current) {
@@ -44,10 +53,16 @@ const Toolbar: React.FunctionComponent<Props> = ({
   ) => {
     switch (event.keyCode) {
       case ARROW_LEFT:
-        setTabIndex(reducer(tabIndex - 1));
+        setTabIndex({
+          tabIndex: reducer(tabIndex.tabIndex - 1),
+          origin: "key"
+        });
         break;
       case ARROW_RIGHT:
-        setTabIndex(reducer(tabIndex === -1 ? 1 : tabIndex + 1));
+        setTabIndex({
+          tabIndex: reducer(tabIndex.tabIndex + 1),
+          origin: "key"
+        });
         break;
       default:
         break;

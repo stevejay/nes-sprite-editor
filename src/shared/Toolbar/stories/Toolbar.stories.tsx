@@ -7,7 +7,7 @@ import "../../../index.scss";
 
 import NewToolbar from "../NewToolbar";
 
-const buttonHost = host({
+const storyHost = host({
   align: "center middle",
   backdrop: "transparent"
 });
@@ -22,22 +22,34 @@ const Button: React.FunctionComponent<Props> = ({ children, ...rest }) => (
   </button>
 );
 
-const TempButton: React.FunctionComponent<any> = ({
+type TempProps = {
+  tabIndex: {
+    tabIndex: number;
+    origin: string;
+  };
+  index: number;
+  onClick: any;
+  children: React.ReactNode;
+};
+
+const TempButton: React.FunctionComponent<TempProps> = ({
   tabIndex,
-  forceAsTabStop,
+  index,
   onClick,
   children
 }) => {
   const ref = React.useRef<HTMLButtonElement>(null);
+
   React.useLayoutEffect(
     () => {
-      if (tabIndex !== 0 || !ref || !ref.current) {
+      if (
+        tabIndex.origin !== "key" ||
+        tabIndex.tabIndex !== index ||
+        !ref ||
+        !ref.current
+      ) {
         return;
       }
-      // console.log("test", document.activeElement, ref.current);
-      // if (document.activeElement === ref.current) {
-      //   console.log("current has active");
-      // }
       ref.current.focus();
     },
     [tabIndex]
@@ -46,9 +58,10 @@ const TempButton: React.FunctionComponent<any> = ({
   return (
     <button
       ref={ref}
-      tabIndex={tabIndex === -1 && forceAsTabStop ? 0 : tabIndex}
+      tabIndex={tabIndex.tabIndex === index ? 0 : -1}
       className={`${styles.button}`}
       onClick={onClick}
+      onKeyDown={() => console.log("onkeydown!!")}
     >
       {children}
     </button>
@@ -56,7 +69,7 @@ const TempButton: React.FunctionComponent<any> = ({
 };
 
 storiesOf("Toolbar", module)
-  .addDecorator(buttonHost)
+  .addDecorator(storyHost)
   .add("Basic", () => (
     <Toolbar ariaLabel="The toolbar label">
       <Button>One</Button>
@@ -80,21 +93,23 @@ storiesOf("Toolbar", module)
       {(tabIndex, setTabIndex) => (
         <>
           <TempButton
-            tabIndex={tabIndex === 0 ? 0 : -1}
-            forceAsTabStop={tabIndex === -1}
-            onClick={() => setTabIndex(0)}
+            tabIndex={tabIndex}
+            index={0}
+            onClick={() => setTabIndex({ tabIndex: 0, origin: "mouse" })}
           >
             One
           </TempButton>
           <TempButton
-            tabIndex={tabIndex === 1 ? 0 : -1}
-            onClick={() => setTabIndex(1)}
+            tabIndex={tabIndex}
+            index={1}
+            onClick={() => setTabIndex({ tabIndex: 1, origin: "mouse" })}
           >
             Two
           </TempButton>
           <TempButton
-            tabIndex={tabIndex === 2 ? 0 : -1}
-            onClick={() => setTabIndex(2)}
+            tabIndex={tabIndex}
+            index={2}
+            onClick={() => setTabIndex({ tabIndex: 2, origin: "mouse" })}
           >
             Three
           </TempButton>

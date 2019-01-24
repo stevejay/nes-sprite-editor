@@ -10,6 +10,7 @@ This is an in-progress tool to aid with my learning of Nintendo NES games progra
 
 - Use [typed arrays](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Typed_arrays) for efficiency?
 - I had to pin `save-file` package to version 2.0.0 because of an import problem
+- Interesting for roving tab index: https://github.com/reactjs/react-tabs/blob/master/src/components/UncontrolledTabs.js
 
 ## Resources
 
