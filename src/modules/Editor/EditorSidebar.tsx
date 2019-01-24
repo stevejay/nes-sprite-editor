@@ -1,11 +1,13 @@
 import React from "react";
-import styles from "./EditorSidebar.module.scss";
-import PaletteColorInput from "../../shared/PaletteColorInput";
-import RadioInput from "../../shared/RadioInput";
 import { GamePaletteChange, GamePaletteWithColors } from "../../reducer";
+import PaletteColorInput from "../../shared/PaletteColorInput";
+import Panel from "../../shared/Panel";
+import RadioInput from "../../shared/RadioInput";
 import { Color, SystemPalette as SystemPaletteType } from "../../types";
+import styles from "./EditorSidebar.module.scss";
+import PaletteToolbar from "./PaletteToolbar";
+import PaletteToolbarColorInput from "./PaletteToolbarColorInput";
 import Section from "./Section";
-import Toolbar from "../../shared/Toolbar";
 
 type Props = {
   systemPalettes: Array<SystemPaletteType>;
@@ -46,46 +48,26 @@ const EditorSidebar: React.FunctionComponent<Props> = ({
       </header>
       <h2>Background Color</h2>
       <div className={styles.palette}>
-        <PaletteColorInput.Container className={styles.paletteContainer}>
+        <Panel>
           <PaletteColorInput
             color={backgroundColor}
             systemPalette={systemPalette}
             onChange={onBackgroundColorChange}
           />
-        </PaletteColorInput.Container>
+        </Panel>
       </div>
       <h2>Background Palettes</h2>
       {backgroundPalettes.map(palette => (
         <div key={palette.id} className={styles.palette}>
-          <h3>#{palette.id}</h3>
-          <PaletteColorInput.Container>
-            <Toolbar ariaLabel={`Background palette #${palette.id}`}>
-              {palette.colors.map((color, index) => (
-                <PaletteColorInput
-                  key={index}
-                  color={color}
-                  systemPalette={systemPalette}
-                  onChange={color =>
-                    onGamePaletteChange({
-                      gamePalette: palette,
-                      valueIndex: index,
-                      newColor: color
-                    })
-                  }
-                />
-              ))}
-            </Toolbar>
-          </PaletteColorInput.Container>
-        </div>
-      ))}
-      <h2>Sprite Palettes</h2>
-      {spritePalettes.map(palette => (
-        <div key={palette.id} className={styles.palette}>
-          <h3>#{palette.id}</h3>
-          <PaletteColorInput.Container>
+          <h3>
+            <span className="screen-reader-only">Background palette </span>#
+            {palette.id}
+          </h3>
+          <PaletteToolbar>
             {palette.colors.map((color, index) => (
-              <PaletteColorInput
+              <PaletteToolbarColorInput
                 key={index}
+                index={index}
                 color={color}
                 systemPalette={systemPalette}
                 onChange={color =>
@@ -97,7 +79,33 @@ const EditorSidebar: React.FunctionComponent<Props> = ({
                 }
               />
             ))}
-          </PaletteColorInput.Container>
+          </PaletteToolbar>
+        </div>
+      ))}
+      <h2>Sprite Palettes</h2>
+      {spritePalettes.map(palette => (
+        <div key={palette.id} className={styles.palette}>
+          <h3>
+            <span className="screen-reader-only">Sprite palette </span>#
+            {palette.id}
+          </h3>
+          <PaletteToolbar>
+            {palette.colors.map((color, index) => (
+              <PaletteToolbarColorInput
+                key={index}
+                index={index}
+                color={color}
+                systemPalette={systemPalette}
+                onChange={color =>
+                  onGamePaletteChange({
+                    gamePalette: palette,
+                    valueIndex: index,
+                    newColor: color
+                  })
+                }
+              />
+            ))}
+          </PaletteToolbar>
         </div>
       ))}
     </Section>

@@ -10,7 +10,6 @@ import CodeContainer from "./CodeContainer";
 import createGameDataText from "./create-game-data-text";
 import Button from "../../shared/Button";
 import downloadTileGrid from "./download-tile-grid";
-import Toolbar from "../../shared/Toolbar";
 
 type Props = {
   state: State;
@@ -34,12 +33,12 @@ const GameDataOutput: React.FunctionComponent<Props> = ({ state }) => {
       <header>
         <h1>ASM Output</h1>
       </header>
-      <Toolbar ariaLabel="Output actions toolbar" ariaOrientation="horizontal">
+      <Button.Container>
         <Button onClick={() => setDataVersion(Date.now())}>Update</Button>
         <Button onClick={() => downloadTileGrid(backgroundTileGrid)}>
           Download background tiles pattern file
         </Button>
-      </Toolbar>
+      </Button.Container>
       <CodeContainer>{gameDataText}</CodeContainer>
     </section>
   );

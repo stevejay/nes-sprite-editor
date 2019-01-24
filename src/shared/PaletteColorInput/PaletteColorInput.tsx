@@ -1,13 +1,17 @@
-import React from "react";
+import React, { FunctionComponent } from "react";
 import ColorPickerModal from "./ColorPickerModal";
 import PaletteColor from "./PaletteColor";
 import styles from "./PaletteColorInput.module.scss";
 import { Color, SystemPalette } from "../../types";
+import useFocused from "../utils/use-focus-effect";
 
 type Props = {
   color: Color;
   systemPalette: SystemPalette; // TODO remove this when using redux
   tabIndex?: number;
+  focused?: boolean;
+  onKeyDown?: (event: React.KeyboardEvent<any>) => void;
+  onClick?: () => void;
   onChange: (color: Color) => void;
 };
 
@@ -25,25 +29,25 @@ const initialState: State = {
   originY: 0
 };
 
-const PaletteColorInput: React.FunctionComponent<Props> = ({
+const PaletteColorInput: FunctionComponent<Props> = ({
   color,
   systemPalette,
   tabIndex = 0,
+  focused,
+  onKeyDown,
+  onClick,
   onChange
 }) => {
   const buttonRef = React.useRef<HTMLButtonElement>(null);
-
   const [dialogState, setDialogState] = React.useState<State>(initialState);
+  useFocused(focused, buttonRef);
 
   const handleClick = () => {
-    const originElement = buttonRef.current;
+    if (onClick) {
+      onClick();
+    }
 
-    // if (!dialogState.isOpen) {
-    //   console.log(
-    //     ' && document.getElementById("color-picker")',
-    //     document.getElementById("color-picker")
-    //   );
-    // }
+    const originElement = buttonRef.current;
 
     if (!dialogState.isOpen && originElement) {
       const rect = originElement.getBoundingClientRect();
@@ -68,12 +72,13 @@ const PaletteColorInput: React.FunctionComponent<Props> = ({
       <button
         ref={buttonRef}
         className={styles.button}
+        onKeyDown={onKeyDown}
         onClick={handleClick}
         tabIndex={tabIndex}
       >
         <PaletteColor
           color={color}
-          srLabel={`Color ${color.id}. Click to change.`}
+          screenReaderLabel={`Color ${color.id}. Click to change.`}
         />
       </button>
       <ColorPickerModal

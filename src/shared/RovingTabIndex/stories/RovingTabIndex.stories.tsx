@@ -3,6 +3,7 @@ import { host } from "storybook-host";
 import { storiesOf } from "@storybook/react";
 import { RovingTabIndexProvider, useRovingTabIndex } from "..";
 import "../../../index.scss";
+import useFocused from "../../utils/use-focus-effect";
 
 const storyHost = host({
   align: "center middle",
@@ -15,8 +16,9 @@ type Props = {
 };
 
 const ToolbarButton: React.FunctionComponent<Props> = ({ index, children }) => {
-  const buttonRef = React.useRef(null);
-  const [tabIndex, onKeyDown, onClick] = useRovingTabIndex(index, buttonRef);
+  const buttonRef = React.useRef<HTMLButtonElement>(null);
+  const [tabIndex, onKeyDown, onClick, focused] = useRovingTabIndex(index);
+  useFocused(focused, buttonRef);
 
   return (
     <button

@@ -32,7 +32,7 @@ const ColorPicker: React.FunctionComponent<Props> = ({
           <PaletteColor
             color={color}
             selected={checked}
-            srLabel={`Color ${color.id}`}
+            screenReaderLabel={`Color ${color.id}`}
             compact
           />
         </label>

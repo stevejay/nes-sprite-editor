@@ -1,34 +1,23 @@
-import React, { useContext, useLayoutEffect } from "react";
+import React from "react";
 import { RovingTabIndexContext } from "./Provider";
 
 const ARROW_LEFT = 37;
 const ARROW_RIGHT = 39;
 
-export default function useRovingTabIndex(
-  index: number,
-  focusRef: React.RefObject<HTMLElement>
-): [number, (event: React.KeyboardEvent<any>) => void, () => void] {
-  const context = useContext(RovingTabIndexContext);
-  const selected = index === context.state.selectedIndex;
+type ReturnType = [
+  number,
+  (event: React.KeyboardEvent<any>) => void,
+  () => void,
+  boolean
+];
 
-  useLayoutEffect(
-    () => {
-      // set focus if:
-      // - the associated node is selected
-      // - the user used the keyboard to select it
-      // - we have a valid ref
-      if (
-        selected &&
-        context.state.lastActionOrigin === "keyboard" &&
-        focusRef &&
-        focusRef.current &&
-        focusRef.current.focus
-      ) {
-        focusRef.current.focus();
-      }
-    },
-    [selected]
-  );
+export default function useRovingTabIndex(index: number): ReturnType {
+  if (!isFinite(index) || index < 0) {
+    throw new Error("useRovingTabIndex: index must be integer >= 0");
+  }
+
+  const context = React.useContext(RovingTabIndexContext);
+  const selected = index === context.state.selectedIndex;
 
   const keyDownHandler = React.useCallback(
     (event: React.KeyboardEvent<any>) => {
@@ -45,5 +34,7 @@ export default function useRovingTabIndex(
     context
   ]);
 
-  return [selected ? 0 : -1, keyDownHandler, onClickHandler];
+  const tabIndex = selected ? 0 : -1;
+  const focused = selected && context.state.lastActionOrigin === "keyboard";
+  return [tabIndex, keyDownHandler, onClickHandler, focused];
 }
