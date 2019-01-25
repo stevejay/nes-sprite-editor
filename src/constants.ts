@@ -319,14 +319,7 @@ const PALETTE_2C02_PPU: SystemPalette = {
   ]
 };
 
-const SYSTEM_PALETTE_OPTIONS: Array<SystemPalette> = [
-  PALETTE_2C02_PPU,
-  {
-    ...PALETTE_2C02_PPU,
-    id: "test",
-    label: "Test"
-  }
-];
+const SYSTEM_PALETTE_OPTIONS: Array<SystemPalette> = [PALETTE_2C02_PPU];
 
 if (process.env.NODE_ENV === "development") {
   Object.freeze(SYSTEM_PALETTE_OPTIONS);

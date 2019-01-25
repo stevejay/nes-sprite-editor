@@ -6,11 +6,11 @@ export default function downloadTileGrid(
   tileGrid: TileGrid,
   fileNameNoExt?: string
 ): Promise<void> {
-  const buffer = new ArrayBuffer(16 * 16 * 16); // 4096 bytes
+  const buffer = new ArrayBuffer(4096);
   const byteView = new Uint8Array(buffer);
 
   tileGrid.tiles.forEach(tile => {
-    const tileByteOffset = tile.columnIndex * 16 + tile.rowIndex * 16 * 16;
+    const tileByteOffset = tile.columnIndex * 16 + tile.rowIndex * 256;
 
     // write first plane bytes for this tile
     range(0, 64, 8)

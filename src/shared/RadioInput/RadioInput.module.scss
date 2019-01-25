@@ -12,12 +12,7 @@ $disabled-color: $md-grey-200;
   display: inline-block;
   cursor: pointer;
   padding: rem(2) rem(1) rem(2) rem(25);
-  // border-radius: rem(2);
 }
-
-// .input + label:hover {
-//   background-color: $md-grey-200;
-// }
 
 .input + label::before,
 .input + label::after {

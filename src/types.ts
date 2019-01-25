@@ -33,8 +33,8 @@ export type SystemPalette = {
 
 // the screen is 32 tiles wide, 30 tiles tall
 export type Tile = {
-  rowIndex: number; // 0 to 15
-  columnIndex: number; // 0 to 15
+  rowIndex: number; // 0 to 15 - ditch?
+  columnIndex: number; // 0 to 15 - ditch?
   gamePaletteId: GamePalette["id"]; // 0 to 3
   pixels: Uint8Array; // 64 pixels, each value 0 to 3 (palette index)
 };

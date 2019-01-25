@@ -8,22 +8,19 @@ type Props = {
   originY: number;
 };
 
-// Note: implemented as a class component to allow focus trap to get a ref.
-class PointingModalContainer extends React.Component<Props> {
-  render() {
-    const { children, originX, originY } = this.props;
-    return (
-      <div
-        className={styles.container}
-        style={{
-          left: `${originX + 38}px`,
-          top: `${originY}px`
-        }}
-      >
-        {children}
-      </div>
-    );
-  }
-}
+const PointingModalContainer = React.forwardRef<any, Props>(
+  ({ children, originX, originY }, ref) => (
+    <div
+      ref={ref}
+      className={styles.container}
+      style={{
+        left: `${originX + 38}px`,
+        top: `${originY}px`
+      }}
+    >
+      {children}
+    </div>
+  )
+);
 
 export default PointingModalContainer;

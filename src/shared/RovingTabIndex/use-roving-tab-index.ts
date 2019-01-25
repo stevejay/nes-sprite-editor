@@ -19,7 +19,7 @@ export default function useRovingTabIndex(index: number): ReturnType {
   const context = React.useContext(RovingTabIndexContext);
   const selected = index === context.state.selectedIndex;
 
-  const keyDownHandler = React.useCallback(
+  const handleKeyDown = React.useCallback(
     (event: React.KeyboardEvent<any>) => {
       if (event.keyCode === ARROW_LEFT) {
         context.tabPrev();
@@ -30,11 +30,11 @@ export default function useRovingTabIndex(index: number): ReturnType {
     [context]
   );
 
-  const onClickHandler = React.useCallback(() => context.clicked(index), [
+  const handleClick = React.useCallback(() => context.clicked(index), [
     context
   ]);
 
   const tabIndex = selected ? 0 : -1;
   const focused = selected && context.state.lastActionOrigin === "keyboard";
-  return [tabIndex, keyDownHandler, onClickHandler, focused];
+  return [tabIndex, handleKeyDown, handleClick, focused];
 }

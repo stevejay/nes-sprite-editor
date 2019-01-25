@@ -6,7 +6,7 @@ import {
   State,
   selectCurrentBackgroundTileGrid
 } from "../../reducer";
-import CodeContainer from "./CodeContainer";
+import CodePanel from "./CodePanel";
 import createGameDataText from "./create-game-data-text";
 import Button from "../../shared/Button";
 import downloadTileGrid from "./download-tile-grid";
@@ -34,12 +34,14 @@ const GameDataOutput: React.FunctionComponent<Props> = ({ state }) => {
         <h1>ASM Output</h1>
       </header>
       <Button.Container>
-        <Button onClick={() => setDataVersion(Date.now())}>Update</Button>
+        <Button onClick={() => setDataVersion(Date.now())}>
+          Update text output
+        </Button>
         <Button onClick={() => downloadTileGrid(backgroundTileGrid)}>
           Download background tiles pattern file
         </Button>
       </Button.Container>
-      <CodeContainer>{gameDataText}</CodeContainer>
+      <CodePanel>{gameDataText}</CodePanel>
     </section>
   );
 };

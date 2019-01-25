@@ -9,12 +9,24 @@ type Props = {
   onChange: (color: Color) => void;
 };
 
+// const NewColorPicker: React.FunctionComponent<Props> = ({
+//   palette,
+//   selectedColorId,
+//   onChange
+// }) => {
+//   return (
+//     <canvas className={styles.container}>
+
+//     </canvas>
+//   )
+// };
+
 const ColorPicker: React.FunctionComponent<Props> = ({
   palette,
   selectedColorId,
   onChange
 }) => (
-  <div className={styles.container} id="color-picker">
+  <div className={styles.container}>
     {palette.values.map(color => {
       const id = `palette_color_${color.id}`;
       const checked = selectedColorId === color.id;

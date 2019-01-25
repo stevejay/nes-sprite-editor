@@ -1,9 +1,9 @@
 import React from "react";
 
-export default function usePreventBodyScroll(shouldUse: boolean) {
+export default function usePreventBodyScroll(isActive: boolean) {
   React.useEffect(
     () => {
-      if (!shouldUse) {
+      if (!isActive) {
         return;
       }
 
@@ -13,10 +13,11 @@ export default function usePreventBodyScroll(shouldUse: boolean) {
       }
 
       document.body.style.overflow = "hidden";
+
       return () => {
         document.body.style.overflow = oldOverflow;
       };
     },
-    [shouldUse]
+    [isActive]
   );
 }

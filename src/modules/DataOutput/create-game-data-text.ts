@@ -1,5 +1,5 @@
 import { GamePaletteWithColors } from "../../reducer";
-import formatIntegerAsHex from "../../shared/utils/format-integer-as-hex";
+import formatByteAsHex from "../../shared/utils/format-byte-as-hex";
 import { Color, TileGrid } from "../../types";
 
 export default function createGameDataText(
@@ -35,7 +35,7 @@ function createGamePaletteData(
   backgroundColor: Color
 ): string {
   const gamePaletteColors = gamePalette.values
-    .map(value => `$${formatIntegerAsHex(value)}`)
+    .map(value => `$${formatByteAsHex(value)}`)
     .join(",");
-  return `$${formatIntegerAsHex(backgroundColor.id)},${gamePaletteColors}`;
+  return `$${formatByteAsHex(backgroundColor.id)},${gamePaletteColors}`;
 }

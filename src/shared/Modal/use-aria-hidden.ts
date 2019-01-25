@@ -2,10 +2,10 @@ import React from "react";
 
 const ATTR_NAME = "aria-hidden";
 
-export default function useAriaHidden(shouldUse: boolean, id: string = "root") {
+export default function useAriaHidden(isActive: boolean, id: string = "root") {
   React.useEffect(
     () => {
-      if (!shouldUse) {
+      if (!isActive) {
         return;
       }
 
@@ -15,10 +15,11 @@ export default function useAriaHidden(shouldUse: boolean, id: string = "root") {
       }
 
       appRoot && appRoot.setAttribute(ATTR_NAME, "true");
+
       return () => {
         appRoot && appRoot.setAttribute(ATTR_NAME, "false");
       };
     },
-    [shouldUse]
+    [isActive]
   );
 }

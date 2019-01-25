@@ -1,0 +1,13 @@
+@import "styles/_base.scss";
+
+.container {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  pointer-events: all;
+}
+
+.canvas {
+  background-color: $md-grey-200;
+  box-shadow: $box-shadow;
+}

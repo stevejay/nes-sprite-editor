@@ -12,7 +12,7 @@ const ModalBackdrop: React.FunctionComponent<Props> = ({
 }) => {
   const eventHandler = (event: React.SyntheticEvent) => {
     event.preventDefault();
-    onClose && onClose();
+    onClose!();
   };
 
   return (
