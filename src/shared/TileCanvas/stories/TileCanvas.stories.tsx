@@ -64,7 +64,7 @@ storiesOf("TileCanvas", module)
     <TileCanvas
       rows={3}
       columns={2}
-      scaling={8 * 8}
+      scaling={64}
       tiles={[
         PINK_PIXELS,
         PINK_PIXELS,
@@ -87,7 +87,7 @@ storiesOf("TileCanvas", module)
     <TileCanvas
       rows={1}
       columns={1}
-      scaling={8 * 8 * 4}
+      scaling={64 * 2}
       tiles={[RANDOM_PIXELS].map(pixels => ({
         rowIndex: -1,
         columnIndex: -1,

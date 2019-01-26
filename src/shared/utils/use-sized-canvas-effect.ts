@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function useSizedCanvas(
+export default function useSizedCanvasEffect(
   canvasRef: React.RefObject<HTMLCanvasElement | null>,
   rows: number,
   columns: number,

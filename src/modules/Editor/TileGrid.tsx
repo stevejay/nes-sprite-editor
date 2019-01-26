@@ -49,7 +49,7 @@ type Props = {
   onSelectedTileChange: (selectedTile: Position) => void;
 };
 
-export const useSizedCanvas = (
+export const useSizedCanvasEffect = (
   canvasRef: React.RefObject<HTMLCanvasElement | null>,
   rows: number,
   columns: number,
@@ -120,7 +120,7 @@ const TileGrid: React.FunctionComponent<Props> = ({
 }) => {
   const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
 
-  const canvasSize = useSizedCanvas(
+  const canvasSize = useSizedCanvasEffect(
     canvasRef,
     GRID_TILE_ROWS,
     GRID_TILE_COLUMNS,

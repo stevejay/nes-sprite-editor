@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./TileDetail.module.scss";
-import { useSizedCanvas, drawTile } from "./TileGrid";
+import { useSizedCanvasEffect, drawTile } from "./TileGrid";
 import { GamePaletteWithColors } from "../../reducer";
 import { Tile, Color } from "../../types";
 
@@ -21,7 +21,12 @@ const TileDetail: React.FunctionComponent<Props> = ({
 }) => {
   const gridScaling = 4;
   const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
-  const canvasSize = useSizedCanvas(canvasRef, rows, columns, gridScaling);
+  const canvasSize = useSizedCanvasEffect(
+    canvasRef,
+    rows,
+    columns,
+    gridScaling
+  );
 
   React.useLayoutEffect(
     () => {
