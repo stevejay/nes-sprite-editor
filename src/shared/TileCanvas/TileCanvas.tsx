@@ -5,21 +5,22 @@ import { Tile, Color } from "../../types";
 import useSizedCanvasEffect from "../utils/use-sized-canvas-effect";
 import useDrawTilesEffect from "./use-draw-tiles-effect";
 
+const TILE_PIXEL_HEIGHT = 8;
+const TILE_PIXEL_WIDTH = TILE_PIXEL_HEIGHT;
+
 type Props = {
-  rows: number;
-  columns: number;
-  scaling: number;
+  tilesInRow: number;
+  tilesInColumn: number;
+  scaling: number; // 1+
   tiles: Array<Tile>;
   backgroundColor: Color;
   palettes: Array<GamePaletteWithColors>;
   ariaLabel: string;
 };
 
-// A tile is an 8x8 pixel area. This component draws one or more
-// on a canvas.
 const TileCanvas: React.FunctionComponent<Props> = ({
-  rows,
-  columns,
+  tilesInRow,
+  tilesInColumn,
   scaling,
   tiles,
   backgroundColor,
@@ -27,14 +28,21 @@ const TileCanvas: React.FunctionComponent<Props> = ({
   ariaLabel
 }) => {
   const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
-  const canvasSize = useSizedCanvasEffect(canvasRef, rows, columns, scaling);
+
+  const canvasSize = useSizedCanvasEffect(
+    canvasRef,
+    tilesInRow,
+    tilesInColumn,
+    scaling * TILE_PIXEL_HEIGHT,
+    scaling * TILE_PIXEL_WIDTH
+  );
 
   useDrawTilesEffect(
     canvasRef,
     tiles,
     backgroundColor,
     palettes,
-    columns,
+    tilesInColumn,
     scaling
   );
 

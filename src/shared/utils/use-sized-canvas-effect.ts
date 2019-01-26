@@ -4,14 +4,15 @@ export default function useSizedCanvasEffect(
   canvasRef: React.RefObject<HTMLCanvasElement | null>,
   rows: number,
   columns: number,
-  scaling: number
+  pixelsPerRow: number,
+  pixelsPerColumn: number
 ) {
   const canvasSize = React.useMemo(
     () => ({
-      width: columns * scaling,
-      height: rows * scaling
+      width: columns * pixelsPerColumn,
+      height: rows * pixelsPerRow
     }),
-    [scaling]
+    [rows, columns, pixelsPerRow, pixelsPerColumn]
   );
 
   React.useLayoutEffect(

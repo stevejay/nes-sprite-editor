@@ -57,10 +57,10 @@ function drawTile(
     ctx.fillStyle = rgbString;
 
     ctx.fillRect(
-      columnIndex * scaling + columnLoopIndex * (scaling / PIXELS_PER_COLUMN),
-      rowIndex * scaling + rowLoopIndex * (scaling / PIXELS_PER_ROW),
-      scaling / PIXELS_PER_COLUMN,
-      scaling / PIXELS_PER_ROW
+      columnIndex * scaling * PIXELS_PER_COLUMN + columnLoopIndex * scaling,
+      rowIndex * scaling * PIXELS_PER_ROW + rowLoopIndex * scaling,
+      scaling,
+      scaling
     );
   });
 }
