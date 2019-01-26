@@ -32,8 +32,6 @@ const SelectedTile: React.FunctionComponent<Props> = ({
     [tileWidth, tileHeight, row, column]
   );
 
-  console.log("style", column * tileWidth);
-
   return (
     <div
       ref={tileRef}

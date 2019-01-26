@@ -5,8 +5,8 @@ import { Tile, Color } from "../../types";
 import useSizedCanvasEffect from "../utils/use-sized-canvas-effect";
 import useDrawTilesEffect from "./use-draw-tiles-effect";
 
-const TILE_PIXEL_HEIGHT = 8;
-const TILE_PIXEL_WIDTH = TILE_PIXEL_HEIGHT;
+const PIXEL_ROWS_PER_TILE = 8;
+const PIXEL_COLUMNS_PER_TILE = PIXEL_ROWS_PER_TILE;
 
 type Props = {
   tilesInRow: number;
@@ -33,8 +33,8 @@ const TileCanvas: React.FunctionComponent<Props> = ({
     canvasRef,
     tilesInRow,
     tilesInColumn,
-    scaling * TILE_PIXEL_HEIGHT,
-    scaling * TILE_PIXEL_WIDTH
+    scaling * PIXEL_ROWS_PER_TILE,
+    scaling * PIXEL_COLUMNS_PER_TILE
   );
 
   useDrawTilesEffect(

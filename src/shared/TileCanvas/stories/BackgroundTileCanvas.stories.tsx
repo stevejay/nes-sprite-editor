@@ -1,24 +1,22 @@
-import * as React from "react";
-import { range, sample, clamp } from "lodash";
-import { host } from "storybook-host";
-import { withKnobs, boolean } from "@storybook/addon-knobs";
+import { TileCanvas } from "..";
 import { State, Store } from "@sambego/storybook-state";
+import { boolean, withKnobs } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/react";
+import { range, sample } from "lodash";
+import * as React from "react";
+import { host } from "storybook-host";
 import "../../../index.scss";
-import TileCanvas from "..";
-import GridInteractionTracker, {
-  Props as TrackerProps
-} from "../GridInteractionTracker";
+import { GamePaletteWithColors } from "../../../reducer";
+import { Color, Tile } from "../../../types";
+import { TileInteractionTracker } from "..";
+import { SelectedTile } from "..";
 import {
-  PINK_PIXELS,
+  BACKGROUND_PALETTE,
+  COLOR_ALMOST_WHITE,
   GRAPE_PIXELS,
   JADE_PIXELS,
-  BACKGROUND_PALETTE,
-  COLOR_ALMOST_WHITE
+  PINK_PIXELS
 } from "./constants";
-import SelectedTile from "../SelectedTile";
-import { Tile, Color } from "../../../types";
-import { GamePaletteWithColors } from "../../../reducer";
 
 const storyHost = host({
   align: "center middle",
@@ -26,10 +24,8 @@ const storyHost = host({
 });
 
 const store = new Store({
-  selected: {
-    row: 0,
-    column: 0
-  }
+  row: 0,
+  column: 0
 });
 
 const ROWS = 12;
@@ -51,7 +47,7 @@ type Props = {
   metatileSize: number;
   scaling: number;
   tiles: Array<Tile>;
-  selected: {
+  selectedMetatile: {
     row: number;
     column: number;
   };
@@ -60,76 +56,63 @@ type Props = {
   onChange: (row: number, column: number) => void;
 };
 
-const BackgroundTileCanvas: React.FunctionComponent<Props> = ({
+const BackgroundPatternTable: React.FunctionComponent<Props> = ({
   tilesInRow,
   tilesInColumn,
   metatileSize = 1,
   scaling,
   tiles,
-  selected,
+  selectedMetatile,
   backgroundColor,
   palettes,
   onChange
-}) => {
-  const handleChange: TrackerProps["onChange"] = (type, value) => {
-    if (type === "absolute") {
-      onChange(value.row, value.column);
-    } else if (type === "delta") {
-      onChange(
-        clamp(selected.row + value.row, 0, tilesInRow / metatileSize - 1),
-        clamp(
-          selected.column + value.column,
-          0,
-          tilesInColumn / metatileSize - 1
-        )
-      );
-    }
-  };
+}) => (
+  <div style={{ display: "inline-block" }}>
+    <TileInteractionTracker
+      rows={tilesInRow / metatileSize}
+      columns={tilesInColumn / metatileSize}
+      row={selectedMetatile.row}
+      column={selectedMetatile.column}
+      onChange={onChange}
+    >
+      <TileCanvas
+        tilesInRow={tilesInRow}
+        tilesInColumn={tilesInColumn}
+        scaling={scaling}
+        tiles={tiles}
+        backgroundColor={backgroundColor}
+        palettes={palettes}
+        ariaLabel="The aria label"
+      />
+      <SelectedTile
+        tileWidth={8 * scaling * metatileSize}
+        tileHeight={8 * scaling * metatileSize}
+        row={selectedMetatile.row}
+        column={selectedMetatile.column}
+        ariaLabel={`Metatile row ${selectedMetatile.row}, column ${
+          selectedMetatile.column
+        }`}
+      />
+    </TileInteractionTracker>
+  </div>
+);
 
-  return (
-    <div style={{ display: "inline-block" }}>
-      <GridInteractionTracker
-        rows={tilesInRow / metatileSize}
-        columns={tilesInColumn / metatileSize}
-        onChange={handleChange}
-      >
-        <TileCanvas
-          tilesInRow={tilesInRow}
-          tilesInColumn={tilesInColumn}
-          scaling={scaling}
-          tiles={tiles}
-          backgroundColor={backgroundColor}
-          palettes={palettes}
-          ariaLabel="The aria label"
-        />
-        <SelectedTile
-          tileWidth={scaling * metatileSize * 8}
-          tileHeight={scaling * metatileSize * 8}
-          row={selected.row}
-          column={selected.column}
-          ariaLabel={`Metatile row ${selected.row}, column ${selected.column}`}
-        />
-      </GridInteractionTracker>
-    </div>
-  );
-};
-
-storiesOf("TileCanvas/BackgroundTileCanvas", module)
+storiesOf("TileCanvas/BackgroundPatternTable", module)
   .addDecorator(storyHost)
   .addDecorator(withKnobs)
   .add("Basic", () => (
     <State store={store}>
       {state => (
-        <BackgroundTileCanvas
+        <BackgroundPatternTable
           tilesInRow={ROWS}
           tilesInColumn={COLUMNS}
           metatileSize={boolean("Metatiles", true) ? 2 : 1}
           scaling={4}
           tiles={TILES}
-          selected={state.selected}
+          selectedMetatile={state}
           backgroundColor={COLOR_ALMOST_WHITE}
           palettes={PALETTES}
-          onChange={(row, column) => store.set({ selected: { row, column } })}
+          onChange={(row, column) => store.set({ row, column })}
         />
       )}
     </State>

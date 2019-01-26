@@ -3,7 +3,7 @@ import { host } from "storybook-host";
 import { State, Store } from "@sambego/storybook-state";
 import { storiesOf } from "@storybook/react";
 import "../../../index.scss";
-import GridInteractionTracker from "../GridInteractionTracker";
+import { TileInteractionTracker } from "..";
 
 const storyHost = host({
   align: "center middle",
@@ -11,24 +11,26 @@ const storyHost = host({
 });
 
 const store = new Store({
-  type: "absolute",
-  value: { row: 0, column: 0 }
+  row: 0,
+  column: 0
 });
 
-storiesOf("TileCanvas/GridInteractionTracker", module)
+storiesOf("TileCanvas/TileInteractionTracker", module)
   .addDecorator(storyHost)
   .add("Basic", () => (
     <State store={store}>
       {state => (
         <>
           <p>
-            {state.type}: row={state.value.row}, column={state.value.column}
+            row={state.row}, column={state.column}
           </p>
           <div>
-            <GridInteractionTracker
+            <TileInteractionTracker
               rows={2}
               columns={3}
-              onChange={(type, value) => store.set({ type, value })}
+              row={state.row}
+              column={state.column}
+              onChange={(row, column) => store.set({ row, column })}
             >
               <div
                 tabIndex={0}
@@ -38,7 +40,7 @@ storiesOf("TileCanvas/GridInteractionTracker", module)
                   backgroundColor: "papayawhip"
                 }}
               />
-            </GridInteractionTracker>
+            </TileInteractionTracker>
           </div>
         </>
       )}

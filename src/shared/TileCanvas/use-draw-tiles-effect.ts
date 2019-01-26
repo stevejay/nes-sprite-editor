@@ -33,8 +33,8 @@ export default function useDrawTilesEffect(
   );
 }
 
-const PIXELS_PER_ROW = 8;
-const PIXELS_PER_COLUMN = PIXELS_PER_ROW;
+const PIXEL_ROWS_PER_TILE = 8;
+const PIXEL_COLUMNS_PER_TILE = PIXEL_ROWS_PER_TILE;
 const UNAVAILABLE_COLOR = "#000";
 
 function drawTile(
@@ -47,7 +47,7 @@ function drawTile(
 ) {
   let rowLoopIndex = -1;
   pixels.forEach((colorIndex, index) => {
-    const columnLoopIndex = index % PIXELS_PER_COLUMN;
+    const columnLoopIndex = index % PIXEL_COLUMNS_PER_TILE;
     if (columnLoopIndex === 0) {
       ++rowLoopIndex;
     }
@@ -57,8 +57,9 @@ function drawTile(
     ctx.fillStyle = rgbString;
 
     ctx.fillRect(
-      columnIndex * scaling * PIXELS_PER_COLUMN + columnLoopIndex * scaling,
-      rowIndex * scaling * PIXELS_PER_ROW + rowLoopIndex * scaling,
+      columnIndex * scaling * PIXEL_COLUMNS_PER_TILE +
+        columnLoopIndex * scaling,
+      rowIndex * scaling * PIXEL_ROWS_PER_TILE + rowLoopIndex * scaling,
       scaling,
       scaling
     );

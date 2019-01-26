@@ -10,8 +10,11 @@
     height: auto;
     margin: 0;
     overflow: visible;
-    position: static;
     white-space: normal;
     width: auto;
+    position: absolute;
+    padding: rem(5) rem(8);
+    border-radius: rem(6);
+    background-color: rgba($md-white, 1);
   }
 }

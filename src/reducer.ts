@@ -5,14 +5,12 @@ import {
   SystemPalette,
   Color,
   GamePaletteTypes,
-  TileGrid,
-  Tile
+  TileGrid
 } from "./types";
 import {
   SYSTEM_PALETTE_OPTIONS,
   BACKGROUND_TILE_GRID_OPTIONS
 } from "./constants";
-import { Tuple } from "./typescript";
 
 export enum ActionTypes {
   CHANGE_SYSTEM_PALETTE = "CHANGE_SYSTEM_PALETTE",
@@ -21,7 +19,10 @@ export enum ActionTypes {
   CHANGE_SELECTED_BACKGROUND_TILE = "CHANGE_SELECTED_BACKGROUND_TILE"
 }
 
-export type Position = Tuple<number, 2>;
+export type Position = {
+  row: number;
+  column: number;
+};
 
 export type State = {
   systemPalettes: Array<SystemPalette>;
@@ -72,7 +73,7 @@ export const initialState: State = {
   backgroundTileGrids: BACKGROUND_TILE_GRID_OPTIONS,
   backgroundTileGridId: BACKGROUND_TILE_GRID_OPTIONS[0].id,
   backgroundTileGridScaling: 3,
-  selectedBackgroundTile: [0, 0]
+  selectedBackgroundTile: { row: 0, column: 0 }
 };
 
 export function reducer(state: State, action: Action) {
@@ -197,3 +198,17 @@ export function selectBackgroundTileGridScaling(state: State) {
 export function selectSelectedBackgroundTile(state: State) {
   return state.selectedBackgroundTile;
 }
+
+export const selectSelectedBackgroundTiles = createSelector(
+  selectCurrentBackgroundTileGrid,
+  selectSelectedBackgroundTile,
+  (tileGrid, selected) => {
+    const row0Index = selected.row * 2 * 16 + selected.column * 2;
+    return [
+      tileGrid.tiles[row0Index],
+      tileGrid.tiles[row0Index + 1],
+      tileGrid.tiles[row0Index + 16],
+      tileGrid.tiles[row0Index + 16 + 1]
+    ];
+  }
+);

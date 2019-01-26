@@ -3,7 +3,7 @@ import * as React from "react";
 import { host } from "storybook-host";
 import { storiesOf } from "@storybook/react";
 import "../../../index.scss";
-import TileCanvas from "..";
+import { TileCanvas } from "..";
 import {
   PINK_PIXELS,
   GRAPE_PIXELS,

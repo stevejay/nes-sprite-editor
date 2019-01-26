@@ -1,4 +1,4 @@
-import { range } from "lodash";
+import { range, random } from "lodash";
 import { SystemPalette, Tile, TileGrid } from "./types";
 
 // TODO alternative system palette color values here:

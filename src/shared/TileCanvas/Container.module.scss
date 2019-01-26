@@ -1,0 +1,7 @@
+@import "styles/_base.scss";
+
+.container {
+  display: inline-block;
+  line-height: 0;
+  box-shadow: $box-shadow;
+}

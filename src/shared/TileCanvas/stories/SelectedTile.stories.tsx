@@ -2,7 +2,7 @@ import * as React from "react";
 import { host } from "storybook-host";
 import { storiesOf } from "@storybook/react";
 import "../../../index.scss";
-import SelectedTile from "../SelectedTile";
+import { SelectedTile } from "..";
 
 const storyHost = host({
   align: "center middle",

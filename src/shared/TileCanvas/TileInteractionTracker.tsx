@@ -1,5 +1,6 @@
 import React from "react";
-import styles from "./GridInteractionTracker.module.scss";
+import { clamp } from "lodash";
+import styles from "./TileInteractionTracker.module.scss";
 
 const ARROW_LEFT = 37;
 const ARROW_RIGHT = 39;
@@ -7,19 +8,20 @@ const ARROW_UP = 38;
 const ARROW_DOWN = 40;
 
 export type Props = {
-  children: React.ReactNode;
   rows: number;
   columns: number;
-  onChange: (
-    type: "absolute" | "delta",
-    value: { row: number; column: number }
-  ) => void;
+  row: number;
+  column: number;
+  children: React.ReactNode;
+  onChange: (row: number, column: number) => void;
 };
 
-const GridInteractionTracker: React.FunctionComponent<Props> = ({
-  children,
+const TileInteractionTracker: React.FunctionComponent<Props> = ({
   rows,
   columns,
+  row,
+  column,
+  children,
   onChange
 }) => {
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -36,31 +38,52 @@ const GridInteractionTracker: React.FunctionComponent<Props> = ({
       const widthOfContainer = boundingRect.right - boundingRect.left;
       const widthOfCell = widthOfContainer / columns;
 
-      onChange("absolute", {
-        row: Math.floor(yInContainer / heightOfCell),
-        column: Math.floor(xInContainer / widthOfCell)
-      });
+      const newRow = clamp(
+        Math.floor(yInContainer / heightOfCell),
+        0,
+        rows - 1
+      );
+
+      const newColumn = clamp(
+        Math.floor(xInContainer / widthOfCell),
+        0,
+        columns - 1
+      );
+
+      if (newRow !== row || newColumn !== column) {
+        onChange(newRow, newColumn);
+      }
     },
-    [rows, columns, onChange]
+    [rows, columns, row, column]
   );
 
   const handleKeyDown = React.useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
+      let newRow = row;
+      let newColumn = column;
+
       if (event.keyCode === ARROW_UP) {
         event.preventDefault();
-        onChange("delta", { row: -1, column: 0 });
+        newRow = newRow - 1;
       } else if (event.keyCode === ARROW_DOWN) {
         event.preventDefault();
-        onChange("delta", { row: 1, column: 0 });
+        newRow = newRow + 1;
       } else if (event.keyCode === ARROW_LEFT) {
         event.preventDefault();
-        onChange("delta", { row: 0, column: -1 });
+        newColumn = newColumn - 1;
       } else if (event.keyCode === ARROW_RIGHT) {
         event.preventDefault();
-        onChange("delta", { row: 0, column: 1 });
+        newColumn = newColumn + 1;
+      }
+
+      newRow = clamp(newRow, 0, rows - 1);
+      newColumn = clamp(newColumn, 0, columns - 1);
+
+      if (newRow !== row || newColumn !== column) {
+        onChange(newRow, newColumn);
       }
     },
-    [onChange]
+    [rows, columns, row, column]
   );
 
   return (
@@ -75,4 +98,4 @@ const GridInteractionTracker: React.FunctionComponent<Props> = ({
   );
 };
 
-export default GridInteractionTracker;
+export default TileInteractionTracker;
