@@ -3,12 +3,18 @@ import { uniqueId } from "lodash";
 import RadioInput from "./RadioInput";
 import styles from "./RadioInputGroup.module.scss";
 
+type Option = {
+  id: string;
+  label: string;
+};
+
 type Props = {
   legend: string;
-  options: Array<{ id: string; label: string }>;
+  options: Array<Option>;
   selectedId: string;
   disabled?: boolean;
   inline?: boolean;
+  renderLabel?: (option: Option) => React.ReactNode;
   onChange: (id: string) => void;
 };
 
@@ -18,6 +24,7 @@ const RadioInputGroup: React.FunctionComponent<Props> = ({
   selectedId,
   disabled,
   inline,
+  renderLabel = (option: Option) => option.label,
   onChange
 }) => {
   const labelId = React.useRef(uniqueId("radio-group_"));
@@ -41,12 +48,13 @@ const RadioInputGroup: React.FunctionComponent<Props> = ({
           >
             <RadioInput
               value={option.id}
-              label={option.label}
               groupName={labelId.current}
               checked={selectedId === option.id}
               disabled={disabled}
               onChange={handleChange}
-            />
+            >
+              {renderLabel(option)}
+            </RadioInput>
           </div>
         ))}
       </div>

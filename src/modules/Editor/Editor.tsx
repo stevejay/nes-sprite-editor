@@ -35,6 +35,9 @@ type Props = {
 const Editor: React.FunctionComponent<Props> = ({ state, dispatch }) => {
   const tileGrid = selectCurrentBackgroundPatternTable(state);
 
+  const backgroundColor = selectBackgroundColor(state);
+  // const backgroundPalette =
+
   return (
     <div className={styles.container}>
       <EditorSidebar
@@ -104,7 +107,7 @@ const Editor: React.FunctionComponent<Props> = ({ state, dispatch }) => {
               payload: parseInt(id, 10)
             });
           }}
-          inline={false}
+          inline
         />
       </Section>
     </div>

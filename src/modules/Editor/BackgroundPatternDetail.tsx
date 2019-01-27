@@ -11,25 +11,21 @@ import {
 type Props = {
   tilesInRow: number;
   tilesInColumn: number;
-  // metatileSize: number;
   scaling: number;
   tiles: Array<Tile>;
   currentMetatile: MetatileSelection;
   backgroundColor: Color;
   palettes: Array<GamePaletteWithColors>;
-  // onSelectMetatile: (value: MetatileSelection) => void;
 };
 
 const BackgroundPatternDetail: React.FunctionComponent<Props> = ({
   tilesInRow,
   tilesInColumn,
-  // metatileSize,
   scaling,
   tiles,
   currentMetatile,
   backgroundColor,
   palettes
-  // onSelectMetatile
 }) => {
   const [currentPixel, setCurrentPixel] = React.useState({ row: 0, column: 0 });
 

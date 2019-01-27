@@ -4,7 +4,7 @@ import styles from "./RadioInput.module.scss";
 
 type Props = {
   value: string;
-  label: string;
+  children: React.ReactNode;
   checked: boolean;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   groupName?: string;
@@ -13,7 +13,7 @@ type Props = {
 
 const RadioInput: React.FunctionComponent<Props> = ({
   value,
-  label,
+  children,
   checked,
   onChange,
   groupName,
@@ -32,7 +32,7 @@ const RadioInput: React.FunctionComponent<Props> = ({
         className={styles.input}
         onChange={onChange}
       />
-      <label htmlFor={id.current}>{label}</label>
+      <label htmlFor={id.current}>{children}</label>
     </>
   );
 };

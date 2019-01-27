@@ -9,9 +9,11 @@ $disabled-color: $md-grey-200;
 
 .input + label {
   position: relative;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   cursor: pointer;
   padding: rem(2) rem(1) rem(2) rem(25);
+  line-height: 1;
 }
 
 .input + label::before,
