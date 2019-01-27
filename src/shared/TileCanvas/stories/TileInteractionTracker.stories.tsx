@@ -30,7 +30,7 @@ storiesOf("TileCanvas/TileInteractionTracker", module)
               columns={3}
               row={state.row}
               column={state.column}
-              onChange={(row, column) => store.set({ row, column })}
+              onSelect={(row, column) => store.set({ row, column })}
             >
               <div
                 tabIndex={0}

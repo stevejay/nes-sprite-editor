@@ -402,7 +402,7 @@ const HEART_TILE_PIXELS: Tile["pixels"] = new Uint8Array([
   0
 ]);
 
-const BACKGROUND_TILE_GRID_OPTIONS: Array<TileGrid> = [
+const BACKGROUND_PATTERN_TABLE_OPTIONS: Array<TileGrid> = [
   {
     id: "background-1",
     label: "Background Grid 1",
@@ -416,7 +416,7 @@ const BACKGROUND_TILE_GRID_OPTIONS: Array<TileGrid> = [
 ];
 
 if (process.env.NODE_ENV === "development") {
-  Object.freeze(BACKGROUND_TILE_GRID_OPTIONS);
+  Object.freeze(BACKGROUND_PATTERN_TABLE_OPTIONS);
 }
 
-export { BACKGROUND_TILE_GRID_OPTIONS };
+export { BACKGROUND_PATTERN_TABLE_OPTIONS };

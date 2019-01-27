@@ -8,6 +8,7 @@ type Props = {
   row: number;
   column: number;
   ariaLabel: string;
+  focusOnly?: boolean;
 };
 
 const SelectedTile: React.FunctionComponent<Props> = ({
@@ -16,7 +17,8 @@ const SelectedTile: React.FunctionComponent<Props> = ({
   tileHeight,
   row,
   column,
-  ariaLabel
+  ariaLabel,
+  focusOnly = false
 }) => {
   const tileRef = React.useRef<HTMLDivElement | null>(null);
 
@@ -35,7 +37,7 @@ const SelectedTile: React.FunctionComponent<Props> = ({
   return (
     <div
       ref={tileRef}
-      className={styles.container}
+      className={`${styles.container} ${focusOnly ? styles.focusOnly : ""}`}
       tabIndex={0}
       style={style}
       onClick={event => event.stopPropagation()}

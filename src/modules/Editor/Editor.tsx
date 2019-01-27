@@ -7,13 +7,13 @@ import {
   selectBackgroundColor,
   selectBackgroundPalettes,
   selectSpritePalettes,
-  selectSystemPalette,
+  selectCurrentSystemPalette,
   selectSystemPalettes,
   State,
-  selectCurrentBackgroundTileGrid,
-  selectBackgroundTileGridScaling,
-  selectSelectedBackgroundTile,
-  selectSelectedBackgroundTiles
+  selectCurrentBackgroundPatternTable,
+  selectBackgroundPatternTableScaling,
+  selectCurrentBackgroundMetatile,
+  selectCurrentBackgroundMetatileTiles
 } from "../../reducer";
 import Section from "./Section";
 import BackgroundPatternTable from "./BackgroundPatternTable";
@@ -25,13 +25,13 @@ type Props = {
 };
 
 const Editor: React.FunctionComponent<Props> = ({ state, dispatch }) => {
-  const tileGrid = selectCurrentBackgroundTileGrid(state);
+  const tileGrid = selectCurrentBackgroundPatternTable(state);
 
   return (
     <div className={styles.container}>
       <EditorSidebar
         systemPalettes={selectSystemPalettes(state)}
-        systemPalette={selectSystemPalette(state)}
+        systemPalette={selectCurrentSystemPalette(state)}
         onSystemPaletteChange={id =>
           dispatch({
             type: ActionTypes.CHANGE_SYSTEM_PALETTE,
@@ -62,16 +62,15 @@ const Editor: React.FunctionComponent<Props> = ({ state, dispatch }) => {
         <BackgroundPatternTable
           tilesInRow={16}
           tilesInColumn={16}
-          metatileSize={2}
-          scaling={selectBackgroundTileGridScaling(state)}
+          scaling={selectBackgroundPatternTableScaling(state)}
           tiles={tileGrid.tiles}
-          selectedMetatile={selectSelectedBackgroundTile(state)}
+          currentMetatile={selectCurrentBackgroundMetatile(state)}
           backgroundColor={selectBackgroundColor(state)}
           palettes={selectBackgroundPalettes(state)}
-          onSelectedMetatileChange={selected =>
+          onSelectMetatile={(row, column) =>
             dispatch({
-              type: ActionTypes.CHANGE_SELECTED_BACKGROUND_TILE,
-              payload: selected
+              type: ActionTypes.CHANGE_CURRENT_BACKGROUND_METATILE,
+              payload: { row, column }
             })
           }
         />
@@ -80,8 +79,8 @@ const Editor: React.FunctionComponent<Props> = ({ state, dispatch }) => {
           tilesInRow={2}
           tilesInColumn={2}
           scaling={20}
-          tiles={selectSelectedBackgroundTiles(state)}
-          selectedMetatile={selectSelectedBackgroundTile(state)}
+          tiles={selectCurrentBackgroundMetatileTiles(state)}
+          currentMetatile={selectCurrentBackgroundMetatile(state)}
           backgroundColor={selectBackgroundColor(state)}
           palettes={selectBackgroundPalettes(state)}
         />

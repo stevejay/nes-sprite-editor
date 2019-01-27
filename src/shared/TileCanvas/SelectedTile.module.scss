@@ -8,6 +8,13 @@
   border: 5px solid $md-white;
   background-color: transparent;
   border-radius: 3px;
+  pointer-events: none;
+}
+
+.focusOnly {
+  box-shadow: none;
+  border: none;
+  border-radius: 0;
 }
 
 .container:focus {

@@ -1,10 +1,10 @@
 import React from "react";
 import { Tile, Color } from "../../types";
-import { GamePaletteWithColors, Position } from "../../reducer";
+import { GamePaletteWithColors, MetatileSelection } from "../../reducer";
 import {
-  // TileInteractionTracker,
+  TileInteractionTracker,
   TileCanvas,
-  // SelectedTile,
+  SelectedTile,
   Container
 } from "../../shared/TileCanvas";
 
@@ -14,10 +14,10 @@ type Props = {
   // metatileSize: number;
   scaling: number;
   tiles: Array<Tile>;
-  selectedMetatile: Position;
+  currentMetatile: MetatileSelection;
   backgroundColor: Color;
   palettes: Array<GamePaletteWithColors>;
-  // onSelectedMetatileChange: (value: Position) => void;
+  // onSelectMetatile: (value: MetatileSelection) => void;
 };
 
 const BackgroundPatternDetail: React.FunctionComponent<Props> = ({
@@ -26,41 +26,44 @@ const BackgroundPatternDetail: React.FunctionComponent<Props> = ({
   // metatileSize,
   scaling,
   tiles,
-  selectedMetatile,
+  currentMetatile,
   backgroundColor,
   palettes
-  // onSelectedMetatileChange
-}) => (
-  <Container>
-    {/* <TileInteractionTracker
-      rows={tilesInRow / metatileSize}
-      columns={tilesInColumn / metatileSize}
-      row={selectedMetatile.row}
-      column={selectedMetatile.column}
-      onChange={(row, column) => onSelectedMetatileChange({ row, column })}
-    > */}
-    <TileCanvas
-      tilesInRow={tilesInRow}
-      tilesInColumn={tilesInColumn}
-      scaling={scaling}
-      tiles={tiles}
-      backgroundColor={backgroundColor}
-      palettes={palettes}
-      ariaLabel={`Pixels of metatile row ${selectedMetatile.row}, column ${
-        selectedMetatile.column
-      }`}
-    />
-    {/* <SelectedTile
-        tileWidth={8 * scaling * metatileSize}
-        tileHeight={8 * scaling * metatileSize}
-        row={selectedMetatile.row}
-        column={selectedMetatile.column}
-        ariaLabel={`Metatile row ${selectedMetatile.row}, column ${
-          selectedMetatile.column
-        }`}
-      /> */}
-    {/* </TileInteractionTracker> */}
-  </Container>
-);
+  // onSelectMetatile
+}) => {
+  const [currentPixel, setCurrentPixel] = React.useState({ row: 0, column: 0 });
+
+  return (
+    <Container>
+      <TileInteractionTracker
+        rows={currentMetatile.metatileSize * 8}
+        columns={currentMetatile.metatileSize * 8}
+        row={currentPixel.row}
+        column={currentPixel.column}
+        onSelect={(row, column) => setCurrentPixel({ row, column })}
+      >
+        <TileCanvas
+          tilesInRow={tilesInRow}
+          tilesInColumn={tilesInColumn}
+          scaling={scaling}
+          tiles={tiles}
+          backgroundColor={backgroundColor}
+          palettes={palettes}
+          ariaLabel={`Pixels of metatile row ${currentMetatile.row}, column ${
+            currentMetatile.column
+          }`}
+        />
+        <SelectedTile
+          tileWidth={scaling}
+          tileHeight={scaling}
+          row={currentPixel.row}
+          column={currentPixel.column}
+          ariaLabel="todo"
+          focusOnly
+        />
+      </TileInteractionTracker>
+    </Container>
+  );
+};
 
 export default BackgroundPatternDetail;

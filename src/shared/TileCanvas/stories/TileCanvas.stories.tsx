@@ -1,4 +1,3 @@
-import { range, random } from "lodash";
 import * as React from "react";
 import { host } from "storybook-host";
 import { storiesOf } from "@storybook/react";
@@ -9,15 +8,14 @@ import {
   GRAPE_PIXELS,
   JADE_PIXELS,
   BACKGROUND_PALETTE,
-  COLOR_ALMOST_WHITE
+  COLOR_ALMOST_WHITE,
+  RANDOM_PIXELS
 } from "./constants";
 
 const storyHost = host({
   align: "center middle",
   backdrop: "transparent"
 });
-
-const RANDOM_PIXELS = Uint8Array.from(range(0, 64).map(() => random(0, 3)));
 
 storiesOf("TileCanvas/TileCanvas", module)
   .addDecorator(storyHost)

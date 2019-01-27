@@ -9,30 +9,32 @@ import {
 } from "./types";
 import {
   SYSTEM_PALETTE_OPTIONS,
-  BACKGROUND_TILE_GRID_OPTIONS
+  BACKGROUND_PATTERN_TABLE_OPTIONS
 } from "./constants";
 
 export enum ActionTypes {
   CHANGE_SYSTEM_PALETTE = "CHANGE_SYSTEM_PALETTE",
   CHANGE_BACKGROUND_COLOR = "CHANGE_BACKGROUND_COLOR",
   CHANGE_GAME_PALETTE_COLOR = "CHANGE_GAME_PALETTE_COLOR",
-  CHANGE_SELECTED_BACKGROUND_TILE = "CHANGE_SELECTED_BACKGROUND_TILE"
+  CHANGE_CURRENT_BACKGROUND_METATILE = "CHANGE_CURRENT_BACKGROUND_METATILE",
+  CHANGE_BACKGROUND_METATILE_SIZE = "CHANGE_BACKGROUND_METATILE_SIZE"
 }
 
-export type Position = {
+export type MetatileSelection = {
+  metatileSize: 1 | 2;
   row: number;
   column: number;
 };
 
 export type State = {
   systemPalettes: Array<SystemPalette>;
-  systemPaletteId: SystemPalette["id"];
+  currentSystemPaletteId: SystemPalette["id"];
   backgroundColorId: Color["id"];
   gamePalettes: Array<GamePalette>;
-  backgroundTileGrids: Array<TileGrid>;
-  backgroundTileGridId: TileGrid["id"];
-  backgroundTileGridScaling: number;
-  selectedBackgroundTile: Position;
+  backgroundPatternTables: Array<TileGrid>;
+  currentBackgroundPatternTableId: TileGrid["id"];
+  backgroundPatternTableScaling: number;
+  currentBackgroundMetatile: MetatileSelection;
 };
 
 export type GamePaletteChange = {
@@ -50,14 +52,19 @@ export type Action =
   | { type: ActionTypes.CHANGE_BACKGROUND_COLOR; payload: number }
   | { type: ActionTypes.CHANGE_GAME_PALETTE_COLOR; payload: GamePaletteChange }
   | {
-      type: ActionTypes.CHANGE_SELECTED_BACKGROUND_TILE;
-      payload: Position;
+      type: ActionTypes.CHANGE_BACKGROUND_METATILE_SIZE;
+      payload: MetatileSelection["metatileSize"];
+    }
+  | {
+      type: ActionTypes.CHANGE_CURRENT_BACKGROUND_METATILE;
+      payload: Partial<MetatileSelection>;
     };
 
 export const initialState: State = {
-  // palettes
+  // system palette
   systemPalettes: SYSTEM_PALETTE_OPTIONS,
-  systemPaletteId: SYSTEM_PALETTE_OPTIONS[0].id,
+  currentSystemPaletteId: SYSTEM_PALETTE_OPTIONS[0].id,
+  // game palettes
   backgroundColorId: 0x0f,
   gamePalettes: [
     { type: GamePaletteTypes.BACKGROUND, id: 0, values: [19, 20, 21] },
@@ -69,17 +76,17 @@ export const initialState: State = {
     { type: GamePaletteTypes.SPRITE, id: 2, values: [3, 35, 7] },
     { type: GamePaletteTypes.SPRITE, id: 3, values: [4, 39, 8] }
   ],
-  // background
-  backgroundTileGrids: BACKGROUND_TILE_GRID_OPTIONS,
-  backgroundTileGridId: BACKGROUND_TILE_GRID_OPTIONS[0].id,
-  backgroundTileGridScaling: 3,
-  selectedBackgroundTile: { row: 0, column: 0 }
+  // backgrounds
+  backgroundPatternTables: BACKGROUND_PATTERN_TABLE_OPTIONS,
+  currentBackgroundPatternTableId: BACKGROUND_PATTERN_TABLE_OPTIONS[0].id,
+  backgroundPatternTableScaling: 3,
+  currentBackgroundMetatile: { metatileSize: 2, row: 0, column: 0 }
 };
 
 export function reducer(state: State, action: Action) {
   switch (action.type) {
     case ActionTypes.CHANGE_SYSTEM_PALETTE:
-      return { ...state, systemPaletteId: action.payload };
+      return { ...state, currentSystemPaletteId: action.payload };
     case ActionTypes.CHANGE_BACKGROUND_COLOR:
       return { ...state, backgroundColorId: action.payload };
     case ActionTypes.CHANGE_GAME_PALETTE_COLOR:
@@ -102,10 +109,37 @@ export function reducer(state: State, action: Action) {
           return element;
         })
       };
-    case ActionTypes.CHANGE_SELECTED_BACKGROUND_TILE:
+    case ActionTypes.CHANGE_BACKGROUND_METATILE_SIZE:
+      const newMetatileSize = action.payload;
+      const { metatileSize, row, column } = state.currentBackgroundMetatile;
+      if (newMetatileSize === metatileSize) {
+        return state;
+      }
+      if (newMetatileSize < metatileSize) {
+        return {
+          ...state,
+          currentBackgroundMetatile: {
+            metatileSize: newMetatileSize,
+            row: row * (metatileSize / newMetatileSize),
+            column: column * (metatileSize / newMetatileSize)
+          }
+        };
+      }
       return {
         ...state,
-        selectedBackgroundTile: action.payload
+        currentBackgroundMetatile: {
+          metatileSize: newMetatileSize,
+          row: Math.floor(row / newMetatileSize),
+          column: Math.floor(column / newMetatileSize)
+        }
+      };
+    case ActionTypes.CHANGE_CURRENT_BACKGROUND_METATILE:
+      return {
+        ...state,
+        currentBackgroundMetatile: {
+          ...state.currentBackgroundMetatile,
+          ...action.payload
+        }
       };
     default:
       return state;
@@ -116,8 +150,17 @@ export function selectSystemPalettes(state: State) {
   return state.systemPalettes;
 }
 
-export function selectSystemPaletteId(state: State) {
-  return state.systemPaletteId;
+export function selectCurrentSystemPaletteId(state: State) {
+  return state.currentSystemPaletteId;
+}
+
+export function selectCurrentSystemPalette(state: State) {
+  const systemPalettes = selectSystemPalettes(state);
+  const currentSystemPaletteId = selectCurrentSystemPaletteId(state);
+  return find(
+    systemPalettes,
+    x => x.id === currentSystemPaletteId
+  ) as SystemPalette;
 }
 
 export function selectBackgroundColorId(state: State) {
@@ -128,14 +171,8 @@ export function selectGamePalettes(state: State) {
   return state.gamePalettes;
 }
 
-export function selectSystemPalette(state: State) {
-  const systemPalettes = selectSystemPalettes(state);
-  const systemPaletteId = selectSystemPaletteId(state);
-  return find(systemPalettes, x => x.id === systemPaletteId) as SystemPalette;
-}
-
 export const selectBackgroundColor = createSelector(
-  selectSystemPalette,
+  selectCurrentSystemPalette,
   selectBackgroundColorId,
   (systemPalette, backgroundColorId) =>
     find(
@@ -145,7 +182,7 @@ export const selectBackgroundColor = createSelector(
 );
 
 export const selectBackgroundPalettes = createSelector(
-  selectSystemPalette,
+  selectCurrentSystemPalette,
   selectGamePalettes,
   (systemPalette, gamePalettes) =>
     gamePalettes
@@ -155,7 +192,7 @@ export const selectBackgroundPalettes = createSelector(
 );
 
 export const selectSpritePalettes = createSelector(
-  selectSystemPalette,
+  selectCurrentSystemPalette,
   selectGamePalettes,
   (systemPalette, gamePalettes) =>
     gamePalettes
@@ -174,41 +211,46 @@ function mapToGamePaletteColors(
   };
 }
 
-export function selectBackgroundTileGrids(state: State) {
-  return state.backgroundTileGrids;
+export function selectBackgroundPatternTables(state: State) {
+  return state.backgroundPatternTables;
 }
 
-export function selectCurrentBackgroundTileGridId(state: State) {
-  return state.backgroundTileGridId;
+export function selectCurrentBackgroundPatternTableId(state: State) {
+  return state.currentBackgroundPatternTableId;
 }
 
-export function selectCurrentBackgroundTileGrid(state: State) {
-  const backgroundTileGrids = selectBackgroundTileGrids(state);
-  const currentBackgroundTileGridId = selectCurrentBackgroundTileGridId(state);
+export function selectCurrentBackgroundPatternTable(state: State) {
+  const backgroundPatternTables = selectBackgroundPatternTables(state);
+  const currentBackgroundTileGridId = selectCurrentBackgroundPatternTableId(
+    state
+  );
   return find(
-    backgroundTileGrids,
+    backgroundPatternTables,
     x => x.id === currentBackgroundTileGridId
   ) as TileGrid;
 }
 
-export function selectBackgroundTileGridScaling(state: State) {
-  return state.backgroundTileGridScaling;
+export function selectBackgroundPatternTableScaling(state: State) {
+  return state.backgroundPatternTableScaling;
 }
 
-export function selectSelectedBackgroundTile(state: State) {
-  return state.selectedBackgroundTile;
+export function selectCurrentBackgroundMetatile(state: State) {
+  return state.currentBackgroundMetatile;
 }
 
-export const selectSelectedBackgroundTiles = createSelector(
-  selectCurrentBackgroundTileGrid,
-  selectSelectedBackgroundTile,
-  (tileGrid, selected) => {
-    const row0Index = selected.row * 2 * 16 + selected.column * 2;
-    return [
-      tileGrid.tiles[row0Index],
-      tileGrid.tiles[row0Index + 1],
-      tileGrid.tiles[row0Index + 16],
-      tileGrid.tiles[row0Index + 16 + 1]
-    ];
+export const selectCurrentBackgroundMetatileTiles = createSelector(
+  selectCurrentBackgroundPatternTable,
+  selectCurrentBackgroundMetatile,
+  (patternTable, metatile) => {
+    const result = [];
+    const startIndex = metatile.row * metatile.metatileSize * 16;
+
+    for (let row = 0; row < metatile.metatileSize; ++row) {
+      for (let column = 0; column < metatile.metatileSize; ++column) {
+        result.push(patternTable.tiles[startIndex + row * 16 + column]);
+      }
+    }
+
+    return result;
   }
 );

@@ -13,7 +13,7 @@ export type Props = {
   row: number;
   column: number;
   children: React.ReactNode;
-  onChange: (row: number, column: number) => void;
+  onSelect: (row: number, column: number) => void;
 };
 
 const TileInteractionTracker: React.FunctionComponent<Props> = ({
@@ -22,7 +22,7 @@ const TileInteractionTracker: React.FunctionComponent<Props> = ({
   row,
   column,
   children,
-  onChange
+  onSelect
 }) => {
   const containerRef = React.useRef<HTMLDivElement>(null);
 
@@ -50,9 +50,7 @@ const TileInteractionTracker: React.FunctionComponent<Props> = ({
         columns - 1
       );
 
-      if (newRow !== row || newColumn !== column) {
-        onChange(newRow, newColumn);
-      }
+      onSelect(newRow, newColumn);
     },
     [rows, columns, row, column]
   );
@@ -79,9 +77,7 @@ const TileInteractionTracker: React.FunctionComponent<Props> = ({
       newRow = clamp(newRow, 0, rows - 1);
       newColumn = clamp(newColumn, 0, columns - 1);
 
-      if (newRow !== row || newColumn !== column) {
-        onChange(newRow, newColumn);
-      }
+      onSelect(newRow, newColumn);
     },
     [rows, columns, row, column]
   );

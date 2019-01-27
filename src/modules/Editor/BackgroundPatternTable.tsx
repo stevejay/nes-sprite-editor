@@ -1,6 +1,6 @@
 import React from "react";
 import { Tile, Color } from "../../types";
-import { GamePaletteWithColors, Position } from "../../reducer";
+import { GamePaletteWithColors, MetatileSelection } from "../../reducer";
 import {
   TileInteractionTracker,
   TileCanvas,
@@ -11,33 +11,34 @@ import {
 type Props = {
   tilesInRow: number;
   tilesInColumn: number;
-  metatileSize: number;
   scaling: number;
   tiles: Array<Tile>;
-  selectedMetatile: Position;
+  currentMetatile: MetatileSelection;
   backgroundColor: Color;
   palettes: Array<GamePaletteWithColors>;
-  onSelectedMetatileChange: (value: Position) => void;
+  onSelectMetatile: (
+    row: MetatileSelection["row"],
+    column: MetatileSelection["column"]
+  ) => void;
 };
 
 const BackgroundPatternTable: React.FunctionComponent<Props> = ({
   tilesInRow,
   tilesInColumn,
-  metatileSize,
   scaling,
   tiles,
-  selectedMetatile,
+  currentMetatile,
   backgroundColor,
   palettes,
-  onSelectedMetatileChange
+  onSelectMetatile
 }) => (
   <Container>
     <TileInteractionTracker
-      rows={tilesInRow / metatileSize}
-      columns={tilesInColumn / metatileSize}
-      row={selectedMetatile.row}
-      column={selectedMetatile.column}
-      onChange={(row, column) => onSelectedMetatileChange({ row, column })}
+      rows={tilesInRow / currentMetatile.metatileSize}
+      columns={tilesInColumn / currentMetatile.metatileSize}
+      row={currentMetatile.row}
+      column={currentMetatile.column}
+      onSelect={onSelectMetatile}
     >
       <TileCanvas
         tilesInRow={tilesInRow}
@@ -49,12 +50,12 @@ const BackgroundPatternTable: React.FunctionComponent<Props> = ({
         ariaLabel="Pattern table tiles"
       />
       <SelectedTile
-        tileWidth={8 * scaling * metatileSize}
-        tileHeight={8 * scaling * metatileSize}
-        row={selectedMetatile.row}
-        column={selectedMetatile.column}
-        ariaLabel={`Metatile row ${selectedMetatile.row}, column ${
-          selectedMetatile.column
+        tileWidth={8 * scaling * currentMetatile.metatileSize}
+        tileHeight={8 * scaling * currentMetatile.metatileSize}
+        row={currentMetatile.row}
+        column={currentMetatile.column}
+        ariaLabel={`Metatile row ${currentMetatile.row}, column ${
+          currentMetatile.column
         }`}
       />
     </TileInteractionTracker>

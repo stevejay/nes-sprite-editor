@@ -4,7 +4,7 @@ import {
   selectBackgroundPalettes,
   selectSpritePalettes,
   State,
-  selectCurrentBackgroundTileGrid
+  selectCurrentBackgroundPatternTable
 } from "../../reducer";
 import CodePanel from "./CodePanel";
 import createGameDataText from "./create-game-data-text";
@@ -19,7 +19,7 @@ const GameDataOutput: React.FunctionComponent<Props> = ({ state }) => {
   const backgroundPalettes = selectBackgroundPalettes(state);
   const spritePalettes = selectSpritePalettes(state);
   const backgroundColor = selectBackgroundColor(state);
-  const backgroundTileGrid = selectCurrentBackgroundTileGrid(state);
+  const backgroundTileGrid = selectCurrentBackgroundPatternTable(state);
   const [dataVersion, setDataVersion] = React.useState(0);
 
   const gameDataText = React.useMemo(

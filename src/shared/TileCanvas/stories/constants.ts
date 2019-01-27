@@ -1,3 +1,4 @@
+import { range, random } from "lodash";
 import { GamePaletteTypes, Color } from "../../../types";
 import { GamePaletteWithColors } from "../../../reducer";
 
@@ -44,3 +45,7 @@ PINK_PIXELS.fill(1);
 
 export const JADE_PIXELS = new Uint8Array(64);
 JADE_PIXELS.fill(3);
+
+export const RANDOM_PIXELS = Uint8Array.from(
+  range(0, 64).map(() => random(0, 3))
+);
