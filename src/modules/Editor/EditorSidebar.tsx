@@ -66,7 +66,7 @@ const EditorSidebar: React.FunctionComponent<Props> = ({
             <span className="screen-reader-only">Background palette </span>#
             {palette.id}
           </h3>
-          <PaletteToolbar>
+          <PaletteToolbar ariaLabel="Color edit toolbar">
             {tail(palette.colors).map((color, index) => (
               <PaletteToolbarColorInput
                 key={index}
@@ -92,7 +92,7 @@ const EditorSidebar: React.FunctionComponent<Props> = ({
             <span className="screen-reader-only">Sprite palette </span>#
             {palette.id}
           </h3>
-          <PaletteToolbar>
+          <PaletteToolbar ariaLabel="Color edit toolbar">
             {tail(palette.colors).map((color, index) => (
               <PaletteToolbarColorInput
                 key={index}

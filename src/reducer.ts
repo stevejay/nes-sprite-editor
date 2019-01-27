@@ -233,12 +233,12 @@ export function selectCurrentBackgroundPatternTableId(state: State) {
 
 export function selectCurrentBackgroundPatternTable(state: State) {
   const backgroundPatternTables = selectBackgroundPatternTables(state);
-  const currentBackgroundTileGridId = selectCurrentBackgroundPatternTableId(
+  const currentBackgroundPatternTableId = selectCurrentBackgroundPatternTableId(
     state
   );
   return find(
     backgroundPatternTables,
-    x => x.id === currentBackgroundTileGridId
+    x => x.id === currentBackgroundPatternTableId
   ) as PatternTable;
 }
 
@@ -270,3 +270,10 @@ function getTileIndexesForMetatile(metatile: Metatile) {
 
   return result;
 }
+
+export const selectCurrentBackgroundMetatilePalette = createSelector(
+  selectCurrentBackgroundMetatileTiles,
+  selectBackgroundPalettes,
+  (tiles, backgroundPalettes) =>
+    backgroundPalettes.find(palette => palette.id === tiles[0].gamePaletteId)
+);

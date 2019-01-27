@@ -11,7 +11,8 @@ import {
   State,
   selectCurrentBackgroundPatternTable,
   selectCurrentBackgroundMetatile,
-  selectCurrentBackgroundMetatileTiles
+  selectCurrentBackgroundMetatileTiles,
+  selectCurrentBackgroundMetatilePalette
 } from "../../reducer";
 import Section from "./Section";
 import BackgroundPatternTable from "./BackgroundPatternTable";
@@ -31,7 +32,19 @@ type Props = {
 };
 
 const Editor: React.FunctionComponent<Props> = ({ state, dispatch }) => {
-  const tileGrid = selectCurrentBackgroundPatternTable(state);
+  const patternTable = selectCurrentBackgroundPatternTable(state);
+  const currentMetatilePalette = selectCurrentBackgroundMetatilePalette(state)!;
+  const [drawColorIndex, setDrawColorIndex] = React.useState("0");
+
+  const colorOptions = React.useMemo(
+    () => {
+      return currentMetatilePalette.colors.map(color => ({
+        id: color.id + "",
+        label: color.id + ""
+      }));
+    },
+    [currentMetatilePalette]
+  );
 
   return (
     <div className={styles.container}>
@@ -62,7 +75,7 @@ const Editor: React.FunctionComponent<Props> = ({ state, dispatch }) => {
           tilesInRow={16}
           tilesInColumn={16}
           scaling={3}
-          tiles={tileGrid.tiles}
+          tiles={patternTable.tiles}
           currentMetatile={selectCurrentBackgroundMetatile(state)}
           palettes={selectBackgroundPalettes(state)}
           onSelectMetatile={(row, column) =>
@@ -93,6 +106,13 @@ const Editor: React.FunctionComponent<Props> = ({ state, dispatch }) => {
               payload: parseInt(id, 10)
             });
           }}
+          inline
+        />
+        <RadioInput.Group
+          legend="Draw color:"
+          options={colorOptions}
+          selectedId={drawColorIndex}
+          onChange={id => setDrawColorIndex(id)}
           inline
         />
       </Section>

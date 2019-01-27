@@ -4,18 +4,18 @@ import RadioInput from "./RadioInput";
 import styles from "./RadioInputGroup.module.scss";
 
 type Option = {
-  id: string;
+  id: string | number;
   label: string;
 };
 
 type Props = {
   legend: string;
   options: Array<Option>;
-  selectedId: string;
+  selectedId: string | number;
   disabled?: boolean;
   inline?: boolean;
   renderLabel?: (option: Option) => React.ReactNode;
-  onChange: (id: string) => void;
+  onChange: (id: string | number) => void;
 };
 
 const RadioInputGroup: React.FunctionComponent<Props> = ({

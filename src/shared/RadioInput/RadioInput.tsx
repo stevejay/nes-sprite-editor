@@ -3,7 +3,7 @@ import { uniqueId } from "lodash";
 import styles from "./RadioInput.module.scss";
 
 type Props = {
-  value: string;
+  value: string | number;
   children: React.ReactNode;
   checked: boolean;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;

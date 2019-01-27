@@ -2,14 +2,14 @@ import { range } from "lodash";
 import sync from "save-file";
 import { PatternTable, Tile } from "../../types";
 
-export default function downloadTileGrid(
-  tileGrid: PatternTable,
+export default function downloadPatternTable(
+  patternTable: PatternTable,
   fileNameNoExt?: string
 ): Promise<void> {
   const buffer = new ArrayBuffer(4096);
   const byteView = new Uint8Array(buffer);
 
-  tileGrid.tiles.forEach(tile => {
+  patternTable.tiles.forEach(tile => {
     const tileByteOffset = tile.column * 16 + tile.row * 256;
 
     // write first plane bytes for this tile
@@ -28,7 +28,7 @@ export default function downloadTileGrid(
   });
 
   return new Promise(resolve => {
-    sync(byteView, `${fileNameNoExt || tileGrid.id}.chr`, resolve);
+    sync(byteView, `${fileNameNoExt || patternTable.id}.chr`, resolve);
   });
 }
 

@@ -8,7 +8,7 @@ import {
 import CodePanel from "./CodePanel";
 import createGameDataText from "./create-game-data-text";
 import Button from "../../shared/Button";
-import downloadTileGrid from "./download-tile-grid";
+import downloadPatternTable from "./download-pattern-table";
 
 type Props = {
   state: State;
@@ -17,7 +17,7 @@ type Props = {
 const GameDataOutput: React.FunctionComponent<Props> = ({ state }) => {
   const backgroundPalettes = selectBackgroundPalettes(state);
   const spritePalettes = selectSpritePalettes(state);
-  const backgroundTileGrid = selectCurrentBackgroundPatternTable(state);
+  const backgroundPatternTable = selectCurrentBackgroundPatternTable(state);
   const [dataVersion, setDataVersion] = React.useState(0);
 
   const gameDataText = React.useMemo(
@@ -34,7 +34,7 @@ const GameDataOutput: React.FunctionComponent<Props> = ({ state }) => {
         <Button onClick={() => setDataVersion(Date.now())}>
           Update text output
         </Button>
-        <Button onClick={() => downloadTileGrid(backgroundTileGrid)}>
+        <Button onClick={() => downloadPatternTable(backgroundPatternTable)}>
           Download background tiles pattern file
         </Button>
       </Button.Container>
