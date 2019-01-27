@@ -1,5 +1,5 @@
 import { storiesOf } from "@storybook/react";
-import { range, sample } from "lodash";
+import { range } from "lodash";
 import * as React from "react";
 import { host } from "storybook-host";
 import "../../../index.scss";
@@ -18,8 +18,8 @@ const storyHost = host({
 const PALETTES = [BACKGROUND_PALETTE];
 
 const TILES = range(0, 4).map(() => ({
-  rowIndex: -1,
-  columnIndex: -1,
+  row: -1,
+  column: -1,
   gamePaletteId: BACKGROUND_PALETTE.id,
   pixels: RANDOM_PIXELS
 }));
@@ -37,7 +37,6 @@ storiesOf("Editor/BackgroundPatternDetail", module)
         row: 0,
         column: 0
       }}
-      backgroundColor={COLOR_ALMOST_WHITE}
       palettes={PALETTES}
     />
   ));

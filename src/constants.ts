@@ -1,5 +1,5 @@
-import { range, random } from "lodash";
-import { SystemPalette, Tile, TileGrid } from "./types";
+import { range } from "lodash";
+import { SystemPalette, Tile, PatternTable } from "./types";
 
 // TODO alternative system palette color values here:
 // http://nesdev.com/NESTechFAQ.htm#howmanycolours
@@ -402,16 +402,16 @@ const HEART_TILE_PIXELS: Tile["pixels"] = new Uint8Array([
   0
 ]);
 
-const BACKGROUND_PATTERN_TABLE_OPTIONS: Array<TileGrid> = [
+const BACKGROUND_PATTERN_TABLE_OPTIONS: Array<PatternTable> = [
   {
     id: "background-1",
     label: "Background Grid 1",
     tiles: range(0, 256).map(index => ({
-      rowIndex: Math.floor(index / 16),
-      columnIndex: index % 16,
+      row: Math.floor(index / 16),
+      column: index % 16,
       gamePaletteId: 2,
       pixels: HEART_TILE_PIXELS
-    })) as TileGrid["tiles"]
+    })) as PatternTable["tiles"]
   }
 ];
 

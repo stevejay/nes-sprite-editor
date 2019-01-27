@@ -1,6 +1,6 @@
 import * as React from "react";
 import styles from "./ColorPicker.module.scss";
-import { SystemPalette, ColorId, Color } from "../../types";
+import { SystemPalette, Color } from "../../types";
 import useSizedCanvasEffect from "../utils/use-sized-canvas-effect";
 import { TileInteractionTracker, SelectedTile } from "../TileCanvas";
 
@@ -9,7 +9,7 @@ const ROWS = 64 / COLUMNS;
 
 type Props = {
   palette: SystemPalette;
-  selectedColorId: ColorId;
+  selectedColorId: Color["id"];
   scaling: number;
   onChange: (color: Color) => void;
 };

@@ -1,15 +1,13 @@
 import { Tuple } from "./typescript";
 
-export type ColorId = number;
-
 export type Color =
   | {
       available: false;
-      id: ColorId;
+      id: number;
     }
   | {
       available: true;
-      id: ColorId;
+      id: number;
       name: string;
       rgb: string;
     };
@@ -21,8 +19,8 @@ export enum GamePaletteTypes {
 
 export type GamePalette = {
   type: GamePaletteTypes;
-  id: number;
-  values: Tuple<ColorId, 3>;
+  id: number; // [0, 3]
+  values: Tuple<Color["id"], 4>;
 };
 
 export type SystemPalette = {
@@ -31,16 +29,22 @@ export type SystemPalette = {
   values: Tuple<Color, 64>;
 };
 
-// the screen is 32 tiles wide, 30 tiles tall
+// A Tile is an 8 by 8 pixel area
 export type Tile = {
-  rowIndex: number; // 0 to 15 - ditch?
-  columnIndex: number; // 0 to 15 - ditch?
+  row: number; // 0 to 15 - TODO ditch?
+  column: number; // 0 to 15 - TODO ditch?
   gamePaletteId: GamePalette["id"]; // 0 to 3
   pixels: Uint8Array; // 64 pixels, each value 0 to 3 (palette index)
 };
 
-export type TileGrid = {
+export type PatternTable = {
   id: string;
   label: string;
   tiles: Tuple<Tile, 256>; // 16 by 16
+};
+
+export type Metatile = {
+  metatileSize: 1 | 2;
+  row: number;
+  column: number;
 };

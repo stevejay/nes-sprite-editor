@@ -13,7 +13,6 @@ type Props = {
   tilesInColumn: number;
   scaling: number; // 1+
   tiles: Array<Tile>;
-  backgroundColor: Color;
   palettes: Array<GamePaletteWithColors>;
   ariaLabel: string;
 };
@@ -23,7 +22,6 @@ const TileCanvas: React.FunctionComponent<Props> = ({
   tilesInColumn,
   scaling,
   tiles,
-  backgroundColor,
   palettes,
   ariaLabel
 }) => {
@@ -37,14 +35,7 @@ const TileCanvas: React.FunctionComponent<Props> = ({
     scaling * PIXEL_COLUMNS_PER_TILE
   );
 
-  useDrawTilesEffect(
-    canvasRef,
-    tiles,
-    backgroundColor,
-    palettes,
-    tilesInColumn,
-    scaling
-  );
+  useDrawTilesEffect(canvasRef, tiles, palettes, tilesInColumn, scaling);
 
   return (
     <canvas

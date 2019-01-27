@@ -8,7 +8,6 @@ import {
   GRAPE_PIXELS,
   JADE_PIXELS,
   BACKGROUND_PALETTE,
-  COLOR_ALMOST_WHITE,
   RANDOM_PIXELS
 } from "./constants";
 
@@ -32,12 +31,11 @@ storiesOf("TileCanvas/TileCanvas", module)
         JADE_PIXELS,
         JADE_PIXELS
       ].map(pixels => ({
-        rowIndex: -1,
-        columnIndex: -1,
+        row: -1,
+        column: -1,
         gamePaletteId: BACKGROUND_PALETTE.id,
         pixels
       }))}
-      backgroundColor={COLOR_ALMOST_WHITE}
       palettes={[BACKGROUND_PALETTE]}
       ariaLabel="The aria label"
     />
@@ -48,12 +46,11 @@ storiesOf("TileCanvas/TileCanvas", module)
       tilesInColumn={1}
       scaling={16}
       tiles={[RANDOM_PIXELS].map(pixels => ({
-        rowIndex: -1,
-        columnIndex: -1,
+        row: -1,
+        column: -1,
         gamePaletteId: BACKGROUND_PALETTE.id,
         pixels
       }))}
-      backgroundColor={COLOR_ALMOST_WHITE}
       palettes={[BACKGROUND_PALETTE]}
       ariaLabel="The aria label"
     />

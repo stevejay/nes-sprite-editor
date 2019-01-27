@@ -4,14 +4,12 @@ import EditorSidebar from "./EditorSidebar";
 import {
   Action,
   ActionTypes,
-  selectBackgroundColor,
   selectBackgroundPalettes,
   selectSpritePalettes,
   selectCurrentSystemPalette,
   selectSystemPalettes,
   State,
   selectCurrentBackgroundPatternTable,
-  selectBackgroundPatternTableScaling,
   selectCurrentBackgroundMetatile,
   selectCurrentBackgroundMetatileTiles
 } from "../../reducer";
@@ -35,9 +33,6 @@ type Props = {
 const Editor: React.FunctionComponent<Props> = ({ state, dispatch }) => {
   const tileGrid = selectCurrentBackgroundPatternTable(state);
 
-  const backgroundColor = selectBackgroundColor(state);
-  // const backgroundPalette =
-
   return (
     <div className={styles.container}>
       <EditorSidebar
@@ -47,13 +42,6 @@ const Editor: React.FunctionComponent<Props> = ({ state, dispatch }) => {
           dispatch({
             type: ActionTypes.CHANGE_SYSTEM_PALETTE,
             payload: id
-          })
-        }
-        backgroundColor={selectBackgroundColor(state)}
-        onBackgroundColorChange={color =>
-          dispatch({
-            type: ActionTypes.CHANGE_BACKGROUND_COLOR,
-            payload: color.id
           })
         }
         backgroundPalettes={selectBackgroundPalettes(state)}
@@ -73,10 +61,9 @@ const Editor: React.FunctionComponent<Props> = ({ state, dispatch }) => {
         <BackgroundPatternTable
           tilesInRow={16}
           tilesInColumn={16}
-          scaling={selectBackgroundPatternTableScaling(state)}
+          scaling={3}
           tiles={tileGrid.tiles}
           currentMetatile={selectCurrentBackgroundMetatile(state)}
-          backgroundColor={selectBackgroundColor(state)}
           palettes={selectBackgroundPalettes(state)}
           onSelectMetatile={(row, column) =>
             dispatch({
@@ -92,7 +79,6 @@ const Editor: React.FunctionComponent<Props> = ({ state, dispatch }) => {
           scaling={20}
           tiles={selectCurrentBackgroundMetatileTiles(state)}
           currentMetatile={selectCurrentBackgroundMetatile(state)}
-          backgroundColor={selectBackgroundColor(state)}
           palettes={selectBackgroundPalettes(state)}
         />
         <RadioInput.Group

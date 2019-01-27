@@ -1,6 +1,6 @@
 import React from "react";
-import { Tile, Color } from "../../types";
-import { GamePaletteWithColors, MetatileSelection } from "../../reducer";
+import { Tile, Color, Metatile } from "../../types";
+import { GamePaletteWithColors } from "../../reducer";
 import {
   TileInteractionTracker,
   TileCanvas,
@@ -13,13 +13,9 @@ type Props = {
   tilesInColumn: number;
   scaling: number;
   tiles: Array<Tile>;
-  currentMetatile: MetatileSelection;
-  backgroundColor: Color;
+  currentMetatile: Metatile;
   palettes: Array<GamePaletteWithColors>;
-  onSelectMetatile: (
-    row: MetatileSelection["row"],
-    column: MetatileSelection["column"]
-  ) => void;
+  onSelectMetatile: (row: Metatile["row"], column: Metatile["column"]) => void;
 };
 
 const BackgroundPatternTable: React.FunctionComponent<Props> = ({
@@ -28,7 +24,6 @@ const BackgroundPatternTable: React.FunctionComponent<Props> = ({
   scaling,
   tiles,
   currentMetatile,
-  backgroundColor,
   palettes,
   onSelectMetatile
 }) => (
@@ -45,7 +40,6 @@ const BackgroundPatternTable: React.FunctionComponent<Props> = ({
         tilesInColumn={tilesInColumn}
         scaling={scaling}
         tiles={tiles}
-        backgroundColor={backgroundColor}
         palettes={palettes}
         ariaLabel="Pattern table tiles"
       />

@@ -1,16 +1,16 @@
 import { range } from "lodash";
 import sync from "save-file";
-import { TileGrid, Tile } from "../../types";
+import { PatternTable, Tile } from "../../types";
 
 export default function downloadTileGrid(
-  tileGrid: TileGrid,
+  tileGrid: PatternTable,
   fileNameNoExt?: string
 ): Promise<void> {
   const buffer = new ArrayBuffer(4096);
   const byteView = new Uint8Array(buffer);
 
   tileGrid.tiles.forEach(tile => {
-    const tileByteOffset = tile.columnIndex * 16 + tile.rowIndex * 256;
+    const tileByteOffset = tile.column * 16 + tile.row * 256;
 
     // write first plane bytes for this tile
     range(0, 64, 8)

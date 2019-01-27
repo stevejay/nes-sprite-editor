@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  selectBackgroundColor,
   selectBackgroundPalettes,
   selectSpritePalettes,
   State,
@@ -18,13 +17,11 @@ type Props = {
 const GameDataOutput: React.FunctionComponent<Props> = ({ state }) => {
   const backgroundPalettes = selectBackgroundPalettes(state);
   const spritePalettes = selectSpritePalettes(state);
-  const backgroundColor = selectBackgroundColor(state);
   const backgroundTileGrid = selectCurrentBackgroundPatternTable(state);
   const [dataVersion, setDataVersion] = React.useState(0);
 
   const gameDataText = React.useMemo(
-    () =>
-      createGameDataText(backgroundColor, backgroundPalettes, spritePalettes),
+    () => createGameDataText(backgroundPalettes, spritePalettes),
     [dataVersion]
   );
 

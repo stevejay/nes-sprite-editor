@@ -1,9 +1,8 @@
 import { GamePaletteWithColors } from "../../reducer";
 import formatByteAsHex from "../../shared/utils/format-byte-as-hex";
-import { Color, TileGrid } from "../../types";
+import { Color } from "../../types";
 
 export default function createGameDataText(
-  backgroundColor: Color,
   backgroundPalettes: Array<GamePaletteWithColors>,
   spritePalettes: Array<GamePaletteWithColors>
 ): string {
@@ -17,25 +16,22 @@ export default function createGameDataText(
 PaletteData:
 
   ;; background palettes
-  .db ${createGamePaletteData(backgroundPalettes[0], backgroundColor)}
-  .db ${createGamePaletteData(backgroundPalettes[1], backgroundColor)}
-  .db ${createGamePaletteData(backgroundPalettes[2], backgroundColor)}
-  .db ${createGamePaletteData(backgroundPalettes[3], backgroundColor)}
+  .db ${createGamePaletteData(backgroundPalettes[0])}
+  .db ${createGamePaletteData(backgroundPalettes[1])}
+  .db ${createGamePaletteData(backgroundPalettes[2])}
+  .db ${createGamePaletteData(backgroundPalettes[3])}
 
   ;; sprite palettes
-  .db ${createGamePaletteData(spritePalettes[0], backgroundColor)}
-  .db ${createGamePaletteData(spritePalettes[1], backgroundColor)}
-  .db ${createGamePaletteData(spritePalettes[2], backgroundColor)}
-  .db ${createGamePaletteData(spritePalettes[3], backgroundColor)}
+  .db ${createGamePaletteData(spritePalettes[0])}
+  .db ${createGamePaletteData(spritePalettes[1])}
+  .db ${createGamePaletteData(spritePalettes[2])}
+  .db ${createGamePaletteData(spritePalettes[3])}
 `;
 }
 
-function createGamePaletteData(
-  gamePalette: GamePaletteWithColors,
-  backgroundColor: Color
-): string {
+function createGamePaletteData(gamePalette: GamePaletteWithColors): string {
   const gamePaletteColors = gamePalette.values
     .map(value => `$${formatByteAsHex(value)}`)
     .join(",");
-  return `$${formatByteAsHex(backgroundColor.id)},${gamePaletteColors}`;
+  return `$${gamePaletteColors}`;
 }
