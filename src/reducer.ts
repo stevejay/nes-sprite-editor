@@ -1,5 +1,5 @@
 import { createSelector } from "reselect";
-import { find } from "lodash";
+import { find, includes } from "lodash";
 import {
   GamePalette,
   SystemPalette,
@@ -17,6 +17,7 @@ export enum ActionTypes {
   CHANGE_BACKGROUND_COLOR = "CHANGE_BACKGROUND_COLOR",
   CHANGE_GAME_PALETTE_COLOR = "CHANGE_GAME_PALETTE_COLOR",
   CHANGE_CURRENT_BACKGROUND_METATILE = "CHANGE_CURRENT_BACKGROUND_METATILE",
+  CHANGE_CURRENT_BACKGROUND_METATILE_PALETTE = "CHANGE_CURRENT_BACKGROUND_METATILE_PALETTE",
   CHANGE_BACKGROUND_METATILE_SIZE = "CHANGE_BACKGROUND_METATILE_SIZE"
 }
 
@@ -58,6 +59,10 @@ export type Action =
   | {
       type: ActionTypes.CHANGE_CURRENT_BACKGROUND_METATILE;
       payload: Partial<MetatileSelection>;
+    }
+  | {
+      type: ActionTypes.CHANGE_CURRENT_BACKGROUND_METATILE_PALETTE;
+      payload: GamePalette["id"];
     };
 
 export const initialState: State = {
@@ -140,6 +145,30 @@ export function reducer(state: State, action: Action) {
           ...state.currentBackgroundMetatile,
           ...action.payload
         }
+      };
+    case ActionTypes.CHANGE_CURRENT_BACKGROUND_METATILE_PALETTE:
+      return {
+        ...state,
+        backgroundPatternTables: state.backgroundPatternTables.map(table => {
+          if (table.id !== state.currentBackgroundPatternTableId) {
+            return table;
+          }
+          const indexes = getTileIndexesForMetatile(
+            state.currentBackgroundMetatile
+          );
+          return {
+            ...table,
+            tiles: table.tiles.map((tile, index) => {
+              if (includes(indexes, index)) {
+                return {
+                  ...tile,
+                  gamePaletteId: action.payload
+                };
+              }
+              return tile;
+            }) as TileGrid["tiles"]
+          };
+        })
       };
     default:
       return state;
@@ -242,15 +271,23 @@ export const selectCurrentBackgroundMetatileTiles = createSelector(
   selectCurrentBackgroundPatternTable,
   selectCurrentBackgroundMetatile,
   (patternTable, metatile) => {
-    const result = [];
-    const startIndex = metatile.row * metatile.metatileSize * 16;
-
-    for (let row = 0; row < metatile.metatileSize; ++row) {
-      for (let column = 0; column < metatile.metatileSize; ++column) {
-        result.push(patternTable.tiles[startIndex + row * 16 + column]);
-      }
-    }
-
-    return result;
+    const indexes = getTileIndexesForMetatile(metatile);
+    return indexes.map(index => patternTable.tiles[index]);
   }
 );
+
+function getTileIndexesForMetatile(metatile: MetatileSelection) {
+  const result = [];
+
+  const startIndex =
+    metatile.row * metatile.metatileSize * 16 +
+    metatile.column * metatile.metatileSize;
+
+  for (let row = 0; row < metatile.metatileSize; ++row) {
+    for (let column = 0; column < metatile.metatileSize; ++column) {
+      result.push(startIndex + row * 16 + column);
+    }
+  }
+
+  return result;
+}

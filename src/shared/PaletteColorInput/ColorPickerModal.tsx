@@ -51,6 +51,7 @@ const ColorPickerModal: React.FunctionComponent<Props> = ({
             <ColorPicker
               palette={systemPalette}
               selectedColorId={color.id}
+              scaling={24}
               onChange={onChange}
             />
           </PointingModalContainer>

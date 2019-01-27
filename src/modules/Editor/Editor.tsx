@@ -18,6 +18,14 @@ import {
 import Section from "./Section";
 import BackgroundPatternTable from "./BackgroundPatternTable";
 import BackgroundPatternDetail from "./BackgroundPatternDetail";
+import RadioInput from "../../shared/RadioInput";
+
+const PALETTE_OPTIONS = [
+  { id: "0", label: "#0" },
+  { id: "1", label: "#1" },
+  { id: "2", label: "#2" },
+  { id: "3", label: "#3" }
+];
 
 type Props = {
   state: State;
@@ -83,6 +91,20 @@ const Editor: React.FunctionComponent<Props> = ({ state, dispatch }) => {
           currentMetatile={selectCurrentBackgroundMetatile(state)}
           backgroundColor={selectBackgroundColor(state)}
           palettes={selectBackgroundPalettes(state)}
+        />
+        <RadioInput.Group
+          legend="Palette:"
+          options={PALETTE_OPTIONS}
+          selectedId={
+            selectCurrentBackgroundMetatileTiles(state)[0].gamePaletteId + ""
+          }
+          onChange={id => {
+            dispatch({
+              type: ActionTypes.CHANGE_CURRENT_BACKGROUND_METATILE_PALETTE,
+              payload: parseInt(id, 10)
+            });
+          }}
+          inline={false}
         />
       </Section>
     </div>
