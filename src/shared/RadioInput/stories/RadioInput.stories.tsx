@@ -11,13 +11,13 @@ const storyHost = host({
   backdrop: "transparent"
 });
 
-const store = new Store<{ selectedId: string | number }>({
-  selectedId: "one"
+const store = new Store({
+  selectedId: 1
 });
 
 const stringIdOptions = [
   {
-    id: "one",
+    id: 1,
     label: "First option"
   },
   {

@@ -20,10 +20,10 @@ import BackgroundPatternDetail from "./BackgroundPatternDetail";
 import RadioInput from "../../shared/RadioInput";
 
 const PALETTE_OPTIONS = [
-  { id: "0", label: "#0" },
-  { id: "1", label: "#1" },
-  { id: "2", label: "#2" },
-  { id: "3", label: "#3" }
+  { id: 0, label: "#0" },
+  { id: 1, label: "#1" },
+  { id: 2, label: "#2" },
+  { id: 3, label: "#3" }
 ];
 
 type Props = {
@@ -33,14 +33,14 @@ type Props = {
 
 const Editor: React.FunctionComponent<Props> = ({ state, dispatch }) => {
   const patternTable = selectCurrentBackgroundPatternTable(state);
-  const currentMetatilePalette = selectCurrentBackgroundMetatilePalette(state)!;
-  const [drawColorIndex, setDrawColorIndex] = React.useState("0");
+  const currentMetatilePalette = selectCurrentBackgroundMetatilePalette(state);
+  const [drawColorIndex, setDrawColorIndex] = React.useState(0);
 
   const colorOptions = React.useMemo(
     () => {
-      return currentMetatilePalette.colors.map(color => ({
-        id: color.id + "",
-        label: color.id + ""
+      return currentMetatilePalette!.colors.map((color, index) => ({
+        id: index,
+        label: `${color.id}`
       }));
     },
     [currentMetatilePalette]
@@ -98,12 +98,12 @@ const Editor: React.FunctionComponent<Props> = ({ state, dispatch }) => {
           legend="Palette:"
           options={PALETTE_OPTIONS}
           selectedId={
-            selectCurrentBackgroundMetatileTiles(state)[0].gamePaletteId + ""
+            selectCurrentBackgroundMetatileTiles(state)[0].gamePaletteId
           }
           onChange={id => {
             dispatch({
               type: ActionTypes.CHANGE_CURRENT_BACKGROUND_METATILE_PALETTE,
-              payload: parseInt(id, 10)
+              payload: id
             });
           }}
           inline

@@ -3,36 +3,31 @@ import { uniqueId } from "lodash";
 import RadioInput from "./RadioInput";
 import styles from "./RadioInputGroup.module.scss";
 
-type Option = {
-  id: string | number;
+type Option<IdT> = {
+  id: IdT;
   label: string;
 };
 
-type Props = {
+type Props<IdT> = {
   legend: string;
-  options: Array<Option>;
-  selectedId: string | number;
+  options: Array<Option<IdT>>;
+  selectedId: IdT;
   disabled?: boolean;
   inline?: boolean;
-  renderLabel?: (option: Option) => React.ReactNode;
-  onChange: (id: string | number) => void;
+  renderLabel?: (option: Option<IdT>) => React.ReactNode;
+  onChange: (id: IdT) => void;
 };
 
-const RadioInputGroup: React.FunctionComponent<Props> = ({
+const RadioInputGroup = <P extends string | number>({
   legend,
   options,
   selectedId,
   disabled,
   inline,
-  renderLabel = (option: Option) => option.label,
+  renderLabel = option => option.label,
   onChange
-}) => {
+}: Props<P>) => {
   const labelId = React.useRef(uniqueId("radio-group_"));
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(event.target.value);
-  };
-
   return (
     <>
       <p id={labelId.current}>{legend}</p>
@@ -51,7 +46,7 @@ const RadioInputGroup: React.FunctionComponent<Props> = ({
               groupName={labelId.current}
               checked={selectedId === option.id}
               disabled={disabled}
-              onChange={handleChange}
+              onChange={() => onChange(option.id)}
             >
               {renderLabel(option)}
             </RadioInput>
