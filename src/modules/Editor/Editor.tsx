@@ -58,7 +58,7 @@ const Editor: React.FunctionComponent<Props> = ({ state, dispatch }) => {
         currentSystemPalette={currentSystemPalette}
         onChange={id =>
           dispatch({
-            type: ActionTypes.CHANGE_SYSTEM_PALETTE,
+            type: ActionTypes.SELECT_SYSTEM_PALETTE,
             payload: id
           })
         }
@@ -68,7 +68,7 @@ const Editor: React.FunctionComponent<Props> = ({ state, dispatch }) => {
         systemPalette={currentSystemPalette}
         onSystemPaletteChange={id =>
           dispatch({
-            type: ActionTypes.CHANGE_SYSTEM_PALETTE,
+            type: ActionTypes.SELECT_SYSTEM_PALETTE,
             payload: id
           })
         }

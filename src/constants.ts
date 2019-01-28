@@ -1,5 +1,5 @@
 import { range } from "lodash";
-import { SystemPalette, Tile, PatternTable } from "./types";
+import { SystemPalette, PatternTile, PatternTable } from "./types";
 
 // TODO alternative system palette color values here:
 // http://nesdev.com/NESTechFAQ.htm#howmanycolours
@@ -327,7 +327,7 @@ if (process.env.NODE_ENV === "development") {
 
 export { SYSTEM_PALETTE_OPTIONS };
 
-const HEART_TILE_PIXELS: Tile["pixels"] = new Uint8Array([
+const HEART_TILE_PIXELS: PatternTile["pixels"] = new Uint8Array([
   // 0
   0,
   3,

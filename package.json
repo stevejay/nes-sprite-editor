@@ -22,6 +22,7 @@
     "@types/storybook__addon-knobs": "^4.0.0",
     "@types/storybook__addon-viewport": "^4.1.0",
     "@types/storybook__react": "^4.0.0",
+    "@types/uuid": "^3.4.4",
     "classnames": "^2.2.6",
     "focus-trap-react": "^5.0.1",
     "lodash": "^4.17.11",
@@ -37,7 +38,8 @@
     "reselect": "^4.0.0",
     "save-file": "2.0.0",
     "storybook-host": "^5.0.3",
-    "typescript": "3.2.2"
+    "typescript": "3.2.2",
+    "uuid": "^3.3.2"
   },
   "scripts": {
     "start": "react-scripts start",
