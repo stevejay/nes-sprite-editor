@@ -15,6 +15,7 @@ type Props = {
   tiles: Array<Tile>;
   currentMetatile: Metatile;
   palettes: Array<GamePaletteWithColors>;
+  onClicked: (tileIndex: number, pixelIndex: number) => void;
 };
 
 const BackgroundPatternDetail: React.FunctionComponent<Props> = ({
@@ -23,9 +24,27 @@ const BackgroundPatternDetail: React.FunctionComponent<Props> = ({
   scaling,
   tiles,
   currentMetatile,
-  palettes
+  palettes,
+  onClicked
 }) => {
   const [currentPixel, setCurrentPixel] = React.useState({ row: 0, column: 0 });
+
+  const handleSelect = (row: number, column: number, pressed: boolean) => {
+    setCurrentPixel({ row, column });
+    if (pressed) {
+      const pixel = (row % 8) * 8 + (column % 8);
+
+      const tileRow =
+        currentMetatile.row * currentMetatile.metatileSize +
+        Math.floor(row / 8);
+
+      const tileColumn =
+        currentMetatile.column * currentMetatile.metatileSize +
+        Math.floor(column / 8);
+
+      onClicked(tileRow * 16 + tileColumn, pixel);
+    }
+  };
 
   return (
     <Container>
@@ -34,7 +53,7 @@ const BackgroundPatternDetail: React.FunctionComponent<Props> = ({
         columns={currentMetatile.metatileSize * 8}
         row={currentPixel.row}
         column={currentPixel.column}
-        onSelect={(row, column) => setCurrentPixel({ row, column })}
+        onSelect={handleSelect}
       >
         <TileCanvas
           tilesInRow={tilesInRow}
@@ -51,7 +70,7 @@ const BackgroundPatternDetail: React.FunctionComponent<Props> = ({
           tileHeight={scaling}
           row={currentPixel.row}
           column={currentPixel.column}
-          ariaLabel="todo"
+          ariaLabel="TODO"
           focusOnly
         />
       </TileInteractionTracker>

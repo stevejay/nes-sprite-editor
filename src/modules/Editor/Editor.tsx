@@ -18,6 +18,8 @@ import Section from "./Section";
 import BackgroundPatternTable from "./BackgroundPatternTable";
 import BackgroundPatternDetail from "./BackgroundPatternDetail";
 import RadioInput from "../../shared/RadioInput";
+import formatByteAsHex from "../../shared/utils/format-byte-as-hex";
+import SystemPaletteSection from "./SystemPaletteSection";
 
 const PALETTE_OPTIONS = [
   { id: 0, label: "#0" },
@@ -32,6 +34,9 @@ type Props = {
 };
 
 const Editor: React.FunctionComponent<Props> = ({ state, dispatch }) => {
+  const systemPalettes = selectSystemPalettes(state);
+  const currentSystemPalette = selectCurrentSystemPalette(state);
+
   const patternTable = selectCurrentBackgroundPatternTable(state);
   const currentMetatilePalette = selectCurrentBackgroundMetatilePalette(state);
   const [drawColorIndex, setDrawColorIndex] = React.useState(0);
@@ -40,7 +45,7 @@ const Editor: React.FunctionComponent<Props> = ({ state, dispatch }) => {
     () => {
       return currentMetatilePalette!.colors.map((color, index) => ({
         id: index,
-        label: `${color.id}`
+        label: `$${formatByteAsHex(color.id)}`
       }));
     },
     [currentMetatilePalette]
@@ -48,9 +53,19 @@ const Editor: React.FunctionComponent<Props> = ({ state, dispatch }) => {
 
   return (
     <div className={styles.container}>
-      <EditorSidebar
-        systemPalettes={selectSystemPalettes(state)}
-        systemPalette={selectCurrentSystemPalette(state)}
+      <SystemPaletteSection
+        systemPalettes={systemPalettes}
+        currentSystemPalette={currentSystemPalette}
+        onChange={id =>
+          dispatch({
+            type: ActionTypes.CHANGE_SYSTEM_PALETTE,
+            payload: id
+          })
+        }
+      />
+      {/* <EditorSidebar
+        systemPalettes={systemPalettes}
+        systemPalette={currentSystemPalette}
         onSystemPaletteChange={id =>
           dispatch({
             type: ActionTypes.CHANGE_SYSTEM_PALETTE,
@@ -65,7 +80,7 @@ const Editor: React.FunctionComponent<Props> = ({ state, dispatch }) => {
             payload: gamePaletteChange
           })
         }
-      />
+      /> */}
       <Section>
         <header>
           <h1>Background Tiles</h1>
@@ -93,6 +108,12 @@ const Editor: React.FunctionComponent<Props> = ({ state, dispatch }) => {
           tiles={selectCurrentBackgroundMetatileTiles(state)}
           currentMetatile={selectCurrentBackgroundMetatile(state)}
           palettes={selectBackgroundPalettes(state)}
+          onClicked={(tileIndex, pixelIndex) => {
+            dispatch({
+              type: ActionTypes.CHANGE_CURRENT_BACKGROUND_METATILE_PIXEL,
+              payload: { tileIndex, pixelIndex, colorIndex: drawColorIndex }
+            });
+          }}
         />
         <RadioInput.Group
           legend="Palette:"

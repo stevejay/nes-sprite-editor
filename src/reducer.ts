@@ -19,12 +19,14 @@ export enum ActionTypes {
   CHANGE_GAME_PALETTE_COLOR = "CHANGE_GAME_PALETTE_COLOR",
   CHANGE_CURRENT_BACKGROUND_METATILE = "CHANGE_CURRENT_BACKGROUND_METATILE",
   CHANGE_CURRENT_BACKGROUND_METATILE_PALETTE = "CHANGE_CURRENT_BACKGROUND_METATILE_PALETTE",
+  CHANGE_CURRENT_BACKGROUND_METATILE_PIXEL = "CHANGE_CURRENT_BACKGROUND_METATILE_PIXEL",
   CHANGE_BACKGROUND_METATILE_SIZE = "CHANGE_BACKGROUND_METATILE_SIZE"
 }
 
 export type State = {
   systemPalettes: Array<SystemPalette>;
   currentSystemPaletteId: SystemPalette["id"];
+
   gamePalettes: Array<GamePalette>;
   backgroundPatternTables: Array<PatternTable>;
   currentBackgroundPatternTableId: PatternTable["id"];
@@ -55,6 +57,14 @@ export type Action =
   | {
       type: ActionTypes.CHANGE_CURRENT_BACKGROUND_METATILE_PALETTE;
       payload: GamePalette["id"];
+    }
+  | {
+      type: ActionTypes.CHANGE_CURRENT_BACKGROUND_METATILE_PIXEL;
+      payload: {
+        tileIndex: number;
+        pixelIndex: number;
+        colorIndex: number;
+      };
     };
 
 export const initialState: State = {
@@ -165,6 +175,33 @@ export function reducer(state: State, action: Action) {
           };
         })
       };
+    case ActionTypes.CHANGE_CURRENT_BACKGROUND_METATILE_PIXEL:
+      const { tileIndex, pixelIndex, colorIndex } = action.payload;
+      return {
+        ...state,
+        backgroundPatternTables: state.backgroundPatternTables.map(
+          patternTable => {
+            if (patternTable.id !== state.currentBackgroundPatternTableId) {
+              return patternTable;
+            }
+            return {
+              ...patternTable,
+              tiles: patternTable.tiles.map((tile, index) => {
+                if (index !== tileIndex) {
+                  return tile;
+                }
+                const newPixels = new Uint8Array(tile.pixels);
+                newPixels[pixelIndex] = colorIndex;
+                return {
+                  ...tile,
+                  pixels: newPixels
+                };
+              }) as PatternTable["tiles"]
+            };
+          }
+        )
+      };
+
     default:
       return state;
   }
@@ -178,14 +215,12 @@ export function selectCurrentSystemPaletteId(state: State) {
   return state.currentSystemPaletteId;
 }
 
-export function selectCurrentSystemPalette(state: State) {
-  const systemPalettes = selectSystemPalettes(state);
-  const currentSystemPaletteId = selectCurrentSystemPaletteId(state);
-  return find(
-    systemPalettes,
-    x => x.id === currentSystemPaletteId
-  ) as SystemPalette;
-}
+export const selectCurrentSystemPalette = createSelector(
+  selectSystemPalettes,
+  selectCurrentSystemPaletteId,
+  (systemPalettes, currentSystemPaletteId) =>
+    find(systemPalettes, x => x.id === currentSystemPaletteId)!
+);
 
 export function selectGamePalettes(state: State) {
   return state.gamePalettes;

@@ -12,6 +12,7 @@ type Props = {
   selectedColorId: Color["id"];
   scaling: number;
   onChange: (color: Color) => void;
+  children?: never;
 };
 
 const ColorPicker: React.FunctionComponent<Props> = ({

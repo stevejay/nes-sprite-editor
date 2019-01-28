@@ -1,12 +1,11 @@
 import { storiesOf } from "@storybook/react";
-import { range } from "lodash";
+import { range, noop } from "lodash";
 import * as React from "react";
 import { host } from "storybook-host";
 import "../../../index.scss";
 import BackgroundPatternDetail from "../BackgroundPatternDetail";
 import {
   BACKGROUND_PALETTE,
-  COLOR_ALMOST_WHITE,
   RANDOM_PIXELS
 } from "../../../shared/TileCanvas/stories/constants";
 
@@ -38,5 +37,6 @@ storiesOf("Editor/BackgroundPatternDetail", module)
         column: 0
       }}
       palettes={PALETTES}
+      onClicked={noop}
     />
   ));

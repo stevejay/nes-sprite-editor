@@ -41,7 +41,7 @@ const EditorSidebar: React.FunctionComponent<Props> = ({
     </Section>
     <Section>
       <header>
-        <h1>Game Palette</h1>
+        <h1>Game Palettes</h1>
       </header>
       <h2>Background Color</h2>
       <div className={styles.palette}>

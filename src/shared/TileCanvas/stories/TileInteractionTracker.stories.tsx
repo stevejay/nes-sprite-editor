@@ -12,7 +12,8 @@ const storyHost = host({
 
 const store = new Store({
   row: 0,
-  column: 0
+  column: 0,
+  pressed: false
 });
 
 storiesOf("TileCanvas/TileInteractionTracker", module)
@@ -22,7 +23,7 @@ storiesOf("TileCanvas/TileInteractionTracker", module)
       {state => (
         <>
           <p>
-            row={state.row}, column={state.column}
+            row={state.row}, column={state.column}, pressed={`${state.pressed}`}
           </p>
           <div>
             <TileInteractionTracker
@@ -30,7 +31,9 @@ storiesOf("TileCanvas/TileInteractionTracker", module)
               columns={3}
               row={state.row}
               column={state.column}
-              onSelect={(row, column) => store.set({ row, column })}
+              onSelect={(row, column, pressed) =>
+                store.set({ row, column, pressed })
+              }
             >
               <div
                 tabIndex={0}

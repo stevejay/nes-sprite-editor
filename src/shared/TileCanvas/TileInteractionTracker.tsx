@@ -2,18 +2,19 @@ import React from "react";
 import { clamp } from "lodash";
 import styles from "./TileInteractionTracker.module.scss";
 
+const ENTER = 13;
 const ARROW_LEFT = 37;
 const ARROW_RIGHT = 39;
 const ARROW_UP = 38;
 const ARROW_DOWN = 40;
 
-export type Props = {
+type Props = {
   rows: number;
   columns: number;
   row: number;
   column: number;
   children: React.ReactNode;
-  onSelect: (row: number, column: number) => void;
+  onSelect: (row: number, column: number, pressed: boolean) => void;
 };
 
 const TileInteractionTracker: React.FunctionComponent<Props> = ({
@@ -50,15 +51,22 @@ const TileInteractionTracker: React.FunctionComponent<Props> = ({
         columns - 1
       );
 
-      onSelect(newRow, newColumn);
+      onSelect(newRow, newColumn, true);
     },
-    [rows, columns, row, column]
+    [rows, columns, row, column, onSelect]
   );
 
   const handleKeyDown = React.useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (event.keyCode === ENTER) {
+        onSelect(row, column, true);
+        return;
+      }
+
       let newRow = row;
       let newColumn = column;
+
+      // TODO check shift key not pressed
 
       if (event.keyCode === ARROW_UP) {
         event.preventDefault();
@@ -76,8 +84,7 @@ const TileInteractionTracker: React.FunctionComponent<Props> = ({
 
       newRow = clamp(newRow, 0, rows - 1);
       newColumn = clamp(newColumn, 0, columns - 1);
-
-      onSelect(newRow, newColumn);
+      onSelect(newRow, newColumn, false);
     },
     [rows, columns, row, column]
   );
