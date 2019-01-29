@@ -1,7 +1,7 @@
 import React from "react";
 import {
-  selectBackgroundPalettes,
-  selectSpritePalettes,
+  selectCurrentBackgroundPaletteCollection,
+  selectCurrentSpritePaletteCollection,
   State,
   selectCurrentBackgroundPatternTable
 } from "../../reducer";
@@ -15,13 +15,16 @@ type Props = {
 };
 
 const GameDataOutput: React.FunctionComponent<Props> = ({ state }) => {
-  const backgroundPalettes = selectBackgroundPalettes(state);
-  const spritePalettes = selectSpritePalettes(state);
+  const backgroundPaletteCollection = selectCurrentBackgroundPaletteCollection(
+    state
+  );
+  const spritePaletteCollection = selectCurrentSpritePaletteCollection(state);
   const backgroundPatternTable = selectCurrentBackgroundPatternTable(state);
   const [dataVersion, setDataVersion] = React.useState(0);
 
   const gameDataText = React.useMemo(
-    () => createGameDataText(backgroundPalettes, spritePalettes),
+    () =>
+      createGameDataText(backgroundPaletteCollection, spritePaletteCollection),
     [dataVersion]
   );
 
@@ -34,7 +37,13 @@ const GameDataOutput: React.FunctionComponent<Props> = ({ state }) => {
         <Button onClick={() => setDataVersion(Date.now())}>
           Update text output
         </Button>
-        <Button onClick={() => downloadPatternTable(backgroundPatternTable)}>
+        <Button
+          disabled={!backgroundPatternTable}
+          onClick={() =>
+            backgroundPatternTable &&
+            downloadPatternTable(backgroundPatternTable)
+          }
+        >
           Download background tiles pattern file
         </Button>
       </Button.Container>

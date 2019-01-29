@@ -31,9 +31,6 @@ storiesOf("TileCanvas/TileCanvas", module)
         JADE_PIXELS,
         JADE_PIXELS
       ].map(pixels => ({
-        row: -1,
-        column: -1,
-        gamePaletteId: BACKGROUND_PALETTE.id,
         pixels
       }))}
       palettes={[BACKGROUND_PALETTE]}
@@ -46,9 +43,6 @@ storiesOf("TileCanvas/TileCanvas", module)
       tilesInColumn={1}
       scaling={16}
       tiles={[RANDOM_PIXELS].map(pixels => ({
-        row: -1,
-        column: -1,
-        gamePaletteId: BACKGROUND_PALETTE.id,
         pixels
       }))}
       palettes={[BACKGROUND_PALETTE]}

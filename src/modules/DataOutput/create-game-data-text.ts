@@ -1,11 +1,17 @@
-import { GamePaletteWithColors } from "../../reducer";
+import {
+  GamePaletteWithColors,
+  GamePaletteCollectionWithColors
+} from "../../reducer";
 import formatByteAsHex from "../../shared/utils/format-byte-as-hex";
-import { Color } from "../../types";
 
 export default function createGameDataText(
-  backgroundPalettes: Array<GamePaletteWithColors>,
-  spritePalettes: Array<GamePaletteWithColors>
+  backgroundPaletteCollection: GamePaletteCollectionWithColors | null,
+  spritePaletteCollection: GamePaletteCollectionWithColors | null
 ): string {
+  if (!backgroundPaletteCollection || !spritePaletteCollection) {
+    return "";
+  }
+
   // Note: might be '.byte' instead of '.db':
 
   return `;;; BANK 1 DATA
@@ -16,22 +22,22 @@ export default function createGameDataText(
 PaletteData:
 
   ;; background palettes
-  .db ${createGamePaletteData(backgroundPalettes[0])}
-  .db ${createGamePaletteData(backgroundPalettes[1])}
-  .db ${createGamePaletteData(backgroundPalettes[2])}
-  .db ${createGamePaletteData(backgroundPalettes[3])}
+  .db ${createGamePaletteData(backgroundPaletteCollection.gamePalettes[0])}
+  .db ${createGamePaletteData(backgroundPaletteCollection.gamePalettes[1])}
+  .db ${createGamePaletteData(backgroundPaletteCollection.gamePalettes[2])}
+  .db ${createGamePaletteData(backgroundPaletteCollection.gamePalettes[3])}
 
   ;; sprite palettes
-  .db ${createGamePaletteData(spritePalettes[0])}
-  .db ${createGamePaletteData(spritePalettes[1])}
-  .db ${createGamePaletteData(spritePalettes[2])}
-  .db ${createGamePaletteData(spritePalettes[3])}
+  .db ${createGamePaletteData(spritePaletteCollection.gamePalettes[0])}
+  .db ${createGamePaletteData(spritePaletteCollection.gamePalettes[1])}
+  .db ${createGamePaletteData(spritePaletteCollection.gamePalettes[2])}
+  .db ${createGamePaletteData(spritePaletteCollection.gamePalettes[3])}
 `;
 }
 
 function createGamePaletteData(gamePalette: GamePaletteWithColors): string {
-  const gamePaletteColors = gamePalette.values
-    .map(value => `$${formatByteAsHex(value)}`)
+  const gamePaletteColors = gamePalette.colorIndexes
+    .map(colorIndex => `$${formatByteAsHex(colorIndex)}`)
     .join(",");
-  return `$${gamePaletteColors}`;
+  return `${gamePaletteColors}`;
 }

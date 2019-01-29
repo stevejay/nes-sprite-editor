@@ -41,7 +41,7 @@ export type PatternTableType = "background" | "sprite";
 export type PatternTable = {
   id: string;
   label: string;
-  tiles: Array<PatternTile>; // 256 tiles
+  tiles: Array<PatternTile>; // 256 tiles (16x16)
 };
 
 // export type PatternMetatile = {

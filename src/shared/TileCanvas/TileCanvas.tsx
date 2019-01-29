@@ -1,9 +1,9 @@
 import React from "react";
 import styles from "./TileCanvas.module.scss";
 import { GamePaletteWithColors } from "../../reducer";
-import { Tile, Color } from "../../types";
 import useSizedCanvasEffect from "../utils/use-sized-canvas-effect";
 import useDrawTilesEffect from "./use-draw-tiles-effect";
+import { PatternTile } from "../../types";
 
 const PIXEL_ROWS_PER_TILE = 8;
 const PIXEL_COLUMNS_PER_TILE = PIXEL_ROWS_PER_TILE;
@@ -12,7 +12,7 @@ type Props = {
   tilesInRow: number;
   tilesInColumn: number;
   scaling: number; // 1+
-  tiles: Array<Tile>;
+  tiles: Array<PatternTile>;
   palettes: Array<GamePaletteWithColors>;
   ariaLabel: string;
 };

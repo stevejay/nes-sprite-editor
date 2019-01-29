@@ -1,5 +1,5 @@
 import { range, random } from "lodash";
-import { GamePaletteTypes, Color } from "../../../types";
+import { Color } from "../../../types";
 import { GamePaletteWithColors } from "../../../reducer";
 
 export const COLOR_GRAPE: Color = {
@@ -31,9 +31,12 @@ export const COLOR_ALMOST_WHITE: Color = {
 };
 
 export const BACKGROUND_PALETTE: GamePaletteWithColors = {
-  type: GamePaletteTypes.BACKGROUND,
-  id: 0,
-  values: [COLOR_ALMOST_WHITE.id, COLOR_GRAPE.id, COLOR_PINK.id, COLOR_JADE.id],
+  colorIndexes: [
+    COLOR_ALMOST_WHITE.id,
+    COLOR_GRAPE.id,
+    COLOR_PINK.id,
+    COLOR_JADE.id
+  ],
   colors: [COLOR_ALMOST_WHITE, COLOR_GRAPE, COLOR_PINK, COLOR_JADE]
 };
 

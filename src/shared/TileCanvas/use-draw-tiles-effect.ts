@@ -1,10 +1,10 @@
 import React from "react";
-import { Color, Tile } from "../../types";
+import { Color, PatternTile } from "../../types";
 import { GamePaletteWithColors } from "../../reducer";
 
 export default function useDrawTilesEffect(
   canvasRef: React.RefObject<HTMLCanvasElement | null>,
-  tiles: Array<Tile>,
+  tiles: Array<PatternTile>,
   palettes: Array<GamePaletteWithColors>,
   columns: number,
   scaling: number
@@ -19,7 +19,7 @@ export default function useDrawTilesEffect(
           Math.floor(index / columns),
           index % columns,
           tile.pixels,
-          palettes[tile.gamePaletteId].colors,
+          palettes[0].colors, // TODO change
           scaling
         );
       });

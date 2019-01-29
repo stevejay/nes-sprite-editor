@@ -1,5 +1,4 @@
 import React from "react";
-import { Tile, Color, Metatile } from "../../types";
 import { GamePaletteWithColors } from "../../reducer";
 import {
   TileInteractionTracker,

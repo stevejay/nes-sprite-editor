@@ -1,0 +1,62 @@
+@import "styles/_base.scss";
+
+$button-v-padding: 10;
+
+.container {
+  position: relative;
+  color: inherit;
+  width: 100%;
+
+  &::after {
+    content: "\25BE";
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: rem(13);
+    color: $md-grey-800;
+    pointer-events: none;
+  }
+
+  &.disabled::after {
+    color: $md-grey-500;
+  }
+}
+
+.container > select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 100%;
+  height: rem($button-v-padding + $button-v-padding + 16 + 2);
+  padding: rem($button-v-padding) rem(32) rem($button-v-padding) rem(12);
+  font-family: inherit;
+  font-size: rem(16);
+  line-height: 1;
+  vertical-align: middle;
+  border: 1px solid $md-grey-500;
+  border-radius: rem(3);
+  outline: 0;
+  background-color: $md-white;
+
+  // try:
+  line-height: 1.5rem;
+  padding-top: 0;
+  padding-bottom: 0;
+
+  &:disabled {
+    background-color: $md-grey-200;
+    border-color: $md-grey-400;
+    cursor: not-allowed;
+  }
+}
+
+.container > select:-moz-focusring,
+.container > select::-moz-focus-inner {
+  color: transparent !important;
+  text-shadow: 0 0 0 #000 !important;
+  background-image: none !important;
+  border: 0;
+}
+
+.container > select:focus {
+  @include focus-ring;
+}

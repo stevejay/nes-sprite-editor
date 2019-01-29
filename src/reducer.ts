@@ -69,6 +69,12 @@ export type GamePaletteWithColors = GamePalette & {
   colors: Array<Color>;
 };
 
+export type GamePaletteCollectionWithColors = {
+  id: GamePaletteCollection["id"];
+  label: GamePaletteCollection["label"];
+  gamePalettes: Array<GamePaletteWithColors>;
+};
+
 export type Action =
   | {
       type: ActionTypes.SELECT_SYSTEM_PALETTE;
@@ -699,7 +705,7 @@ function nametableSliceReducer(state: State, action: Action): State {
   }
 }
 
-export function reducer(state: State, action: Action): State {
+export function reducer(state: State = initialState, action: Action): State {
   switch (action.type) {
     case ActionTypes.SELECT_SYSTEM_PALETTE:
       return systemPaletteSliceReducer(state, action);
@@ -801,59 +807,31 @@ export function selectCurrentBackgroundPaletteCollectionId(state: State) {
   return state.paletteCollections.background.currentCollectionId;
 }
 
-export const selectCurrentBackgroundPaletteCollectionWithColors = createSelector(
+export const selectCurrentBackgroundPaletteCollection = createSelector(
   selectCurrentSystemPalette,
   selectBackgroundPaletteCollections,
   selectCurrentBackgroundPaletteCollectionId,
-  (systemPalette, paletteCollections, currentId) => {
-    if (!currentId) {
-      return null;
-    }
-    const collection =
-      find(paletteCollections, collection => collection.id === currentId) ||
-      null;
-    if (!collection) {
-      return null;
-    }
-    return {
-      ...collection,
-      gamePalettes: collection.gamePalettes.map(gamePalette =>
-        mapToGamePaletteColors(gamePalette, systemPalette)
-      )
-    };
-  }
+  createGamePaletteCollectionWithColors
 );
 
-export function selectSpritePaletteCollections(state: State) {
-  return state.paletteCollections.sprite.collections;
-}
-
-export function selectCurrentSpritePaletteCollectionId(state: State) {
-  return state.paletteCollections.sprite.currentCollectionId;
-}
-
-export const selectCurrentSpritePaletteCollectionWithColors = createSelector(
-  selectCurrentSystemPalette,
-  selectSpritePaletteCollections,
-  selectCurrentSpritePaletteCollectionId,
-  (systemPalette, paletteCollections, currentId) => {
-    if (!currentId) {
-      return null;
-    }
-    const collection =
-      find(paletteCollections, collection => collection.id === currentId) ||
-      null;
-    if (!collection) {
-      return null;
-    }
-    return {
-      ...collection,
-      gamePalettes: collection.gamePalettes.map(gamePalette =>
-        mapToGamePaletteColors(gamePalette, systemPalette)
-      )
-    };
+function createGamePaletteCollectionWithColors(
+  systemPalette: SystemPalette,
+  paletteCollections: Array<GamePaletteCollection>,
+  currentId: PaletteCollectionState["currentCollectionId"]
+): GamePaletteCollectionWithColors | null {
+  const paletteCollection =
+    find(paletteCollections, collection => collection.id === currentId) || null;
+  if (!paletteCollection) {
+    return null;
   }
-);
+  return {
+    id: paletteCollection.id,
+    label: paletteCollection.label,
+    gamePalettes: paletteCollection.gamePalettes.map(gamePalette =>
+      mapToGamePaletteColors(gamePalette, systemPalette)
+    )
+  };
+}
 
 function mapToGamePaletteColors(
   gamePalette: GamePalette,
@@ -866,6 +844,21 @@ function mapToGamePaletteColors(
     )
   };
 }
+
+export function selectSpritePaletteCollections(state: State) {
+  return state.paletteCollections.sprite.collections;
+}
+
+export function selectCurrentSpritePaletteCollectionId(state: State) {
+  return state.paletteCollections.sprite.currentCollectionId;
+}
+
+export const selectCurrentSpritePaletteCollection = createSelector(
+  selectCurrentSystemPalette,
+  selectSpritePaletteCollections,
+  selectCurrentSpritePaletteCollectionId,
+  createGamePaletteCollectionWithColors
+);
 
 export function selectBackgroundPatternTables(state: State) {
   return state.patternTables.background.tables;

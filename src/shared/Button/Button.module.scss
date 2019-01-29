@@ -1,37 +1,87 @@
 @import "styles/_base.scss";
 
+$background-color: $md-grey-300;
+$foreground-color: $md-black;
+$button-v-padding: 10;
+
 .button {
-  border: 0px solid;
-  padding: rem(12) rem(24);
+  display: inline-block;
+  position: relative;
+  height: rem($button-v-padding + $button-v-padding + 16 + 2);
+  min-width: rem($button-v-padding + $button-v-padding + 16 + 2);
+  padding: 0 rem(14);
   margin: 0;
+  border-radius: rem(3);
+  flex-shrink: 0;
+
+  color: $foreground-color;
+  background-color: $background-color;
+  border: 1px solid $background-color;
+
+  font-style: normal;
+  text-align: center;
+  vertical-align: middle;
+  text-decoration: none;
+  font-size: rem(16);
+  line-height: 1;
+
+  will-change: background-color, border-color;
+  transition: background-color $transition-fast, border-color $transition-fast;
+
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   -webkit-appearance: none;
   background-clip: padding-box;
   cursor: pointer;
-  display: inline-block;
-  border: none;
-  border-radius: rem(3);
-  font-style: normal;
-  text-align: center;
-  text-decoration: none;
   user-select: none;
-  min-height: rem(39);
-  font-size: rem(16);
-  color: $md-white;
-  background-color: $md-light-green-800;
   background-image: none;
-  will-change: background-color;
-  transition: background-color $transition-fast;
 
   &::-moz-focus-inner {
     border: 0; /* Removes dotted line in Firefox */
   }
 
   &:hover {
-    background-color: darken($md-light-green-800, 5);
+    background-color: darken($background-color, 3);
+    border-color: darken($background-color, 3);
+  }
+
+  &:active {
+    background-color: darken($background-color, 10);
+    border-color: darken($background-color, 10);
+  }
+}
+
+.button.small {
+  text-transform: uppercase;
+  height: 1.75rem;
+  padding: 0 0.375rem;
+}
+
+.button svg {
+  width: rem(22);
+  height: rem(22);
+  position: absolute;
+  left: rem($button-v-padding + 8 + 1);
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.button svg + span {
+  padding-left: rem(22);
+}
+
+.button:disabled {
+  cursor: not-allowed;
+
+  &,
+  &:hover,
+  &:active {
+    background-color: rgba($background-color, 0.66);
+    border-color: rgba($background-color, 0.66);
+    color: rgba($foreground-color, 0.33);
   }
 }
 
 .button:focus {
   @include focus-ring;
+  z-index: 1;
 }

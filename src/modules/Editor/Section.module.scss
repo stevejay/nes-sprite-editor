@@ -2,8 +2,14 @@
 
 .section {
   // border-bottom: 1px solid $md-grey-300;
-  padding: 0 $gutter / 2 $gutter / 4;
-  margin-bottom: $gutter / 2;
+  // padding: 0 $gutter / 2 $gutter / 4;
+  // margin-bottom: $gutter / 2;
+
+  padding: $gutter / 3 $gutter / 2 $gutter / 4 $gutter / 2;
+  margin: $gutter / 4;
+  border: 1px solid $md-grey-300;
+  // border-radius: rem(6);
+  // box-shadow: $box-shadow;
 }
 
 // .section:last-of-type {

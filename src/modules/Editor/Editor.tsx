@@ -1,25 +1,25 @@
 import React from "react";
 import styles from "./Editor.module.scss";
-import EditorSidebar from "./EditorSidebar";
+// import EditorSidebar from "./EditorSidebar";
 import {
   Action,
   ActionTypes,
-  selectBackgroundPalettes,
-  selectSpritePalettes,
   selectCurrentSystemPalette,
   selectSystemPalettes,
   State,
-  selectCurrentBackgroundPatternTable,
-  selectCurrentBackgroundMetatile,
-  selectCurrentBackgroundMetatileTiles,
-  selectCurrentBackgroundMetatilePalette
+  selectBackgroundPaletteCollections,
+  selectCurrentBackgroundPaletteCollection,
+  selectSpritePaletteCollections,
+  selectCurrentSpritePaletteCollection
 } from "../../reducer";
-import Section from "./Section";
-import BackgroundPatternTable from "./BackgroundPatternTable";
-import BackgroundPatternDetail from "./BackgroundPatternDetail";
-import RadioInput from "../../shared/RadioInput";
-import formatByteAsHex from "../../shared/utils/format-byte-as-hex";
+// import Section from "./Section";
+// import BackgroundPatternTable from "./BackgroundPatternTable";
+// import BackgroundPatternDetail from "./BackgroundPatternDetail";
+// import RadioInput from "../../shared/RadioInput";
+// import formatByteAsHex from "../../shared/utils/format-byte-as-hex";
 import SystemPaletteSection from "./SystemPaletteSection";
+import BackgroundPalettesSection from "./BackgroundPalettesSection";
+import SpritePalettesSection from "./SpritePalettesSection";
 
 const PALETTE_OPTIONS = [
   { id: 0, label: "#0" },
@@ -36,32 +36,49 @@ type Props = {
 const Editor: React.FunctionComponent<Props> = ({ state, dispatch }) => {
   const systemPalettes = selectSystemPalettes(state);
   const currentSystemPalette = selectCurrentSystemPalette(state);
-
-  const patternTable = selectCurrentBackgroundPatternTable(state);
-  const currentMetatilePalette = selectCurrentBackgroundMetatilePalette(state);
-  const [drawColorIndex, setDrawColorIndex] = React.useState(0);
-
-  const colorOptions = React.useMemo(
-    () => {
-      return currentMetatilePalette!.colors.map((color, index) => ({
-        id: index,
-        label: `$${formatByteAsHex(color.id)}`
-      }));
-    },
-    [currentMetatilePalette]
+  const backgroundPaletteCollections = selectBackgroundPaletteCollections(
+    state
   );
+  const currentBackgroundPaletteCollection = selectCurrentBackgroundPaletteCollection(
+    state
+  );
+  const spritePaletteCollections = selectSpritePaletteCollections(state);
+  const currentSpritePaletteCollection = selectCurrentSpritePaletteCollection(
+    state
+  );
+
+  // const patternTable = selectCurrentBackgroundPatternTable(state);
+  // const currentMetatilePalette = selectCurrentBackgroundMetatilePalette(state);
+  // const [drawColorIndex, setDrawColorIndex] = React.useState(0);
+
+  // const colorOptions = React.useMemo(
+  //   () => {
+  //     return currentMetatilePalette!.colors.map((color, index) => ({
+  //       id: index,
+  //       label: `$${formatByteAsHex(color.id)}`
+  //     }));
+  //   },
+  //   [currentMetatilePalette]
+  // );
 
   return (
     <div className={styles.container}>
       <SystemPaletteSection
         systemPalettes={systemPalettes}
         currentSystemPalette={currentSystemPalette}
-        onChange={id =>
-          dispatch({
-            type: ActionTypes.SELECT_SYSTEM_PALETTE,
-            payload: id
-          })
-        }
+        dispatch={dispatch}
+      />
+      <BackgroundPalettesSection
+        systemPalette={currentSystemPalette}
+        paletteCollections={backgroundPaletteCollections}
+        currentPaletteCollection={currentBackgroundPaletteCollection}
+        dispatch={dispatch}
+      />
+      <SpritePalettesSection
+        systemPalette={currentSystemPalette}
+        paletteCollections={spritePaletteCollections}
+        currentPaletteCollection={currentSpritePaletteCollection}
+        dispatch={dispatch}
       />
       {/* <EditorSidebar
         systemPalettes={systemPalettes}
@@ -81,7 +98,7 @@ const Editor: React.FunctionComponent<Props> = ({ state, dispatch }) => {
           })
         }
       /> */}
-      <Section>
+      {/* <Section>
         <header>
           <h1>Background Tiles</h1>
         </header>
@@ -136,7 +153,7 @@ const Editor: React.FunctionComponent<Props> = ({ state, dispatch }) => {
           onChange={id => setDrawColorIndex(id)}
           inline
         />
-      </Section>
+      </Section> */}
     </div>
   );
 };
