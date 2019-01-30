@@ -1,0 +1,16 @@
+@import "styles/_base.scss";
+
+.container {
+  display: flex;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.container > button {
+  margin-left: rem(6);
+  flex-grow: 1;
+}
+
+.container > button:first-of-type {
+  margin-left: 0;
+}

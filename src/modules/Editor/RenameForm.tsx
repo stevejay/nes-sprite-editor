@@ -10,13 +10,18 @@ type Props = {
   onCancel: () => void;
 };
 
-const RenameForm: React.FunctionComponent<Props> = ({
-  handleSubmit,
-  submitting,
-  onCancel
-}) => (
+const RenameForm = ({ handleSubmit, submitting, onCancel }: Props) => (
   <Form onSubmit={handleSubmit}>
-    <Field name="name" label="Collection name:" component={TextField as any} />
+    <ModalDialog.Header onClose={onCancel}>
+      Rename a collection
+    </ModalDialog.Header>
+    <ModalDialog.Content>
+      <Field
+        name="name"
+        label="Collection name:"
+        component={TextField as any}
+      />
+    </ModalDialog.Content>
     <ModalDialog.Footer>
       <Button onClick={onCancel}>Cancel</Button>
       <Button.Submit label="Rename" color="primary" disabled={submitting} />

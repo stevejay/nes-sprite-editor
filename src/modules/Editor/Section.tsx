@@ -7,7 +7,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-const Section: React.FunctionComponent<Props> = ({ className, children }) => {
+const Section = ({ className, children }: Props) => {
   const sectionClassName = classNames(styles.section, className);
   return <section className={sectionClassName}>{children}</section>;
 };

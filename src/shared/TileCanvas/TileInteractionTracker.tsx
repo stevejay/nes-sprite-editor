@@ -93,7 +93,7 @@ const TileInteractionTracker: React.FunctionComponent<Props> = ({
     <div
       ref={containerRef}
       className={styles.container}
-      onClick={handleContainerClick}
+      onMouseDown={handleContainerClick}
       onKeyDown={handleKeyDown}
     >
       {children}

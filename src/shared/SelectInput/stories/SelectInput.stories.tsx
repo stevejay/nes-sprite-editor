@@ -13,7 +13,7 @@ const storyHost = host({
 });
 
 const store = new Store({
-  selectedId: 1
+  value: 1
 });
 
 const options = [
@@ -31,9 +31,9 @@ storiesOf("SelectInput", module)
         <SelectInput<number>
           id="select-basic"
           options={options}
-          selectedId={state.selectedId}
+          value={state.value}
           disabled={boolean("Disabled", false)}
-          onChange={(id: number) => store.set({ selectedId: id })}
+          onChange={(value: number) => store.set({ value })}
         />
       )}
     </State>
@@ -44,10 +44,8 @@ storiesOf("SelectInput", module)
         <SelectInput<number>
           id="select-basic"
           options={[]}
-          selectedId={null}
-          onChange={(id: number) => {
-            store.set({ selectedId: id });
-          }}
+          value={null}
+          onChange={(value: number) => store.set({ value })}
         />
       )}
     </State>

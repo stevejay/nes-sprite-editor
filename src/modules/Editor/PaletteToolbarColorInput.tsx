@@ -10,14 +10,13 @@ type Props = {
   onChange: (color: Color) => void;
 };
 
-const PaletteToolbarColorInput: React.FunctionComponent<Props> = ({
+const PaletteToolbarColorInput = ({
   index,
   color,
   systemPalette,
   onChange
-}) => {
+}: Props) => {
   const [tabIndex, onKeyDown, onClick, focused] = useRovingTabIndex(index);
-
   return (
     <PaletteColorInput
       color={color}

@@ -10,7 +10,11 @@ import {
   selectBackgroundPaletteCollections,
   selectCurrentBackgroundPaletteCollection,
   selectSpritePaletteCollections,
-  selectCurrentSpritePaletteCollection
+  selectCurrentSpritePaletteCollection,
+  selectBackgroundPatternTables,
+  selectCurrentBackgroundPatternTable,
+  selectSpritePatternTables,
+  selectCurrentSpritePatternTable
 } from "../../reducer";
 // import Section from "./Section";
 // import BackgroundPatternTable from "./BackgroundPatternTable";
@@ -20,13 +24,7 @@ import {
 import SystemPaletteSection from "./SystemPaletteSection";
 import BackgroundPalettesSection from "./BackgroundPalettesSection";
 import SpritePalettesSection from "./SpritePalettesSection";
-
-const PALETTE_OPTIONS = [
-  { id: 0, label: "#0" },
-  { id: 1, label: "#1" },
-  { id: 2, label: "#2" },
-  { id: 3, label: "#3" }
-];
+import BackgroundPatternTablesSection from "./BackgroundPatternTablesSection";
 
 type Props = {
   state: State;
@@ -46,6 +44,12 @@ const Editor: React.FunctionComponent<Props> = ({ state, dispatch }) => {
   const currentSpritePaletteCollection = selectCurrentSpritePaletteCollection(
     state
   );
+  const backgroundPatternTables = selectBackgroundPatternTables(state);
+  const currentBackgroundPatternTable = selectCurrentBackgroundPatternTable(
+    state
+  );
+  const spritePatternTables = selectSpritePatternTables(state);
+  const currentSpritePatternTable = selectCurrentSpritePatternTable(state);
 
   // const patternTable = selectCurrentBackgroundPatternTable(state);
   // const currentMetatilePalette = selectCurrentBackgroundMetatilePalette(state);
@@ -62,43 +66,39 @@ const Editor: React.FunctionComponent<Props> = ({ state, dispatch }) => {
   // );
 
   return (
-    <div className={styles.container}>
-      <SystemPaletteSection
-        systemPalettes={systemPalettes}
-        currentSystemPalette={currentSystemPalette}
-        dispatch={dispatch}
-      />
-      <BackgroundPalettesSection
-        systemPalette={currentSystemPalette}
-        paletteCollections={backgroundPaletteCollections}
-        currentPaletteCollection={currentBackgroundPaletteCollection}
-        dispatch={dispatch}
-      />
-      <SpritePalettesSection
-        systemPalette={currentSystemPalette}
-        paletteCollections={spritePaletteCollections}
-        currentPaletteCollection={currentSpritePaletteCollection}
-        dispatch={dispatch}
-      />
-      {/* <EditorSidebar
-        systemPalettes={systemPalettes}
-        systemPalette={currentSystemPalette}
-        onSystemPaletteChange={id =>
-          dispatch({
-            type: ActionTypes.SELECT_SYSTEM_PALETTE,
-            payload: id
-          })
-        }
-        backgroundPalettes={selectBackgroundPalettes(state)}
-        spritePalettes={selectSpritePalettes(state)}
-        onGamePaletteChange={gamePaletteChange =>
-          dispatch({
-            type: ActionTypes.CHANGE_GAME_PALETTE_COLOR,
-            payload: gamePaletteChange
-          })
-        }
-      /> */}
-      {/* <Section>
+    <>
+      <div className={styles.container}>
+        <SystemPaletteSection
+          systemPalettes={systemPalettes}
+          currentSystemPalette={currentSystemPalette}
+          dispatch={dispatch}
+        />
+        <BackgroundPalettesSection
+          systemPalette={currentSystemPalette}
+          paletteCollections={backgroundPaletteCollections}
+          currentCollection={currentBackgroundPaletteCollection}
+          dispatch={dispatch}
+        />
+        <SpritePalettesSection
+          systemPalette={currentSystemPalette}
+          paletteCollections={spritePaletteCollections}
+          currentCollection={currentSpritePaletteCollection}
+          dispatch={dispatch}
+        />
+      </div>
+      <div className={styles.container}>
+        <BackgroundPatternTablesSection
+          patternTables={backgroundPatternTables}
+          currentTable={currentBackgroundPatternTable}
+          currentPaletteCollection={currentBackgroundPaletteCollection}
+          dispatch={dispatch}
+        />
+        {/* <SpritePatternTablesSection
+          patternTables={spritePatternTables}
+          currentTable={currentSpritePatternTable}
+          dispatch={dispatch}
+        /> */}
+        {/* <Section>
         <header>
           <h1>Background Tiles</h1>
         </header>
@@ -154,7 +154,8 @@ const Editor: React.FunctionComponent<Props> = ({ state, dispatch }) => {
           inline
         />
       </Section> */}
-    </div>
+      </div>
+    </>
   );
 };
 

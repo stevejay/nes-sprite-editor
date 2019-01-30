@@ -1,10 +1,8 @@
-import React from "react";
-import { ModalDialog } from "../../shared/Modal";
-import { Form } from "react-final-form";
-import Button from "../../shared/Button";
-import { TextField } from "../../shared/Form";
-import RenameForm from "./RenameForm";
 import { isEmpty } from "lodash";
+import React from "react";
+import { Form } from "react-final-form";
+import { ModalDialog } from "../../shared/Modal";
+import RenameForm from "./RenameForm";
 
 const FORM_SUBSCRIPTION = { submitting: true };
 
@@ -15,14 +13,7 @@ type Props = {
   onClose: () => void;
 };
 
-const RenameModal: React.FunctionComponent<Props> = ({
-  isOpen,
-  name,
-  onRename,
-  onClose
-}) => {
-  const initialValues = React.useMemo(() => ({ name }), [name]);
-
+const RenameModal = ({ isOpen, name, onRename, onClose }: Props) => {
   const handleSubmit = React.useCallback(
     (values: any) => {
       const value = values.name.trim();
@@ -37,25 +28,23 @@ const RenameModal: React.FunctionComponent<Props> = ({
 
   return (
     <ModalDialog isOpen={isOpen} onClose={onClose}>
-      <ModalDialog.Header onClose={onClose}>
-        Rename a collection
-      </ModalDialog.Header>
-      <ModalDialog.Content>
-        <Form
-          onSubmit={handleSubmit}
-          initialValues={initialValues}
-          subscription={FORM_SUBSCRIPTION}
-          render={({ handleSubmit, submitting }) => (
-            <RenameForm
-              handleSubmit={handleSubmit}
-              onCancel={onClose}
-              submitting={submitting}
-            />
-          )}
-        />
-      </ModalDialog.Content>
+      <Form
+        onSubmit={handleSubmit}
+        initialValues={{ name }}
+        subscription={FORM_SUBSCRIPTION}
+        render={({ handleSubmit, submitting }) => (
+          <RenameForm
+            handleSubmit={handleSubmit}
+            onCancel={onClose}
+            submitting={submitting}
+          />
+        )}
+      />
     </ModalDialog>
   );
 };
 
-export default React.memo(RenameModal);
+export default React.memo(
+  RenameModal,
+  (prevProps, nextProps) => prevProps.isOpen === nextProps.isOpen
+);

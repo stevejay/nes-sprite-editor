@@ -1,0 +1,18 @@
+@import "styles/_base.scss";
+
+.palette {
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.palette + :not(.palette) {
+  margin-top: 1rem;
+}
+
+.palette h3 {
+  font-size: rem(21);
+  font-weight: $font-weight-regular;
+  width: 2.25rem;
+  margin: 0;
+}

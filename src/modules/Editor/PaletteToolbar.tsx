@@ -7,10 +7,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-const PaletteToolbar: React.FunctionComponent<Props> = ({
-  ariaLabel,
-  children
-}) => (
+const PaletteToolbar = ({ ariaLabel, children }: Props) => (
   <Panel ariaLabel={ariaLabel} ariaOrientation="horizontal" role="toolbar">
     <RovingTabIndexProvider>{children}</RovingTabIndexProvider>
   </Panel>

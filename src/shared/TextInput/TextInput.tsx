@@ -7,6 +7,7 @@ export type Props = {
   disabled?: boolean;
   id?: string;
   name?: string;
+  autosOff?: boolean;
   onChange: (value: string) => void;
 };
 
@@ -16,6 +17,7 @@ const TextInput: React.FunctionComponent<Props> = ({
   disabled = false,
   id,
   name,
+  autosOff,
   onChange
 }) => (
   <input
@@ -26,10 +28,10 @@ const TextInput: React.FunctionComponent<Props> = ({
     value={value}
     disabled={disabled}
     onChange={event => onChange(event.target.value)}
-    autoCapitalize="off"
-    autoComplete="off"
-    autoCorrect="off"
-    spellCheck={false}
+    autoCapitalize={autosOff ? "off" : undefined}
+    autoComplete={autosOff ? "off" : undefined}
+    autoCorrect={autosOff ? "off" : undefined}
+    spellCheck={autosOff ? false : undefined}
   />
 );
 

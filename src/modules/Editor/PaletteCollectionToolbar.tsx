@@ -1,5 +1,4 @@
 import React from "react";
-import styles from "./PaletteCollectionToolbar.module.scss";
 import Button from "../../shared/Button";
 import {
   ActionTypes,
@@ -9,28 +8,26 @@ import {
 import { isNil, isEmpty } from "lodash";
 import { GamePaletteCollection, GamePaletteType } from "../../types";
 import RenameModal from "./RenameModal";
+import ButtonToolbar from "./ButtonToolbar";
 
 type Props = {
   type: GamePaletteType;
   paletteCollections: Array<GamePaletteCollection>;
-  currentPaletteCollection: GamePaletteCollectionWithColors | null;
+  currentCollection: GamePaletteCollectionWithColors | null;
   dispatch: React.Dispatch<Action>;
 };
 
-// TODO put memo back on
 const PaletteCollectionToolbar = ({
   type,
   paletteCollections,
-  currentPaletteCollection,
+  currentCollection,
   dispatch
 }: Props) => {
   const [renameModalIsOpen, setRenameModalIsOpen] = React.useState(false);
-
-  const hasNoPalettes =
-    isNil(currentPaletteCollection) || isEmpty(paletteCollections);
+  const hasNoOptions = isNil(currentCollection) || isEmpty(paletteCollections);
 
   return (
-    <div className={styles.container}>
+    <ButtonToolbar>
       <Button
         ariaLabel={`Add a new ${type} palette collection`}
         size="small"
@@ -45,7 +42,7 @@ const PaletteCollectionToolbar = ({
       </Button>
       <Button
         ariaLabel={`Edit the current ${type} palette collection`}
-        disabled={hasNoPalettes}
+        disabled={hasNoOptions}
         size="small"
         onClick={() => setRenameModalIsOpen(true)}
       >
@@ -53,13 +50,13 @@ const PaletteCollectionToolbar = ({
       </Button>
       <Button
         ariaLabel={`Copy the current ${type} palette collection`}
-        disabled={hasNoPalettes}
+        disabled={hasNoOptions}
         size="small"
         onClick={() =>
-          currentPaletteCollection &&
+          currentCollection &&
           dispatch({
             type: ActionTypes.COPY_PALETTE_COLLECTION,
-            payload: { type, id: currentPaletteCollection.id }
+            payload: { type, id: currentCollection.id }
           })
         }
       >
@@ -67,13 +64,13 @@ const PaletteCollectionToolbar = ({
       </Button>
       <Button
         ariaLabel={`Delete the current ${type} palette collection`}
-        disabled={hasNoPalettes}
+        disabled={hasNoOptions}
         size="small"
         onClick={() =>
-          currentPaletteCollection &&
+          currentCollection &&
           dispatch({
             type: ActionTypes.DELETE_PALETTE_COLLECTION,
-            payload: { type, id: currentPaletteCollection.id }
+            payload: { type, id: currentCollection.id }
           })
         }
       >
@@ -81,22 +78,22 @@ const PaletteCollectionToolbar = ({
       </Button>
       <RenameModal
         isOpen={renameModalIsOpen}
-        name={currentPaletteCollection ? currentPaletteCollection.label : ""}
+        name={currentCollection ? currentCollection.label : ""}
         onClose={() => setRenameModalIsOpen(false)}
         onRename={(label: string) =>
-          currentPaletteCollection &&
+          currentCollection &&
           dispatch({
             type: ActionTypes.UPDATE_PALETTE_COLLECTION_METADATA,
             payload: {
               type,
-              id: currentPaletteCollection.id,
+              id: currentCollection.id,
               label
             }
           })
         }
       />
-    </div>
+    </ButtonToolbar>
   );
 };
 
-export default PaletteCollectionToolbar;
+export default React.memo(PaletteCollectionToolbar);

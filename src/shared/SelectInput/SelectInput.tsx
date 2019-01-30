@@ -11,7 +11,7 @@ type Option<IdT> = {
 type Props<IdT> = {
   id?: string;
   options: Array<Option<IdT>>;
-  selectedId: IdT | null;
+  value: IdT | null;
   disabled?: boolean;
   onChange: (id: IdT) => void;
   className?: string;
@@ -20,12 +20,13 @@ type Props<IdT> = {
 const SelectInput = <P extends string | number>({
   id,
   options,
-  selectedId,
+  value,
   disabled = false,
   onChange,
   className = ""
 }: Props<P>) => {
-  const showDisabled = disabled || isNil(selectedId) || isEmpty(options);
+  const showDisabled = disabled || isNil(value) || isEmpty(options);
+
   const containerClassNames = classNames(styles.container, className, {
     [styles.disabled]: showDisabled
   });
@@ -34,7 +35,7 @@ const SelectInput = <P extends string | number>({
     <div className={containerClassNames}>
       <select
         id={id}
-        value={selectedId || undefined}
+        value={value || undefined}
         onChange={event => onChange(event.target.value as P)}
         disabled={showDisabled}
         tabIndex={0}
