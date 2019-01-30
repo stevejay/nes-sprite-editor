@@ -1,60 +1,60 @@
-import FocusTrap from "focus-trap-react";
 import React from "react";
-import { Portal } from "react-portal";
-import { Color, SystemPalette } from "../../types";
-import {
-  useAriaHidden,
-  usePreventBodyScroll,
-  ModalBackdrop
-} from "../../shared/Modal";
+import { ModalDialog } from "../../shared/Modal";
+import { Form } from "react-final-form";
 import Button from "../../shared/Button";
-import ModalContainer from "../../shared/Modal/ModalContainer";
+import { TextField } from "../../shared/Form";
+import RenameForm from "./RenameForm";
+import { isEmpty } from "lodash";
+
+const FORM_SUBSCRIPTION = { submitting: true };
 
 type Props = {
   isOpen: boolean;
-  // color: Color;
-  // systemPalette: SystemPalette;
-  // originX: number;
-  // originY: number;
-  // originElement: HTMLElement | null;
-  // onChange: (color: Color) => void;
+  name: string;
+  onRename: (values: any) => void;
   onClose: () => void;
 };
 
 const RenameModal: React.FunctionComponent<Props> = ({
   isOpen,
-  // color,
-  // systemPalette,
-  // originX,
-  // originY,
-  // originElement,
-  // onChange,
+  name,
+  onRename,
   onClose
 }) => {
-  usePreventBodyScroll(isOpen);
-  useAriaHidden(isOpen);
+  const initialValues = React.useMemo(() => ({ name }), [name]);
 
-  if (!isOpen) {
-    return null;
-  }
+  const handleSubmit = React.useCallback(
+    (values: any) => {
+      const value = values.name.trim();
+      if (isEmpty(value)) {
+        return;
+      }
+      onRename(value);
+      onClose();
+    },
+    [onRename, onClose]
+  );
 
   return (
-    <Portal>
-      <>
-        <ModalBackdrop opacity={0.5} onClose={onClose} />
-        <FocusTrap focusTrapOptions={{ onDeactivate: onClose }}>
-          <ModalContainer>
-            <Button
-              onClick={() => {
-                onClose();
-              }}
-            >
-              Rename
-            </Button>
-          </ModalContainer>
-        </FocusTrap>
-      </>
-    </Portal>
+    <ModalDialog isOpen={isOpen} onClose={onClose}>
+      <ModalDialog.Header onClose={onClose}>
+        Rename a collection
+      </ModalDialog.Header>
+      <ModalDialog.Content>
+        <Form
+          onSubmit={handleSubmit}
+          initialValues={initialValues}
+          subscription={FORM_SUBSCRIPTION}
+          render={({ handleSubmit, submitting }) => (
+            <RenameForm
+              handleSubmit={handleSubmit}
+              onCancel={onClose}
+              submitting={submitting}
+            />
+          )}
+        />
+      </ModalDialog.Content>
+    </ModalDialog>
   );
 };
 

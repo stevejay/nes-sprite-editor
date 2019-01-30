@@ -9,7 +9,7 @@ type Option<IdT> = {
 };
 
 type Props<IdT> = {
-  id: string;
+  id?: string;
   options: Array<Option<IdT>>;
   selectedId: IdT | null;
   disabled?: boolean;

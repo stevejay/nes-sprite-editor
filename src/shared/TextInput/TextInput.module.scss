@@ -1,0 +1,34 @@
+@import "styles/_base.scss";
+
+$button-v-padding: 10;
+
+.input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 100%;
+  height: rem($button-v-padding + $button-v-padding + 16 + 2);
+  padding: rem($button-v-padding) rem(12);
+  font-family: inherit;
+  font-size: rem(16);
+  line-height: 1;
+  vertical-align: middle;
+  border: 1px solid $md-grey-500;
+  border-radius: rem(3);
+  outline: 0;
+  background-color: $md-white;
+
+  line-height: 1.5rem;
+  padding-top: 0;
+  padding-bottom: 0;
+
+  &:disabled {
+    background-color: $md-grey-200;
+    border-color: $md-grey-400;
+    color: $md-grey-500;
+    cursor: not-allowed;
+  }
+}
+
+.input:focus {
+  @include focus-ring;
+}

@@ -1,0 +1,24 @@
+@import "styles/_base.scss";
+
+.header {
+  padding: rem(10) rem(10) rem(10) rem(16);
+  border-bottom: 1px solid $md-grey-300;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  h1 {
+    font-family: $font-family-body;
+    color: $md-grey-700;
+    margin-bottom: 0;
+  }
+
+  h1 + button {
+    margin-left: rem(10);
+
+    svg {
+      width: rem(30);
+      height: rem(30);
+    }
+  }
+}

@@ -1,0 +1,7 @@
+@import "styles/_base.scss";
+
+.container {
+  padding: rem(16) rem(16) 0 rem(16);
+  display: flex;
+  flex-direction: column;
+}

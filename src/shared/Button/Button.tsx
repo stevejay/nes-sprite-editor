@@ -11,8 +11,9 @@ type Props = {
   disabled?: boolean;
   ariaLabel?: string;
   size?: "small" | "medium";
+  color?: "default" | "primary" | "transparent";
   className?: string;
-  onClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 };
 
 const Button: React.FunctionComponent<Props> = ({
@@ -23,10 +24,30 @@ const Button: React.FunctionComponent<Props> = ({
   disabled = false,
   ariaLabel,
   size = "medium",
+  color = "default",
   className,
   onClick
 }) => {
-  const buttonClassNames = classNames(styles.button, styles[size], className);
+  const buttonClassNames = classNames(
+    styles.button,
+    styles[size],
+    styles[color],
+    className
+  );
+
+  if (type === "submit") {
+    return (
+      <input
+        type="submit"
+        disabled={disabled}
+        className={buttonClassNames}
+        tabIndex={tabIndex}
+        aria-label={ariaLabel}
+        value="Submit"
+      />
+    );
+  }
+
   return (
     <button
       type={type}

@@ -17,7 +17,7 @@ const SystemPaletteSection: React.FunctionComponent<Props> = ({
   currentSystemPalette,
   dispatch
 }) => {
-  const selectId = React.useRef(uniqueId());
+  const selectId = React.useRef(uniqueId("select_"));
   return (
     <Section>
       <header>

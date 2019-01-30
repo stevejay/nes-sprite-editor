@@ -13,6 +13,7 @@ $background-color: $md-white;
   background-clip: padding-box;
   outline: 0;
   will-change: opacity, transform;
+  // use filter to ensure ::after pointer is included in the drop shadow:
   filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.3));
   padding: rem(8);
 }

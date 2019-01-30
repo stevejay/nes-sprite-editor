@@ -26,7 +26,6 @@ const BackgroundPalettesSection: React.FunctionComponent<Props> = ({
   currentPaletteCollection,
   dispatch
 }) => {
-  const selectId = React.useRef(uniqueId());
   const noPalettes =
     isNil(currentPaletteCollection) || isEmpty(paletteCollections);
   return (
@@ -37,7 +36,6 @@ const BackgroundPalettesSection: React.FunctionComponent<Props> = ({
       <h2>Current Collection</h2>
       <div className={styles.buttonRow}>
         <SelectInput<string>
-          id={selectId.current}
           options={paletteCollections}
           selectedId={
             currentPaletteCollection ? currentPaletteCollection.id : null

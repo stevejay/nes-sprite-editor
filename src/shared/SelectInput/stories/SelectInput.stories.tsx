@@ -46,7 +46,6 @@ storiesOf("SelectInput", module)
           options={[]}
           selectedId={null}
           onChange={(id: number) => {
-            console.log(id);
             store.set({ selectedId: id });
           }}
         />

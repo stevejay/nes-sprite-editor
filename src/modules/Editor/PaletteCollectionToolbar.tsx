@@ -17,70 +17,86 @@ type Props = {
   dispatch: React.Dispatch<Action>;
 };
 
-const PaletteCollectionToolbar = React.memo(
-  ({ type, paletteCollections, currentPaletteCollection, dispatch }: Props) => {
-    const [renameModalIsOpen, setRenameModalIsOpen] = React.useState(false);
+// TODO put memo back on
+const PaletteCollectionToolbar = ({
+  type,
+  paletteCollections,
+  currentPaletteCollection,
+  dispatch
+}: Props) => {
+  const [renameModalIsOpen, setRenameModalIsOpen] = React.useState(false);
 
-    const hasNoPalettes =
-      isNil(currentPaletteCollection) || isEmpty(paletteCollections);
+  const hasNoPalettes =
+    isNil(currentPaletteCollection) || isEmpty(paletteCollections);
 
-    return (
-      <div className={styles.container}>
-        <Button
-          ariaLabel={`Add a new ${type} palette collection`}
-          size="small"
-          onClick={() =>
-            dispatch({
-              type: ActionTypes.ADD_NEW_PALETTE_COLLECTION,
-              payload: { type, label: "New collection" }
-            })
-          }
-        >
-          New
-        </Button>
-        <Button
-          ariaLabel={`Edit the current ${type} palette collection`}
-          disabled={hasNoPalettes}
-          size="small"
-          onClick={() => setRenameModalIsOpen(true)}
-        >
-          Rename
-        </Button>
-        <Button
-          ariaLabel={`Copy the current ${type} palette collection`}
-          disabled={hasNoPalettes}
-          size="small"
-          onClick={() =>
-            currentPaletteCollection &&
-            dispatch({
-              type: ActionTypes.COPY_PALETTE_COLLECTION,
-              payload: { type, id: currentPaletteCollection.id }
-            })
-          }
-        >
-          Copy
-        </Button>
-        <Button
-          ariaLabel={`Delete the current ${type} palette collection`}
-          disabled={hasNoPalettes}
-          size="small"
-          onClick={() =>
-            currentPaletteCollection &&
-            dispatch({
-              type: ActionTypes.DELETE_PALETTE_COLLECTION,
-              payload: { type, id: currentPaletteCollection.id }
-            })
-          }
-        >
-          Delete
-        </Button>
-        <RenameModal
-          isOpen={renameModalIsOpen}
-          onClose={() => setRenameModalIsOpen(false)}
-        />
-      </div>
-    );
-  }
-);
+  return (
+    <div className={styles.container}>
+      <Button
+        ariaLabel={`Add a new ${type} palette collection`}
+        size="small"
+        onClick={() =>
+          dispatch({
+            type: ActionTypes.ADD_NEW_PALETTE_COLLECTION,
+            payload: { type, label: "New collection" }
+          })
+        }
+      >
+        New
+      </Button>
+      <Button
+        ariaLabel={`Edit the current ${type} palette collection`}
+        disabled={hasNoPalettes}
+        size="small"
+        onClick={() => setRenameModalIsOpen(true)}
+      >
+        Rename
+      </Button>
+      <Button
+        ariaLabel={`Copy the current ${type} palette collection`}
+        disabled={hasNoPalettes}
+        size="small"
+        onClick={() =>
+          currentPaletteCollection &&
+          dispatch({
+            type: ActionTypes.COPY_PALETTE_COLLECTION,
+            payload: { type, id: currentPaletteCollection.id }
+          })
+        }
+      >
+        Copy
+      </Button>
+      <Button
+        ariaLabel={`Delete the current ${type} palette collection`}
+        disabled={hasNoPalettes}
+        size="small"
+        onClick={() =>
+          currentPaletteCollection &&
+          dispatch({
+            type: ActionTypes.DELETE_PALETTE_COLLECTION,
+            payload: { type, id: currentPaletteCollection.id }
+          })
+        }
+      >
+        Delete
+      </Button>
+      <RenameModal
+        isOpen={renameModalIsOpen}
+        name={currentPaletteCollection ? currentPaletteCollection.label : ""}
+        onClose={() => setRenameModalIsOpen(false)}
+        onRename={(label: string) =>
+          currentPaletteCollection &&
+          dispatch({
+            type: ActionTypes.UPDATE_PALETTE_COLLECTION_METADATA,
+            payload: {
+              type,
+              id: currentPaletteCollection.id,
+              label
+            }
+          })
+        }
+      />
+    </div>
+  );
+};
 
 export default PaletteCollectionToolbar;

@@ -1,0 +1,10 @@
+@import "styles/_base.scss";
+
+.container {
+  margin-bottom: 1rem;
+}
+
+.container > label {
+  display: inline-block;
+  margin-bottom: rem(8);
+}

@@ -711,6 +711,7 @@ export function reducer(state: State = initialState, action: Action): State {
       return systemPaletteSliceReducer(state, action);
     case ActionTypes.SELECT_PALETTE_COLLECTION:
     case ActionTypes.ADD_NEW_PALETTE_COLLECTION:
+    case ActionTypes.UPDATE_PALETTE_COLLECTION_METADATA:
     case ActionTypes.COPY_PALETTE_COLLECTION:
     case ActionTypes.DELETE_PALETTE_COLLECTION:
     case ActionTypes.CHANGE_GAME_PALETTE_COLOR:
