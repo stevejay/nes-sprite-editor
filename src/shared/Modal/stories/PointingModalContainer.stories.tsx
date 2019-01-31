@@ -1,7 +1,4 @@
 import * as React from "react";
-import { host } from "storybook-host";
-// import { withKnobs, boolean } from "@storybook/addon-knobs";
-// import { State, Store } from "@sambego/storybook-state";
 import { storiesOf } from "@storybook/react";
 import "../../../index.scss";
 import FocusTrap from "focus-trap-react";
@@ -12,16 +9,6 @@ import {
   ModalBackdrop
 } from "..";
 import { Portal } from "react-portal";
-
-// const storyHost = host({
-//   width: "100vw",
-//   height: "100vh",
-//   backdrop: "white"
-// });
-
-// const store = new Store({
-//   selectedId: "one"
-// });
 
 const Button = ({ label }: { label: string }) => {
   const buttonRef = React.useRef<HTMLButtonElement>(null);
@@ -79,61 +66,58 @@ const Modal = ({
   );
 };
 
-storiesOf("Modal/PointingModalContainer", module)
-  // .addDecorator(storyHost)
-  // .addDecorator(withKnobs)
-  .add("Basic", () => (
+storiesOf("Modal/PointingModalContainer", module).add("Basic", () => (
+  <div
+    style={{
+      width: "100vw",
+      height: "100vh"
+    }}
+  >
     <div
       style={{
+        display: "flex",
+        flexDirection: "row",
         width: "100vw",
-        height: "100vh"
+        height: "100vh",
+        justifyContent: "space-between"
       }}
     >
       <div
         style={{
           display: "flex",
-          flexDirection: "row",
-          width: "100vw",
-          height: "100vh",
-          justifyContent: "space-between"
+          flexDirection: "column",
+          justifyContent: "space-between",
+          alignItems: "flex-start"
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-            alignItems: "flex-start"
-          }}
-        >
-          <Button label="Top left" />
-          <Button label="Middle left" />
-          <Button label="Bottom left" />
-        </div>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-            alignItems: "center"
-          }}
-        >
-          <Button label="Top middle" />
-          <Button label="Middle middle" />
-          <Button label="Bottom middle" />
-        </div>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-            alignItems: "flex-end"
-          }}
-        >
-          <Button label="Top right" />
-          <Button label="Middle right" />
-          <Button label="Bottom right" />
-        </div>
+        <Button label="Top left" />
+        <Button label="Middle left" />
+        <Button label="Bottom left" />
+      </div>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          alignItems: "center"
+        }}
+      >
+        <Button label="Top middle" />
+        <Button label="Middle middle" />
+        <Button label="Bottom middle" />
+      </div>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          alignItems: "flex-end"
+        }}
+      >
+        <Button label="Top right" />
+        <Button label="Middle right" />
+        <Button label="Bottom right" />
       </div>
     </div>
-  ));
+  </div>
+));

@@ -1,12 +1,15 @@
 import React, { useLayoutEffect } from "react";
 import styles from "./PointingModalContainer.module.scss";
-import { clamp } from "lodash";
-import getValidModalPositions from "./get-valid-modal-positions";
+import { clamp, isEmpty, inRange } from "lodash";
+import getValidModalPositions, {
+  ModalPosition
+} from "./get-valid-modal-positions";
+import selectModalPosition from "./select-modal-position";
 
 type Props = {
   children: React.ReactNode;
   originElement: HTMLElement | null;
-  containerElement: Element | null;
+  containerElement?: Element | null;
 };
 
 // TODO work out if I can avoid this wrapper class component
@@ -25,9 +28,18 @@ const PointingModalContainerInner = ({
   const ref = React.useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
-    if (!ref || !ref.current || !originElement || !containerElement) {
+    if (!ref || !ref.current || !originElement) {
       return;
     }
+
+    const containerClientRect = containerElement
+      ? containerElement.getBoundingClientRect()
+      : {
+          left: 0,
+          top: 0,
+          right: window.innerWidth - 1,
+          bottom: window.innerWidth - 1
+        };
 
     const modalRect = ref.current.getBoundingClientRect();
     const widthToDisplay = clamp(modalRect.right - modalRect.left, 1, 10000);
@@ -35,16 +47,17 @@ const PointingModalContainerInner = ({
 
     const positions = getValidModalPositions(
       originElement.getBoundingClientRect(),
-      containerElement.getBoundingClientRect(),
+      containerClientRect,
       widthToDisplay,
-      heightToDisplay
+      heightToDisplay,
+      14
     );
 
-    ref.current.style.left = positions[2].left + "px";
-    ref.current.style.top = positions[2].top + "px";
-    ref.current.classList.add(positions[2].basicPosition);
-
-    ref.current.style.setProperty("--pointer-position", "25%");
+    const position = selectModalPosition(positions);
+    ref.current.style.left = position.left + "px";
+    ref.current.style.top = position.top + "px";
+    ref.current.classList.add(position.basicPosition);
+    ref.current.style.setProperty("--pointer-position", position.pointer + "%");
   }, []);
 
   return (

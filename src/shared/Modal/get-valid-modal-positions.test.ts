@@ -21,36 +21,32 @@ describe("getValidModalPositions", () => {
       100,
       [
         {
-          basicPosition: "left",
-          fits: false,
-          left: 0 - 200,
-          top: 0,
-          pointerLeft: 200,
-          pointerTop: 10
-        },
-        {
           basicPosition: "right",
           fits: true,
-          left: 60,
+          left: 60 + 6,
           top: 0,
-          pointerLeft: 0,
-          pointerTop: 10
+          pointer: 12
         },
         {
-          basicPosition: "top",
+          basicPosition: "left",
           fits: false,
-          left: 0,
-          top: 0 - 100,
-          pointerLeft: 30,
-          pointerTop: 100
+          left: 0 - 200 - 6,
+          top: 0,
+          pointer: 12
         },
         {
           basicPosition: "bottom",
           fits: true,
           left: 0,
-          top: 20,
-          pointerLeft: 30,
-          pointerTop: 0
+          top: 20 + 6,
+          pointer: 15
+        },
+        {
+          basicPosition: "top",
+          fits: false,
+          left: 0,
+          top: 0 - 100 - 6,
+          pointer: 15
         }
       ]
     ],
@@ -62,36 +58,32 @@ describe("getValidModalPositions", () => {
       100,
       [
         {
-          basicPosition: "left",
-          fits: true,
-          left: 270 - 200,
-          top: 0,
-          pointerLeft: 200,
-          pointerTop: 10
-        },
-        {
           basicPosition: "right",
           fits: true,
-          left: 330,
+          left: 330 + 6,
           top: 0,
-          pointerLeft: 0,
-          pointerTop: 10
+          pointer: 12
         },
         {
-          basicPosition: "top",
-          fits: false,
-          left: 300 - 100,
-          top: 0 - 100,
-          pointerLeft: 100,
-          pointerTop: 100
+          basicPosition: "left",
+          fits: true,
+          left: 270 - 200 - 6,
+          top: 0,
+          pointer: 12
         },
         {
           basicPosition: "bottom",
           fits: true,
           left: 300 - 100,
-          top: 20,
-          pointerLeft: 100,
-          pointerTop: 0
+          top: 20 + 6,
+          pointer: 50
+        },
+        {
+          basicPosition: "top",
+          fits: false,
+          left: 300 - 100,
+          top: 0 - 100 - 6,
+          pointer: 50
         }
       ]
     ],
@@ -103,36 +95,32 @@ describe("getValidModalPositions", () => {
       100,
       [
         {
-          basicPosition: "left",
-          fits: true,
-          left: 540 - 200,
-          top: 0,
-          pointerLeft: 200,
-          pointerTop: 10
-        },
-        {
           basicPosition: "right",
           fits: false,
-          left: 600,
+          left: 600 + 6,
           top: 0,
-          pointerLeft: 0,
-          pointerTop: 10
+          pointer: 12
         },
         {
-          basicPosition: "top",
-          fits: false,
-          left: 600 - 200,
-          top: 0 - 100,
-          pointerLeft: 200 - 30,
-          pointerTop: 100
+          basicPosition: "left",
+          fits: true,
+          left: 540 - 200 - 6,
+          top: 0,
+          pointer: 12
         },
         {
           basicPosition: "bottom",
           fits: true,
           left: 600 - 200,
-          top: 20,
-          pointerLeft: 200 - 30,
-          pointerTop: 0
+          top: 20 + 6,
+          pointer: 85
+        },
+        {
+          basicPosition: "top",
+          fits: false,
+          left: 600 - 200,
+          top: 0 - 100 - 6,
+          pointer: 85
         }
       ]
     ],
@@ -144,36 +132,32 @@ describe("getValidModalPositions", () => {
       100,
       [
         {
-          basicPosition: "left",
-          fits: false,
-          left: 0 - 200,
-          top: 250 - 50,
-          pointerLeft: 200,
-          pointerTop: 50
-        },
-        {
           basicPosition: "right",
           fits: true,
-          left: 60,
+          left: 60 + 6,
           top: 250 - 50,
-          pointerLeft: 0,
-          pointerTop: 50
+          pointer: 50
         },
         {
-          basicPosition: "top",
-          fits: true,
-          left: 0,
-          top: 240 - 100,
-          pointerLeft: 30,
-          pointerTop: 100
+          basicPosition: "left",
+          fits: false,
+          left: 0 - 200 - 6,
+          top: 250 - 50,
+          pointer: 50
         },
         {
           basicPosition: "bottom",
           fits: true,
           left: 0,
-          top: 260,
-          pointerLeft: 30,
-          pointerTop: 0
+          top: 260 + 6,
+          pointer: 15
+        },
+        {
+          basicPosition: "top",
+          fits: true,
+          left: 0,
+          top: 240 - 100 - 6,
+          pointer: 15
         }
       ]
     ],
@@ -185,36 +169,32 @@ describe("getValidModalPositions", () => {
       100,
       [
         {
-          basicPosition: "left",
-          fits: true,
-          left: 270 - 200,
-          top: 250 - 50,
-          pointerLeft: 200,
-          pointerTop: 50
-        },
-        {
           basicPosition: "right",
           fits: true,
-          left: 330,
+          left: 330 + 6,
           top: 250 - 50,
-          pointerLeft: 0,
-          pointerTop: 50
+          pointer: 50
         },
         {
-          basicPosition: "top",
+          basicPosition: "left",
           fits: true,
-          left: 300 - 100,
-          top: 240 - 100,
-          pointerLeft: 100,
-          pointerTop: 100
+          left: 270 - 200 - 6,
+          top: 250 - 50,
+          pointer: 50
         },
         {
           basicPosition: "bottom",
           fits: true,
           left: 300 - 100,
-          top: 260,
-          pointerLeft: 100,
-          pointerTop: 0
+          top: 260 + 6,
+          pointer: 50
+        },
+        {
+          basicPosition: "top",
+          fits: true,
+          left: 300 - 100,
+          top: 240 - 100 - 6,
+          pointer: 50
         }
       ]
     ],
@@ -226,36 +206,32 @@ describe("getValidModalPositions", () => {
       100,
       [
         {
-          basicPosition: "left",
-          fits: true,
-          left: 540 - 200,
-          top: 250 - 50,
-          pointerLeft: 200,
-          pointerTop: 50
-        },
-        {
           basicPosition: "right",
           fits: false,
-          left: 600,
+          left: 600 + 6,
           top: 250 - 50,
-          pointerLeft: 0,
-          pointerTop: 50
+          pointer: 50
         },
         {
-          basicPosition: "top",
+          basicPosition: "left",
           fits: true,
-          left: 600 - 200,
-          top: 240 - 100,
-          pointerLeft: 200 - 30,
-          pointerTop: 100
+          left: 540 - 200 - 6,
+          top: 250 - 50,
+          pointer: 50
         },
         {
           basicPosition: "bottom",
           fits: true,
           left: 600 - 200,
-          top: 260,
-          pointerLeft: 200 - 30,
-          pointerTop: 0
+          top: 260 + 6,
+          pointer: 85
+        },
+        {
+          basicPosition: "top",
+          fits: true,
+          left: 600 - 200,
+          top: 240 - 100 - 6,
+          pointer: 85
         }
       ]
     ],
@@ -267,36 +243,32 @@ describe("getValidModalPositions", () => {
       100,
       [
         {
-          basicPosition: "left",
-          fits: false,
-          left: 0 - 200,
-          top: 500 - 100,
-          pointerLeft: 200,
-          pointerTop: 90
-        },
-        {
           basicPosition: "right",
           fits: true,
-          left: 60,
+          left: 60 + 6,
           top: 500 - 100,
-          pointerLeft: 0,
-          pointerTop: 90
+          pointer: 88
         },
         {
-          basicPosition: "top",
-          fits: true,
-          left: 0,
-          top: 480 - 100,
-          pointerLeft: 30,
-          pointerTop: 100
+          basicPosition: "left",
+          fits: false,
+          left: 0 - 200 - 6,
+          top: 500 - 100,
+          pointer: 88
         },
         {
           basicPosition: "bottom",
           fits: false,
           left: 0,
-          top: 500,
-          pointerLeft: 30,
-          pointerTop: 0
+          top: 500 + 6,
+          pointer: 15
+        },
+        {
+          basicPosition: "top",
+          fits: true,
+          left: 0,
+          top: 480 - 100 - 6,
+          pointer: 15
         }
       ]
     ],
@@ -308,36 +280,32 @@ describe("getValidModalPositions", () => {
       100,
       [
         {
-          basicPosition: "left",
-          fits: true,
-          left: 270 - 200,
-          top: 500 - 100,
-          pointerLeft: 200,
-          pointerTop: 90
-        },
-        {
           basicPosition: "right",
           fits: true,
-          left: 330,
+          left: 330 + 6,
           top: 500 - 100,
-          pointerLeft: 0,
-          pointerTop: 90
+          pointer: 88
         },
         {
-          basicPosition: "top",
+          basicPosition: "left",
           fits: true,
-          left: 300 - 100,
-          top: 480 - 100,
-          pointerLeft: 100,
-          pointerTop: 100
+          left: 270 - 200 - 6,
+          top: 500 - 100,
+          pointer: 88
         },
         {
           basicPosition: "bottom",
           fits: false,
           left: 300 - 100,
-          top: 500,
-          pointerLeft: 100,
-          pointerTop: 0
+          top: 500 + 6,
+          pointer: 50
+        },
+        {
+          basicPosition: "top",
+          fits: true,
+          left: 300 - 100,
+          top: 480 - 100 - 6,
+          pointer: 50
         }
       ]
     ],
@@ -349,36 +317,32 @@ describe("getValidModalPositions", () => {
       100,
       [
         {
-          basicPosition: "left",
-          fits: true,
-          left: 540 - 200,
-          top: 500 - 100,
-          pointerLeft: 200,
-          pointerTop: 90
-        },
-        {
           basicPosition: "right",
           fits: false,
-          left: 600,
+          left: 600 + 6,
           top: 500 - 100,
-          pointerLeft: 0,
-          pointerTop: 90
+          pointer: 88
         },
         {
-          basicPosition: "top",
+          basicPosition: "left",
           fits: true,
-          left: 600 - 200,
-          top: 480 - 100,
-          pointerLeft: 200 - 30,
-          pointerTop: 100
+          left: 540 - 200 - 6,
+          top: 500 - 100,
+          pointer: 88
         },
         {
           basicPosition: "bottom",
           fits: false,
           left: 600 - 200,
-          top: 500,
-          pointerLeft: 200 - 30,
-          pointerTop: 0
+          top: 500 + 6,
+          pointer: 85
+        },
+        {
+          basicPosition: "top",
+          fits: true,
+          left: 600 - 200,
+          top: 480 - 100 - 6,
+          pointer: 85
         }
       ]
     ]
@@ -396,7 +360,8 @@ describe("getValidModalPositions", () => {
         targetClientRect,
         containerClientRect,
         modalWidth,
-        modalHeight
+        modalHeight,
+        12
       );
       expect(actual).toEqual(expected);
     }

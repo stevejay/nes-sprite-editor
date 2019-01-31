@@ -3,7 +3,7 @@ import { host } from "storybook-host";
 import { State, Store } from "@sambego/storybook-state";
 import { storiesOf } from "@storybook/react";
 import "../../../index.scss";
-import { PointingModalContainer, ModalDialog } from "..";
+import { ModalDialog } from "..";
 import { range } from "lodash";
 import Button from "../../Button/Button";
 
@@ -18,18 +18,9 @@ const store = new Store({
   isOpen: false
 });
 
-storiesOf("Modal", module)
+storiesOf("Modal/ModalDialog", module)
   .addDecorator(storyHost)
-  // .add("PointingModalContainer", () => (
-  //   <PointingModalContainer originElement={null} originX={50} originY={100}>
-  //     <div>
-  //       Some content
-  //       <br />
-  //       in a modal
-  //     </div>
-  //   </PointingModalContainer>
-  // ))
-  .add("ModalDialog - Short", () => (
+  .add("Short", () => (
     <State store={store}>
       {state => (
         <>
@@ -59,7 +50,7 @@ storiesOf("Modal", module)
       )}
     </State>
   ))
-  .add("ModalDialog - Long", () => (
+  .add("Long", () => (
     <State store={store}>
       {state => (
         <>

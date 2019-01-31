@@ -5,15 +5,23 @@ export type ModalPosition = {
   fits: boolean;
   left: number;
   top: number;
-  pointerLeft: number;
-  pointerTop: number;
+  pointer: number;
 };
 
 export default function getValidModalPositions(
   targetClientRect: ClientRect | DOMRect,
-  containerClientRect: ClientRect | DOMRect,
+  containerClientRect:
+    | ClientRect
+    | DOMRect
+    | {
+        left: number;
+        top: number;
+        right: number;
+        bottom: number;
+      },
   modalWidth: number,
-  modalHeight: number
+  modalHeight: number,
+  pointerSize: number
 ) {
   const targetWidth = targetClientRect.right - targetClientRect.left;
   const halfTargetWidth = targetWidth * 0.5;
@@ -36,62 +44,45 @@ export default function getValidModalPositions(
 
   const result: Array<ModalPosition> = [];
 
-  // left position:
-
-  const leftPosition: ModalPosition = {
-    basicPosition: "left",
-    fits: true,
-    left: targetClientRect.left - modalWidth,
-    top: verticalSlidePosition,
-    pointerLeft: modalWidth,
-    pointerTop: 0
-  };
-
-  leftPosition.pointerTop = clamp(
-    targetClientRect.top + halfTargetHeight - leftPosition.top,
-    0,
-    modalHeight
-  );
-
-  result.push(leftPosition);
-
   // right position:
 
   const rightPosition: ModalPosition = {
     basicPosition: "right",
     fits: true,
-    left: targetClientRect.right,
+    left: targetClientRect.right + pointerSize * 0.5,
     top: verticalSlidePosition,
-    pointerLeft: 0,
-    pointerTop: 0
+    pointer: 0
   };
 
-  rightPosition.pointerTop = clamp(
-    targetClientRect.top + halfTargetHeight - rightPosition.top,
-    0,
-    modalHeight
-  );
+  rightPosition.pointer =
+    (100 / modalHeight) *
+    clamp(
+      targetClientRect.top + halfTargetHeight - rightPosition.top,
+      pointerSize,
+      modalHeight - pointerSize
+    );
 
   result.push(rightPosition);
 
-  // top position
+  // left position:
 
-  const topPosition: ModalPosition = {
-    basicPosition: "top",
+  const leftPosition: ModalPosition = {
+    basicPosition: "left",
     fits: true,
-    left: horizontalSlidePosition,
-    top: targetClientRect.top - modalHeight,
-    pointerLeft: 0,
-    pointerTop: modalHeight
+    left: targetClientRect.left - modalWidth - pointerSize * 0.5,
+    top: verticalSlidePosition,
+    pointer: 0
   };
 
-  topPosition.pointerLeft = clamp(
-    targetClientRect.left + halfTargetWidth - topPosition.left,
-    0,
-    modalWidth
-  );
+  leftPosition.pointer =
+    (100 / modalHeight) *
+    clamp(
+      targetClientRect.top + halfTargetHeight - leftPosition.top,
+      pointerSize,
+      modalHeight - pointerSize
+    );
 
-  result.push(topPosition);
+  result.push(leftPosition);
 
   // bottom position
 
@@ -99,18 +90,39 @@ export default function getValidModalPositions(
     basicPosition: "bottom",
     fits: true,
     left: horizontalSlidePosition,
-    top: targetClientRect.bottom,
-    pointerLeft: 0,
-    pointerTop: 0
+    top: targetClientRect.bottom + pointerSize * 0.5,
+    pointer: 0
   };
 
-  bottomPosition.pointerLeft = clamp(
-    targetClientRect.left + halfTargetWidth - bottomPosition.left,
-    0,
-    modalWidth
-  );
+  bottomPosition.pointer =
+    (100 / modalWidth) *
+    clamp(
+      targetClientRect.left + halfTargetWidth - bottomPosition.left,
+      pointerSize,
+      modalWidth - pointerSize
+    );
 
   result.push(bottomPosition);
+
+  // top position
+
+  const topPosition: ModalPosition = {
+    basicPosition: "top",
+    fits: true,
+    left: horizontalSlidePosition,
+    top: targetClientRect.top - modalHeight - pointerSize * 0.5,
+    pointer: 0
+  };
+
+  topPosition.pointer =
+    (100 / modalWidth) *
+    clamp(
+      targetClientRect.left + halfTargetWidth - topPosition.left,
+      pointerSize,
+      modalWidth - pointerSize
+    );
+
+  result.push(topPosition);
 
   // for each position, see if it is a valid position or not
   result.forEach(position => {

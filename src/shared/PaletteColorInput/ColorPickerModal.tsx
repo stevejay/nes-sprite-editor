@@ -39,10 +39,7 @@ const ColorPickerModal: React.FunctionComponent<Props> = ({
       <>
         <ModalBackdrop opacity={0} onClose={onClose} />
         <FocusTrap focusTrapOptions={{ onDeactivate: onClose }}>
-          <PointingModalContainer
-            originElement={originElement}
-            containerElement={document.body}
-          >
+          <PointingModalContainer originElement={originElement}>
             <ColorPicker
               palette={systemPalette}
               selectedColorId={color.id}
