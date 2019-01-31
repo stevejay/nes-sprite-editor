@@ -20,15 +20,15 @@ const store = new Store({
 
 storiesOf("Modal", module)
   .addDecorator(storyHost)
-  .add("PointingModalContainer", () => (
-    <PointingModalContainer originElement={null} originX={50} originY={100}>
-      <div>
-        Some content
-        <br />
-        in a modal
-      </div>
-    </PointingModalContainer>
-  ))
+  // .add("PointingModalContainer", () => (
+  //   <PointingModalContainer originElement={null} originX={50} originY={100}>
+  //     <div>
+  //       Some content
+  //       <br />
+  //       in a modal
+  //     </div>
+  //   </PointingModalContainer>
+  // ))
   .add("ModalDialog - Short", () => (
     <State store={store}>
       {state => (

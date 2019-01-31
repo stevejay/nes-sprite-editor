@@ -3,8 +3,9 @@
 $background-color: $md-white;
 
 .container {
+  --pointer-position: 50%;
+
   position: fixed;
-  transform: translateY(-50%);
   display: flex;
   flex-direction: column;
   pointer-events: auto;
@@ -19,15 +20,47 @@ $background-color: $md-white;
 }
 
 .container::after {
-  right: 100%;
-  top: 50%;
-  border: solid transparent;
+  position: absolute;
   content: " ";
   height: 0;
   width: 0;
-  position: absolute;
-  pointer-events: none;
-  border-right-color: $background-color;
+  border: solid transparent;
   border-width: 12px;
+  pointer-events: none;
+}
+
+.container:global(.left)::after {
+  right: -12px;
+  top: 50%; // fallback
+  top: var(--pointer-position); // 50%;
+  border-right-width: 0;
+  border-left-color: $background-color;
   margin-top: -12px;
+}
+
+.container:global(.right)::after {
+  left: -12px;
+  top: 50%; // fallback
+  top: var(--pointer-position); // 50%;
+  border-left-width: 0;
+  border-right-color: $background-color;
+  margin-top: -12px;
+}
+
+.container:global(.top)::after {
+  left: 50%; // fallback
+  left: var(--pointer-position); // 50%;
+  bottom: -12px;
+  border-bottom-width: 0;
+  border-top-color: $background-color;
+  margin-left: -12px;
+}
+
+.container:global(.bottom)::after {
+  left: 50%; // fallback
+  left: var(--pointer-position); // 50%;
+  top: -12px;
+  border-top-width: 0;
+  border-bottom-color: $background-color;
+  margin-left: -12px;
 }

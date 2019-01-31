@@ -29,7 +29,7 @@ const initialState: State = {
   originY: 0
 };
 
-const PaletteColorInput: FunctionComponent<Props> = ({
+const PaletteColorInput = ({
   color,
   systemPalette,
   tabIndex = 0,
@@ -37,31 +37,35 @@ const PaletteColorInput: FunctionComponent<Props> = ({
   onKeyDown,
   onClick,
   onChange
-}) => {
+}: Props) => {
   const buttonRef = React.useRef<HTMLButtonElement>(null);
   const [dialogState, setDialogState] = React.useState<State>(initialState);
   useFocused(focused, buttonRef);
 
-  const handleClick = () => {
-    if (onClick) {
-      onClick();
-    }
+  const handleClick = React.useCallback(
+    () => {
+      if (onClick) {
+        onClick();
+      }
 
-    const originElement = buttonRef.current;
+      const originElement = buttonRef.current;
 
-    if (!dialogState.isOpen && originElement) {
-      const rect = originElement.getBoundingClientRect();
-      const originY = rect.top + rect.height / 2;
-      const originX = rect.left + rect.width / 2;
+      if (!dialogState.isOpen && originElement) {
+        const rect = originElement.getBoundingClientRect();
+        const originY = rect.top + rect.height / 2;
+        const originX = rect.left + rect.width / 2;
 
-      setDialogState({
-        isOpen: true,
-        originElement,
-        originX,
-        originY
-      });
-    }
-  };
+        // TODO remove originX and originY
+        setDialogState({
+          isOpen: true,
+          originElement,
+          originX,
+          originY
+        });
+      }
+    },
+    [onClick, buttonRef, dialogState]
+  );
 
   const handleClose = () => {
     setDialogState(initialState);

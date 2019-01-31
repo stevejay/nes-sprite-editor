@@ -14,8 +14,6 @@ type Props = {
   isOpen: boolean;
   color: Color;
   systemPalette: SystemPalette;
-  originX: number;
-  originY: number;
   originElement: HTMLElement | null;
   onChange: (color: Color) => void;
   onClose: () => void;
@@ -25,8 +23,6 @@ const ColorPickerModal: React.FunctionComponent<Props> = ({
   isOpen,
   color,
   systemPalette,
-  originX,
-  originY,
   originElement,
   onChange,
   onClose
@@ -44,9 +40,8 @@ const ColorPickerModal: React.FunctionComponent<Props> = ({
         <ModalBackdrop opacity={0} onClose={onClose} />
         <FocusTrap focusTrapOptions={{ onDeactivate: onClose }}>
           <PointingModalContainer
-            originX={originX}
-            originY={originY}
             originElement={originElement}
+            containerElement={document.body}
           >
             <ColorPicker
               palette={systemPalette}
