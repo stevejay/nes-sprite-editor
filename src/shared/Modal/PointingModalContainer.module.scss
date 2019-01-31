@@ -31,7 +31,7 @@ $background-color: $md-white;
 
 .container:global(.left)::after {
   right: -12px;
-  top: 50%; // fallback
+  top: 50%; // fallback value
   top: var(--pointer-position);
   border-right-width: 0;
   border-left-color: $background-color;
@@ -40,7 +40,7 @@ $background-color: $md-white;
 
 .container:global(.right)::after {
   left: -12px;
-  top: 50%; // fallback
+  top: 50%; // fallback value
   top: var(--pointer-position);
   border-left-width: 0;
   border-right-color: $background-color;
@@ -48,7 +48,7 @@ $background-color: $md-white;
 }
 
 .container:global(.top)::after {
-  left: 50%; // fallback
+  left: 50%; // fallback value
   left: var(--pointer-position);
   bottom: -12px;
   border-bottom-width: 0;
@@ -57,7 +57,7 @@ $background-color: $md-white;
 }
 
 .container:global(.bottom)::after {
-  left: 50%; // fallback
+  left: 50%; // fallback value
   left: var(--pointer-position);
   top: -12px;
   border-top-width: 0;

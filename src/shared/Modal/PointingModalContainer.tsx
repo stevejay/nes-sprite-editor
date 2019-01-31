@@ -1,15 +1,14 @@
+import { clamp } from "lodash";
 import React, { useLayoutEffect } from "react";
+import getValidModalPositions from "./get-valid-modal-positions";
 import styles from "./PointingModalContainer.module.scss";
-import { clamp, isEmpty, inRange } from "lodash";
-import getValidModalPositions, {
-  ModalPosition
-} from "./get-valid-modal-positions";
 import selectModalPosition from "./select-modal-position";
 
 type Props = {
   children: React.ReactNode;
   originElement: HTMLElement | null;
   containerElement?: Element | null;
+  style?: React.CSSProperties;
 };
 
 // TODO work out if I can avoid this wrapper class component
@@ -23,7 +22,8 @@ class PointingModalContainer extends React.Component<Props> {
 const PointingModalContainerInner = ({
   children,
   originElement,
-  containerElement
+  containerElement,
+  style
 }: Props) => {
   const ref = React.useRef<HTMLDivElement>(null);
 
@@ -61,7 +61,7 @@ const PointingModalContainerInner = ({
   }, []);
 
   return (
-    <div ref={ref} className={styles.container}>
+    <div ref={ref} className={styles.container} style={style}>
       {children}
     </div>
   );

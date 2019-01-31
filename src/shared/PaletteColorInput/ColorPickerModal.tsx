@@ -9,6 +9,7 @@ import {
   PointingModalContainer,
   ModalBackdrop
 } from "../Modal";
+import { Transition } from "react-spring";
 
 type Props = {
   isOpen: boolean;
@@ -29,27 +30,38 @@ const ColorPickerModal: React.FunctionComponent<Props> = ({
 }) => {
   usePreventBodyScroll(isOpen);
   useAriaHidden(isOpen);
-
-  if (!isOpen) {
-    return null;
-  }
-
   return (
-    <Portal>
-      <>
-        <ModalBackdrop opacity={0} onClose={onClose} />
-        <FocusTrap focusTrapOptions={{ onDeactivate: onClose }}>
-          <PointingModalContainer originElement={originElement}>
-            <ColorPicker
-              palette={systemPalette}
-              selectedColorId={color.id}
-              scaling={24}
-              onChange={onChange}
-            />
-          </PointingModalContainer>
-        </FocusTrap>
-      </>
-    </Portal>
+    <Transition
+      config={{ duration: 150 }}
+      items={isOpen}
+      from={{ opacity: 0 }}
+      enter={{ opacity: 1 }}
+      leave={{ opacity: 0 }}
+    >
+      {isOpen =>
+        isOpen &&
+        (({ opacity }) => (
+          <Portal>
+            <>
+              <ModalBackdrop opacity={0} onClose={onClose} />
+              <FocusTrap focusTrapOptions={{ onDeactivate: onClose }}>
+                <PointingModalContainer
+                  originElement={originElement}
+                  style={{ opacity }}
+                >
+                  <ColorPicker
+                    palette={systemPalette}
+                    selectedColorId={color.id}
+                    scaling={24}
+                    onChange={onChange}
+                  />
+                </PointingModalContainer>
+              </FocusTrap>
+            </>
+          </Portal>
+        ))
+      }
+    </Transition>
   );
 };
 
