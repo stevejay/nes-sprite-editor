@@ -19,7 +19,6 @@ const App: React.FunctionComponent = () => {
       </header>
       <main id="main" className={styles.main}>
         <Editor state={state} dispatch={dispatch} />
-        <hr className={styles.hr} />
         <DataOutput state={state} />
       </main>
     </>

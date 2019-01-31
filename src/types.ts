@@ -1,5 +1,3 @@
-import { Tuple } from "./typescript";
-
 export type Color =
   | {
       available: false;
@@ -15,11 +13,15 @@ export type Color =
 export type SystemPalette = {
   id: string;
   label: string;
-  values: Tuple<Color, 64>;
+  values: Array<Color>; // 64 colors
 };
 
 export type GamePalette = {
   colorIndexes: Array<Color["id"]>; // 4 color ids
+};
+
+export type GamePaletteWithColors = GamePalette & {
+  colors: Array<Color>;
 };
 
 export type GamePaletteType = "background" | "sprite";
@@ -54,18 +56,6 @@ export type PatternTable = {
 export type Nametable = {
   id: string;
   label: string;
-  tileIndexes: Uint8Array; // 960 - Tuple<PatternTileIndex, 960>;
-  paletteIndexes: Uint8Array; // 64 - Tuple<number, 64>;
+  tileIndexes: Uint8Array; // 960 bytes
+  paletteIndexes: Uint8Array; // 64 bytes, 4 color index in each byte
 };
-
-// export type Nametable = {
-//   id: number;
-//   label: string;
-//   metatiles: Array<{ tileIndexes: Tuple<PatternTileIndex, 4>, paletteIndex: number }>
-// }
-
-// export type Nametable = {
-//   id: number;
-//   label: string;
-//   tiles: Array<{ tileIndex: PatternTileIndex, paletteIndex: number }>
-// }

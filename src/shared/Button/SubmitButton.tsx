@@ -12,7 +12,7 @@ type Props = {
   className?: string;
 };
 
-const SubmitButton: React.FunctionComponent<Props> = ({
+const SubmitButton = ({
   label,
   tabIndex = 0,
   disabled = false,
@@ -20,7 +20,7 @@ const SubmitButton: React.FunctionComponent<Props> = ({
   size = "medium",
   color = "default",
   className
-}) => {
+}: Props) => {
   const buttonClassNames = classNames(
     styles.button,
     styles[size],

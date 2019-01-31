@@ -1,8 +1,6 @@
-import {
-  GamePaletteWithColors,
-  GamePaletteCollectionWithColors
-} from "../../reducer";
+import { GamePaletteCollectionWithColors } from "../../reducer";
 import formatByteAsHex from "../../shared/utils/format-byte-as-hex";
+import { GamePaletteWithColors } from "../../types";
 
 export default function createGameDataText(
   backgroundPaletteCollection: GamePaletteCollectionWithColors | null,

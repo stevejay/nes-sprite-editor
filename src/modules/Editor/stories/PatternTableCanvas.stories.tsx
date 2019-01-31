@@ -2,7 +2,6 @@ import * as React from "react";
 import { host } from "storybook-host";
 import { storiesOf } from "@storybook/react";
 import "../../../index.scss";
-import { TileCanvas } from "..";
 import {
   PINK_PIXELS,
   GRAPE_PIXELS,
@@ -10,16 +9,17 @@ import {
   BACKGROUND_PALETTE,
   RANDOM_PIXELS
 } from "./constants";
+import PatternTableCanvas from "../PatternTableCanvas";
 
 const storyHost = host({
   align: "center middle",
   backdrop: "transparent"
 });
 
-storiesOf("TileCanvas/TileCanvas", module)
+storiesOf("PatternTableCanvas", module)
   .addDecorator(storyHost)
   .add("3 x 2", () => (
-    <TileCanvas
+    <PatternTableCanvas
       tilesInRow={3}
       tilesInColumn={2}
       scaling={8}
@@ -33,19 +33,19 @@ storiesOf("TileCanvas/TileCanvas", module)
       ].map(pixels => ({
         pixels
       }))}
-      palettes={[BACKGROUND_PALETTE]}
+      palette={BACKGROUND_PALETTE}
       ariaLabel="The aria label"
     />
   ))
   .add("1 x 1", () => (
-    <TileCanvas
+    <PatternTableCanvas
       tilesInRow={1}
       tilesInColumn={1}
       scaling={16}
       tiles={[RANDOM_PIXELS].map(pixels => ({
         pixels
       }))}
-      palettes={[BACKGROUND_PALETTE]}
+      palette={BACKGROUND_PALETTE}
       ariaLabel="The aria label"
     />
   ));

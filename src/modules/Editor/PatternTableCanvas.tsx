@@ -1,9 +1,8 @@
 import React from "react";
-import styles from "./TileCanvas.module.scss";
-import { GamePaletteWithColors } from "../../reducer";
-import useSizedCanvasEffect from "../utils/use-sized-canvas-effect";
+import styles from "./PatternTableCanvas.module.scss";
+import { PatternTile, GamePaletteWithColors } from "../../types";
+import useSizedCanvasEffect from "../../shared/utils/use-sized-canvas-effect";
 import useDrawTilesEffect from "./use-draw-tiles-effect";
-import { PatternTile } from "../../types";
 
 const PIXEL_ROWS_PER_TILE = 8;
 const PIXEL_COLUMNS_PER_TILE = PIXEL_ROWS_PER_TILE;
@@ -11,20 +10,20 @@ const PIXEL_COLUMNS_PER_TILE = PIXEL_ROWS_PER_TILE;
 type Props = {
   tilesInRow: number;
   tilesInColumn: number;
-  scaling: number; // 1+
+  scaling: number; // in range [1, ...]
   tiles: Array<PatternTile>;
-  palettes: Array<GamePaletteWithColors>;
+  palette: GamePaletteWithColors;
   ariaLabel: string;
 };
 
-const TileCanvas: React.FunctionComponent<Props> = ({
+const PatternTableCanvas = ({
   tilesInRow,
   tilesInColumn,
   scaling,
   tiles,
-  palettes,
+  palette,
   ariaLabel
-}) => {
+}: Props) => {
   const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
 
   const canvasSize = useSizedCanvasEffect(
@@ -35,7 +34,7 @@ const TileCanvas: React.FunctionComponent<Props> = ({
     scaling * PIXEL_COLUMNS_PER_TILE
   );
 
-  useDrawTilesEffect(canvasRef, tiles, palettes, tilesInColumn, scaling);
+  useDrawTilesEffect(canvasRef, tiles, palette, tilesInColumn, scaling);
 
   return (
     <canvas
@@ -48,4 +47,4 @@ const TileCanvas: React.FunctionComponent<Props> = ({
   );
 };
 
-export default TileCanvas;
+export default PatternTableCanvas;

@@ -7,7 +7,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-const Form: React.FunctionComponent<Props> = ({ onSubmit, children }) => (
+const Form = ({ onSubmit, children }: Props) => (
   <form onSubmit={onSubmit} className={styles.form}>
     {children}
   </form>

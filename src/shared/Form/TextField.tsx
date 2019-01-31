@@ -11,13 +11,7 @@ type Props = FieldRenderProps & {
   name: string;
 };
 
-const TextField: React.FunctionComponent<Props> = ({
-  input,
-  label,
-  type,
-  disabled,
-  name
-}) => {
+const TextField = ({ input, label, type, disabled, name }: Props) => {
   const id = React.useRef(uniqueId("text-field_"));
   return (
     <div className={styles.container}>

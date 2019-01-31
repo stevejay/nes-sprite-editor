@@ -1,6 +1,5 @@
 import { range, random } from "lodash";
-import { Color } from "../../../types";
-import { GamePaletteWithColors } from "../../../reducer";
+import { Color, GamePaletteWithColors } from "../../../types";
 
 export const COLOR_GRAPE: Color = {
   id: 36,

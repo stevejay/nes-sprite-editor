@@ -61,14 +61,6 @@ $button-v-padding: 10;
 
 .button:disabled {
   cursor: not-allowed;
-
-  // &,
-  // &:hover,
-  // &:active {
-  //   background-color: rgba($background-color, 0.66);
-  //   border-color: rgba($background-color, 0.66);
-  //   color: rgba($foreground-color, 0.33);
-  // }
 }
 
 .button:focus {

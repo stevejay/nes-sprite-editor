@@ -5,7 +5,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-const Container: React.FunctionComponent<Props> = ({ children }) => (
+const Container = ({ children }: Props) => (
   <div className={styles.container}>{children}</div>
 );
 

@@ -16,7 +16,7 @@ type Props = {
   onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 };
 
-const Button: React.FunctionComponent<Props> = ({
+const Button = ({
   type = "button",
   icon,
   children,
@@ -27,7 +27,7 @@ const Button: React.FunctionComponent<Props> = ({
   color = "default",
   className,
   onClick
-}) => {
+}: Props) => {
   const buttonClassNames = classNames(
     styles.button,
     styles[size],

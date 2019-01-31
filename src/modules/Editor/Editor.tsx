@@ -3,7 +3,6 @@ import styles from "./Editor.module.scss";
 // import EditorSidebar from "./EditorSidebar";
 import {
   Action,
-  ActionTypes,
   selectCurrentSystemPalette,
   selectSystemPalettes,
   State,
@@ -14,7 +13,9 @@ import {
   selectBackgroundPatternTables,
   selectCurrentBackgroundPatternTable,
   selectSpritePatternTables,
-  selectCurrentSpritePatternTable
+  selectCurrentSpritePatternTable,
+  selectNametables,
+  selectCurrentNametable
 } from "../../reducer";
 // import Section from "./Section";
 // import BackgroundPatternTable from "./BackgroundPatternTable";
@@ -25,6 +26,7 @@ import SystemPaletteSection from "./SystemPaletteSection";
 import BackgroundPalettesSection from "./BackgroundPalettesSection";
 import SpritePalettesSection from "./SpritePalettesSection";
 import BackgroundPatternTablesSection from "./BackgroundPatternTablesSection";
+import NametablesSection from "./NametablesSection";
 
 type Props = {
   state: State;
@@ -50,6 +52,8 @@ const Editor: React.FunctionComponent<Props> = ({ state, dispatch }) => {
   );
   const spritePatternTables = selectSpritePatternTables(state);
   const currentSpritePatternTable = selectCurrentSpritePatternTable(state);
+  const nametables = selectNametables(state);
+  const currentNametable = selectCurrentNametable(state);
 
   // const patternTable = selectCurrentBackgroundPatternTable(state);
   // const currentMetatilePalette = selectCurrentBackgroundMetatilePalette(state);
@@ -90,6 +94,13 @@ const Editor: React.FunctionComponent<Props> = ({ state, dispatch }) => {
         <BackgroundPatternTablesSection
           patternTables={backgroundPatternTables}
           currentTable={currentBackgroundPatternTable}
+          currentPaletteCollection={currentBackgroundPaletteCollection}
+          dispatch={dispatch}
+        />
+        <NametablesSection
+          nametables={nametables}
+          currentNametable={currentNametable}
+          currentPatternTable={currentBackgroundPatternTable}
           currentPaletteCollection={currentBackgroundPaletteCollection}
           dispatch={dispatch}
         />

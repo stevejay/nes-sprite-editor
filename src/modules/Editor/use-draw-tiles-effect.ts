@@ -1,31 +1,27 @@
 import React from "react";
-import { Color, PatternTile } from "../../types";
-import { GamePaletteWithColors } from "../../reducer";
+import { Color, PatternTile, GamePaletteWithColors } from "../../types";
 
 export default function useDrawTilesEffect(
   canvasRef: React.RefObject<HTMLCanvasElement | null>,
   tiles: Array<PatternTile>,
-  palettes: Array<GamePaletteWithColors>,
+  palette: GamePaletteWithColors,
   columns: number,
   scaling: number
 ) {
-  React.useLayoutEffect(
-    () => {
-      const canvas = canvasRef.current!;
-      const ctx = canvas.getContext("2d")!;
-      tiles.forEach((tile, index) => {
-        drawTile(
-          ctx,
-          Math.floor(index / columns),
-          index % columns,
-          tile.pixels,
-          palettes[0].colors, // TODO change
-          scaling
-        );
-      });
-    },
-    [tiles, palettes, scaling]
-  );
+  React.useLayoutEffect(() => {
+    const canvas = canvasRef.current!;
+    const ctx = canvas.getContext("2d")!;
+    tiles.forEach((tile, index) => {
+      drawTile(
+        ctx,
+        Math.floor(index / columns),
+        index % columns,
+        tile.pixels,
+        palette.colors,
+        scaling
+      );
+    });
+  }, [tiles, palette, scaling]);
 }
 
 const PIXEL_ROWS_PER_TILE = 8;

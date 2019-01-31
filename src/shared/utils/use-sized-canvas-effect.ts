@@ -1,5 +1,6 @@
 import React from "react";
 
+// Sizes the specified canvas, taking into account device pixel ratio.
 export default function useSizedCanvasEffect(
   canvasRef: React.RefObject<HTMLCanvasElement | null>,
   rows: number,

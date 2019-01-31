@@ -1,16 +1,12 @@
 import React from "react";
-import {
-  GamePaletteWithColors,
-  GamePaletteCollectionWithColors,
-  Action
-} from "../../reducer";
+import { GamePaletteCollectionWithColors } from "../../reducer";
 import {
   TileInteractionTracker,
-  TileCanvas,
   SelectedTile,
   Container
 } from "../../shared/TileCanvas";
 import { PatternTable } from "../../types";
+import PatternTableCanvas from "./PatternTableCanvas";
 
 type Props = {
   scaling: number;
@@ -41,12 +37,12 @@ const BackgroundPatternTable: React.FunctionComponent<Props> = ({
         column={currentTile.column}
         onSelect={onSelectTile}
       >
-        <TileCanvas
+        <PatternTableCanvas
           tilesInRow={16}
           tilesInColumn={16}
           scaling={scaling}
           tiles={patternTable.tiles}
-          palettes={paletteCollection.gamePalettes}
+          palette={paletteCollection.gamePalettes[0]}
           ariaLabel="Pattern table tiles"
         />
         <SelectedTile

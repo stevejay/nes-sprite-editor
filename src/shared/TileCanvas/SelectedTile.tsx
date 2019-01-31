@@ -11,7 +11,7 @@ type Props = {
   focusOnly?: boolean;
 };
 
-const SelectedTile: React.FunctionComponent<Props> = ({
+const SelectedTile = ({
   children,
   tileWidth,
   tileHeight,
@@ -19,7 +19,7 @@ const SelectedTile: React.FunctionComponent<Props> = ({
   column,
   ariaLabel,
   focusOnly = false
-}) => {
+}: Props) => {
   const tileRef = React.useRef<HTMLDivElement | null>(null);
 
   const style = React.useMemo(

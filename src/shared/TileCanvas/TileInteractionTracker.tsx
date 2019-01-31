@@ -17,14 +17,14 @@ type Props = {
   onSelect: (row: number, column: number, pressed: boolean) => void;
 };
 
-const TileInteractionTracker: React.FunctionComponent<Props> = ({
+const TileInteractionTracker = ({
   rows,
   columns,
   row,
   column,
   children,
   onSelect
-}) => {
+}: Props) => {
   const containerRef = React.useRef<HTMLDivElement>(null);
 
   const handleContainerClick = React.useCallback(
