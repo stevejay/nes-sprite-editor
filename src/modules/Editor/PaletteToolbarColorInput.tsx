@@ -16,7 +16,7 @@ const PaletteToolbarColorInput = ({
   systemPalette,
   onChange
 }: Props) => {
-  const [tabIndex, onKeyDown, onClick, focused] = useRovingTabIndex(index);
+  const [tabIndex, focused, onKeyDown, onClick] = useRovingTabIndex(index);
   return (
     <PaletteColorInput
       color={color}
