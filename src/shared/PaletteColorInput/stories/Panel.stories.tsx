@@ -2,14 +2,14 @@ import * as React from "react";
 import { host } from "storybook-host";
 import { storiesOf } from "@storybook/react";
 import "../../../index.scss";
-import Panel from "..";
+import Panel from "../Panel";
 
 const storyHost = host({
   align: "center middle",
   backdrop: "transparent"
 });
 
-storiesOf("Panel", module)
+storiesOf("PaletteColorInput/Panel", module)
   .addDecorator(storyHost)
   .add("Basic", () => (
     <Panel>

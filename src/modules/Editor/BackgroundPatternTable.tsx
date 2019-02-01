@@ -1,10 +1,6 @@
 import React from "react";
 import { GamePaletteCollectionWithColors } from "../../reducer";
-import {
-  TileInteractionTracker,
-  SelectedTile,
-  Container
-} from "../../shared/TileCanvas";
+import TileCanvas from "../../shared/TileCanvas";
 import { PatternTable } from "../../types";
 import PatternTableCanvas from "./PatternTableCanvas";
 
@@ -25,12 +21,13 @@ const BackgroundPatternTable: React.FunctionComponent<Props> = ({
   onSelectTile
 }) => {
   if (!patternTable || !paletteCollection) {
-    // TODO default palette
+    // TODO default palette?
     return null;
   }
+
   return (
-    <Container>
-      <TileInteractionTracker
+    <TileCanvas.Container>
+      <TileCanvas.InteractionTracker
         rows={16}
         columns={16}
         row={currentTile.row}
@@ -45,7 +42,7 @@ const BackgroundPatternTable: React.FunctionComponent<Props> = ({
           palette={paletteCollection.gamePalettes[0]}
           ariaLabel="Pattern table tiles"
         />
-        <SelectedTile
+        <TileCanvas.Highlight
           tileWidth={8 * scaling}
           tileHeight={8 * scaling}
           row={currentTile.row}
@@ -54,8 +51,8 @@ const BackgroundPatternTable: React.FunctionComponent<Props> = ({
             currentTile.column
           }`}
         />
-      </TileInteractionTracker>
-    </Container>
+      </TileCanvas.InteractionTracker>
+    </TileCanvas.Container>
   );
 };
 

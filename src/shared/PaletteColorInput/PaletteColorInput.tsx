@@ -18,15 +18,11 @@ type Props = {
 type State = {
   isOpen: boolean;
   originElement: HTMLElement | null;
-  originX: number;
-  originY: number;
 };
 
 const initialState: State = {
   isOpen: false,
-  originElement: null,
-  originX: 0,
-  originY: 0
+  originElement: null
 };
 
 const PaletteColorInput = ({
@@ -42,30 +38,17 @@ const PaletteColorInput = ({
   const [dialogState, setDialogState] = React.useState<State>(initialState);
   useFocused(focused, buttonRef);
 
-  const handleClick = React.useCallback(
-    () => {
-      if (onClick) {
-        onClick();
-      }
+  const handleClick = React.useCallback(() => {
+    if (onClick) {
+      onClick();
+    }
 
-      const originElement = buttonRef.current;
+    const originElement = buttonRef.current;
 
-      if (!dialogState.isOpen && originElement) {
-        const rect = originElement.getBoundingClientRect();
-        const originY = rect.top + rect.height / 2;
-        const originX = rect.left + rect.width / 2;
-
-        // TODO remove originX and originY
-        setDialogState({
-          isOpen: true,
-          originElement,
-          originX,
-          originY
-        });
-      }
-    },
-    [onClick, buttonRef, dialogState]
-  );
+    if (!dialogState.isOpen && originElement) {
+      setDialogState({ isOpen: true, originElement });
+    }
+  }, [onClick, buttonRef, dialogState]);
 
   const handleClose = () => {
     setDialogState(initialState);

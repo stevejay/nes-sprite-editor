@@ -1,9 +1,9 @@
-import * as React from "react";
-import { host } from "storybook-host";
+import TileCanvas from "..";
 import { State, Store } from "@sambego/storybook-state";
 import { storiesOf } from "@storybook/react";
+import * as React from "react";
+import { host } from "storybook-host";
 import "../../../index.scss";
-import { TileInteractionTracker } from "..";
 
 const storyHost = host({
   align: "center middle",
@@ -16,7 +16,7 @@ const store = new Store({
   pressed: false
 });
 
-storiesOf("TileCanvas/TileInteractionTracker", module)
+storiesOf("TileCanvas/InteractionTracker", module)
   .addDecorator(storyHost)
   .add("Basic", () => (
     <State store={store}>
@@ -26,7 +26,7 @@ storiesOf("TileCanvas/TileInteractionTracker", module)
             row={state.row}, column={state.column}, pressed={`${state.pressed}`}
           </p>
           <div>
-            <TileInteractionTracker
+            <TileCanvas.InteractionTracker
               rows={2}
               columns={3}
               row={state.row}
@@ -43,7 +43,7 @@ storiesOf("TileCanvas/TileInteractionTracker", module)
                   backgroundColor: "papayawhip"
                 }}
               />
-            </TileInteractionTracker>
+            </TileCanvas.InteractionTracker>
           </div>
         </>
       )}

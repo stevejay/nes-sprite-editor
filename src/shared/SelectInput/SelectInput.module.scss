@@ -6,20 +6,20 @@ $button-v-padding: 10;
   position: relative;
   color: inherit;
   width: 100%;
+}
 
-  &::after {
-    content: "\25BE";
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    right: rem(13);
-    color: $md-grey-800;
-    pointer-events: none;
-  }
+.container::after {
+  content: "\25BE";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: rem(13);
+  color: $md-grey-800;
+  pointer-events: none;
+}
 
-  &.disabled::after {
-    color: $md-grey-500;
-  }
+.container.disabled::after {
+  color: $md-grey-500;
 }
 
 .container > select {
@@ -39,12 +39,12 @@ $button-v-padding: 10;
   line-height: 1.5rem;
   padding-top: 0;
   padding-bottom: 0;
+}
 
-  &:disabled {
-    background-color: $md-grey-200;
-    border-color: $md-grey-400;
-    cursor: not-allowed;
-  }
+.container > select:disabled {
+  background-color: $md-grey-200;
+  border-color: $md-grey-400;
+  cursor: not-allowed;
 }
 
 .container > select:-moz-focusring,

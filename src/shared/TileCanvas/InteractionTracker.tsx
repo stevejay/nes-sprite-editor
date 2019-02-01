@@ -1,6 +1,6 @@
 import React from "react";
 import { clamp } from "lodash";
-import styles from "./TileInteractionTracker.module.scss";
+import styles from "./InteractionTracker.module.scss";
 
 const ENTER = 13;
 const ARROW_LEFT = 37;
@@ -17,7 +17,7 @@ type Props = {
   onSelect: (row: number, column: number, pressed: boolean) => void;
 };
 
-const TileInteractionTracker = ({
+const InteractionTracker = ({
   rows,
   columns,
   row,
@@ -101,4 +101,4 @@ const TileInteractionTracker = ({
   );
 };
 
-export default TileInteractionTracker;
+export default InteractionTracker;

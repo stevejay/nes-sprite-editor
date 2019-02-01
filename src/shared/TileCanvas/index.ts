@@ -1,7 +1,17 @@
-import TileInteractionTracker from "./TileInteractionTracker";
-import SelectedTile from "./SelectedTile";
+import InteractionTracker from "./InteractionTracker";
+import Highlight from "./Highlight";
 import Container from "./Container";
 
-// TODO boostrap thing
+type TileCanvasFn = {
+  InteractionTracker: typeof InteractionTracker;
+  Highlight: typeof Highlight;
+  Container: typeof Container;
+};
 
-export { TileInteractionTracker, SelectedTile, Container };
+const TileCanvasExport: TileCanvasFn = {
+  InteractionTracker,
+  Highlight,
+  Container
+};
+
+export default TileCanvasExport;

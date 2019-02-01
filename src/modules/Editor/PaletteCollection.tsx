@@ -6,8 +6,9 @@ import {
 } from "../../reducer";
 import { GamePaletteType, SystemPalette } from "../../types";
 import styles from "./PaletteCollection.module.scss";
-import PaletteToolbar from "./PaletteToolbar";
 import PaletteToolbarColorInput from "./PaletteToolbarColorInput";
+import PaletteColorInput from "../../shared/PaletteColorInput";
+import { RovingTabIndexProvider } from "../../shared/RovingTabIndex";
 
 type Props = {
   type: GamePaletteType;
@@ -22,7 +23,7 @@ const PaletteCollection = ({
   currentCollection,
   dispatch
 }: Props) => {
-  const isSprite = type === "sprite" ? 1 : 0;
+  const firstColorIndex = type === "sprite" ? 1 : 0;
   return (
     <>
       {!currentCollection && <p>No current collection</p>}
@@ -33,30 +34,36 @@ const PaletteCollection = ({
               <span className="screen-reader-only">{type} palette </span>#
               {paletteIndex}
             </h3>
-            <PaletteToolbar ariaLabel="Color edit toolbar">
-              {palette.colors
-                .filter((__, colorIndex) => colorIndex >= (isSprite ? 1 : 0))
-                .map((color, colorIndex) => (
-                  <PaletteToolbarColorInput
-                    key={colorIndex}
-                    index={colorIndex}
-                    color={color}
-                    systemPalette={systemPalette}
-                    onChange={color =>
-                      dispatch({
-                        type: ActionTypes.CHANGE_GAME_PALETTE_COLOR,
-                        payload: {
-                          type,
-                          paletteCollectionId: currentCollection.id,
-                          gamePaletteIndex: paletteIndex,
-                          valueIndex: colorIndex + (isSprite ? 1 : 0),
-                          newColor: color
-                        }
-                      })
-                    }
-                  />
-                ))}
-            </PaletteToolbar>
+            <PaletteColorInput.Container
+              ariaLabel="Color edit toolbar"
+              ariaOrientation="horizontal"
+              role="toolbar"
+            >
+              <RovingTabIndexProvider>
+                {palette.colors
+                  .filter((__, colorIndex) => colorIndex >= firstColorIndex)
+                  .map((color, colorIndex) => (
+                    <PaletteToolbarColorInput
+                      key={colorIndex}
+                      index={colorIndex}
+                      color={color}
+                      systemPalette={systemPalette}
+                      onChange={color =>
+                        dispatch({
+                          type: ActionTypes.CHANGE_GAME_PALETTE_COLOR,
+                          payload: {
+                            type,
+                            paletteCollectionId: currentCollection.id,
+                            gamePaletteIndex: paletteIndex,
+                            valueIndex: colorIndex + firstColorIndex,
+                            newColor: color
+                          }
+                        })
+                      }
+                    />
+                  ))}
+              </RovingTabIndexProvider>
+            </PaletteColorInput.Container>
           </div>
         ))}
     </>

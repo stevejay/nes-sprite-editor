@@ -1,8 +1,8 @@
+import SkipLink from "..";
+import { storiesOf } from "@storybook/react";
 import * as React from "react";
 import { host } from "storybook-host";
-import { storiesOf } from "@storybook/react";
 import "../../../index.scss";
-import SkipLink from "..";
 
 const storyHost = host({
   align: "center middle",

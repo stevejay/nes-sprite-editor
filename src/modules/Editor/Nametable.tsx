@@ -1,10 +1,6 @@
 import React from "react";
 import styles from "./Nametable.module.scss";
-import {
-  Container,
-  TileInteractionTracker,
-  SelectedTile
-} from "../../shared/TileCanvas";
+import TileCanvas from "../../shared/TileCanvas";
 import { Nametable as NametableType, PatternTable } from "../../types";
 import { GamePaletteCollectionWithColors } from "../../reducer";
 import NametableCanvas from "./NametableCanvas";
@@ -28,8 +24,8 @@ const Nametable: React.FunctionComponent<Props> = ({
   const scaling = 3;
 
   return (
-    <Container>
-      <TileInteractionTracker
+    <TileCanvas.Container>
+      <TileCanvas.InteractionTracker
         rows={16}
         columns={16}
         row={0}
@@ -45,7 +41,7 @@ const Nametable: React.FunctionComponent<Props> = ({
           palettes={paletteCollection.gamePalettes}
           ariaLabel="Nametable tiles"
         />
-        <SelectedTile
+        <TileCanvas.Highlight
           tileWidth={16 * scaling}
           tileHeight={16 * scaling}
           row={currentTile.row}
@@ -54,8 +50,8 @@ const Nametable: React.FunctionComponent<Props> = ({
             currentTile.column
           }`}
         />
-      </TileInteractionTracker>
-    </Container>
+      </TileCanvas.InteractionTracker>
+    </TileCanvas.Container>
   );
 };
 

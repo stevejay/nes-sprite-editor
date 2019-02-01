@@ -1,7 +1,7 @@
+import classNames from "classnames";
+import { isEmpty, isNil } from "lodash";
 import React from "react";
 import styles from "./SelectInput.module.scss";
-import { isEmpty, isNil } from "lodash";
-import classNames from "classnames";
 
 type Option<IdT> = {
   id: IdT;

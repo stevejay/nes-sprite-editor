@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./SelectedTile.module.scss";
+import styles from "./Highlight.module.scss";
 
 type Props = {
   children?: React.ReactNode;
@@ -11,7 +11,7 @@ type Props = {
   focusOnly?: boolean;
 };
 
-const SelectedTile = ({
+const Highlight = ({
   children,
   tileWidth,
   tileHeight,
@@ -48,4 +48,4 @@ const SelectedTile = ({
   );
 };
 
-export default SelectedTile;
+export default Highlight;

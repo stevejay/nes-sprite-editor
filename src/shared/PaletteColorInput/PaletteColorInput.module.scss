@@ -8,6 +8,7 @@
   border: none;
   line-height: 0;
   text-decoration: none;
+  overflow: hidden;
 
   &::-moz-focus-inner {
     border: 0; /* remove dotted line in Firefox */

@@ -3,8 +3,8 @@
 $background-color: $md-white;
 
 .container {
+  // css variable for positioning the pointer arrow:
   --pointer-position: 50%;
-
   position: fixed;
   display: flex;
   flex-direction: column;
@@ -31,7 +31,7 @@ $background-color: $md-white;
 
 .container:global(.left)::after {
   right: -12px;
-  top: 50%; // fallback value
+  top: 50%; // fallback value if css variables not supported
   top: var(--pointer-position);
   border-right-width: 0;
   border-left-color: $background-color;
@@ -40,7 +40,7 @@ $background-color: $md-white;
 
 .container:global(.right)::after {
   left: -12px;
-  top: 50%; // fallback value
+  top: 50%; // fallback value if css variables not supported
   top: var(--pointer-position);
   border-left-width: 0;
   border-right-color: $background-color;
@@ -48,7 +48,7 @@ $background-color: $md-white;
 }
 
 .container:global(.top)::after {
-  left: 50%; // fallback value
+  left: 50%; // fallback value if css variables not supported
   left: var(--pointer-position);
   bottom: -12px;
   border-bottom-width: 0;
@@ -57,7 +57,7 @@ $background-color: $md-white;
 }
 
 .container:global(.bottom)::after {
-  left: 50%; // fallback value
+  left: 50%; // fallback value if css variables not supported
   left: var(--pointer-position);
   top: -12px;
   border-top-width: 0;

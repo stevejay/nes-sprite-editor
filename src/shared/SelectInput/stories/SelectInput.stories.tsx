@@ -1,8 +1,8 @@
+import { State, Store } from "@sambego/storybook-state";
+import { boolean, withKnobs } from "@storybook/addon-knobs";
+import { storiesOf } from "@storybook/react";
 import * as React from "react";
 import { host } from "storybook-host";
-import { withKnobs, boolean } from "@storybook/addon-knobs";
-import { State, Store } from "@sambego/storybook-state";
-import { storiesOf } from "@storybook/react";
 import "../../../index.scss";
 import SelectInput from "../SelectInput";
 

@@ -2,7 +2,7 @@ import * as React from "react";
 import styles from "./ColorPicker.module.scss";
 import { SystemPalette, Color } from "../../types";
 import useSizedCanvasEffect from "../utils/use-sized-canvas-effect";
-import { TileInteractionTracker, SelectedTile } from "../TileCanvas";
+import TileCanvas from "../TileCanvas";
 
 const COLUMNS = 16;
 const ROWS = 64 / COLUMNS;
@@ -30,22 +30,19 @@ const ColorPicker: React.FunctionComponent<Props> = ({
     scaling
   );
 
-  React.useLayoutEffect(
-    () => {
-      const canvas = canvasRef.current!;
-      const ctx = canvas.getContext("2d")!;
-      palette.values.forEach((color, index) => {
-        const x = (index % COLUMNS) * scaling;
-        const y = Math.floor(index / COLUMNS) * scaling;
-        if (!color.available) {
-          return;
-        }
-        ctx.fillStyle = color.rgb;
-        ctx.fillRect(x, y, scaling, scaling);
-      });
-    },
-    [palette, scaling]
-  );
+  React.useLayoutEffect(() => {
+    const canvas = canvasRef.current!;
+    const ctx = canvas.getContext("2d")!;
+    palette.values.forEach((color, index) => {
+      const x = (index % COLUMNS) * scaling;
+      const y = Math.floor(index / COLUMNS) * scaling;
+      if (!color.available) {
+        return;
+      }
+      ctx.fillStyle = color.rgb;
+      ctx.fillRect(x, y, scaling, scaling);
+    });
+  }, [palette, scaling]);
 
   const handleSelect = (row: number, column: number) => {
     const index = row * COLUMNS + column;
@@ -59,7 +56,7 @@ const ColorPicker: React.FunctionComponent<Props> = ({
   const currentColumn = selectedColorId % COLUMNS;
 
   return (
-    <TileInteractionTracker
+    <TileCanvas.InteractionTracker
       rows={ROWS}
       columns={COLUMNS}
       row={currentRow}
@@ -73,14 +70,14 @@ const ColorPicker: React.FunctionComponent<Props> = ({
         role="img"
         aria-label="Todo"
       />
-      <SelectedTile
+      <TileCanvas.Highlight
         tileWidth={scaling}
         tileHeight={scaling}
         row={currentRow}
         column={currentColumn}
         ariaLabel="todo"
       />
-    </TileInteractionTracker>
+    </TileCanvas.InteractionTracker>
   );
 };
 

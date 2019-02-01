@@ -1,21 +1,21 @@
+import TileCanvas from "..";
+import { boolean, withKnobs } from "@storybook/addon-knobs";
+import { storiesOf } from "@storybook/react";
 import * as React from "react";
 import { host } from "storybook-host";
-import { storiesOf } from "@storybook/react";
 import "../../../index.scss";
-import { SelectedTile } from "..";
-import { withKnobs, boolean } from "@storybook/addon-knobs";
 
 const storyHost = host({
   align: "center middle",
   backdrop: "transparent"
 });
 
-storiesOf("TileCanvas/SelectedTile", module)
+storiesOf("TileCanvas/Highlight", module)
   .addDecorator(storyHost)
   .addDecorator(withKnobs)
   .add("Basic", () => (
     <div style={{ position: "relative", width: 200, height: 150 }}>
-      <SelectedTile
+      <TileCanvas.Highlight
         row={2}
         column={3}
         tileWidth={50}
@@ -24,6 +24,6 @@ storiesOf("TileCanvas/SelectedTile", module)
         focusOnly={boolean("Focus only", false)}
       >
         foo
-      </SelectedTile>
+      </TileCanvas.Highlight>
     </div>
   ));

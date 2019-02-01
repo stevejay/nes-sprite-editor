@@ -3,7 +3,7 @@
 .link {
   @include screen-reader-only;
 
-  // from: https://gomakethings.com/hidden-content-for-better-a11y/#hiding-the-link
+  // from https://gomakethings.com/hidden-content-for-better-a11y/#hiding-the-link
   &:active,
   &:focus {
     clip: auto;

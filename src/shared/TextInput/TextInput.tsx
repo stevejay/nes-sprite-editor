@@ -11,7 +11,7 @@ export type Props = {
   onChange: (value: string) => void;
 };
 
-const TextInput: React.FunctionComponent<Props> = ({
+const TextInput = ({
   type = "text",
   value,
   disabled = false,
@@ -19,7 +19,7 @@ const TextInput: React.FunctionComponent<Props> = ({
   name,
   autosOff,
   onChange
-}) => (
+}: Props) => (
   <input
     id={id}
     name={name}
