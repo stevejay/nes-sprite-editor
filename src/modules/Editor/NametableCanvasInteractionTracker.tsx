@@ -50,13 +50,7 @@ function calculateDragBounds(canvasViewport: CanvasViewport) {
     result.top = 0;
   }
 
-  console.log(
-    "drag bounds",
-    canvasViewport.leftTile,
-    canvasViewport.topTile,
-    canvasViewport.leftTile + columns / canvasViewport.scaling,
-    canvasViewport.topTile + rows / canvasViewport.scaling
-  );
+  console.log("drag bounds", result);
 
   return result;
 }

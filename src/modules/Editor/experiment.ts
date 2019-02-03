@@ -1,15 +1,6 @@
-export type ViewportCoords = {
+export type ViewportCoord = {
   x: number;
   y: number;
-};
-
-export type Scale = number; // 0.5 | 1 | 2 | 4 | 8 | 16;
-
-export type LogicalCoords = {
-  xTileIndex: number;
-  xTilePixelIndex: number;
-  yTileIndex: number;
-  yTilePixelIndex: number;
 };
 
 // gets drawn with transparency svg for background
@@ -18,24 +9,40 @@ export type ViewportSize = {
   heightPx: number;
 };
 
-// This is always sized to render some area of whole tiles
+export type ViewportScale = 1 | 2;
+
+export type Scale = number; // 0.5 | 1 | 2 | 4 | 8 | 16;
+
+export type LogicalCoord = {
+  xLogicalPx: number;
+  yLogicalPx: number;
+};
+
+export type LogicalSize = {
+  widthLogicalPx: number;
+  heightLogicalPx: number;
+};
+
 export type RenderCanvasPositioning = {
-  xTileIndex: number;
-  yTileIndex: number;
-  widthTiles: number;
-  heightTiles: number;
+  origin: LogicalCoord;
+  size: LogicalSize;
   scale: Scale;
-  viewportXPx: number; // horizontal offset
-  viewportYPx: number; // vertical offset
-  dragBounds: { left: number; top: number; right: number; bottom: number };
+  viewportOffset: LogicalCoord;
+};
+
+export type DragBounds = {
+  left: number;
+  top: number;
+  right: number;
+  bottom: number;
 };
 
 const TOTAL_NAMETABLE_X_TILES = 32;
 const TOTAL_NAMETABLE_Y_TILES = 30;
 const TILE_SIZE_PIXELS = 8;
 
-// Creates a square viewport size
-export function createViewportSize(scale: 1 | 2): ViewportSize {
+// Creates a square viewport
+export function createViewportSize(scale: ViewportScale): ViewportSize {
   const dimension =
     TILE_SIZE_PIXELS *
     Math.max(TOTAL_NAMETABLE_X_TILES, TOTAL_NAMETABLE_Y_TILES) *
@@ -62,14 +69,28 @@ export function createInitialRenderCanvasPositioning(
   const viewportYPx = (viewportSize.heightPx - scaledHeight) * 0.5;
 
   return {
+    origin: {
+      xLogicalPx: 0,
+      yLogicalPx: 0
+    },
+    size: {
+      widthLogicalPx: TILE_SIZE_PIXELS * TOTAL_NAMETABLE_X_TILES,
+      heightLogicalPx: TILE_SIZE_PIXELS * TOTAL_NAMETABLE_Y_TILES
+    },
+    scale,
+    viewportOffset: {
+      xLogicalPx: 0,
+      yLogicalPx: 8
+    }
+
+
     xTileIndex: 0,
     yTileIndex: 0,
     widthTiles: TOTAL_NAMETABLE_X_TILES,
     heightTiles: TOTAL_NAMETABLE_Y_TILES,
     scale,
-    viewportYPx,
     viewportXPx,
-    dragBounds: { left: 0, top: 0, right: 0, bottom: 0 }
+    viewportYPx
   };
 }
 
@@ -79,32 +100,59 @@ export function createInitialRenderCanvasPositioning(
 
 // }
 
+// temp
+// export function calculateRenderCanvasPositioningForViewport(
+//   viewportCenterLogicalCoord: LogicalCoord,
+//   viewportSize: ViewportSize,
+//   scale: Scale
+// ): RenderCanvasPositioning {}
+
+// export function calculateDragBounds(
+//   renderCanvasPositioning: RenderCanvasPositioning,
+//   viewportSize: ViewportSize
+// ): DragBounds {
+//   // calculate logical position of (viewportXPx, viewportYPx)
+//   // calculate tile width and height of viewable area
+//   // work out how many pixels are available each way
+//   // OR we always calculate the same value???
+//   return {
+//     left: 0,
+//     top: 0,
+//     right: 0,
+//     bottom: 0
+//   };
+// }
+
 export function moveRenderCanvas(
   renderCanvasPositioning: RenderCanvasPositioning,
-  viewportSize: ViewportSize
+  viewportSize: ViewportSize,
+  viewportDelta: ViewportCoord
 ): RenderCanvasPositioning {
   return renderCanvasPositioning;
 }
 
 export function zoomIntoRenderCanvas(
   renderCanvasPositioning: RenderCanvasPositioning,
-  zoomOriginViewportCoords: ViewportCoords
+  zoomCenterViewportCoord: ViewportCoord
 ): RenderCanvasPositioning {
+  //
+
   return renderCanvasPositioning;
 }
 
 export function zoomOutOfRenderCanvas(
   renderCanvasPositioning: RenderCanvasPositioning,
-  zoomOriginViewportCoords: ViewportCoords
+  zoomOriginViewportCoord: ViewportCoord
 ): RenderCanvasPositioning {
   return renderCanvasPositioning;
 }
 
-// Used for tools like pencil to see which tile/pixel the tool should affect
+// Used for tools like pencil to see which tile/pixel the tool should affect.
+// Returns null if viewportCoords is not a point within the canvas.
 export function convertViewportCoordsToLogicalCoords(
-  viewportCoords: ViewportCoords,
+  viewportCoords: ViewportCoord,
   renderCanvasPositioning: RenderCanvasPositioning
-): LogicalCoords | null {
+): LogicalCoord | null {
   const yValue =
     (viewportCoords.y - renderCanvasPositioning.viewportYPx) /
     (TILE_SIZE_PIXELS * renderCanvasPositioning.scale);
