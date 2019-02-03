@@ -1,17 +1,14 @@
-import React, { FunctionComponent } from "react";
-import ColorPickerModal from "./ColorPickerModal";
-import PaletteColor from "../PaletteColor";
-import styles from "./PaletteColorInput.module.scss";
+import React from "react";
 import { Color, SystemPalette } from "../../types";
+import PaletteColor from "../PaletteColor";
+import { useRovingTabIndex } from "../RovingTabIndex";
 import useFocused from "../utils/use-focus-effect";
+import ColorPickerModal from "./ColorPickerModal";
+import styles from "./PaletteColorInput.module.scss";
 
 type Props = {
   color: Color;
   systemPalette: SystemPalette; // TODO remove this when using redux
-  tabIndex?: number;
-  focused?: boolean;
-  onKeyDown?: (event: React.KeyboardEvent<any>) => void;
-  onClick?: () => void;
   onChange: (color: Color) => void;
 };
 
@@ -25,16 +22,12 @@ const initialState: State = {
   originElement: null
 };
 
-const PaletteColorInput = ({
-  color,
-  systemPalette,
-  tabIndex = 0,
-  focused,
-  onKeyDown,
-  onClick,
-  onChange
-}: Props) => {
+const PaletteColorInput = ({ color, systemPalette, onChange }: Props) => {
   const buttonRef = React.useRef<HTMLButtonElement>(null);
+  const [tabIndex, focused, onKeyDown, onClick] = useRovingTabIndex(
+    buttonRef,
+    false
+  );
   const [dialogState, setDialogState] = React.useState<State>(initialState);
   useFocused(focused, buttonRef);
 

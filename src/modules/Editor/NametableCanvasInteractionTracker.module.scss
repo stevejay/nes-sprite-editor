@@ -1,0 +1,34 @@
+@import "styles/_base.scss";
+
+.container {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  pointer-events: all;
+}
+
+.container.palette {
+  cursor: grab; // TODO
+}
+
+.container.pattern {
+  cursor: grab; // TODO
+}
+
+.container.pencil {
+  cursor: grab; // TODO
+}
+
+.container.zoomIn {
+  cursor: col-resize; // fallback for IE
+  cursor: zoom-in;
+}
+
+.container.zoomOut {
+  cursor: col-resize; // fallback for IE
+  cursor: zoom-out;
+}
+
+.container.move {
+  cursor: grab;
+}

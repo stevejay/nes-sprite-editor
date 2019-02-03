@@ -47,11 +47,13 @@ export default function useRovingTabIndex(
         type: ActionTypes.TAB_TO_PREVIOUS,
         payload: { id: id.current }
       });
+      event.preventDefault();
     } else if (event.keyCode === ARROW_RIGHT) {
       context.dispatch({
         type: ActionTypes.TAB_TO_NEXT,
         payload: { id: id.current }
       });
+      event.preventDefault();
     }
   }, []);
 

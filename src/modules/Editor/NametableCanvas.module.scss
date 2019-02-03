@@ -1,0 +1,15 @@
+@import "styles/_base.scss";
+
+// .viewport {
+//   display: block;
+//   overflow: hidden;
+//   background-color: $md-grey-200;
+//   position: relative;
+// }
+
+.canvas {
+  display: block;
+  background-color: transparent;
+  will-change: transform;
+  transition: transform 50ms;
+}

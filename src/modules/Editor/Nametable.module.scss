@@ -1,0 +1,11 @@
+@import "styles/_base.scss";
+
+.background {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $md-grey-200;
+  position: relative;
+  overflow: hidden;
+  @include transparentColor;
+}

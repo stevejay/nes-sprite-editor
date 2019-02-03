@@ -23,8 +23,6 @@ storiesOf("PaletteColorInput/PaletteColorInput", module)
         <PaletteColorInput
           color={state.color}
           systemPalette={SYSTEM_PALETTE_OPTIONS[0]}
-          tabIndex={0}
-          focused={false}
           onChange={color => store.set({ color })}
         />
       )}

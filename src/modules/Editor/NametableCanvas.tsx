@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./PatternTableCanvas.module.scss";
+import styles from "./NametableCanvas.module.scss";
 import {
   PatternTile,
   GamePaletteWithColors,
@@ -7,6 +7,8 @@ import {
   Color
 } from "../../types";
 import useSizedCanvasEffect from "../../shared/utils/use-sized-canvas-effect";
+import classNames from "classnames";
+import { CanvasViewport, PixelScaling } from "./Nametable";
 
 const PIXEL_ROWS_PER_TILE = 8;
 const PIXEL_COLUMNS_PER_TILE = PIXEL_ROWS_PER_TILE;
@@ -75,9 +77,13 @@ function drawTile(
 }
 
 type Props = {
-  tilesInRow: number;
-  tilesInColumn: number;
-  scaling: number; // in range [1, ...]
+  style?: any; // TODO fix any
+  onMouseDown?: any; // TODO fix any
+  onMouseUp?: any; // TODO fix any
+  onTouchStart?: any; // TODO fix any
+  onTouchEnd?: any; // TODO fix any
+  pixelScaling: PixelScaling;
+  canvasViewport: CanvasViewport;
   nametable: Nametable;
   patternTiles: Array<PatternTile>;
   palettes: Array<GamePaletteWithColors>;
@@ -85,9 +91,13 @@ type Props = {
 };
 
 const NametableCanvas = ({
-  tilesInRow,
-  tilesInColumn,
-  scaling,
+  style,
+  onMouseDown,
+  onMouseUp,
+  onTouchStart,
+  onTouchEnd,
+  pixelScaling,
+  canvasViewport,
   nametable,
   patternTiles,
   palettes,
@@ -97,10 +107,10 @@ const NametableCanvas = ({
 
   const canvasSize = useSizedCanvasEffect(
     canvasRef,
-    tilesInRow,
-    tilesInColumn,
-    scaling * PIXEL_ROWS_PER_TILE,
-    scaling * PIXEL_COLUMNS_PER_TILE
+    canvasViewport.scaling === 1 ? 30 : 32,
+    32,
+    pixelScaling * PIXEL_ROWS_PER_TILE,
+    pixelScaling * PIXEL_COLUMNS_PER_TILE
   );
 
   useDrawNametableEffect(
@@ -108,18 +118,30 @@ const NametableCanvas = ({
     nametable,
     patternTiles,
     palettes,
-    tilesInColumn,
-    scaling
+    32,
+    pixelScaling * canvasViewport.scaling
   );
 
   return (
+    // <div
+    //   className={styles.viewport}
+    //   style={{
+    //     width: pixelScaling * 8 * 32, // 256, 512, ...
+    //     height: pixelScaling * 8 * 32
+    //   }}
+    // >
     <canvas
       ref={canvasRef}
       className={styles.canvas}
-      style={canvasSize}
+      style={{ ...style, ...canvasSize }}
       role="img"
       aria-label={ariaLabel}
+      onMouseDown={onMouseDown}
+      onMouseUp={onMouseUp}
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
     />
+    // </div>
   );
 };
 

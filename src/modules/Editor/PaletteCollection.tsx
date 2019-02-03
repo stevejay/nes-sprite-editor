@@ -6,7 +6,6 @@ import {
 } from "../../reducer";
 import { GamePaletteType, SystemPalette } from "../../types";
 import styles from "./PaletteCollection.module.scss";
-import PaletteToolbarColorInput from "./PaletteToolbarColorInput";
 import PaletteColorInput from "../../shared/PaletteColorInput";
 import { RovingTabIndexProvider } from "../../shared/RovingTabIndex";
 
@@ -43,9 +42,8 @@ const PaletteCollection = ({
                 {palette.colors
                   .filter((__, colorIndex) => colorIndex >= firstColorIndex)
                   .map((color, colorIndex) => (
-                    <PaletteToolbarColorInput
+                    <PaletteColorInput
                       key={colorIndex}
-                      index={colorIndex}
                       color={color}
                       systemPalette={systemPalette}
                       onChange={color =>
