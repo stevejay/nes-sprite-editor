@@ -5,13 +5,11 @@ export type ViewportCoord = {
 
 // gets drawn with transparency svg for background
 export type ViewportSize = {
-  widthPx: number;
-  heightPx: number;
+  width: number;
+  height: number;
 };
 
-export type ViewportScale = 1 | 2;
-
-export type Scale = number; // 0.5 | 1 | 2 | 4 | 8 | 16;
+export type Scale = 0.5 | 1 | 2 | 4 | 8 | 16;
 
 export type LogicalCoord = {
   xLogicalPx: number;
@@ -27,7 +25,7 @@ export type RenderCanvasPositioning = {
   origin: LogicalCoord;
   size: LogicalSize;
   scale: Scale;
-  viewportOffset: LogicalCoord;
+  viewportOffset: LogicalCoord; // logical top left values for canvas style
 };
 
 export type DragBounds = {
@@ -40,33 +38,45 @@ export type DragBounds = {
 const TOTAL_NAMETABLE_X_TILES = 32;
 const TOTAL_NAMETABLE_Y_TILES = 30;
 const TILE_SIZE_PIXELS = 8;
+const CANVAS_OVERDRAW_SCALING = 1;
 
-// Creates a square viewport
-export function createViewportSize(scale: ViewportScale): ViewportSize {
-  const dimension =
-    TILE_SIZE_PIXELS *
-    Math.max(TOTAL_NAMETABLE_X_TILES, TOTAL_NAMETABLE_Y_TILES) *
-    scale;
-  return { widthPx: dimension, heightPx: dimension };
+export function calculateBestNaturalScaleForViewportSize(
+  viewportSize: ViewportSize
+): Scale {
+  // Calculate the value that allows the entire tile grid to fit
+  // in the viewport by using the smaller viewport dimension:
+  const rawScale =
+    viewportSize.width <= viewportSize.height
+      ? viewportSize.width / (TILE_SIZE_PIXELS * TOTAL_NAMETABLE_X_TILES)
+      : viewportSize.height / (TILE_SIZE_PIXELS * TOTAL_NAMETABLE_Y_TILES);
+
+  if (rawScale < 1) {
+    return 0.5;
+  } else if (rawScale < 2) {
+    return 1;
+  } else if (rawScale < 4) {
+    return 2;
+  } else if (rawScale < 8) {
+    return 4;
+  } else if (rawScale < 16) {
+    return 8;
+  } else {
+    return 16;
+  }
 }
 
 export function createInitialRenderCanvasPositioning(
   viewportSize: ViewportSize
 ): RenderCanvasPositioning {
-  // scale the canvas so the entire tile grid fits,
-  // by using the smaller viewport dimension:
-  const scale =
-    viewportSize.widthPx <= viewportSize.heightPx
-      ? viewportSize.widthPx / (TILE_SIZE_PIXELS * TOTAL_NAMETABLE_X_TILES)
-      : viewportSize.heightPx / (TILE_SIZE_PIXELS * TOTAL_NAMETABLE_Y_TILES);
+  const scale = calculateBestNaturalScaleForViewportSize(viewportSize);
 
   // work out what that means for the viewportXPx value:
   const scaledWidth = scale * (TILE_SIZE_PIXELS * TOTAL_NAMETABLE_X_TILES);
-  const viewportXPx = (viewportSize.widthPx - scaledWidth) * 0.5;
+  const xLogicalPx = ((viewportSize.width - scaledWidth) * 0.5) / scale;
 
   // work out what that means for the viewportYPx value:
   const scaledHeight = scale * (TILE_SIZE_PIXELS * TOTAL_NAMETABLE_Y_TILES);
-  const viewportYPx = (viewportSize.heightPx - scaledHeight) * 0.5;
+  const yLogicalPx = ((viewportSize.height - scaledHeight) * 0.5) / scale;
 
   return {
     origin: {
@@ -79,120 +89,286 @@ export function createInitialRenderCanvasPositioning(
     },
     scale,
     viewportOffset: {
-      xLogicalPx: 0,
-      yLogicalPx: 8
+      xLogicalPx,
+      yLogicalPx
     }
-
-
-    xTileIndex: 0,
-    yTileIndex: 0,
-    widthTiles: TOTAL_NAMETABLE_X_TILES,
-    heightTiles: TOTAL_NAMETABLE_Y_TILES,
-    scale,
-    viewportXPx,
-    viewportYPx
   };
 }
-
-// export function createCanvasSize(renderCanvasPositioning: RenderCanvasPositioning): ??? {
-//   // TODO
-//   // take retina into account.
-
-// }
-
-// temp
-// export function calculateRenderCanvasPositioningForViewport(
-//   viewportCenterLogicalCoord: LogicalCoord,
-//   viewportSize: ViewportSize,
-//   scale: Scale
-// ): RenderCanvasPositioning {}
-
-// export function calculateDragBounds(
-//   renderCanvasPositioning: RenderCanvasPositioning,
-//   viewportSize: ViewportSize
-// ): DragBounds {
-//   // calculate logical position of (viewportXPx, viewportYPx)
-//   // calculate tile width and height of viewable area
-//   // work out how many pixels are available each way
-//   // OR we always calculate the same value???
-//   return {
-//     left: 0,
-//     top: 0,
-//     right: 0,
-//     bottom: 0
-//   };
-// }
 
 export function moveRenderCanvas(
   renderCanvasPositioning: RenderCanvasPositioning,
   viewportSize: ViewportSize,
   viewportDelta: ViewportCoord
 ): RenderCanvasPositioning {
-  return renderCanvasPositioning;
+  const moveCenterViewportCoord: ViewportCoord = {
+    x: viewportSize.width * 0.5 + viewportDelta.x,
+    y: viewportSize.height * 0.5 + viewportDelta.y
+  };
+
+  const logicalMoveCenterViewportCoord = convertViewportCoordToLogicalCoord(
+    renderCanvasPositioning,
+    moveCenterViewportCoord
+  );
+
+  return createRenderCanvasPositioningCenteredOnLogicalCoord(
+    logicalMoveCenterViewportCoord,
+    viewportSize,
+    renderCanvasPositioning.scale
+  );
 }
 
 export function zoomIntoRenderCanvas(
   renderCanvasPositioning: RenderCanvasPositioning,
+  viewportSize: ViewportSize,
   zoomCenterViewportCoord: ViewportCoord
 ): RenderCanvasPositioning {
-  //
+  const newScale = zoomInScale(renderCanvasPositioning.scale);
+  if (newScale === renderCanvasPositioning.scale) {
+    return renderCanvasPositioning;
+  }
 
-  return renderCanvasPositioning;
+  const logicalZoomCenterViewportCoord = convertViewportCoordToLogicalCoord(
+    renderCanvasPositioning,
+    zoomCenterViewportCoord
+  );
+
+  return createRenderCanvasPositioningCenteredOnLogicalCoord(
+    logicalZoomCenterViewportCoord,
+    viewportSize,
+    newScale
+  );
 }
 
 export function zoomOutOfRenderCanvas(
   renderCanvasPositioning: RenderCanvasPositioning,
-  zoomOriginViewportCoord: ViewportCoord
+  viewportSize: ViewportSize,
+  zoomCenterViewportCoord: ViewportCoord
 ): RenderCanvasPositioning {
-  return renderCanvasPositioning;
+  const newScale = zoomOutScale(renderCanvasPositioning.scale);
+  if (newScale === renderCanvasPositioning.scale) {
+    return renderCanvasPositioning;
+  }
+
+  const logicalZoomCenterViewportCoord = convertViewportCoordToLogicalCoord(
+    renderCanvasPositioning,
+    zoomCenterViewportCoord
+  );
+
+  return createRenderCanvasPositioningCenteredOnLogicalCoord(
+    logicalZoomCenterViewportCoord,
+    viewportSize,
+    newScale
+  );
 }
 
-// Used for tools like pencil to see which tile/pixel the tool should affect.
-// Returns null if viewportCoords is not a point within the canvas.
-export function convertViewportCoordsToLogicalCoords(
-  viewportCoords: ViewportCoord,
-  renderCanvasPositioning: RenderCanvasPositioning
-): LogicalCoord | null {
-  const yValue =
-    (viewportCoords.y - renderCanvasPositioning.viewportYPx) /
-    (TILE_SIZE_PIXELS * renderCanvasPositioning.scale);
+export function adjustZoomOfRenderCanvas(
+  renderCanvasPositioning: RenderCanvasPositioning,
+  viewportSize: ViewportSize,
+  newScale: Scale
+): RenderCanvasPositioning {
+  const logicalZoomCenterViewportCoord = convertViewportCoordToLogicalCoord(
+    renderCanvasPositioning,
+    {
+      x: viewportSize.width / 2,
+      y: viewportSize.height / 2
+    }
+  );
 
-  const flooredYValue = Math.floor(yValue);
+  console.log("--- adjustZoomOfRenderCanvas ---");
+  console.log("input viewport coord", {
+    x: viewportSize.width / 2,
+    y: viewportSize.height / 2
+  });
 
-  const xValue =
-    (viewportCoords.x - renderCanvasPositioning.viewportXPx) /
-    (TILE_SIZE_PIXELS * renderCanvasPositioning.scale);
+  return createRenderCanvasPositioningCenteredOnLogicalCoord(
+    logicalZoomCenterViewportCoord,
+    viewportSize,
+    newScale
+  );
+}
 
-  const flooredXValue = Math.floor(xValue);
+export function createRenderCanvasPositioningCenteredOnLogicalCoord(
+  logicalCoord: LogicalCoord,
+  viewportSize: ViewportSize,
+  scale: Scale
+): RenderCanvasPositioning {
+  const viewportLogicalSize = convertViewportSizeToLogicalSize(
+    viewportSize,
+    scale
+  );
 
-  const result = {
-    xTileIndex: flooredXValue,
-    xTilePixelIndex: Math.floor((xValue - flooredXValue) * TILE_SIZE_PIXELS),
-    yTileIndex: flooredYValue,
-    yTilePixelIndex: Math.floor((yValue - flooredYValue) * TILE_SIZE_PIXELS)
+  console.log("logicalCoord", logicalCoord);
+  console.log("viewportLogicalSize", viewportLogicalSize);
+
+  const expandedViewportLogicalSize: LogicalSize = {
+    widthLogicalPx:
+      viewportLogicalSize.widthLogicalPx +
+      viewportLogicalSize.widthLogicalPx * CANVAS_OVERDRAW_SCALING * 2,
+    heightLogicalPx:
+      viewportLogicalSize.heightLogicalPx +
+      viewportLogicalSize.heightLogicalPx * CANVAS_OVERDRAW_SCALING * 2
   };
 
-  if (
-    result.xTileIndex < 0 ||
-    result.xTileIndex >= TOTAL_NAMETABLE_X_TILES ||
-    result.yTileIndex < 0 ||
-    result.yTileIndex >= TOTAL_NAMETABLE_Y_TILES
-  ) {
-    return null;
+  const originLogicalCoord: LogicalCoord = {
+    xLogicalPx:
+      logicalCoord.xLogicalPx -
+      expandedViewportLogicalSize.widthLogicalPx * 0.5,
+    yLogicalPx:
+      logicalCoord.yLogicalPx -
+      expandedViewportLogicalSize.heightLogicalPx * 0.5
+  };
+
+  const viewportLogicalOffset: LogicalCoord = {
+    xLogicalPx: -viewportLogicalSize.widthLogicalPx * CANVAS_OVERDRAW_SCALING,
+    yLogicalPx: -viewportLogicalSize.heightLogicalPx * CANVAS_OVERDRAW_SCALING
+  };
+
+  if (originLogicalCoord.xLogicalPx < 0) {
+    // canvas origin logical x is off to the left of the canvas
+
+    // reduce width of logical canvas by the amount we are off to the left
+    expandedViewportLogicalSize.widthLogicalPx =
+      expandedViewportLogicalSize.widthLogicalPx +
+      originLogicalCoord.xLogicalPx;
+
+    viewportLogicalOffset.xLogicalPx =
+      viewportLogicalOffset.xLogicalPx - originLogicalCoord.xLogicalPx;
+
+    originLogicalCoord.xLogicalPx = 0;
   }
 
-  if (process.env.NODE_ENV === "development") {
-    if (
-      result.xTilePixelIndex < 0 ||
-      result.xTilePixelIndex >= TILE_SIZE_PIXELS ||
-      result.yTilePixelIndex < 0 ||
-      result.yTilePixelIndex >= TILE_SIZE_PIXELS
-    ) {
-      throw new Error(
-        `invalid tile pixel index: ${viewportCoords} ${renderCanvasPositioning} ${result}`
-      );
-    }
+  if (originLogicalCoord.yLogicalPx < 0) {
+    expandedViewportLogicalSize.heightLogicalPx =
+      expandedViewportLogicalSize.heightLogicalPx +
+      originLogicalCoord.yLogicalPx;
+
+    viewportLogicalOffset.yLogicalPx =
+      viewportLogicalOffset.yLogicalPx - originLogicalCoord.yLogicalPx;
+
+    originLogicalCoord.yLogicalPx = 0;
   }
+
+  if (
+    expandedViewportLogicalSize.widthLogicalPx >
+    TILE_SIZE_PIXELS * TOTAL_NAMETABLE_X_TILES
+  ) {
+    expandedViewportLogicalSize.widthLogicalPx =
+      TILE_SIZE_PIXELS * TOTAL_NAMETABLE_X_TILES;
+  }
+
+  if (
+    expandedViewportLogicalSize.heightLogicalPx >
+    TILE_SIZE_PIXELS * TOTAL_NAMETABLE_Y_TILES
+  ) {
+    expandedViewportLogicalSize.heightLogicalPx =
+      TILE_SIZE_PIXELS * TOTAL_NAMETABLE_Y_TILES;
+  }
+
+  const result = {
+    origin: originLogicalCoord,
+    size: expandedViewportLogicalSize,
+    scale,
+    viewportOffset: viewportLogicalOffset
+  };
+
+  console.log("----------------------------");
 
   return result;
+}
+
+export function convertViewportSizeToLogicalSize(
+  viewportSize: ViewportSize,
+  scale: Scale
+): LogicalSize {
+  return {
+    widthLogicalPx: Math.floor(viewportSize.width / scale),
+    heightLogicalPx: Math.floor(viewportSize.height / scale)
+  };
+}
+
+// Returned logical coord is relative to logical nametable.
+export function convertViewportCoordToLogicalCoord(
+  renderCanvasPositioning: RenderCanvasPositioning,
+  viewportCoord: ViewportCoord
+): LogicalCoord {
+  const xLogicalPx = Math.floor(
+    viewportCoord.x / renderCanvasPositioning.scale
+  );
+  const yLogicalPx = Math.floor(
+    viewportCoord.y / renderCanvasPositioning.scale
+  );
+  return {
+    xLogicalPx: xLogicalPx - renderCanvasPositioning.viewportOffset.xLogicalPx,
+    yLogicalPx: yLogicalPx - renderCanvasPositioning.viewportOffset.yLogicalPx
+  };
+}
+
+export function isWithinNametable(logicalCoord: LogicalCoord): boolean {
+  return (
+    logicalCoord.xLogicalPx >= 0 &&
+    logicalCoord.xLogicalPx < TILE_SIZE_PIXELS * TOTAL_NAMETABLE_X_TILES &&
+    logicalCoord.yLogicalPx >= 0 &&
+    logicalCoord.yLogicalPx < TILE_SIZE_PIXELS * TOTAL_NAMETABLE_Y_TILES
+  );
+}
+
+export function zoomInScale(scale: Scale): Scale {
+  if (scale >= 16) {
+    return scale;
+  } else if (scale >= 8) {
+    return 16;
+  } else if (scale >= 4) {
+    return 8;
+  } else if (scale >= 2) {
+    return 4;
+  } else if (scale >= 1) {
+    return 2;
+  } else {
+    return 1;
+  }
+}
+
+export function zoomOutScale(scale: Scale): Scale {
+  if (scale <= 0.5) {
+    return scale;
+  } else if (scale <= 1) {
+    return 0.5;
+  } else if (scale <= 2) {
+    return 1;
+  } else if (scale <= 4) {
+    return 2;
+  } else if (scale <= 8) {
+    return 4;
+  } else {
+    return 8;
+  }
+}
+
+export type TileIndexBounds = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  xOffset: number;
+  yOffset: number;
+};
+
+export function createTileIndexBounds(
+  renderCanvasPositioning: RenderCanvasPositioning
+): TileIndexBounds {
+  const x = Math.floor(
+    renderCanvasPositioning.origin.xLogicalPx / TILE_SIZE_PIXELS
+  );
+  const y = Math.floor(
+    renderCanvasPositioning.origin.yLogicalPx / TILE_SIZE_PIXELS
+  );
+  const width = Math.ceil(
+    renderCanvasPositioning.size.widthLogicalPx / TILE_SIZE_PIXELS
+  );
+  const height = Math.ceil(
+    renderCanvasPositioning.size.heightLogicalPx / TILE_SIZE_PIXELS
+  );
+  const xOffset = -renderCanvasPositioning.origin.xLogicalPx % TILE_SIZE_PIXELS;
+  const yOffset = -renderCanvasPositioning.origin.yLogicalPx % TILE_SIZE_PIXELS;
+  return { x, y, width, height, xOffset, yOffset };
 }

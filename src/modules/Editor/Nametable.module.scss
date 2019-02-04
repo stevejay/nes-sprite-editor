@@ -7,5 +7,5 @@
   background-color: $md-grey-200;
   position: relative;
   overflow: hidden;
-  @include transparentColor;
+  @include transparencyBackgroundPattern;
 }

@@ -66,6 +66,8 @@ export const initialState: State = {
   currentNametableId: "0"
 };
 
+initialState.nametables[0].paletteIndexes.set([1], 64 * 2 - 8);
+
 export function reducer(state: State = initialState, action: Action): State {
   switch (action.type) {
     case ActionTypes.SELECT_SYSTEM_PALETTE:

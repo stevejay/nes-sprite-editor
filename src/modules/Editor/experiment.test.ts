@@ -1,227 +1,457 @@
 import deepFreeze from "@ef-carbon/deep-freeze";
 import {
-  createViewportSize,
   createInitialRenderCanvasPositioning,
   ViewportSize,
   RenderCanvasPositioning,
-  convertViewportCoordsToLogicalCoords,
   ViewportCoord,
   LogicalCoord,
-  ViewportScale
+  Scale,
+  zoomInScale,
+  zoomOutScale,
+  isWithinNametable,
+  LogicalSize,
+  convertViewportSizeToLogicalSize,
+  convertViewportCoordToLogicalCoord,
+  createRenderCanvasPositioningCenteredOnLogicalCoord,
+  calculateBestNaturalScaleForViewportSize,
+  TileIndexBounds,
+  createTileIndexBounds,
+  adjustZoomOfRenderCanvas
 } from "./experiment";
 
-// scale 1 = 16 tiles max border width = 1 * 8 * 16 = 128px border
-// scale 2 = 8 tiles max border width = 2 * 8 * 8 = 128px border
-// scale 4 = 4 tiles max border width = 4 * 8 * 4 = 128px border
-//
-// = 16 / scale = max tiles border width, but min is 1 tile.
+const VIEWPORT_256x256 = deepFreeze({ width: 256, height: 256 });
+const VIEWPORT_512x512 = deepFreeze({ width: 512, height: 512 });
 
 const INITIAL_POSITION_256x256: RenderCanvasPositioning = deepFreeze({
-  xTileIndex: 0,
-  yTileIndex: 0,
-  widthTiles: 32 + 0 + 0,
-  heightTiles: 30 + 0 + 0,
+  origin: {
+    xLogicalPx: 0,
+    yLogicalPx: 0
+  },
+  size: {
+    widthLogicalPx: 8 * 32,
+    heightLogicalPx: 8 * 30
+  },
   scale: 1,
-  viewportXPx: 0,
-  viewportYPx: 8
-});
+  viewportOffset: {
+    xLogicalPx: 0,
+    yLogicalPx: 8
+  }
+} as RenderCanvasPositioning);
 
 const ZOOMED_INTO_TOP_LEFT_256x256: RenderCanvasPositioning = deepFreeze({
-  xTileIndex: 0,
-  yTileIndex: 0,
-  widthTiles: 16 + 0 + 8,
-  heightTiles: 16 + 0 + 8,
+  origin: {
+    xLogicalPx: 0,
+    yLogicalPx: 0
+  },
+  size: {
+    widthLogicalPx: 8 * 32,
+    heightLogicalPx: 8 * 30
+  },
   scale: 2,
-  viewportXPx: 0,
-  viewportYPx: 0
-});
+  viewportOffset: {
+    xLogicalPx: 0,
+    yLogicalPx: 0
+  }
+} as RenderCanvasPositioning);
 
-const ZOOMED_INTO_JUST_OUTSIDE_TOP_LEFT_256x256: RenderCanvasPositioning = deepFreeze(
+const ZOOMED_INTO_OUTSIDE_TOP_LEFT_256x256: RenderCanvasPositioning = deepFreeze(
   {
-    xTileIndex: 0,
-    yTileIndex: 0,
-    widthTiles: 16 + 0 + 8,
-    heightTiles: 16 + 0 + 8,
+    origin: {
+      xLogicalPx: 0,
+      yLogicalPx: 0
+    },
+    size: {
+      widthLogicalPx: 8 * 30, // ?
+      heightLogicalPx: 8 * 28 // ?
+    },
     scale: 2,
-    viewportLogicalCoord: {
-      xTileIndex: -1,
-      xTilePixelIndex: 4,
-      yTileIndex: -1,
-      yTilePixelIndex: 3
+    viewportOffset: {
+      xLogicalPx: 16,
+      yLogicalPx: 16
     }
-    // viewportXPx: 4,
-    // viewportYPx: 4
-  }
-);
-
-const ZOOMED_INTO_ALMOST_TOP_LEFT_256x256: RenderCanvasPositioning = deepFreeze(
-  {
-    xTileIndex: 0,
-    yTileIndex: 0,
-    widthTiles: 16 + 0 + 9,
-    heightTiles: 16 + 0 + 9,
-    scale: 2,
-    viewportLogicalCoord: {
-      xTileIndex: 0,
-      xTilePixelIndex: 4,
-      yTileIndex: 0,
-      yTilePixelIndex: 3
-    }
-    // viewportXPx: 4,
-    // viewportYPx: 4
-  }
-);
-
-const ZOOMED_INTO_NEARLY_TOP_LEFT_256x256: RenderCanvasPositioning = deepFreeze(
-  {
-    xTileIndex: 4 - 4,
-    yTileIndex: 4 - 4,
-    widthTiles: 16 + 4 + 8,
-    heightTiles: 16 + 4 + 8,
-    scale: 2,
-    viewportXPx: -4 * (8 * 2) + 5 * 2, // 4 tiles 5 pixels to left
-    viewportYPx: -4 * (8 * 2) + 6 * 2 // 4 tiles 6 pixels to top
-  }
+  } as RenderCanvasPositioning
 );
 
 const ZOOMED_INTO_BOTTOM_RIGHT_256x256: RenderCanvasPositioning = deepFreeze({
-  xTileIndex: 16 - 8,
-  yTileIndex: 14 - 8,
-  widthTiles: 16 + 8 + 0,
-  heightTiles: 16 + 8 + 0,
+  origin: {
+    xLogicalPx: 0,
+    yLogicalPx: 0
+  },
+  size: {
+    widthLogicalPx: 8 * 32,
+    heightLogicalPx: 8 * 30
+  },
   scale: 2,
-  viewportXPx: -8 * (8 * 2), // 8 tiles to left
-  viewportYPx: -8 * (8 * 2) // 8 tiles to top
-});
-// what happens when we're one off bottom right?
-
-const ZOOMED_INTO_CENTRE_256x256: RenderCanvasPositioning = deepFreeze({
-  xTileIndex: 8 - 8,
-  yTileIndex: 7 - 7,
-  widthTiles: 16 + 8 + 8,
-  heightTiles: 16 + 7 + 7,
-  scale: 2,
-  viewportXPx: -8 * (8 * 2) + 5 * 2, // 8 tiles 5 pixels to left
-  viewportYPx: -7 * (8 * 2) + 6 * 2 // 7 tiles 6 pixels to top
-});
-
-const ZOOMED_INTO_NEARLY_BOTTOM_RIGHT_256x256: RenderCanvasPositioning = deepFreeze(
-  {
-    xTileIndex: 14 - 8,
-    yTileIndex: 12 - 8,
-    widthTiles: 16 + 8 + 2,
-    heightTiles: 16 + 8 + 2,
-    scale: 2,
-    viewportXPx: -8 * (8 * 2) + 5 * 2, // 8 tiles 5 pixels to left
-    viewportYPx: -8 * (8 * 2) + 6 * 2 // 8 tiles 6 pixels to top
+  viewportOffset: {
+    xLogicalPx: -8 * 16,
+    yLogicalPx: -8 * 14
   }
-);
+} as RenderCanvasPositioning);
 
 const INITIAL_POSITION_512x512: RenderCanvasPositioning = deepFreeze({
-  xTileIndex: 0,
-  yTileIndex: 0,
-  widthTiles: 32,
-  heightTiles: 30,
+  origin: {
+    xLogicalPx: 0,
+    yLogicalPx: 0
+  },
+  size: {
+    widthLogicalPx: 8 * 32,
+    heightLogicalPx: 8 * 30
+  },
   scale: 2,
-  viewportXPx: 0,
-  viewportYPx: 8 * 2
-});
+  viewportOffset: {
+    xLogicalPx: 0,
+    yLogicalPx: 8
+  }
+} as RenderCanvasPositioning);
 
 const ZOOMED_INTO_TOP_LEFT_512x512 = deepFreeze({
-  xTileIndex: 0,
-  yTileIndex: 0,
-  widthTiles: 16 + 4,
-  heightTiles: 16 + 4,
+  origin: {
+    xLogicalPx: 0,
+    yLogicalPx: 0
+  },
+  size: {
+    widthLogicalPx: 8 * 32,
+    heightLogicalPx: 8 * 30
+  },
   scale: 4,
-  viewportXPx: 0,
-  viewportYPx: 0
+  viewportOffset: {
+    xLogicalPx: 0,
+    yLogicalPx: 0
+  }
 });
 
 const ZOOMED_INTO_BOTTOM_RIGHT_512x512 = deepFreeze({
-  xTileIndex: 16 - 4,
-  yTileIndex: 16 - 4,
-  widthTiles: 16 + 4,
-  heightTiles: 16 + 4,
+  origin: {
+    xLogicalPx: 0,
+    yLogicalPx: 0
+  },
+  size: {
+    widthLogicalPx: 8 * 32,
+    heightLogicalPx: 8 * 30
+  },
   scale: 4,
-  viewportXPx: -4 * (8 * 4), // 4 tiles to left
-  viewportYPx: -4 * (8 * 4) // 4 tiles to top
+  viewportOffset: {
+    xLogicalPx: -8 * 16,
+    yLogicalPx: -8 * 14
+  }
 });
 
-describe("createViewportSize", () => {
+describe("calculateBestNaturalScaleForViewportSize", () => {
+  test.each([[VIEWPORT_256x256, 1], [VIEWPORT_512x512, 2]])(
+    "%o",
+    (viewportSize: ViewportSize, expected: Scale) => {
+      const actual = calculateBestNaturalScaleForViewportSize(viewportSize);
+      expect(actual).toEqual(expected);
+    }
+  );
+});
+
+describe("zoomInScale", () => {
+  test.each([[0.5, 1], [1.06666, 2], [2, 4], [4, 8], [8, 16], [20, 20]])(
+    "scale is %o",
+    (scale: Scale, expected: Scale) => {
+      const actual = zoomInScale(scale);
+      expect(actual).toEqual(expected);
+    }
+  );
+});
+
+describe("zoomOutScale", () => {
   test.each([
-    [1, { widthPx: 256, heightPx: 256 }],
-    [2, { widthPx: 512, heightPx: 512 }]
-  ])("scale is %o", (scale: ViewportScale, expected: ViewportSize) => {
-    const actual = createViewportSize(scale);
+    [0.2, 0.2],
+    [1, 0.5],
+    [1.06666, 1],
+    [2, 1],
+    [4, 2],
+    [8, 4],
+    [16, 8],
+    [20, 8]
+  ])("scale is %o", (scale: Scale, expected: Scale) => {
+    const actual = zoomOutScale(scale);
     expect(actual).toEqual(expected);
   });
+});
+
+describe("isWithinNametable", () => {
+  test.each([
+    [{ xLogicalPx: -1, yLogicalPx: -1 }, false],
+    [{ xLogicalPx: -1, yLogicalPx: 0 }, false],
+    [{ xLogicalPx: 0, yLogicalPx: -1 }, false],
+    [{ xLogicalPx: 0, yLogicalPx: 0 }, true],
+    [{ xLogicalPx: 1, yLogicalPx: 1 }, true],
+    [{ xLogicalPx: 254, yLogicalPx: 238 }, true],
+    [{ xLogicalPx: 255, yLogicalPx: 239 }, true],
+    [{ xLogicalPx: 256, yLogicalPx: 239 }, false],
+    [{ xLogicalPx: 255, yLogicalPx: 240 }, false]
+  ])("logical coord is %o", (logicalCoord: LogicalCoord, expected: boolean) => {
+    const actual = isWithinNametable(logicalCoord);
+    expect(actual).toEqual(expected);
+  });
+});
+
+describe("convertViewportSizeToLogicalSize", () => {
+  test.each([
+    [VIEWPORT_256x256, 1, { widthLogicalPx: 256, heightLogicalPx: 256 }],
+    [VIEWPORT_256x256, 2, { widthLogicalPx: 128, heightLogicalPx: 128 }],
+    [
+      { width: 256, height: 512 },
+      1,
+      { widthLogicalPx: 256, heightLogicalPx: 512 }
+    ],
+    [
+      { width: 256, height: 512 },
+      2,
+      { widthLogicalPx: 128, heightLogicalPx: 256 }
+    ]
+  ])(
+    "viewport size is %o and scale is %o",
+    (viewportSize: ViewportSize, scale: Scale, expected: LogicalSize) => {
+      const actual = convertViewportSizeToLogicalSize(viewportSize, scale);
+      expect(actual).toEqual(expected);
+    }
+  );
+});
+
+describe("convertViewportCoordToLogicalCoord", () => {
+  test.each([
+    // special test
+    [
+      {
+        origin: {
+          xLogicalPx: 0,
+          yLogicalPx: 0
+        },
+        size: {
+          widthLogicalPx: 256,
+          heightLogicalPx: 240
+        },
+        scale: 2,
+        viewportOffset: {
+          xLogicalPx: 0,
+          yLogicalPx: 8
+        }
+      },
+      { x: 256, y: 256 },
+      { xLogicalPx: 128, yLogicalPx: 120 }
+    ],
+    // INITIAL_POSITION_256x256 variations:
+    [
+      INITIAL_POSITION_256x256,
+      { x: 0, y: 0 },
+      { xLogicalPx: 0, yLogicalPx: -8 }
+    ],
+    [
+      INITIAL_POSITION_256x256,
+      { x: 0, y: 8 },
+      { xLogicalPx: 0, yLogicalPx: 0 }
+    ],
+    [
+      INITIAL_POSITION_256x256,
+      { x: 0, y: 12 },
+      { xLogicalPx: 0, yLogicalPx: 4 }
+    ],
+    [
+      INITIAL_POSITION_256x256,
+      { x: 255, y: 239 + 8 },
+      { xLogicalPx: 255, yLogicalPx: 239 }
+    ],
+    [
+      INITIAL_POSITION_256x256,
+      { x: 256, y: 239 + 9 },
+      { xLogicalPx: 256, yLogicalPx: 240 }
+    ],
+    // ZOOMED_INTO_TOP_LEFT_256x256 variations:
+    [
+      ZOOMED_INTO_TOP_LEFT_256x256,
+      { x: 9, y: 10 },
+      { xLogicalPx: 4, yLogicalPx: 5 }
+    ],
+    // ZOOMED_INTO_BOTTOM_RIGHT_256x256 variations
+    [
+      ZOOMED_INTO_BOTTOM_RIGHT_256x256,
+      { x: 9, y: 10 },
+      { xLogicalPx: 132, yLogicalPx: 117 }
+    ],
+    [
+      ZOOMED_INTO_BOTTOM_RIGHT_256x256,
+      { x: 255, y: 253 },
+      { xLogicalPx: 255, yLogicalPx: 238 }
+    ],
+    // ZOOMED_INTO_OUTSIDE_TOP_LEFT_256x256 variations:
+    [
+      ZOOMED_INTO_OUTSIDE_TOP_LEFT_256x256,
+      { x: 3, y: 0 },
+      { xLogicalPx: -15, yLogicalPx: -16 }
+    ],
+    // INITIAL_POSITION_512x512 variations:
+    [
+      INITIAL_POSITION_512x512,
+      { x: 0, y: 0 },
+      { xLogicalPx: 0, yLogicalPx: -8 }
+    ],
+    [
+      INITIAL_POSITION_512x512,
+      { x: 256, y: 256 },
+      { xLogicalPx: 128, yLogicalPx: 120 }
+    ],
+    [
+      INITIAL_POSITION_512x512,
+      { x: 1, y: 8 },
+      { xLogicalPx: 0, yLogicalPx: -4 }
+    ],
+    [
+      INITIAL_POSITION_512x512,
+      { x: 0, y: 16 },
+      { xLogicalPx: 0, yLogicalPx: 0 }
+    ],
+    [
+      INITIAL_POSITION_512x512,
+      { x: 7, y: 20 },
+      { xLogicalPx: 3, yLogicalPx: 2 }
+    ],
+    [
+      INITIAL_POSITION_512x512,
+      { x: 511, y: 479 + 16 },
+      { xLogicalPx: 255, yLogicalPx: 239 }
+    ],
+    [
+      INITIAL_POSITION_512x512,
+      { x: 512, y: 480 + 16 },
+      { xLogicalPx: 256, yLogicalPx: 240 }
+    ],
+    // ZOOMED_INTO_TOP_LEFT_512x512 variations:
+    [
+      ZOOMED_INTO_TOP_LEFT_512x512,
+      { x: 0, y: 6 },
+      { xLogicalPx: 0, yLogicalPx: 1 }
+    ],
+    [
+      ZOOMED_INTO_TOP_LEFT_512x512,
+      { x: 511, y: 511 },
+      { xLogicalPx: 127, yLogicalPx: 127 }
+    ],
+    // ZOOMED_INTO_BOTTOM_RIGHT_512x512
+    [
+      ZOOMED_INTO_BOTTOM_RIGHT_512x512,
+      { x: 6, y: 0 },
+      { xLogicalPx: 129, yLogicalPx: 112 }
+    ],
+    [
+      ZOOMED_INTO_BOTTOM_RIGHT_512x512,
+      { x: 511, y: 511 },
+      { xLogicalPx: 255, yLogicalPx: 239 }
+    ]
+  ])(
+    "positioning is %o and coord is %o",
+    (
+      renderCanvasPositioning: RenderCanvasPositioning,
+      viewportCoord: ViewportCoord,
+      expected: LogicalCoord
+    ) => {
+      const actual = convertViewportCoordToLogicalCoord(
+        renderCanvasPositioning,
+        viewportCoord
+      );
+      expect(actual).toEqual(expected);
+    }
+  );
 });
 
 describe("createInitialRenderCanvasPositioning", () => {
   test.each([
     [
       // showing canvas in full in a 256x256 viewport
-      { widthPx: 256, heightPx: 256 },
+      VIEWPORT_256x256,
       {
-        xTileIndex: 0,
-        yTileIndex: 0,
-        widthInTiles: 32,
-        heightTIniles: 30,
+        origin: {
+          xLogicalPx: 0,
+          yLogicalPx: 0
+        },
+        size: {
+          widthLogicalPx: 256,
+          heightLogicalPx: 240
+        },
         scale: 1,
-        viewportXPx: 0,
-        viewportYPx: 8
+        viewportOffset: {
+          xLogicalPx: 0,
+          yLogicalPx: 8
+        }
       }
     ],
     [
       // showing canvas in full in a 384x384 viewport
-      { widthPx: 384, heightPx: 384 },
+      { width: 384, height: 384 },
       {
-        xTileIndex: 0,
-        yTileIndex: 0,
-        widthTiles: 32,
-        heightTiles: 30,
-        scale: 1.5,
-        viewportXPx: 0,
-        viewportYPx: 12
+        origin: {
+          xLogicalPx: 0,
+          yLogicalPx: 0
+        },
+        size: {
+          widthLogicalPx: 256,
+          heightLogicalPx: 240
+        },
+        scale: 1,
+        viewportOffset: {
+          xLogicalPx: 64,
+          yLogicalPx: 72
+        }
       }
     ],
     [
       // showing canvas in full in a 512x256 viewport
-      { widthPx: 512, heightPx: 256 },
+      { width: 512, height: 256 },
       {
-        xTileIndex: 0,
-        yTileIndex: 0,
-        widthTiles: 32,
-        heightTiles: 30,
-        scale: 1.0666666666666667,
-        viewportXPx: 119.46666666666667,
-        viewportYPx: 0
+        origin: {
+          xLogicalPx: 0,
+          yLogicalPx: 0
+        },
+        size: {
+          widthLogicalPx: 256,
+          heightLogicalPx: 240
+        },
+        scale: 1,
+        viewportOffset: {
+          xLogicalPx: 128,
+          yLogicalPx: 8
+        }
       }
     ],
     [
       // showing canvas in full in a 256x512 viewport
-      { widthPx: 256, heightPx: 512 },
+      { width: 256, height: 512 },
       {
-        xTileIndex: 0,
-        yTileIndex: 0,
-        widthTiles: 32,
-        heightTiles: 30,
+        origin: {
+          xLogicalPx: 0,
+          yLogicalPx: 0
+        },
+        size: {
+          widthLogicalPx: 256,
+          heightLogicalPx: 240
+        },
         scale: 1,
-        viewportXPx: 0,
-        viewportYPx: 136
+        viewportOffset: {
+          xLogicalPx: 0,
+          yLogicalPx: 136
+        }
       }
     ],
     [
       // showing canvas in full in a 512x512 viewport
-      { widthPx: 512, heightPx: 512 },
+      VIEWPORT_512x512,
       {
-        xTileIndex: 0,
-        yTileIndex: 0,
-        widthTiles: 32,
-        heightTiles: 30,
+        origin: {
+          xLogicalPx: 0,
+          yLogicalPx: 0
+        },
+        size: {
+          widthLogicalPx: 256,
+          heightLogicalPx: 240
+        },
         scale: 2,
-        viewportXPx: 0,
-        viewportYPx: 16
+        viewportOffset: {
+          xLogicalPx: 0,
+          yLogicalPx: 8
+        }
       }
     ]
   ])(
@@ -233,109 +463,203 @@ describe("createInitialRenderCanvasPositioning", () => {
   );
 });
 
-describe("convertViewportCoordsToLogicalCoords", () => {
+describe("createRenderCanvasPositioningCenteredOnLogicalCoord", () => {
   test.each([
     [
-      "click inside INITIAL_POSITION_256x256 - centralish",
-      { x: 100.2, y: 201.3 },
-      INITIAL_POSITION_256x256,
+      // 512x512 viewport, at scale 2 (so all canvas visible):
+      { xLogicalPx: 128, yLogicalPx: 120 }, // should be current viewport center
+      VIEWPORT_512x512,
+      2,
       {
-        xTileIndex: 12,
-        xTilePixelIndex: 4,
-        yTileIndex: 24,
-        yTilePixelIndex: 1
+        origin: {
+          xLogicalPx: 0,
+          yLogicalPx: 0
+        },
+        size: {
+          widthLogicalPx: 256,
+          heightLogicalPx: 240
+        },
+        scale: 2,
+        viewportOffset: {
+          xLogicalPx: 0,
+          yLogicalPx: 8
+        }
+      }
+    ],
+    // 256x256 viewport, at scale 1 (so all canvas visible):
+    [
+      { xLogicalPx: 128, yLogicalPx: 120 },
+      VIEWPORT_256x256,
+      1,
+      {
+        origin: { xLogicalPx: 0, yLogicalPx: 0 },
+        size: { widthLogicalPx: 256, heightLogicalPx: 240 },
+        scale: 1,
+        viewportOffset: {
+          xLogicalPx: 0,
+          yLogicalPx: 8
+        }
       }
     ],
     [
-      "click inside INITIAL_POSITION_256x256 - top left tile",
-      { x: 2, y: 11 },
-      INITIAL_POSITION_256x256,
+      { xLogicalPx: 0, yLogicalPx: 0 },
+      VIEWPORT_256x256,
+      1,
       {
-        xTileIndex: 0,
-        xTilePixelIndex: 2,
-        yTileIndex: 0,
-        yTilePixelIndex: 3
+        origin: { xLogicalPx: 0, yLogicalPx: 0 },
+        size: { widthLogicalPx: 256, heightLogicalPx: 240 },
+        scale: 1,
+        viewportOffset: {
+          xLogicalPx: 128,
+          yLogicalPx: 128
+        }
       }
     ],
     [
-      "click inside INITIAL_POSITION_256x256 - bottom right tile",
-      { x: 255, y: 246 },
-      INITIAL_POSITION_256x256,
+      { xLogicalPx: 0, yLogicalPx: -8 },
+      VIEWPORT_256x256,
+      1,
       {
-        xTileIndex: 31,
-        xTilePixelIndex: 7,
-        yTileIndex: 29,
-        yTilePixelIndex: 6
+        origin: { xLogicalPx: 0, yLogicalPx: 0 },
+        size: { widthLogicalPx: 256, heightLogicalPx: 240 },
+        scale: 1,
+        viewportOffset: {
+          xLogicalPx: 128,
+          yLogicalPx: 136
+        }
       }
     ],
     [
-      "click outside INITIAL_POSITION_256x256 - top",
-      { x: 1, y: 1 },
-      INITIAL_POSITION_256x256,
-      null
-    ],
-    [
-      "click outside INITIAL_POSITION_256x256 - bottom",
-      { x: 1, y: 255 },
-      INITIAL_POSITION_256x256,
-      null
-    ],
-    [
-      "click inside INITIAL_POSITION_512x512 - centralish",
-      { x: 100.2, y: 201.3 },
-      INITIAL_POSITION_512x512,
+      { xLogicalPx: 255, yLogicalPx: 239 },
+      VIEWPORT_256x256,
+      1,
       {
-        xTileIndex: 6,
-        xTilePixelIndex: 2,
-        yTileIndex: 11,
-        yTilePixelIndex: 4
+        origin: { xLogicalPx: 0, yLogicalPx: 0 },
+        size: { widthLogicalPx: 256, heightLogicalPx: 240 },
+        scale: 1,
+        viewportOffset: {
+          xLogicalPx: -127,
+          yLogicalPx: -111
+        }
       }
-    ],
-    [
-      "click inside INITIAL_POSITION_512x512 - top left tile",
-      { x: 2, y: 17 },
-      INITIAL_POSITION_512x512,
-      {
-        xTileIndex: 0,
-        xTilePixelIndex: 1,
-        yTileIndex: 0,
-        yTilePixelIndex: 0
-      }
-    ],
-    [
-      "click inside INITIAL_POSITION_512x512 - bottom right tile",
-      { x: 511, y: 492 },
-      INITIAL_POSITION_512x512,
-      {
-        xTileIndex: 31,
-        xTilePixelIndex: 7,
-        yTileIndex: 29,
-        yTilePixelIndex: 6
-      }
-    ],
-    [
-      "click outside INITIAL_POSITION_512x512 - top",
-      { x: 1, y: 1 },
-      INITIAL_POSITION_512x512,
-      null
-    ],
-    [
-      "click outside INITIAL_POSITION_512x512 - bottom",
-      { x: 1, y: 511 },
-      INITIAL_POSITION_512x512,
-      null
     ]
   ])(
-    "%s",
+    "logicalCoord=%o, viewportSize=%o, scale=%o",
     (
-      _description: string,
-      viewportCoords: ViewportCoord,
-      renderCanvasPositioning: RenderCanvasPositioning,
-      expected: LogicalCoord | null
+      logicalCoord: LogicalCoord,
+      viewportSize: ViewportSize,
+      scale: Scale,
+      expected: RenderCanvasPositioning
     ) => {
-      const actual = convertViewportCoordsToLogicalCoords(
-        viewportCoords,
-        renderCanvasPositioning
+      const actual = createRenderCanvasPositioningCenteredOnLogicalCoord(
+        logicalCoord,
+        viewportSize,
+        scale
+      );
+      expect(actual).toEqual(expected);
+    }
+  );
+});
+
+describe("createTileIndexBounds", () => {
+  test.each([
+    // TODO
+  ])(
+    "%o",
+    (
+      renderCanvasPositioning: RenderCanvasPositioning,
+      expected: TileIndexBounds
+    ) => {
+      const actual = createTileIndexBounds(renderCanvasPositioning);
+      expect(actual).toEqual(expected);
+    }
+  );
+});
+
+describe("adjustZoomOfRenderCanvas", () => {
+  test.each([
+    // No-op scale change
+    [
+      {
+        origin: {
+          xLogicalPx: 0,
+          yLogicalPx: 0
+        },
+        size: {
+          widthLogicalPx: 256,
+          heightLogicalPx: 240
+        },
+        scale: 2,
+        viewportOffset: {
+          xLogicalPx: 0,
+          yLogicalPx: 8
+        }
+      },
+      VIEWPORT_512x512,
+      2,
+      {
+        origin: {
+          xLogicalPx: 0,
+          yLogicalPx: 0
+        },
+        size: {
+          widthLogicalPx: 256,
+          heightLogicalPx: 240
+        },
+        scale: 2,
+        viewportOffset: {
+          xLogicalPx: 0,
+          yLogicalPx: 8
+        }
+      }
+    ],
+    // 2 > 4 scale change
+    [
+      {
+        origin: {
+          xLogicalPx: 0,
+          yLogicalPx: 0
+        },
+        size: {
+          widthLogicalPx: 256,
+          heightLogicalPx: 240
+        },
+        scale: 2,
+        viewportOffset: {
+          xLogicalPx: 0,
+          yLogicalPx: 8
+        }
+      },
+      VIEWPORT_512x512,
+      4,
+      {
+        origin: {
+          xLogicalPx: 0,
+          yLogicalPx: 0
+        },
+        size: {
+          widthLogicalPx: 128,
+          heightLogicalPx: 128
+        },
+        scale: 4,
+        viewportOffset: {
+          xLogicalPx: -64,
+          yLogicalPx: -72
+        }
+      }
+    ]
+  ])(
+    "%o with viewport %o and newScale %o",
+    (
+      renderCanvasPositioning: RenderCanvasPositioning,
+      viewportSize: ViewportSize,
+      newScale: Scale,
+      expected: RenderCanvasPositioning
+    ) => {
+      const actual = adjustZoomOfRenderCanvas(
+        renderCanvasPositioning,
+        viewportSize,
+        newScale
       );
       expect(actual).toEqual(expected);
     }
