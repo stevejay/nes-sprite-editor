@@ -38,7 +38,7 @@ export type DragBounds = {
 const TOTAL_NAMETABLE_X_TILES = 32;
 const TOTAL_NAMETABLE_Y_TILES = 30;
 const TILE_SIZE_PIXELS = 8;
-const CANVAS_OVERDRAW_SCALING = 1;
+const CANVAS_OVERDRAW_SCALING = 1; //1;
 
 export function calculateBestNaturalScaleForViewportSize(
   viewportSize: ViewportSize
@@ -174,11 +174,15 @@ export function adjustZoomOfRenderCanvas(
     }
   );
 
-  console.log("--- adjustZoomOfRenderCanvas ---");
-  console.log("input viewport coord", {
-    x: viewportSize.width / 2,
-    y: viewportSize.height / 2
-  });
+  // logicalZoomCenterViewportCoord.xLogicalPx = 128;
+  // logicalZoomCenterViewportCoord.yLogicalPx = 120;
+
+  // console.log("--- adjustZoomOfRenderCanvas ---");
+  // console.log("input viewport coord", {
+  //   x: viewportSize.width / 2,
+  //   y: viewportSize.height / 2
+  // });
+  // console.log("logicalZoomCenterViewportCoord", logicalZoomCenterViewportCoord);
 
   return createRenderCanvasPositioningCenteredOnLogicalCoord(
     logicalZoomCenterViewportCoord,
@@ -197,8 +201,8 @@ export function createRenderCanvasPositioningCenteredOnLogicalCoord(
     scale
   );
 
-  console.log("logicalCoord", logicalCoord);
-  console.log("viewportLogicalSize", viewportLogicalSize);
+  // console.log("logicalCoord", logicalCoord);
+  // console.log("viewportLogicalSize", viewportLogicalSize);
 
   const expandedViewportLogicalSize: LogicalSize = {
     widthLogicalPx:
@@ -264,6 +268,14 @@ export function createRenderCanvasPositioningCenteredOnLogicalCoord(
       TILE_SIZE_PIXELS * TOTAL_NAMETABLE_Y_TILES;
   }
 
+  if (viewportLogicalOffset.xLogicalPx === -0) {
+    viewportLogicalOffset.xLogicalPx = 0;
+  }
+
+  if (viewportLogicalOffset.yLogicalPx === -0) {
+    viewportLogicalOffset.yLogicalPx = 0;
+  }
+
   const result = {
     origin: originLogicalCoord,
     size: expandedViewportLogicalSize,
@@ -271,7 +283,7 @@ export function createRenderCanvasPositioningCenteredOnLogicalCoord(
     viewportOffset: viewportLogicalOffset
   };
 
-  console.log("----------------------------");
+  // console.log("----------------------------");
 
   return result;
 }
@@ -298,8 +310,14 @@ export function convertViewportCoordToLogicalCoord(
     viewportCoord.y / renderCanvasPositioning.scale
   );
   return {
-    xLogicalPx: xLogicalPx - renderCanvasPositioning.viewportOffset.xLogicalPx,
-    yLogicalPx: yLogicalPx - renderCanvasPositioning.viewportOffset.yLogicalPx
+    xLogicalPx:
+      renderCanvasPositioning.origin.xLogicalPx -
+      renderCanvasPositioning.viewportOffset.xLogicalPx +
+      xLogicalPx,
+    yLogicalPx:
+      renderCanvasPositioning.origin.yLogicalPx -
+      renderCanvasPositioning.viewportOffset.yLogicalPx +
+      yLogicalPx
   };
 }
 
@@ -345,30 +363,39 @@ export function zoomOutScale(scale: Scale): Scale {
 }
 
 export type TileIndexBounds = {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  xOffset: number;
-  yOffset: number;
+  xTileIndex: number;
+  yTileIndex: number;
+  widthInTiles: number;
+  heightInTiles: number;
+  xTileOffset: number;
+  yTileOffset: number;
 };
 
 export function createTileIndexBounds(
   renderCanvasPositioning: RenderCanvasPositioning
 ): TileIndexBounds {
-  const x = Math.floor(
+  const xTileIndex = Math.floor(
     renderCanvasPositioning.origin.xLogicalPx / TILE_SIZE_PIXELS
   );
-  const y = Math.floor(
+  const yTileIndex = Math.floor(
     renderCanvasPositioning.origin.yLogicalPx / TILE_SIZE_PIXELS
   );
-  const width = Math.ceil(
+  const widthInTiles = Math.ceil(
     renderCanvasPositioning.size.widthLogicalPx / TILE_SIZE_PIXELS
   );
-  const height = Math.ceil(
+  const heightInTiles = Math.ceil(
     renderCanvasPositioning.size.heightLogicalPx / TILE_SIZE_PIXELS
   );
-  const xOffset = -renderCanvasPositioning.origin.xLogicalPx % TILE_SIZE_PIXELS;
-  const yOffset = -renderCanvasPositioning.origin.yLogicalPx % TILE_SIZE_PIXELS;
-  return { x, y, width, height, xOffset, yOffset };
+  const xTileOffset =
+    (renderCanvasPositioning.origin.xLogicalPx % TILE_SIZE_PIXELS) * -1;
+  const yTileOffset =
+    (renderCanvasPositioning.origin.yLogicalPx % TILE_SIZE_PIXELS) * -1;
+  return {
+    xTileIndex,
+    yTileIndex,
+    widthInTiles,
+    heightInTiles,
+    xTileOffset,
+    yTileOffset
+  };
 }

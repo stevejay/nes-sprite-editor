@@ -50,7 +50,7 @@ function calculateDragBounds(canvasViewport: CanvasViewport) {
     result.top = 0;
   }
 
-  console.log("drag bounds", result);
+  // console.log("drag bounds", result);
 
   return result;
 }
@@ -154,9 +154,9 @@ Props) => {
       move.row = 1;
     }
 
-    if (move.row !== 0 || move.column !== 0) {
-      console.log("move", move);
-    }
+    // if (move.row !== 0 || move.column !== 0) {
+    //   console.log("move", move);
+    // }
   };
 
   return (

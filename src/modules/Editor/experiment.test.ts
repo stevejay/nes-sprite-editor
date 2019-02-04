@@ -136,6 +136,8 @@ const ZOOMED_INTO_BOTTOM_RIGHT_512x512 = deepFreeze({
   }
 });
 
+/*
+
 describe("calculateBestNaturalScaleForViewportSize", () => {
   test.each([[VIEWPORT_256x256, 1], [VIEWPORT_512x512, 2]])(
     "%o",
@@ -645,6 +647,62 @@ describe("adjustZoomOfRenderCanvas", () => {
         viewportOffset: {
           xLogicalPx: -64,
           yLogicalPx: -72
+        }
+      }
+    ]
+  ])(
+    "%o with viewport %o and newScale %o",
+    (
+      renderCanvasPositioning: RenderCanvasPositioning,
+      viewportSize: ViewportSize,
+      newScale: Scale,
+      expected: RenderCanvasPositioning
+    ) => {
+      const actual = adjustZoomOfRenderCanvas(
+        renderCanvasPositioning,
+        viewportSize,
+        newScale
+      );
+      expect(actual).toEqual(expected);
+    }
+  );
+});
+*/
+
+describe("temp - adjustZoomOfRenderCanvas", () => {
+  test.each([
+    // 4 > 2 scale change
+    [
+      {
+        origin: {
+          xLogicalPx: 64,
+          yLogicalPx: 56
+        },
+        size: {
+          widthLogicalPx: 128,
+          heightLogicalPx: 128
+        },
+        scale: 4,
+        viewportOffset: {
+          xLogicalPx: 0,
+          yLogicalPx: 0
+        }
+      },
+      VIEWPORT_512x512,
+      2,
+      {
+        origin: {
+          xLogicalPx: 0,
+          yLogicalPx: 0
+        },
+        size: {
+          widthLogicalPx: 256, // wrong
+          heightLogicalPx: 240 // wrong
+        },
+        scale: 2,
+        viewportOffset: {
+          xLogicalPx: 0, // wrong
+          yLogicalPx: 8 // wrong
         }
       }
     ]

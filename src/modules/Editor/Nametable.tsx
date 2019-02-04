@@ -3,7 +3,7 @@ import TileCanvas from "../../shared/TileCanvas";
 import { Nametable as NametableType, PatternTable } from "../../types";
 import { GamePaletteCollectionWithColors } from "../../reducer";
 import NametableCanvas from "./NametableCanvas";
-import NametableCanvasInteractionTracker from "./NametableCanvasInteractionTracker";
+// import NametableCanvasInteractionTracker from "./NametableCanvasInteractionTracker";
 import styles from "./Nametable.module.scss";
 import RadioInput from "../../shared/RadioInput";
 import {

@@ -67,6 +67,7 @@ export const initialState: State = {
 };
 
 initialState.nametables[0].paletteIndexes.set([1], 64 * 2 - 8);
+initialState.nametables[0].paletteIndexes.set([3], 64 * 2 - 9);
 
 export function reducer(state: State = initialState, action: Action): State {
   switch (action.type) {

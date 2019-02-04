@@ -31,49 +31,58 @@ function useDrawNametableEffect(
     const canvas = canvasRef.current!;
     const ctx = canvas.getContext("2d")!;
 
-    console.log("renderCanvasPositioning", renderCanvasPositioning);
+    // console.log("renderCanvasPositioning", renderCanvasPositioning);
 
     // TODO find a better way to draw a 'rectangle' from the tileIndexes array.
 
     const tileIndexBounds = createTileIndexBounds(renderCanvasPositioning);
 
-    nametable.tileIndexes.forEach((tileIndex, index) => {
-      const row = Math.floor(index / TOTAL_NAMETABLE_X_TILES);
-      const column = index % TOTAL_NAMETABLE_X_TILES;
+    console.log("renderCanvasPositioning", renderCanvasPositioning);
+    console.log("tileIndexBounds", tileIndexBounds);
 
-      if (
-        column < tileIndexBounds.x ||
-        column >= tileIndexBounds.x + tileIndexBounds.width
+    for (
+      let yTileIndex = tileIndexBounds.yTileIndex;
+      yTileIndex < tileIndexBounds.yTileIndex + tileIndexBounds.heightInTiles;
+      ++yTileIndex
+    ) {
+      for (
+        let xTileIndex = tileIndexBounds.xTileIndex;
+        xTileIndex < tileIndexBounds.xTileIndex + tileIndexBounds.widthInTiles;
+        ++xTileIndex
       ) {
-        return;
+        const tileIndex =
+          nametable.tileIndexes[
+            xTileIndex + yTileIndex * TOTAL_NAMETABLE_X_TILES
+          ];
+
+        const renderXTileIndex = xTileIndex - tileIndexBounds.xTileIndex;
+        const renderYTileIndex = yTileIndex - tileIndexBounds.yTileIndex;
+
+        const yMetatileIndex = Math.floor(yTileIndex * 0.5);
+        const xMetatileIndex = Math.floor(xTileIndex * 0.5);
+
+        const paletteIndex =
+          nametable.paletteIndexes[
+            yMetatileIndex * (TOTAL_NAMETABLE_X_TILES * 0.5) + xMetatileIndex
+          ];
+
+        // console.log(
+        //   `tile:${tileIndex} ${xTileIndex}/${yTileIndex} => ${renderXTileIndex}/${renderYTileIndex} ${paletteIndex}`
+        // );
+
+        drawTile(
+          ctx,
+          renderYTileIndex,
+          renderXTileIndex,
+          patternTiles[tileIndex].pixels, // pixels
+          palettes[paletteIndex].colors, // palettes
+          renderCanvasPositioning.scale,
+          // debug:
+          xTileIndex,
+          yTileIndex
+        );
       }
-
-      if (
-        row < tileIndexBounds.y ||
-        row >= tileIndexBounds.y + tileIndexBounds.height
-      ) {
-        return;
-      }
-
-      const metatileRow = Math.floor(row / 2);
-      const metatileColumn = Math.floor(column / 2);
-
-      const paletteIndex =
-        nametable.paletteIndexes[
-          metatileRow * (TOTAL_NAMETABLE_X_TILES / 2) + metatileColumn
-        ];
-
-      drawTile(
-        ctx,
-        row,
-        column,
-        tileIndexBounds.xOffset,
-        tileIndexBounds.yOffset,
-        patternTiles[tileIndex].pixels, // pixels
-        palettes[paletteIndex].colors, // palettes
-        renderCanvasPositioning.scale
-      );
-    });
+    }
   }, [nametable, patternTiles, palettes, renderCanvasPositioning]);
 }
 
@@ -81,13 +90,15 @@ function drawTile(
   ctx: CanvasRenderingContext2D,
   row: number,
   column: number,
-  xOffset: number,
-  yOffset: number,
   pixels: Uint8Array,
   colors: Array<Color>,
-  scaling: number
+  scaling: number,
+  // debug:
+  xTileIndex: number,
+  yTileIndex: number
 ) {
   let rowLoopIndex = -1;
+
   pixels.forEach((colorIndex, index) => {
     const columnLoopIndex = index % TILE_SIZE_PIXELS;
     if (columnLoopIndex === 0) {
@@ -99,13 +110,20 @@ function drawTile(
     ctx.fillStyle = rgbString;
 
     ctx.fillRect(
-      column * scaling * TILE_SIZE_PIXELS +
-        (columnLoopIndex + xOffset) * scaling,
-      row * scaling * TILE_SIZE_PIXELS + (rowLoopIndex + yOffset) * scaling,
+      column * scaling * TILE_SIZE_PIXELS + columnLoopIndex * scaling,
+      row * scaling * TILE_SIZE_PIXELS + rowLoopIndex * scaling,
       scaling,
       scaling
     );
   });
+
+  ctx.font = "10px Arial";
+  ctx.fillStyle = "white";
+  ctx.fillText(
+    `${xTileIndex}/${yTileIndex}`,
+    column * scaling * TILE_SIZE_PIXELS + 1,
+    row * scaling * TILE_SIZE_PIXELS + 10
+  );
 }
 
 type Props = {
