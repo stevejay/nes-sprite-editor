@@ -68,6 +68,7 @@ export function calculateBestNaturalScaleForViewportSize(
 export function createInitialRenderCanvasPositioning(
   viewportSize: ViewportSize
 ): RenderCanvasPositioning {
+  console.log("INVOKING");
   const scale = calculateBestNaturalScaleForViewportSize(viewportSize);
 
   // work out what that means for the viewportXPx value:

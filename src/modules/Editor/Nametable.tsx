@@ -12,6 +12,7 @@ import {
   createInitialRenderCanvasPositioning,
   adjustZoomOfRenderCanvas
 } from "./experiment";
+import Button from "../../shared/Button";
 
 // visible tile area in canvas viewport
 export type CanvasViewport = {
@@ -96,16 +97,28 @@ const TOOL_OPTIONS: Array<ToolOption> = [
 export type RenderState = RenderCanvasPositioning;
 
 export enum RenderActionTypes {
+  INITIALIZE = "INITIALIZE",
   CHANGE_SCALE = "CHANGE_SCALE"
 }
 
-export type RenderAction = {
-  type: RenderActionTypes.CHANGE_SCALE;
-  payload: RenderCanvasPositioning["scale"];
+export type RenderAction =
+  | {
+      type: RenderActionTypes.CHANGE_SCALE;
+      payload: RenderCanvasPositioning["scale"];
+    }
+  | { type: RenderActionTypes.INITIALIZE };
+
+const RENDER_INITIAL_VALUE: RenderCanvasPositioning = {
+  origin: { xLogicalPx: 0, yLogicalPx: 0 },
+  size: { widthLogicalPx: 0, heightLogicalPx: 0 },
+  scale: 1,
+  viewportOffset: { xLogicalPx: 0, yLogicalPx: 0 }
 };
 
 function renderReducer(state: RenderState, action: RenderAction): RenderState {
   switch (action.type) {
+    case RenderActionTypes.INITIALIZE:
+      return createInitialRenderCanvasPositioning(VIEWPORT_SIZE);
     case RenderActionTypes.CHANGE_SCALE:
       return adjustZoomOfRenderCanvas(state, VIEWPORT_SIZE, action.payload);
     default:
@@ -129,13 +142,12 @@ const Nametable: React.FunctionComponent<Props> = ({
     return null;
   }
 
-  // TODO does initial state get created each time?
   const [renderState, renderDispatch] = React.useReducer<
     RenderState,
     RenderAction
-  >(renderReducer, createInitialRenderCanvasPositioning(VIEWPORT_SIZE));
-
-  // OLD:
+  >(renderReducer, RENDER_INITIAL_VALUE, {
+    type: RenderActionTypes.INITIALIZE
+  });
 
   const [toolState, toolDispatch] = React.useReducer<ToolState, ToolAction>(
     toolReducer,
@@ -145,14 +157,6 @@ const Nametable: React.FunctionComponent<Props> = ({
       selected: null
     }
   );
-
-  const [canvasViewport, setCanvasViewport] = React.useState<CanvasViewport>({
-    scaling: 2,
-    topTile: 0,
-    leftTile: 0
-  });
-
-  const pixelScaling: PixelScaling = 2;
 
   return (
     <>
@@ -178,6 +182,17 @@ const Nametable: React.FunctionComponent<Props> = ({
           })
         }
       />
+      <Button.Container>
+        <Button
+          onClick={() =>
+            renderDispatch({
+              type: RenderActionTypes.INITIALIZE
+            })
+          }
+        >
+          Reset View
+        </Button>
+      </Button.Container>
       <TileCanvas.Container>
         {/* <NametableCanvas
         viewportScaling={2}
