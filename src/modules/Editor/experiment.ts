@@ -38,7 +38,7 @@ export type DragBounds = {
 const TOTAL_NAMETABLE_X_TILES = 32;
 const TOTAL_NAMETABLE_Y_TILES = 30;
 const TILE_SIZE_PIXELS = 8;
-const CANVAS_OVERDRAW_SCALING = 1; //1;
+const CANVAS_OVERDRAW_SCALING = 0; //1; //1;
 
 export function calculateBestNaturalScaleForViewportSize(
   viewportSize: ViewportSize
@@ -68,7 +68,6 @@ export function calculateBestNaturalScaleForViewportSize(
 export function createInitialRenderCanvasPositioning(
   viewportSize: ViewportSize
 ): RenderCanvasPositioning {
-  console.log("INVOKING");
   const scale = calculateBestNaturalScaleForViewportSize(viewportSize);
 
   // work out what that means for the viewportXPx value:
@@ -175,16 +174,6 @@ export function adjustZoomOfRenderCanvas(
     }
   );
 
-  // logicalZoomCenterViewportCoord.xLogicalPx = 128;
-  // logicalZoomCenterViewportCoord.yLogicalPx = 120;
-
-  // console.log("--- adjustZoomOfRenderCanvas ---");
-  // console.log("input viewport coord", {
-  //   x: viewportSize.width / 2,
-  //   y: viewportSize.height / 2
-  // });
-  // console.log("logicalZoomCenterViewportCoord", logicalZoomCenterViewportCoord);
-
   return createRenderCanvasPositioningCenteredOnLogicalCoord(
     logicalZoomCenterViewportCoord,
     viewportSize,
@@ -201,9 +190,6 @@ export function createRenderCanvasPositioningCenteredOnLogicalCoord(
     viewportSize,
     scale
   );
-
-  // console.log("logicalCoord", logicalCoord);
-  // console.log("viewportLogicalSize", viewportLogicalSize);
 
   const expandedViewportLogicalSize: LogicalSize = {
     widthLogicalPx:
@@ -253,21 +239,21 @@ export function createRenderCanvasPositioningCenteredOnLogicalCoord(
     originLogicalCoord.yLogicalPx = 0;
   }
 
-  if (
-    expandedViewportLogicalSize.widthLogicalPx >
-    TILE_SIZE_PIXELS * TOTAL_NAMETABLE_X_TILES
-  ) {
-    expandedViewportLogicalSize.widthLogicalPx =
-      TILE_SIZE_PIXELS * TOTAL_NAMETABLE_X_TILES;
-  }
+  // if (
+  //   expandedViewportLogicalSize.widthLogicalPx >
+  //   TILE_SIZE_PIXELS * TOTAL_NAMETABLE_X_TILES
+  // ) {
+  //   expandedViewportLogicalSize.widthLogicalPx =
+  //     TILE_SIZE_PIXELS * TOTAL_NAMETABLE_X_TILES;
+  // }
 
-  if (
-    expandedViewportLogicalSize.heightLogicalPx >
-    TILE_SIZE_PIXELS * TOTAL_NAMETABLE_Y_TILES
-  ) {
-    expandedViewportLogicalSize.heightLogicalPx =
-      TILE_SIZE_PIXELS * TOTAL_NAMETABLE_Y_TILES;
-  }
+  // if (
+  //   expandedViewportLogicalSize.heightLogicalPx >
+  //   TILE_SIZE_PIXELS * TOTAL_NAMETABLE_Y_TILES
+  // ) {
+  //   expandedViewportLogicalSize.heightLogicalPx =
+  //     TILE_SIZE_PIXELS * TOTAL_NAMETABLE_Y_TILES;
+  // }
 
   if (viewportLogicalOffset.xLogicalPx === -0) {
     viewportLogicalOffset.xLogicalPx = 0;
@@ -275,6 +261,25 @@ export function createRenderCanvasPositioningCenteredOnLogicalCoord(
 
   if (viewportLogicalOffset.yLogicalPx === -0) {
     viewportLogicalOffset.yLogicalPx = 0;
+  }
+
+  if (
+    originLogicalCoord.xLogicalPx + expandedViewportLogicalSize.widthLogicalPx >
+    TILE_SIZE_PIXELS * TOTAL_NAMETABLE_X_TILES
+  ) {
+    expandedViewportLogicalSize.widthLogicalPx =
+      TILE_SIZE_PIXELS * TOTAL_NAMETABLE_X_TILES -
+      originLogicalCoord.xLogicalPx;
+  }
+
+  if (
+    originLogicalCoord.yLogicalPx +
+      expandedViewportLogicalSize.heightLogicalPx >
+    TILE_SIZE_PIXELS * TOTAL_NAMETABLE_Y_TILES
+  ) {
+    expandedViewportLogicalSize.heightLogicalPx =
+      TILE_SIZE_PIXELS * TOTAL_NAMETABLE_Y_TILES -
+      originLogicalCoord.yLogicalPx;
   }
 
   const result = {
@@ -378,19 +383,47 @@ export function createTileIndexBounds(
   const xTileIndex = Math.floor(
     renderCanvasPositioning.origin.xLogicalPx / TILE_SIZE_PIXELS
   );
+
   const yTileIndex = Math.floor(
     renderCanvasPositioning.origin.yLogicalPx / TILE_SIZE_PIXELS
   );
-  const widthInTiles = Math.ceil(
+
+  let widthInTiles = Math.ceil(
     renderCanvasPositioning.size.widthLogicalPx / TILE_SIZE_PIXELS
   );
-  const heightInTiles = Math.ceil(
+
+  let heightInTiles = Math.ceil(
     renderCanvasPositioning.size.heightLogicalPx / TILE_SIZE_PIXELS
   );
-  const xTileOffset =
+
+  let xTileOffset =
     (renderCanvasPositioning.origin.xLogicalPx % TILE_SIZE_PIXELS) * -1;
-  const yTileOffset =
+  if (xTileOffset === -0) {
+    xTileOffset = 0;
+  }
+
+  let yTileOffset =
     (renderCanvasPositioning.origin.yLogicalPx % TILE_SIZE_PIXELS) * -1;
+  if (yTileOffset === -0) {
+    yTileOffset = 0;
+  }
+
+  if (xTileOffset < 0) {
+    widthInTiles += 1;
+  }
+
+  if (xTileIndex + widthInTiles > TOTAL_NAMETABLE_X_TILES) {
+    widthInTiles = TOTAL_NAMETABLE_X_TILES - xTileIndex;
+  }
+
+  if (yTileOffset < 0) {
+    heightInTiles += 1;
+  }
+
+  if (yTileIndex + heightInTiles > TOTAL_NAMETABLE_Y_TILES) {
+    heightInTiles = TOTAL_NAMETABLE_Y_TILES - yTileIndex;
+  }
+
   return {
     xTileIndex,
     yTileIndex,

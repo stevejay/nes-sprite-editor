@@ -3,14 +3,18 @@ import TileCanvas from "../../shared/TileCanvas";
 import { Nametable as NametableType, PatternTable } from "../../types";
 import { GamePaletteCollectionWithColors } from "../../reducer";
 import NametableCanvas from "./NametableCanvas";
-// import NametableCanvasInteractionTracker from "./NametableCanvasInteractionTracker";
+import NametableCanvasInteractionTracker from "./NametableCanvasInteractionTracker";
 import styles from "./Nametable.module.scss";
 import RadioInput from "../../shared/RadioInput";
 import {
   ViewportSize,
   RenderCanvasPositioning,
   createInitialRenderCanvasPositioning,
-  adjustZoomOfRenderCanvas
+  adjustZoomOfRenderCanvas,
+  ViewportCoord,
+  zoomIntoRenderCanvas,
+  zoomOutOfRenderCanvas,
+  moveRenderCanvas
 } from "./experiment";
 import Button from "../../shared/Button";
 
@@ -88,6 +92,7 @@ type ToolOption = {
   id: Tool;
   label: string;
 };
+
 const TOOL_OPTIONS: Array<ToolOption> = [
   { id: "move", label: "Move" },
   { id: "zoomIn", label: "Zoom in" },
@@ -98,7 +103,10 @@ export type RenderState = RenderCanvasPositioning;
 
 export enum RenderActionTypes {
   INITIALIZE = "INITIALIZE",
-  CHANGE_SCALE = "CHANGE_SCALE"
+  CHANGE_SCALE = "CHANGE_SCALE",
+  ZOOM_IN = "ZOOM_IN",
+  ZOOM_OUT = "ZOOM_OUT",
+  MOVE = "MOVE"
 }
 
 export type RenderAction =
@@ -106,7 +114,10 @@ export type RenderAction =
       type: RenderActionTypes.CHANGE_SCALE;
       payload: RenderCanvasPositioning["scale"];
     }
-  | { type: RenderActionTypes.INITIALIZE };
+  | { type: RenderActionTypes.INITIALIZE }
+  | { type: RenderActionTypes.ZOOM_IN; payload: ViewportCoord }
+  | { type: RenderActionTypes.ZOOM_OUT; payload: ViewportCoord }
+  | { type: RenderActionTypes.MOVE; payload: ViewportCoord };
 
 const RENDER_INITIAL_VALUE: RenderCanvasPositioning = {
   origin: { xLogicalPx: 0, yLogicalPx: 0 },
@@ -121,6 +132,12 @@ function renderReducer(state: RenderState, action: RenderAction): RenderState {
       return createInitialRenderCanvasPositioning(VIEWPORT_SIZE);
     case RenderActionTypes.CHANGE_SCALE:
       return adjustZoomOfRenderCanvas(state, VIEWPORT_SIZE, action.payload);
+    case RenderActionTypes.ZOOM_IN:
+      return zoomIntoRenderCanvas(state, VIEWPORT_SIZE, action.payload);
+    case RenderActionTypes.ZOOM_OUT:
+      return zoomOutOfRenderCanvas(state, VIEWPORT_SIZE, action.payload);
+    case RenderActionTypes.MOVE:
+      return moveRenderCanvas(state, VIEWPORT_SIZE, action.payload);
     default:
       return state;
   }
@@ -152,7 +169,7 @@ const Nametable: React.FunctionComponent<Props> = ({
   const [toolState, toolDispatch] = React.useReducer<ToolState, ToolAction>(
     toolReducer,
     {
-      toolType: "move",
+      toolType: "zoomIn",
       toolData: null,
       selected: null
     }
@@ -203,23 +220,24 @@ const Nametable: React.FunctionComponent<Props> = ({
         ariaLabel="Nametable tiles"
       /> */}
         <div className={styles.background} style={VIEWPORT_SIZE}>
-          {/* <NametableCanvasInteractionTracker
-            pixelScaling={pixelScaling}
-            canvasViewport={canvasViewport}
-            toolType={toolState.toolType}
-            // onSelect={(row, column, pressed) => {}}
-          > */}
-          <NametableCanvas
+          <NametableCanvasInteractionTracker
             viewportSize={VIEWPORT_SIZE}
             renderCanvasPositioning={renderState}
-            // pixelScaling={pixelScaling}
-            // canvasViewport={canvasViewport}
-            nametable={nametable}
-            patternTiles={patternTable.tiles}
-            palettes={paletteCollection.gamePalettes}
-            ariaLabel="Nametable tiles"
-          />
-          {/* </NametableCanvasInteractionTracker> */}
+            toolType={toolState.toolType}
+            dispatch={renderDispatch}
+            // onSelect={(row, column, pressed) => {}}
+          >
+            <NametableCanvas
+              viewportSize={VIEWPORT_SIZE}
+              renderCanvasPositioning={renderState}
+              // pixelScaling={pixelScaling}
+              // canvasViewport={canvasViewport}
+              nametable={nametable}
+              patternTiles={patternTable.tiles}
+              palettes={paletteCollection.gamePalettes}
+              ariaLabel="Nametable tiles"
+            />
+          </NametableCanvasInteractionTracker>
         </div>
       </TileCanvas.Container>
     </>

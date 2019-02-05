@@ -74,6 +74,8 @@ function useDrawNametableEffect(
           ctx,
           renderYTileIndex,
           renderXTileIndex,
+          tileIndexBounds.xTileOffset,
+          tileIndexBounds.yTileOffset,
           patternTiles[tileIndex].pixels, // pixels
           palettes[paletteIndex].colors, // palettes
           renderCanvasPositioning.scale,
@@ -90,6 +92,8 @@ function drawTile(
   ctx: CanvasRenderingContext2D,
   row: number,
   column: number,
+  xTileOffset: number,
+  yTileOffset: number,
   pixels: Uint8Array,
   colors: Array<Color>,
   scaling: number,
@@ -98,6 +102,9 @@ function drawTile(
   yTileIndex: number
 ) {
   let rowLoopIndex = -1;
+
+  const xOffset = xTileOffset * scaling;
+  const yOffset = yTileOffset * scaling;
 
   pixels.forEach((colorIndex, index) => {
     const columnLoopIndex = index % TILE_SIZE_PIXELS;
@@ -110,8 +117,8 @@ function drawTile(
     ctx.fillStyle = rgbString;
 
     ctx.fillRect(
-      column * scaling * TILE_SIZE_PIXELS + columnLoopIndex * scaling,
-      row * scaling * TILE_SIZE_PIXELS + rowLoopIndex * scaling,
+      column * scaling * TILE_SIZE_PIXELS + columnLoopIndex * scaling + xOffset,
+      row * scaling * TILE_SIZE_PIXELS + rowLoopIndex * scaling + yOffset,
       scaling,
       scaling
     );
@@ -121,8 +128,8 @@ function drawTile(
   ctx.fillStyle = "white";
   ctx.fillText(
     `${xTileIndex}/${yTileIndex}`,
-    column * scaling * TILE_SIZE_PIXELS + 1,
-    row * scaling * TILE_SIZE_PIXELS + 10
+    column * scaling * TILE_SIZE_PIXELS + 1 + xOffset,
+    row * scaling * TILE_SIZE_PIXELS + 10 + yOffset
   );
 }
 

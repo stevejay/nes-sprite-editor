@@ -53,6 +53,10 @@ fieldset {
   @include screen-reader-only();
 }
 
+.no-user-select {
+  user-select: none;
+}
+
 // ----------------------------
 // GLOBAL STYLING
 // ----------------------------

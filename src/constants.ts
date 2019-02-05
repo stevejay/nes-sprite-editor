@@ -328,6 +328,17 @@ if (process.env.NODE_ENV === "development") {
 
 export { SYSTEM_PALETTE_OPTIONS };
 
+const BLANK_0_TILE_PIXELS: PatternTile["pixels"] = new Uint8Array(64);
+
+const BLANK_1_TILE_PIXELS: PatternTile["pixels"] = new Uint8Array(64);
+BLANK_1_TILE_PIXELS.fill(1);
+
+const BLANK_2_TILE_PIXELS: PatternTile["pixels"] = new Uint8Array(64);
+BLANK_2_TILE_PIXELS.fill(2);
+
+const BLANK_3_TILE_PIXELS: PatternTile["pixels"] = new Uint8Array(64);
+BLANK_3_TILE_PIXELS.fill(3);
+
 const HEART_TILE_PIXELS: PatternTile["pixels"] = new Uint8Array([
   // 0
   0,
@@ -411,7 +422,16 @@ const BACKGROUND_PATTERN_TABLE_OPTIONS: Array<PatternTable> = [
       row: Math.floor(index / 16),
       column: index % 16,
       gamePaletteId: 2,
-      pixels: HEART_TILE_PIXELS
+      pixels:
+        index === 1
+          ? BLANK_1_TILE_PIXELS
+          : index === 2
+          ? BLANK_2_TILE_PIXELS
+          : index === 3
+          ? BLANK_3_TILE_PIXELS
+          : index === 4
+          ? HEART_TILE_PIXELS
+          : BLANK_0_TILE_PIXELS
     })) as PatternTable["tiles"]
   }
 ];

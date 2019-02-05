@@ -66,6 +66,13 @@ export const initialState: State = {
   currentNametableId: "0"
 };
 
+initialState.nametables[0].tileIndexes.fill(1);
+initialState.nametables[0].tileIndexes.set([4], 0);
+initialState.nametables[0].tileIndexes.set([4], 13 * 32 + 13);
+initialState.nametables[0].tileIndexes.set([4], 13 * 32 + 18);
+initialState.nametables[0].tileIndexes.set([4], 16 * 32 + 13);
+initialState.nametables[0].tileIndexes.set([4], 16 * 32 + 18);
+
 initialState.nametables[0].paletteIndexes.set([1], 64 * 2 - 8);
 initialState.nametables[0].paletteIndexes.set([3], 64 * 2 - 9);
 

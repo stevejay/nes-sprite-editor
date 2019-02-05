@@ -1,9 +1,18 @@
 import React from "react";
 import { clamp } from "lodash";
-import Draggable, { DraggableEventHandler } from "react-draggable";
+import Draggable, {
+  DraggableEventHandler,
+  DraggableBounds
+} from "react-draggable";
 import styles from "./NametableCanvasInteractionTracker.module.scss";
 import classNames from "classnames";
-import { CanvasViewport, Tool } from "./Nametable";
+import {
+  CanvasViewport,
+  Tool,
+  RenderAction,
+  RenderActionTypes
+} from "./Nametable";
+import { ViewportSize, RenderCanvasPositioning } from "./experiment";
 
 const ENTER = 13;
 const ARROW_LEFT = 37;
@@ -23,60 +32,87 @@ const DRAG_POSITION = { x: 0, y: 0 };
 //   }
 // }
 
-function calculateDragBounds(canvasViewport: CanvasViewport) {
-  const result = {
-    left: -MOVE_BOUNDS_DELTA,
-    top: -MOVE_BOUNDS_DELTA,
-    right: MOVE_BOUNDS_DELTA,
-    bottom: MOVE_BOUNDS_DELTA
-  };
+// function calculateDragBounds(renderCanvasPositioning: RenderCanvasPositioning): DraggableBounds {
+//   return renderCanvasPositioning.
+//   const result = {
+//     left: -MOVE_BOUNDS_DELTA,
+//     top: -MOVE_BOUNDS_DELTA,
+//     right: MOVE_BOUNDS_DELTA,
+//     bottom: MOVE_BOUNDS_DELTA
+//   };
 
-  const columns = 32;
-  const rows = canvasViewport.scaling === 1 ? 30 : 32;
+//   const columns = 32;
+//   const rows = canvasViewport.scaling === 1 ? 30 : 32;
 
-  if (canvasViewport.leftTile === 0) {
-    result.right = 0;
-  }
+//   if (canvasViewport.leftTile === 0) {
+//     result.right = 0;
+//   }
 
-  if (canvasViewport.topTile === 0) {
-    result.bottom = 0;
-  }
+//   if (canvasViewport.topTile === 0) {
+//     result.bottom = 0;
+//   }
 
-  if (canvasViewport.leftTile + columns / canvasViewport.scaling >= columns) {
-    result.left = 0;
-  }
+//   if (canvasViewport.leftTile + columns / canvasViewport.scaling >= columns) {
+//     result.left = 0;
+//   }
 
-  if (canvasViewport.topTile + rows / canvasViewport.scaling >= rows) {
-    result.top = 0;
-  }
+//   if (canvasViewport.topTile + rows / canvasViewport.scaling >= rows) {
+//     result.top = 0;
+//   }
 
-  // console.log("drag bounds", result);
+//   // console.log("drag bounds", result);
 
-  return result;
-}
+//   return result;
+// }
 
 type Props = {
-  pixelScaling: number;
-  canvasViewport: CanvasViewport;
-  children: React.ReactNode;
+  viewportSize: ViewportSize;
+  renderCanvasPositioning: RenderCanvasPositioning;
   toolType: Tool;
+  dispatch: React.Dispatch<RenderAction>;
+  children: React.ReactNode;
   // onSelect: (row: number, column: number, pressed: boolean) => void;
 };
 
 // TODO this shouldnt take children
 const NametableCanvasInteractionTracker = ({
-  pixelScaling,
-  canvasViewport,
+  viewportSize,
+  renderCanvasPositioning,
   toolType,
-  // row,
-  // column,
+  dispatch,
   children
-}: // onSelect
-Props) => {
+}: Props) => {
   const containerRef = React.useRef<HTMLDivElement>(null);
 
-  const handleMouseDown = React.useCallback(
+  const handleClick = React.useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
+      const boundingRect = containerRef!.current!.getBoundingClientRect();
+      const yInContainer = event.clientY - boundingRect.top;
+      const xInContainer = event.clientX - boundingRect.left;
+
+      if (
+        xInContainer < 0 ||
+        xInContainer > viewportSize.width ||
+        yInContainer < 0 ||
+        yInContainer > viewportSize.height
+      ) {
+        return;
+      }
+
+      switch (toolType) {
+        case "zoomIn":
+          dispatch({
+            type: RenderActionTypes.ZOOM_IN,
+            payload: { x: xInContainer, y: yInContainer }
+          });
+          break;
+        case "zoomOut":
+          dispatch({
+            type: RenderActionTypes.ZOOM_OUT,
+            payload: { x: xInContainer, y: yInContainer }
+          });
+          break;
+      }
       // viewportScaling: 1,
       // topTile: 0,
       // leftTile: 0
@@ -99,7 +135,7 @@ Props) => {
       // );
       // onSelect(newRow, newColumn, true);
     },
-    [pixelScaling]
+    [toolType, viewportSize]
   );
 
   // const handleKeyDown = React.useCallback(
@@ -135,40 +171,58 @@ Props) => {
   //   [rows, columns, row, column]
   // );
 
-  const className = classNames(styles.container, styles[toolType]);
-
-  const dragBounds = React.useMemo(() => calculateDragBounds(canvasViewport), [
-    canvasViewport
-  ]);
+  // const dragBounds = React.useMemo(() => calculateDragBounds(renderCanvasPositioning), [
+  //   renderCanvasPositioning
+  // ]);
 
   const handleDraggableStop: DraggableEventHandler = (_event, data) => {
-    const move = { row: 0, column: 0 };
-    if (data.x > MOVE_BOUNDS_TRIGGER_DELTA) {
-      move.column = -1;
-    } else if (data.x < -MOVE_BOUNDS_TRIGGER_DELTA) {
-      move.column = 1;
-    }
-    if (data.y > MOVE_BOUNDS_TRIGGER_DELTA) {
-      move.row = -1;
-    } else if (data.y < -MOVE_BOUNDS_TRIGGER_DELTA) {
-      move.row = 1;
-    }
+    // const move = { row: 0, column: 0 };
+    // if (data.x > MOVE_BOUNDS_TRIGGER_DELTA) {
+    //   move.column = -1;
+    // } else if (data.x < -MOVE_BOUNDS_TRIGGER_DELTA) {
+    //   move.column = 1;
+    // }
+    // if (data.y > MOVE_BOUNDS_TRIGGER_DELTA) {
+    //   move.row = -1;
+    // } else if (data.y < -MOVE_BOUNDS_TRIGGER_DELTA) {
+    //   move.row = 1;
+    // }
+
+    dispatch({
+      type: RenderActionTypes.MOVE,
+      payload: { x: -data.x, y: -data.y }
+    });
+
+    // console.log("move", data);
 
     // if (move.row !== 0 || move.column !== 0) {
     //   console.log("move", move);
     // }
   };
 
+  const handleMouseDown = React.useCallback(event => {
+    // document.body.classList.add("no-user-select");
+  }, []);
+
+  const handleMouseUp = React.useCallback(event => {
+    // document.body.classList.remove("no-user-select");
+  }, []);
+
+  const containerClassNames = classNames(styles.container, styles[toolType]);
+
   return (
     <div
       ref={containerRef}
-      className={className}
+      className={containerClassNames}
+      style={viewportSize}
       onMouseDown={handleMouseDown}
+      onMouseUp={handleMouseUp}
+      onClick={handleClick}
       onKeyDown={undefined}
     >
       <Draggable
         position={DRAG_POSITION}
-        bounds={dragBounds}
+        // bounds={dragBounds}
         disabled={toolType !== "move"}
         onStop={handleDraggableStop}
       >
