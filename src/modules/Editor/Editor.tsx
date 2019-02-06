@@ -55,20 +55,6 @@ const Editor: React.FunctionComponent<Props> = ({ state, dispatch }) => {
   const nametables = selectNametables(state);
   const currentNametable = selectCurrentNametable(state);
 
-  // const patternTable = selectCurrentBackgroundPatternTable(state);
-  // const currentMetatilePalette = selectCurrentBackgroundMetatilePalette(state);
-  // const [drawColorIndex, setDrawColorIndex] = React.useState(0);
-
-  // const colorOptions = React.useMemo(
-  //   () => {
-  //     return currentMetatilePalette!.colors.map((color, index) => ({
-  //       id: index,
-  //       label: `$${formatByteAsHex(color.id)}`
-  //     }));
-  //   },
-  //   [currentMetatilePalette]
-  // );
-
   return (
     <>
       <div className={styles.container}>
@@ -104,67 +90,6 @@ const Editor: React.FunctionComponent<Props> = ({ state, dispatch }) => {
           currentPaletteCollection={currentBackgroundPaletteCollection}
           dispatch={dispatch}
         />
-        {/* <SpritePatternTablesSection
-          patternTables={spritePatternTables}
-          currentTable={currentSpritePatternTable}
-          dispatch={dispatch}
-        /> */}
-        {/* <Section>
-        <header>
-          <h1>Background Tiles</h1>
-        </header>
-        <h2>Pattern Table</h2>
-        <BackgroundPatternTable
-          tilesInRow={16}
-          tilesInColumn={16}
-          scaling={3}
-          tiles={patternTable.tiles}
-          currentMetatile={selectCurrentBackgroundMetatile(state)}
-          palettes={selectBackgroundPalettes(state)}
-          onSelectMetatile={(row, column) =>
-            dispatch({
-              type: ActionTypes.CHANGE_CURRENT_BACKGROUND_METATILE,
-              payload: { row, column }
-            })
-          }
-        />
-        <h2>Selected Metatile</h2>
-        <BackgroundPatternDetail
-          tilesInRow={2}
-          tilesInColumn={2}
-          scaling={20}
-          tiles={selectCurrentBackgroundMetatileTiles(state)}
-          currentMetatile={selectCurrentBackgroundMetatile(state)}
-          palettes={selectBackgroundPalettes(state)}
-          onClicked={(tileIndex, pixelIndex) => {
-            dispatch({
-              type: ActionTypes.CHANGE_CURRENT_BACKGROUND_METATILE_PIXEL,
-              payload: { tileIndex, pixelIndex, colorIndex: drawColorIndex }
-            });
-          }}
-        />
-        <RadioInput.Group
-          legend="Palette:"
-          options={PALETTE_OPTIONS}
-          selectedId={
-            selectCurrentBackgroundMetatileTiles(state)[0].gamePaletteId
-          }
-          onChange={id => {
-            dispatch({
-              type: ActionTypes.CHANGE_CURRENT_BACKGROUND_METATILE_PALETTE,
-              payload: id
-            });
-          }}
-          inline
-        />
-        <RadioInput.Group
-          legend="Draw color:"
-          options={colorOptions}
-          selectedId={drawColorIndex}
-          onChange={id => setDrawColorIndex(id)}
-          inline
-        />
-      </Section> */}
       </div>
     </>
   );

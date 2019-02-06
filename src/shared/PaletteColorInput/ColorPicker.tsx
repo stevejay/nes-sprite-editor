@@ -10,39 +10,28 @@ const ROWS = 64 / COLUMNS;
 type Props = {
   palette: SystemPalette;
   selectedColorId: Color["id"];
-  scaling: number;
+  scale: number;
   onChange: (color: Color) => void;
   children?: never;
 };
 
-const ColorPicker: React.FunctionComponent<Props> = ({
-  palette,
-  selectedColorId,
-  scaling,
-  onChange
-}) => {
+const ColorPicker = ({ palette, selectedColorId, scale, onChange }: Props) => {
   const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
-  const canvasSize = useSizedCanvasEffect(
-    canvasRef,
-    ROWS,
-    COLUMNS,
-    scaling,
-    scaling
-  );
+  const canvasSize = useSizedCanvasEffect(canvasRef, COLUMNS, ROWS, scale);
 
   React.useLayoutEffect(() => {
     const canvas = canvasRef.current!;
     const ctx = canvas.getContext("2d")!;
     palette.values.forEach((color, index) => {
-      const x = (index % COLUMNS) * scaling;
-      const y = Math.floor(index / COLUMNS) * scaling;
+      const x = (index % COLUMNS) * scale;
+      const y = Math.floor(index / COLUMNS) * scale;
       if (!color.available) {
         return;
       }
       ctx.fillStyle = color.rgb;
-      ctx.fillRect(x, y, scaling, scaling);
+      ctx.fillRect(x, y, scale, scale);
     });
-  }, [palette, scaling]);
+  }, [palette, scale]);
 
   const handleSelect = (row: number, column: number) => {
     const index = row * COLUMNS + column;
@@ -71,8 +60,8 @@ const ColorPicker: React.FunctionComponent<Props> = ({
         aria-label="Todo"
       />
       <TileCanvas.Highlight
-        tileWidth={scaling}
-        tileHeight={scaling}
+        tileWidth={scale}
+        tileHeight={scale}
         row={currentRow}
         column={currentColumn}
         ariaLabel="todo"

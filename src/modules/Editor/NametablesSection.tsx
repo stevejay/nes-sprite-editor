@@ -11,21 +11,21 @@ import Nametable from "./Nametable";
 
 // type ToolData =
 //   | {
-//       toolType: "palette";
+//       currentTool: "palette";
 //       toolData: { paletteIndex: number },
 //       metatile: { row: number; column: number };
 //     }
 //   | {
-//       toolType: "pencil";
+//       currentTool: "pencil";
 //       toolData: { paletteIndex: number, colorIndex: number },
 //       pixel: { row: number; column: number };
 //     }
 //   | {
-//       toolType: "pattern";
+//       currentTool: "pattern";
 //       tile: { row: number; column: number };
 //     }
 //   | {
-//       toolType: "zoom";
+//       currentTool: "zoom";
 //       tileArea: { top: number; left: number; width: number; height: number };
 //     };
 
@@ -76,6 +76,7 @@ const NametablesSection = ({
         nametable={currentNametable}
         patternTable={currentPatternTable}
         paletteCollection={currentPaletteCollection}
+        dispatch={dispatch}
       />
 
       {/* <RadioInput.Group

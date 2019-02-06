@@ -9,3 +9,20 @@
   overflow: hidden;
   @include transparencyBackgroundPattern;
 }
+
+.toolbarRow {
+  display: flex;
+}
+
+.toolbarRow > .toolbarColumn {
+  margin-right: $gutter;
+}
+
+.toolbarRow > .toolbarColumn:last-of-type {
+  margin-right: 0;
+}
+
+.toolbarColumn {
+  display: flex;
+  flex-direction: column;
+}

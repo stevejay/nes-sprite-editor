@@ -1,12 +1,12 @@
 import React from "react";
 import { GamePaletteCollectionWithColors } from "../../reducer";
 import TileCanvas from "../../shared/TileCanvas";
-import { PatternTable } from "../../types";
-import PatternTableCanvas from "./PatternTableCanvas";
+import { PatternTable as PatternTableType } from "../../types";
+import PatternTable from "./PatternTable";
 
 type Props = {
-  scaling: number;
-  patternTable: PatternTable | null;
+  scale: number;
+  patternTable: PatternTableType | null;
   paletteCollection: GamePaletteCollectionWithColors | null;
   currentTile: { row: number; column: number };
   // dispatch: React.Dispatch<Action>;
@@ -14,7 +14,7 @@ type Props = {
 };
 
 const BackgroundPatternTable: React.FunctionComponent<Props> = ({
-  scaling,
+  scale,
   patternTable,
   paletteCollection,
   currentTile,
@@ -34,17 +34,17 @@ const BackgroundPatternTable: React.FunctionComponent<Props> = ({
         column={currentTile.column}
         onSelect={onSelectTile}
       >
-        <PatternTableCanvas
+        <PatternTable
           tilesInRow={16}
           tilesInColumn={16}
-          scaling={scaling}
+          scale={scale}
           tiles={patternTable.tiles}
           palette={paletteCollection.gamePalettes[0]}
           ariaLabel="Pattern table tiles"
         />
         <TileCanvas.Highlight
-          tileWidth={8 * scaling}
-          tileHeight={8 * scaling}
+          tileWidth={8 * scale}
+          tileHeight={8 * scale}
           row={currentTile.row}
           column={currentTile.column}
           ariaLabel={`Metatile row ${currentTile.row}, column ${

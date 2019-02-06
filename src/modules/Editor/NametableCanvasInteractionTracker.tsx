@@ -10,9 +10,18 @@ import {
   CanvasViewport,
   Tool,
   RenderAction,
-  RenderActionTypes
+  RenderActionTypes,
+  ToolState
 } from "./Nametable";
-import { ViewportSize, RenderCanvasPositioning } from "./experiment";
+import {
+  ViewportSize,
+  RenderCanvasPositioning,
+  convertViewportCoordToLogicalCoord,
+  ViewportCoord,
+  convertViewportCoordToNameablePixel
+} from "./experiment";
+import { Action, ActionTypes } from "../../reducer";
+import { PatternTable, Nametable } from "../../types";
 
 const ENTER = 13;
 const ARROW_LEFT = 37;
@@ -67,9 +76,13 @@ const DRAG_POSITION = { x: 0, y: 0 };
 
 type Props = {
   viewportSize: ViewportSize;
+  nametable: Nametable | null;
+  patternTable: PatternTable | null;
   renderCanvasPositioning: RenderCanvasPositioning;
-  toolType: Tool;
-  dispatch: React.Dispatch<RenderAction>;
+  currentTool: ToolState["currentTool"];
+  selectedColorIndex: ToolState["selectedColorIndex"];
+  dispatch: React.Dispatch<Action>;
+  renderDispatch: React.Dispatch<RenderAction>;
   children: React.ReactNode;
   // onSelect: (row: number, column: number, pressed: boolean) => void;
 };
@@ -77,9 +90,13 @@ type Props = {
 // TODO this shouldnt take children
 const NametableCanvasInteractionTracker = ({
   viewportSize,
+  nametable,
+  patternTable,
   renderCanvasPositioning,
-  toolType,
+  currentTool,
+  selectedColorIndex,
   dispatch,
+  renderDispatch,
   children
 }: Props) => {
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -99,19 +116,59 @@ const NametableCanvasInteractionTracker = ({
         return;
       }
 
-      switch (toolType) {
+      switch (currentTool) {
         case "zoomIn":
-          dispatch({
+          renderDispatch({
             type: RenderActionTypes.ZOOM_IN,
             payload: { x: xInContainer, y: yInContainer }
           });
           break;
         case "zoomOut":
-          dispatch({
+          renderDispatch({
             type: RenderActionTypes.ZOOM_OUT,
             payload: { x: xInContainer, y: yInContainer }
           });
           break;
+        case "pencil": {
+          if (!patternTable || !nametable) {
+            break;
+          }
+
+          const viewportCoord: ViewportCoord = {
+            x: xInContainer,
+            y: yInContainer
+          };
+
+          const flattenedLogicalCoord = convertViewportCoordToNameablePixel(
+            renderCanvasPositioning,
+            viewportCoord
+          );
+
+          if (!flattenedLogicalCoord) {
+            break;
+          }
+
+          console.log("flattenedLogicalCoord", flattenedLogicalCoord);
+
+          console.log("payload:", {
+            type: "background",
+            tableId: patternTable.id,
+            tileIndex: nametable.tileIndexes[flattenedLogicalCoord.tileIndex],
+            startPixelIndex: flattenedLogicalCoord.tilePixelIndex,
+            newPixels: [selectedColorIndex]
+          });
+
+          dispatch({
+            type: ActionTypes.CHANGE_PATTERN_TABLE_PIXELS,
+            payload: {
+              type: "background",
+              tableId: patternTable.id,
+              tileIndex: nametable.tileIndexes[flattenedLogicalCoord.tileIndex],
+              startPixelIndex: flattenedLogicalCoord.tilePixelIndex,
+              newPixels: [selectedColorIndex]
+            }
+          });
+        }
       }
       // viewportScaling: 1,
       // topTile: 0,
@@ -135,7 +192,14 @@ const NametableCanvasInteractionTracker = ({
       // );
       // onSelect(newRow, newColumn, true);
     },
-    [toolType, viewportSize]
+    [
+      currentTool,
+      selectedColorIndex,
+      viewportSize,
+      patternTable,
+      nametable,
+      renderCanvasPositioning
+    ]
   );
 
   // const handleKeyDown = React.useCallback(
@@ -188,7 +252,7 @@ const NametableCanvasInteractionTracker = ({
     //   move.row = 1;
     // }
 
-    dispatch({
+    renderDispatch({
       type: RenderActionTypes.MOVE,
       payload: { x: -data.x, y: -data.y }
     });
@@ -208,7 +272,7 @@ const NametableCanvasInteractionTracker = ({
     // document.body.classList.remove("no-user-select");
   }, []);
 
-  const containerClassNames = classNames(styles.container, styles[toolType]);
+  const containerClassNames = classNames(styles.container, styles[currentTool]);
 
   return (
     <div
@@ -223,7 +287,7 @@ const NametableCanvasInteractionTracker = ({
       <Draggable
         position={DRAG_POSITION}
         // bounds={dragBounds}
-        disabled={toolType !== "move"}
+        disabled={currentTool !== "move"}
         onStop={handleDraggableStop}
       >
         {children}

@@ -9,7 +9,7 @@ import {
   BACKGROUND_PALETTE,
   RANDOM_PIXELS
 } from "./constants";
-import PatternTableCanvas from "../PatternTableCanvas";
+import PatternTable from "../PatternTable";
 
 const storyHost = host({
   align: "center middle",
@@ -19,10 +19,10 @@ const storyHost = host({
 storiesOf("PatternTableCanvas", module)
   .addDecorator(storyHost)
   .add("3 x 2", () => (
-    <PatternTableCanvas
+    <PatternTable
       tilesInRow={3}
       tilesInColumn={2}
-      scaling={8}
+      scale={8}
       tiles={[
         PINK_PIXELS,
         PINK_PIXELS,
@@ -38,10 +38,10 @@ storiesOf("PatternTableCanvas", module)
     />
   ))
   .add("1 x 1", () => (
-    <PatternTableCanvas
+    <PatternTable
       tilesInRow={1}
       tilesInColumn={1}
-      scaling={16}
+      scale={16}
       tiles={[RANDOM_PIXELS].map(pixels => ({
         pixels
       }))}

@@ -47,7 +47,7 @@ const BackgroundPatternTablesSection = ({
       />
       <h2>Pattern Table Tiles</h2>
       <BackgroundPatternTable
-        scaling={3}
+        scale={3}
         patternTable={currentTable}
         paletteCollection={currentPaletteCollection}
         currentTile={currentTile}

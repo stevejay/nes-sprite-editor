@@ -6,14 +6,13 @@ import {
   Nametable,
   Color
 } from "../../types";
-import useSizedCanvasEffect from "../../shared/utils/use-sized-canvas-effect";
-import classNames from "classnames";
-import { CanvasViewport, PixelScaling } from "./Nametable";
 import {
   ViewportSize,
   RenderCanvasPositioning,
   createTileIndexBounds
 } from "./experiment";
+import useSizedCanvasEffect from "../../shared/utils/use-sized-canvas-effect";
+import usePositionedCanvasEffect from "../../shared/utils/use-positioned-canvas-effect";
 
 const TILE_SIZE_PIXELS = 8;
 const TOTAL_NAMETABLE_X_TILES = 32;
@@ -37,8 +36,8 @@ function useDrawNametableEffect(
 
     const tileIndexBounds = createTileIndexBounds(renderCanvasPositioning);
 
-    console.log("renderCanvasPositioning", renderCanvasPositioning);
-    console.log("tileIndexBounds", tileIndexBounds);
+    // console.log("renderCanvasPositioning", renderCanvasPositioning);
+    // console.log("tileIndexBounds", tileIndexBounds);
 
     for (
       let yTileIndex = tileIndexBounds.yTileIndex;
@@ -124,13 +123,13 @@ function drawTile(
     );
   });
 
-  ctx.font = "10px Arial";
-  ctx.fillStyle = "white";
-  ctx.fillText(
-    `${xTileIndex}/${yTileIndex}`,
-    column * scaling * TILE_SIZE_PIXELS + 1 + xOffset,
-    row * scaling * TILE_SIZE_PIXELS + 10 + yOffset
-  );
+  // ctx.font = "10px Arial";
+  // ctx.fillStyle = "white";
+  // ctx.fillText(
+  //   `${xTileIndex}/${yTileIndex}`,
+  //   column * scaling * TILE_SIZE_PIXELS + 1 + xOffset,
+  //   row * scaling * TILE_SIZE_PIXELS + 10 + yOffset
+  // );
 }
 
 type Props = {
@@ -164,38 +163,19 @@ const NametableCanvas = ({
 }: Props) => {
   const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
 
-  // The new useSizedCanvasEffect hook:
-  React.useLayoutEffect(() => {
-    const canvas = canvasRef.current!;
+  useSizedCanvasEffect(
+    canvasRef,
+    renderCanvasPositioning.size.widthLogicalPx,
+    renderCanvasPositioning.size.heightLogicalPx,
+    renderCanvasPositioning.scale
+  );
 
-    const width =
-      renderCanvasPositioning.size.widthLogicalPx *
-      renderCanvasPositioning.scale;
-
-    const height =
-      renderCanvasPositioning.size.heightLogicalPx *
-      renderCanvasPositioning.scale;
-
-    canvas.style.width = width + "px";
-    canvas.style.height = height + "px";
-
-    canvas.style.left =
-      renderCanvasPositioning.viewportOffset.xLogicalPx *
-        renderCanvasPositioning.scale +
-      "px";
-
-    canvas.style.top =
-      renderCanvasPositioning.viewportOffset.yLogicalPx *
-        renderCanvasPositioning.scale +
-      "px";
-
-    const scale = window.devicePixelRatio;
-    canvas.width = width * scale;
-    canvas.height = height * scale;
-
-    const ctx = canvas.getContext("2d")!;
-    ctx.scale(scale, scale);
-  }, [renderCanvasPositioning]);
+  usePositionedCanvasEffect(
+    canvasRef,
+    renderCanvasPositioning.viewportOffset.xLogicalPx,
+    renderCanvasPositioning.viewportOffset.yLogicalPx,
+    renderCanvasPositioning.scale
+  );
 
   useDrawNametableEffect(
     canvasRef,

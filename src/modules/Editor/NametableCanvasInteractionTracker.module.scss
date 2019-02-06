@@ -15,7 +15,7 @@
 }
 
 .container.pencil {
-  cursor: grab; // TODO
+  cursor: url("/pencil.ico"), pointer; // pointer; // TODO
 }
 
 .container.zoomIn {

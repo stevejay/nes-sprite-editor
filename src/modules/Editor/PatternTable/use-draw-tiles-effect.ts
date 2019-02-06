@@ -1,5 +1,5 @@
 import React from "react";
-import { Color, PatternTile, GamePaletteWithColors } from "../../types";
+import { Color, PatternTile, GamePaletteWithColors } from "../../../types";
 
 export default function useDrawTilesEffect(
   canvasRef: React.RefObject<HTMLCanvasElement | null>,
@@ -48,8 +48,8 @@ function drawTile(
     ctx.fillStyle = rgbString;
 
     ctx.fillRect(
-      column * scaling * PIXEL_COLUMNS_PER_TILE + columnLoopIndex * scaling,
-      row * scaling * PIXEL_ROWS_PER_TILE + rowLoopIndex * scaling,
+      column * PIXEL_COLUMNS_PER_TILE * scaling + columnLoopIndex * scaling,
+      row * PIXEL_ROWS_PER_TILE * scaling + rowLoopIndex * scaling,
       scaling,
       scaling
     );

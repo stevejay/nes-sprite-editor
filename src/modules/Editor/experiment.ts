@@ -38,7 +38,7 @@ export type DragBounds = {
 const TOTAL_NAMETABLE_X_TILES = 32;
 const TOTAL_NAMETABLE_Y_TILES = 30;
 const TILE_SIZE_PIXELS = 8;
-const CANVAS_OVERDRAW_SCALING = 0; //1; //1;
+const CANVAS_OVERDRAW_SCALING = 1;
 
 export function calculateBestNaturalScaleForViewportSize(
   viewportSize: ViewportSize
@@ -324,6 +324,42 @@ export function convertViewportCoordToLogicalCoord(
       renderCanvasPositioning.origin.yLogicalPx -
       renderCanvasPositioning.viewportOffset.yLogicalPx +
       yLogicalPx
+  };
+}
+
+type FlattenedLogicalCoord = {
+  tileIndex: number;
+  tilePixelIndex: number;
+};
+
+export function convertViewportCoordToNameablePixel(
+  renderCanvasPositioning: RenderCanvasPositioning,
+  viewportCoord: ViewportCoord
+): FlattenedLogicalCoord | null {
+  const logicalCoord = convertViewportCoordToLogicalCoord(
+    renderCanvasPositioning,
+    viewportCoord
+  );
+
+  const xTileIndex = Math.floor(logicalCoord.xLogicalPx / TILE_SIZE_PIXELS);
+  const xTilePixelIndex = logicalCoord.xLogicalPx % TILE_SIZE_PIXELS;
+  const yTileIndex = Math.floor(logicalCoord.yLogicalPx / TILE_SIZE_PIXELS);
+  const yTilePixelIndex = logicalCoord.yLogicalPx % TILE_SIZE_PIXELS;
+
+  if (
+    xTileIndex < 0 ||
+    xTileIndex >= TOTAL_NAMETABLE_X_TILES ||
+    yTileIndex < 0 ||
+    yTileIndex >= TOTAL_NAMETABLE_Y_TILES
+  ) {
+    return null;
+  }
+
+  console.log("logicalCoord", logicalCoord);
+
+  return {
+    tileIndex: yTileIndex * TOTAL_NAMETABLE_X_TILES + xTileIndex,
+    tilePixelIndex: yTilePixelIndex * TILE_SIZE_PIXELS + xTilePixelIndex
   };
 }
 

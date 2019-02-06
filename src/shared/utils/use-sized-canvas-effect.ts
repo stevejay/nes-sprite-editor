@@ -3,34 +3,35 @@ import React from "react";
 // Sizes the specified canvas, taking into account device pixel ratio.
 export default function useSizedCanvasEffect(
   canvasRef: React.RefObject<HTMLCanvasElement | null>,
-  rows: number,
-  columns: number,
-  pixelsPerRow: number,
-  pixelsPerColumn: number
+  widthLogicalPx: number,
+  heightLogicalPx: number,
+  scale: number
 ) {
   const canvasSize = React.useMemo(
     () => ({
-      width: columns * pixelsPerColumn,
-      height: rows * pixelsPerRow
+      width: widthLogicalPx * scale,
+      height: heightLogicalPx * scale
     }),
-    [rows, columns, pixelsPerRow, pixelsPerColumn]
+    [widthLogicalPx, heightLogicalPx, scale]
   );
 
-  React.useLayoutEffect(
-    () => {
-      const canvas = canvasRef.current!;
-      canvas.style.width = canvasSize.width + "px";
-      canvas.style.height = canvasSize.height + "px";
+  React.useLayoutEffect(() => {
+    const canvas = canvasRef.current!;
+    canvas.style.width = canvasSize.width + "px";
+    canvas.style.height = canvasSize.height + "px";
 
-      const scale = window.devicePixelRatio;
-      canvas.width = canvasSize.width * scale;
-      canvas.height = canvasSize.height * scale;
+    const deviceScale = window.devicePixelRatio;
+    canvas.width = canvasSize.width * deviceScale;
+    canvas.height = canvasSize.height * deviceScale;
 
-      const ctx = canvas.getContext("2d")!;
-      ctx.scale(scale, scale);
-    },
-    [canvasSize]
-  );
+    console.log(
+      `width/height=${canvasSize.width * deviceScale}/${canvasSize.height *
+        deviceScale}`
+    );
+
+    const ctx = canvas.getContext("2d")!;
+    ctx.scale(deviceScale, deviceScale);
+  }, [canvasSize]);
 
   return canvasSize;
 }

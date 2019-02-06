@@ -1,7 +1,7 @@
 import React from "react";
 import TileCanvas from "../../shared/TileCanvas";
 import { Nametable as NametableType, PatternTable } from "../../types";
-import { GamePaletteCollectionWithColors } from "../../reducer";
+import { GamePaletteCollectionWithColors, Action } from "../../reducer";
 import NametableCanvas from "./NametableCanvas";
 import NametableCanvasInteractionTracker from "./NametableCanvasInteractionTracker";
 import styles from "./Nametable.module.scss";
@@ -17,6 +17,30 @@ import {
   moveRenderCanvas
 } from "./experiment";
 import Button from "../../shared/Button";
+
+export type PaletteOption = {
+  id: number;
+  label: string;
+};
+
+const PALETTE_OPTIONS: Array<PaletteOption> = [
+  { id: 0, label: "#0" },
+  { id: 1, label: "#1" },
+  { id: 2, label: "#2" },
+  { id: 3, label: "#3" }
+];
+
+export type ColorIndexOption = {
+  id: number;
+  label: string;
+};
+
+const COLOR_INDEX_OPTIONS: Array<ColorIndexOption> = [
+  { id: 0, label: "0" },
+  { id: 1, label: "1" },
+  { id: 2, label: "2" },
+  { id: 3, label: "3" }
+];
 
 // visible tile area in canvas viewport
 export type CanvasViewport = {
@@ -36,52 +60,55 @@ export type Tool =
   | "move";
 
 export type ToolState = {
-  toolType: Tool;
-  toolData:
-    | { paletteIndex: number }
-    | { paletteIndex: number; colorIndex: number }
-    | null;
+  currentTool: Tool;
+  selectedPaletteIndex: number;
+  selectedColorIndex: number;
   selected: { row: number; column: number } | null; // nulled when tool changed
   // viewArea: { top: number; left: number; width: number; height: number };
 };
 
 export enum ToolActionTypes {
-  TOOL_SELECTED = "TOOL_SELECTED"
+  TOOL_SELECTED = "TOOL_SELECTED",
+  PALETTE_SELECTED = "PALETTE_SELECTED",
+  COLOR_SELECTED = "COLOR_SELECTED"
 }
 
-export type ToolAction = {
-  type: ToolActionTypes.TOOL_SELECTED;
-  payload: Tool;
-};
+export type ToolAction =
+  | {
+      type: ToolActionTypes.TOOL_SELECTED;
+      payload: Tool;
+    }
+  | {
+      type: ToolActionTypes.PALETTE_SELECTED;
+      payload: ToolState["selectedPaletteIndex"];
+    }
+  | {
+      type: ToolActionTypes.COLOR_SELECTED;
+      payload: ToolState["selectedColorIndex"];
+    };
 
 type ScaleOption = {
   id: RenderCanvasPositioning["scale"];
   label: string;
 };
 
-const VIEWPORT_SIZE: ViewportSize = { width: 512, height: 512 };
-
-const SCALE_OPTIONS: Array<ScaleOption> = [
-  { id: 0.5, label: "50%" },
-  { id: 1, label: "100%" },
-  { id: 2, label: "200%" },
-  { id: 4, label: "400%" },
-  { id: 8, label: "800%" },
-  { id: 16, label: "1600%" }
-];
-
 function toolReducer(state: ToolState, action: ToolAction): ToolState {
   switch (action.type) {
     case ToolActionTypes.TOOL_SELECTED:
-      const toolType = action.payload;
-      if (toolType === state.toolType) {
+      const currentTool = action.payload;
+      if (currentTool === state.currentTool) {
         return state;
       }
+      return { ...state, currentTool };
+    case ToolActionTypes.COLOR_SELECTED:
       return {
         ...state,
-        toolType,
-        toolData: null, // TODO
-        selected: null // TODO
+        selectedColorIndex: action.payload
+      };
+    case ToolActionTypes.PALETTE_SELECTED:
+      return {
+        ...state,
+        selectedPaletteIndex: action.payload
       };
     default:
       return state;
@@ -94,9 +121,22 @@ type ToolOption = {
 };
 
 const TOOL_OPTIONS: Array<ToolOption> = [
+  { id: "pencil", label: "Pencil" },
+  { id: "palette", label: "Palette" },
   { id: "move", label: "Move" },
   { id: "zoomIn", label: "Zoom in" },
   { id: "zoomOut", label: "Zoom out" }
+];
+
+const VIEWPORT_SIZE: ViewportSize = { width: 512, height: 512 };
+
+const SCALE_OPTIONS: Array<ScaleOption> = [
+  { id: 0.5, label: "50%" },
+  { id: 1, label: "100%" },
+  { id: 2, label: "200%" },
+  { id: 4, label: "400%" },
+  { id: 8, label: "800%" },
+  { id: 16, label: "1600%" }
 ];
 
 export type RenderState = RenderCanvasPositioning;
@@ -147,13 +187,14 @@ type Props = {
   nametable: NametableType | null;
   patternTable: PatternTable | null;
   paletteCollection: GamePaletteCollectionWithColors | null;
-  // currentTool: string;
+  dispatch: React.Dispatch<Action>;
 };
 
 const Nametable: React.FunctionComponent<Props> = ({
   nametable,
   patternTable,
-  paletteCollection
+  paletteCollection,
+  dispatch
 }) => {
   if (!nametable || !patternTable || !paletteCollection) {
     return null;
@@ -169,47 +210,81 @@ const Nametable: React.FunctionComponent<Props> = ({
   const [toolState, toolDispatch] = React.useReducer<ToolState, ToolAction>(
     toolReducer,
     {
-      toolType: "zoomIn",
-      toolData: null,
+      currentTool: "zoomIn",
+      selectedPaletteIndex: 0,
+      selectedColorIndex: 0,
       selected: null
     }
   );
 
   return (
     <>
-      <RadioInput.Group<Tool>
-        legend="Selected tool:"
-        options={TOOL_OPTIONS}
-        selectedId={toolState.toolType}
-        onChange={id =>
-          toolDispatch({
-            type: ToolActionTypes.TOOL_SELECTED,
-            payload: id
-          })
-        }
-      />
-      <RadioInput.Group<RenderCanvasPositioning["scale"]>
-        legend="Zoom level:"
-        options={SCALE_OPTIONS}
-        selectedId={renderState.scale}
-        onChange={scale =>
-          renderDispatch({
-            type: RenderActionTypes.CHANGE_SCALE,
-            payload: scale
-          })
-        }
-      />
-      <Button.Container>
-        <Button
-          onClick={() =>
-            renderDispatch({
-              type: RenderActionTypes.INITIALIZE
-            })
-          }
-        >
-          Reset View
-        </Button>
-      </Button.Container>
+      <div className={styles.toolbarRow}>
+        <div className={styles.toolbarColumn}>
+          <RadioInput.Group<Tool>
+            legend="Selected tool:"
+            options={TOOL_OPTIONS}
+            selectedId={toolState.currentTool}
+            onChange={id =>
+              toolDispatch({
+                type: ToolActionTypes.TOOL_SELECTED,
+                payload: id
+              })
+            }
+          />
+        </div>
+        <div className={styles.toolbarColumn}>
+          <RadioInput.Group<RenderCanvasPositioning["scale"]>
+            legend="Zoom level:"
+            options={SCALE_OPTIONS}
+            selectedId={renderState.scale}
+            onChange={scale =>
+              renderDispatch({
+                type: RenderActionTypes.CHANGE_SCALE,
+                payload: scale
+              })
+            }
+          />
+          <Button.Container>
+            <Button
+              onClick={() =>
+                renderDispatch({
+                  type: RenderActionTypes.INITIALIZE
+                })
+              }
+            >
+              Reset View
+            </Button>
+          </Button.Container>
+        </div>
+        <div className={styles.toolbarColumn}>
+          <RadioInput.Group<ToolState["selectedPaletteIndex"]>
+            legend="Palette:"
+            options={PALETTE_OPTIONS}
+            selectedId={toolState.selectedPaletteIndex}
+            onChange={index =>
+              toolDispatch({
+                type: ToolActionTypes.PALETTE_SELECTED,
+                payload: index
+              })
+            }
+          />
+        </div>
+        <div className={styles.toolbarColumn}>
+          <RadioInput.Group<ToolState["selectedColorIndex"]>
+            legend="Color:"
+            options={COLOR_INDEX_OPTIONS}
+            selectedId={toolState.selectedColorIndex}
+            onChange={index =>
+              toolDispatch({
+                type: ToolActionTypes.COLOR_SELECTED,
+                payload: index
+              })
+            }
+          />
+        </div>
+      </div>
+
       <TileCanvas.Container>
         {/* <NametableCanvas
         viewportScaling={2}
@@ -222,10 +297,13 @@ const Nametable: React.FunctionComponent<Props> = ({
         <div className={styles.background} style={VIEWPORT_SIZE}>
           <NametableCanvasInteractionTracker
             viewportSize={VIEWPORT_SIZE}
+            nametable={nametable}
+            patternTable={patternTable}
             renderCanvasPositioning={renderState}
-            toolType={toolState.toolType}
-            dispatch={renderDispatch}
-            // onSelect={(row, column, pressed) => {}}
+            currentTool={toolState.currentTool}
+            selectedColorIndex={toolState.selectedColorIndex}
+            renderDispatch={renderDispatch}
+            dispatch={dispatch}
           >
             <NametableCanvas
               viewportSize={VIEWPORT_SIZE}

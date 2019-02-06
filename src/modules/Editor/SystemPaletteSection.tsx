@@ -14,23 +14,29 @@ const SystemPaletteSection = ({
   systemPalettes,
   currentSystemPalette,
   dispatch
-}: Props) => (
-  <Section>
-    <header>
-      <h1>System Palette</h1>
-    </header>
-    <RadioInput.Group
-      legend="Current system palette:"
-      options={systemPalettes}
-      selectedId={currentSystemPalette.id}
-      onChange={id =>
-        dispatch({
-          type: ActionTypes.SELECT_SYSTEM_PALETTE,
-          payload: { id }
-        })
-      }
-    />
-  </Section>
-);
+}: Props) => {
+  const handleChange = React.useCallback(
+    id =>
+      dispatch({
+        type: ActionTypes.SELECT_SYSTEM_PALETTE,
+        payload: { id }
+      }),
+    []
+  );
+
+  return (
+    <Section>
+      <header>
+        <h1>System Palette</h1>
+      </header>
+      <RadioInput.Group
+        legend="Current system palette:"
+        options={systemPalettes}
+        selectedId={currentSystemPalette.id}
+        onChange={handleChange}
+      />
+    </Section>
+  );
+};
 
 export default React.memo(SystemPaletteSection);

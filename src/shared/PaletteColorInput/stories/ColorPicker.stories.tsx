@@ -23,7 +23,7 @@ storiesOf("PaletteColorInput/ColorPicker", module)
         <ColorPicker
           palette={SYSTEM_PALETTE_OPTIONS[0]}
           selectedColorId={state.colorId}
-          scaling={24}
+          scale={24}
           onChange={color => store.set({ colorId: color.id })}
         />
       )}

@@ -117,6 +117,8 @@ export function reducer(state: State = initialState, action: Action): State {
     case ActionTypes.UPDATE_NAMETABLE_METADATA:
     case ActionTypes.COPY_NAMETABLE:
     case ActionTypes.DELETE_NAMETABLE:
+    case ActionTypes.CHANGE_NAMETABLE_TILE_INDEX:
+    case ActionTypes.CHANGE_NAMETABLE_PALETTE_INDEX:
       return nametableSliceReducer(state, action);
 
     // case ActionTypes.CHANGE_BACKGROUND_METATILE_SIZE:
