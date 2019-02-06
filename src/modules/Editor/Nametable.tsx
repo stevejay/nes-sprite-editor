@@ -159,17 +159,21 @@ export type RenderAction =
   | { type: RenderActionTypes.ZOOM_OUT; payload: ViewportCoord }
   | { type: RenderActionTypes.MOVE; payload: ViewportCoord };
 
-const RENDER_INITIAL_VALUE: RenderCanvasPositioning = {
-  origin: { xLogicalPx: 0, yLogicalPx: 0 },
-  size: { widthLogicalPx: 0, heightLogicalPx: 0 },
-  scale: 1,
-  viewportOffset: { xLogicalPx: 0, yLogicalPx: 0 }
-};
+// const RENDER_INITIAL_VALUE: RenderCanvasPositioning = {
+//   origin: { xLogicalPx: 0, yLogicalPx: 0 },
+//   size: { widthLogicalPx: 0, heightLogicalPx: 0 },
+//   scale: 1,
+//   viewportOffset: { xLogicalPx: 0, yLogicalPx: 0 }
+// };
+
+function initializeReducer(): RenderState {
+  return createInitialRenderCanvasPositioning(VIEWPORT_SIZE);
+}
 
 function renderReducer(state: RenderState, action: RenderAction): RenderState {
   switch (action.type) {
     case RenderActionTypes.INITIALIZE:
-      return createInitialRenderCanvasPositioning(VIEWPORT_SIZE);
+      return initializeReducer();
     case RenderActionTypes.CHANGE_SCALE:
       return adjustZoomOfRenderCanvas(state, VIEWPORT_SIZE, action.payload);
     case RenderActionTypes.ZOOM_IN:
@@ -200,12 +204,11 @@ const Nametable: React.FunctionComponent<Props> = ({
     return null;
   }
 
+  // TODO typings problem here:
   const [renderState, renderDispatch] = React.useReducer<
     RenderState,
     RenderAction
-  >(renderReducer, RENDER_INITIAL_VALUE, {
-    type: RenderActionTypes.INITIALIZE
-  });
+  >(renderReducer, initializeReducer());
 
   const [toolState, toolDispatch] = React.useReducer<ToolState, ToolAction>(
     toolReducer,

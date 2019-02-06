@@ -16,63 +16,13 @@ import {
 import {
   ViewportSize,
   RenderCanvasPositioning,
-  convertViewportCoordToLogicalCoord,
   ViewportCoord,
   convertViewportCoordToNameablePixel
 } from "./experiment";
 import { Action, ActionTypes } from "../../reducer";
 import { PatternTable, Nametable } from "../../types";
 
-const ENTER = 13;
-const ARROW_LEFT = 37;
-const ARROW_RIGHT = 39;
-const ARROW_UP = 38;
-const ARROW_DOWN = 40;
-const MOVE_BOUNDS_DELTA = 100;
-const MOVE_BOUNDS_TRIGGER_DELTA = 20;
 const DRAG_POSITION = { x: 0, y: 0 };
-
-// function calculateCanvasViewportInclusiveTiles (canvasViewport: CanvasViewport) {
-//   return {
-//     left:
-//     top:
-//     width:
-//     height:
-//   }
-// }
-
-// function calculateDragBounds(renderCanvasPositioning: RenderCanvasPositioning): DraggableBounds {
-//   return renderCanvasPositioning.
-//   const result = {
-//     left: -MOVE_BOUNDS_DELTA,
-//     top: -MOVE_BOUNDS_DELTA,
-//     right: MOVE_BOUNDS_DELTA,
-//     bottom: MOVE_BOUNDS_DELTA
-//   };
-
-//   const columns = 32;
-//   const rows = canvasViewport.scaling === 1 ? 30 : 32;
-
-//   if (canvasViewport.leftTile === 0) {
-//     result.right = 0;
-//   }
-
-//   if (canvasViewport.topTile === 0) {
-//     result.bottom = 0;
-//   }
-
-//   if (canvasViewport.leftTile + columns / canvasViewport.scaling >= columns) {
-//     result.left = 0;
-//   }
-
-//   if (canvasViewport.topTile + rows / canvasViewport.scaling >= rows) {
-//     result.top = 0;
-//   }
-
-//   // console.log("drag bounds", result);
-
-//   return result;
-// }
 
 type Props = {
   viewportSize: ViewportSize;
@@ -147,16 +97,6 @@ const NametableCanvasInteractionTracker = ({
           if (!flattenedLogicalCoord) {
             break;
           }
-
-          console.log("flattenedLogicalCoord", flattenedLogicalCoord);
-
-          console.log("payload:", {
-            type: "background",
-            tableId: patternTable.id,
-            tileIndex: nametable.tileIndexes[flattenedLogicalCoord.tileIndex],
-            startPixelIndex: flattenedLogicalCoord.tilePixelIndex,
-            newPixels: [selectedColorIndex]
-          });
 
           dispatch({
             type: ActionTypes.CHANGE_PATTERN_TABLE_PIXELS,
@@ -256,12 +196,6 @@ const NametableCanvasInteractionTracker = ({
       type: RenderActionTypes.MOVE,
       payload: { x: -data.x, y: -data.y }
     });
-
-    // console.log("move", data);
-
-    // if (move.row !== 0 || move.column !== 0) {
-    //   console.log("move", move);
-    // }
   };
 
   const handleMouseDown = React.useCallback(event => {

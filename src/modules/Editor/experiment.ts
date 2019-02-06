@@ -282,16 +282,12 @@ export function createRenderCanvasPositioningCenteredOnLogicalCoord(
       originLogicalCoord.yLogicalPx;
   }
 
-  const result = {
+  return {
     origin: originLogicalCoord,
     size: expandedViewportLogicalSize,
     scale,
     viewportOffset: viewportLogicalOffset
   };
-
-  // console.log("----------------------------");
-
-  return result;
 }
 
 export function convertViewportSizeToLogicalSize(
@@ -354,8 +350,6 @@ export function convertViewportCoordToNameablePixel(
   ) {
     return null;
   }
-
-  console.log("logicalCoord", logicalCoord);
 
   return {
     tileIndex: yTileIndex * TOTAL_NAMETABLE_X_TILES + xTileIndex,

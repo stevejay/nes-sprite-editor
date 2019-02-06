@@ -24,11 +24,6 @@ export default function useSizedCanvasEffect(
     canvas.width = canvasSize.width * deviceScale;
     canvas.height = canvasSize.height * deviceScale;
 
-    console.log(
-      `width/height=${canvasSize.width * deviceScale}/${canvasSize.height *
-        deviceScale}`
-    );
-
     const ctx = canvas.getContext("2d")!;
     ctx.scale(deviceScale, deviceScale);
   }, [canvasSize]);

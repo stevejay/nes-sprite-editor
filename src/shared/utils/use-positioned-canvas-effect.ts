@@ -11,9 +11,5 @@ export default function usePositionedCanvasEffect(
     const canvas = canvasRef.current!;
     canvas.style.left = xLogicalPx * scale + "px";
     canvas.style.top = yLogicalPx * scale + "px";
-
-    // console.log(
-    //   `left/top=${xLogicalPx * scale + "px"}/${yLogicalPx * scale + "px"}`
-    // );
   });
 }

@@ -30,14 +30,9 @@ function useDrawNametableEffect(
     const canvas = canvasRef.current!;
     const ctx = canvas.getContext("2d")!;
 
-    // console.log("renderCanvasPositioning", renderCanvasPositioning);
-
     // TODO find a better way to draw a 'rectangle' from the tileIndexes array.
 
     const tileIndexBounds = createTileIndexBounds(renderCanvasPositioning);
-
-    // console.log("renderCanvasPositioning", renderCanvasPositioning);
-    // console.log("tileIndexBounds", tileIndexBounds);
 
     for (
       let yTileIndex = tileIndexBounds.yTileIndex;
@@ -64,10 +59,6 @@ function useDrawNametableEffect(
           nametable.paletteIndexes[
             yMetatileIndex * (TOTAL_NAMETABLE_X_TILES * 0.5) + xMetatileIndex
           ];
-
-        // console.log(
-        //   `tile:${tileIndex} ${xTileIndex}/${yTileIndex} => ${renderXTileIndex}/${renderYTileIndex} ${paletteIndex}`
-        // );
 
         drawTile(
           ctx,
