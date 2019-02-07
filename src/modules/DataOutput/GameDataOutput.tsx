@@ -21,23 +21,46 @@ const GameDataOutput = () => {
     spritePalettes
   );
 
-  return (
-    <section>
-      <header>
-        <h1>ASM Output</h1>
-      </header>
-      <Button.Container>
-        <Button onClick={updateGameDataText}>Update text output</Button>
-        <Button
-          disabled={!backgroundPatternTable}
-          onClick={() => downloadPatternTable(backgroundPatternTable)}
-        >
-          Download background tiles pattern file
-        </Button>
-      </Button.Container>
-      <CodePanel>{gameDataText}</CodePanel>
-    </section>
+  const dom = React.useMemo(
+    () => (
+      <section>
+        <header>
+          <h1>ASM Output</h1>
+        </header>
+        <Button.Container>
+          <Button onClick={updateGameDataText}>Update text output</Button>
+          <Button
+            disabled={!backgroundPatternTable}
+            onClick={() => downloadPatternTable(backgroundPatternTable)}
+          >
+            Download background tiles pattern file
+          </Button>
+        </Button.Container>
+        <CodePanel>{gameDataText}</CodePanel>
+      </section>
+    ),
+    [gameDataText]
   );
+
+  return dom;
+
+  // return (
+  //   <section>
+  //     <header>
+  //       <h1>ASM Output</h1>
+  //     </header>
+  //     <Button.Container>
+  //       <Button onClick={updateGameDataText}>Update text output</Button>
+  //       <Button
+  //         disabled={!backgroundPatternTable}
+  //         onClick={() => downloadPatternTable(backgroundPatternTable)}
+  //       >
+  //         Download background tiles pattern file
+  //       </Button>
+  //     </Button.Container>
+  //     <CodePanel>{gameDataText}</CodePanel>
+  //   </section>
+  // );
 };
 
 export default GameDataOutput;
