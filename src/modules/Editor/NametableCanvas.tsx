@@ -13,10 +13,10 @@ import {
 } from "./experiment";
 import useSizedCanvasEffect from "../../shared/utils/use-sized-canvas-effect";
 import usePositionedCanvasEffect from "../../shared/utils/use-positioned-canvas-effect";
+import drawTile from "./draw-tile";
 
 const TILE_SIZE_PIXELS = 8;
 const TOTAL_NAMETABLE_X_TILES = 32;
-const TOTAL_NAMETABLE_Y_TILES = 30;
 const UNAVAILABLE_COLOR = "#000";
 
 function useDrawNametableEffect(
@@ -66,61 +66,13 @@ function useDrawNametableEffect(
           renderXTileIndex,
           tileIndexBounds.xTileOffset,
           tileIndexBounds.yTileOffset,
-          patternTiles[tileIndex].pixels, // pixels
-          palettes[paletteIndex].colors, // palettes
-          renderCanvasPositioning.scale,
-          // debug:
-          xTileIndex,
-          yTileIndex
+          patternTiles[tileIndex].pixels,
+          palettes[paletteIndex].colors,
+          renderCanvasPositioning.scale
         );
       }
     }
   }, [nametable, patternTiles, palettes, renderCanvasPositioning]);
-}
-
-function drawTile(
-  ctx: CanvasRenderingContext2D,
-  row: number,
-  column: number,
-  xTileOffset: number,
-  yTileOffset: number,
-  pixels: Uint8Array,
-  colors: Array<Color>,
-  scaling: number,
-  // debug:
-  xTileIndex: number,
-  yTileIndex: number
-) {
-  let rowLoopIndex = -1;
-
-  const xOffset = xTileOffset * scaling;
-  const yOffset = yTileOffset * scaling;
-
-  pixels.forEach((colorIndex, index) => {
-    const columnLoopIndex = index % TILE_SIZE_PIXELS;
-    if (columnLoopIndex === 0) {
-      ++rowLoopIndex;
-    }
-
-    const color = colors[colorIndex];
-    const rgbString = color.available ? color.rgb : UNAVAILABLE_COLOR;
-    ctx.fillStyle = rgbString;
-
-    ctx.fillRect(
-      column * scaling * TILE_SIZE_PIXELS + columnLoopIndex * scaling + xOffset,
-      row * scaling * TILE_SIZE_PIXELS + rowLoopIndex * scaling + yOffset,
-      scaling,
-      scaling
-    );
-  });
-
-  // ctx.font = "10px Arial";
-  // ctx.fillStyle = "white";
-  // ctx.fillText(
-  //   `${xTileIndex}/${yTileIndex}`,
-  //   column * scaling * TILE_SIZE_PIXELS + 1 + xOffset,
-  //   row * scaling * TILE_SIZE_PIXELS + 10 + yOffset
-  // );
 }
 
 type Props = {
@@ -139,7 +91,6 @@ type Props = {
 };
 
 const NametableCanvas = ({
-  viewportSize,
   renderCanvasPositioning,
   nametable,
   patternTiles,

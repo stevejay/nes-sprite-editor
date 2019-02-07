@@ -5,7 +5,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-const ButtonToolbar: React.FunctionComponent<Props> = ({ children }) => (
+const ButtonToolbar = ({ children }: Props) => (
   <div className={styles.container}>{children}</div>
 );
 

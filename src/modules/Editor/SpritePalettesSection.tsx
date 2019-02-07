@@ -1,9 +1,12 @@
 import React from "react";
-import { Action, GamePaletteCollectionWithColors } from "../../reducer";
+import {
+  Action,
+  ActionTypes,
+  GamePaletteCollectionWithColors
+} from "../../reducer";
 import { GamePaletteCollection, SystemPalette } from "../../types";
-import PaletteCollection from "./PaletteCollection";
-import PaletteCollectionSelector from "./PaletteCollectionSelector";
-import PaletteCollectionToolbar from "./PaletteCollectionToolbar";
+import EntityManagement from "./EntityManagement";
+import PaletteCollection from "./PaletteCollection/PaletteCollection";
 import Section from "./Section";
 
 type Props = {
@@ -21,22 +24,49 @@ const SpritePalettesSection = ({
 }: Props) => (
   <Section>
     <header>
-      <h1>Sprite Palettes</h1>
+      <h2>Sprite Palettes</h2>
     </header>
-    <h2>Current Collection</h2>
-    <PaletteCollectionSelector
-      type="sprite"
-      paletteCollections={paletteCollections}
-      currentCollection={currentCollection}
-      dispatch={dispatch}
+    <h3>Current Collection</h3>
+    <EntityManagement.Selector
+      entities={paletteCollections}
+      currentEntity={currentCollection}
+      onChange={id =>
+        dispatch({
+          type: ActionTypes.SELECT_PALETTE_COLLECTION,
+          payload: { type: "sprite", id }
+        })
+      }
     />
-    <PaletteCollectionToolbar
-      type="sprite"
-      paletteCollections={paletteCollections}
-      currentCollection={currentCollection}
-      dispatch={dispatch}
+    <EntityManagement.Toolbar
+      entities={paletteCollections}
+      currentEntity={currentCollection}
+      entityName="Sprite Palette"
+      onNewEntity={() =>
+        dispatch({
+          type: ActionTypes.ADD_NEW_PALETTE_COLLECTION,
+          payload: { type: "sprite", label: "New collection" }
+        })
+      }
+      onCopyEntity={id =>
+        dispatch({
+          type: ActionTypes.COPY_PALETTE_COLLECTION,
+          payload: { type: "sprite", id }
+        })
+      }
+      onDeleteEntity={id =>
+        dispatch({
+          type: ActionTypes.DELETE_PALETTE_COLLECTION,
+          payload: { type: "sprite", id }
+        })
+      }
+      onRenameEntity={(id, label) =>
+        dispatch({
+          type: ActionTypes.UPDATE_PALETTE_COLLECTION_METADATA,
+          payload: { type: "sprite", id, label }
+        })
+      }
     />
-    <h2>Collection Palettes</h2>
+    <h3>Collection Palettes</h3>
     <PaletteCollection
       type="sprite"
       systemPalette={systemPalette}

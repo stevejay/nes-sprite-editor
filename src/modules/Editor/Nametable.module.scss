@@ -16,10 +16,10 @@
 
 .toolbarRow > .toolbarColumn {
   margin-right: $gutter;
-}
 
-.toolbarRow > .toolbarColumn:last-of-type {
-  margin-right: 0;
+  &:last-of-type {
+    margin-right: 0;
+  }
 }
 
 .toolbarColumn {

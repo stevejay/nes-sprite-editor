@@ -6,12 +6,9 @@ export default function useFocusEffect(
   focused: boolean | null | undefined,
   ref: React.RefObject<any>
 ) {
-  React.useLayoutEffect(
-    () => {
-      if (focused) {
-        ref.current!.focus();
-      }
-    },
-    [focused]
-  );
+  React.useLayoutEffect(() => {
+    if (focused && ref.current) {
+      ref.current.focus();
+    }
+  }, [focused]);
 }

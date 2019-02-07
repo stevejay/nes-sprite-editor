@@ -120,39 +120,6 @@ export function reducer(state: State = initialState, action: Action): State {
     case ActionTypes.CHANGE_NAMETABLE_TILE_INDEX:
     case ActionTypes.CHANGE_NAMETABLE_PALETTE_INDEX:
       return nametableSliceReducer(state, action);
-
-    // case ActionTypes.CHANGE_BACKGROUND_METATILE_SIZE:
-    //   const newMetatileSize = action.payload;
-    //   const { metatileSize, row, column } = state.currentBackgroundMetatile;
-    //   if (newMetatileSize === metatileSize) {
-    //     return state;
-    //   }
-    //   if (newMetatileSize < metatileSize) {
-    //     return {
-    //       ...state,
-    //       currentBackgroundMetatile: {
-    //         metatileSize: newMetatileSize,
-    //         row: row * (metatileSize / newMetatileSize),
-    //         column: column * (metatileSize / newMetatileSize)
-    //       }
-    //     };
-    //   }
-    //   return {
-    //     ...state,
-    //     currentBackgroundMetatile: {
-    //       metatileSize: newMetatileSize,
-    //       row: Math.floor(row / newMetatileSize),
-    //       column: Math.floor(column / newMetatileSize)
-    //     }
-    //   };
-    // case ActionTypes.CHANGE_CURRENT_BACKGROUND_METATILE:
-    //   return {
-    //     ...state,
-    //     currentBackgroundMetatile: {
-    //       ...state.currentBackgroundMetatile,
-    //       ...action.payload
-    //     }
-    //   };
     default:
       return state;
   }

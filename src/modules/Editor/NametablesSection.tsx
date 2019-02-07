@@ -1,38 +1,15 @@
 import React from "react";
-import { Action, GamePaletteCollectionWithColors } from "../../reducer";
+import {
+  Action,
+  GamePaletteCollectionWithColors,
+  ActionTypes
+} from "../../reducer";
 import { Nametable as NametableType, PatternTable } from "../../types";
-import Section from "./Section";
-import NametableSelector from "./NametableSelector";
-import NametableToolbar from "./NametableToolbar";
 import Nametable from "./Nametable";
-// import RadioInput from "../../shared/RadioInput";
-
-// -------------------------------
-
-// type ToolData =
-//   | {
-//       currentTool: "palette";
-//       toolData: { paletteIndex: number },
-//       metatile: { row: number; column: number };
-//     }
-//   | {
-//       currentTool: "pencil";
-//       toolData: { paletteIndex: number, colorIndex: number },
-//       pixel: { row: number; column: number };
-//     }
-//   | {
-//       currentTool: "pattern";
-//       tile: { row: number; column: number };
-//     }
-//   | {
-//       currentTool: "zoom";
-//       tileArea: { top: number; left: number; width: number; height: number };
-//     };
-
-// -------------------------------
+import Section from "./Section";
+import EntityManagement from "./EntityManagement";
 
 type Props = {
-  // systemPalette: SystemPalette;
   nametables: Array<NametableType>;
   currentNametable: NametableType | null;
   currentPatternTable: PatternTable | null;
@@ -40,60 +17,65 @@ type Props = {
   dispatch: React.Dispatch<Action>;
 };
 
-// const OPTIONS = [
-//   { id: "palette0", label: "Palette #0" },
-//   { id: "palette1", label: "Palette #1" },
-//   { id: "palette2", label: "Palette #2" },
-//   { id: "palette3", label: "Palette #3" }
-// ];
-
 const NametablesSection = ({
-  // systemPalette,
   nametables,
   currentNametable,
   currentPatternTable,
   currentPaletteCollection,
   dispatch
-}: Props) => {
-  return (
-    <Section>
-      <header>
-        <h1>Nametables</h1>
-      </header>
-      <h2>Current Nametable</h2>
-      <NametableSelector
-        nametables={nametables}
-        currentNametable={currentNametable}
-        dispatch={dispatch}
-      />
-      <NametableToolbar
-        nametables={nametables}
-        currentNametable={currentNametable}
-        dispatch={dispatch}
-      />
-      <h2>Nametable Tiles</h2>
-      <Nametable
-        nametable={currentNametable}
-        patternTable={currentPatternTable}
-        paletteCollection={currentPaletteCollection}
-        dispatch={dispatch}
-      />
-
-      {/* <RadioInput.Group
-        legend="Tools"
-        options={OPTIONS}
-        selectedId={toolId}
-        onChange={id => setToolId(id)}
-      /> */}
-
-      {/* <PaletteCollection
-      type="background"
-      systemPalette={systemPalette}
-      currentCollection={currentCollection}
+}: Props) => (
+  <Section>
+    <header>
+      <h2>Nametables</h2>
+    </header>
+    <h3>Current Nametable</h3>
+    <EntityManagement.Selector
+      entities={nametables}
+      currentEntity={currentNametable}
+      onChange={id =>
+        dispatch({
+          type: ActionTypes.SELECT_NAMETABLE,
+          payload: { id }
+        })
+      }
+    />
+    <EntityManagement.Toolbar
+      entities={nametables}
+      currentEntity={currentNametable}
+      entityName="Nametable"
+      onNewEntity={() =>
+        dispatch({
+          type: ActionTypes.ADD_NEW_NAMETABLE,
+          payload: { label: "New nametable" }
+        })
+      }
+      onCopyEntity={id =>
+        dispatch({
+          type: ActionTypes.COPY_NAMETABLE,
+          payload: { id }
+        })
+      }
+      onDeleteEntity={id =>
+        dispatch({
+          type: ActionTypes.DELETE_NAMETABLE,
+          payload: { id }
+        })
+      }
+      onRenameEntity={(id, label) =>
+        dispatch({
+          type: ActionTypes.UPDATE_NAMETABLE_METADATA,
+          payload: { id, label }
+        })
+      }
+    />
+    <h3>Nametable Tiles</h3>
+    <Nametable
+      nametable={currentNametable}
+      patternTable={currentPatternTable}
+      paletteCollection={currentPaletteCollection}
       dispatch={dispatch}
-    /> */}
-    </Section>
-  );
-};
+    />
+  </Section>
+);
 
 export default NametablesSection;

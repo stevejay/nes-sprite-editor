@@ -131,39 +131,3 @@ export const selectCurrentNametable = createSelector(
   selectCurrentNametableId,
   (nametables, currentId) => find(nametables, x => x.id === currentId) || null
 );
-
-// export function selectCurrentBackgroundMetatile(state: State) {
-//   return state.currentBackgroundMetatile;
-// }
-
-// export const selectCurrentBackgroundMetatileTiles = createSelector(
-//   selectCurrentBackgroundPatternTable,
-//   selectCurrentBackgroundMetatile,
-//   (patternTable, metatile) => {
-//     const indexes = getTileIndexesForMetatile(metatile);
-//     return indexes.map(index => patternTable.tiles[index]);
-//   }
-// );
-
-// function getTileIndexesForMetatile(metatile: Metatile) {
-//   const result = [];
-
-//   const startIndex =
-//     metatile.row * metatile.metatileSize * 16 +
-//     metatile.column * metatile.metatileSize;
-
-//   for (let row = 0; row < metatile.metatileSize; ++row) {
-//     for (let column = 0; column < metatile.metatileSize; ++column) {
-//       result.push(startIndex + row * 16 + column);
-//     }
-//   }
-
-//   return result;
-// }
-
-// export const selectCurrentBackgroundMetatilePalette = createSelector(
-//   selectCurrentBackgroundMetatileTiles,
-//   selectBackgroundPalettes,
-//   (tiles, backgroundPalettes) =>
-//     backgroundPalettes.find(palette => palette.id === tiles[0].gamePaletteId)
-// );

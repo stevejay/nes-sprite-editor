@@ -1,32 +1,24 @@
 import React from "react";
-import styles from "./Editor.module.scss";
-// import EditorSidebar from "./EditorSidebar";
 import {
   Action,
-  selectCurrentSystemPalette,
-  selectSystemPalettes,
-  State,
   selectBackgroundPaletteCollections,
-  selectCurrentBackgroundPaletteCollection,
-  selectSpritePaletteCollections,
-  selectCurrentSpritePaletteCollection,
   selectBackgroundPatternTables,
+  selectCurrentBackgroundPaletteCollection,
   selectCurrentBackgroundPatternTable,
-  selectSpritePatternTables,
-  selectCurrentSpritePatternTable,
+  selectCurrentNametable,
+  selectCurrentSpritePaletteCollection,
+  selectCurrentSystemPalette,
   selectNametables,
-  selectCurrentNametable
+  selectSpritePaletteCollections,
+  selectSystemPalettes,
+  State
 } from "../../reducer";
-// import Section from "./Section";
-// import BackgroundPatternTable from "./BackgroundPatternTable";
-// import BackgroundPatternDetail from "./BackgroundPatternDetail";
-// import RadioInput from "../../shared/RadioInput";
-// import formatByteAsHex from "../../shared/utils/format-byte-as-hex";
-import SystemPaletteSection from "./SystemPaletteSection";
 import BackgroundPalettesSection from "./BackgroundPalettesSection";
-import SpritePalettesSection from "./SpritePalettesSection";
 import BackgroundPatternTablesSection from "./BackgroundPatternTablesSection";
+import styles from "./Editor.module.scss";
 import NametablesSection from "./NametablesSection";
+import SpritePalettesSection from "./SpritePalettesSection";
+import SystemPaletteSection from "./SystemPaletteSection";
 
 type Props = {
   state: State;
@@ -50,8 +42,6 @@ const Editor: React.FunctionComponent<Props> = ({ state, dispatch }) => {
   const currentBackgroundPatternTable = selectCurrentBackgroundPatternTable(
     state
   );
-  const spritePatternTables = selectSpritePatternTables(state);
-  const currentSpritePatternTable = selectCurrentSpritePatternTable(state);
   const nametables = selectNametables(state);
   const currentNametable = selectCurrentNametable(state);
 

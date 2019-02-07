@@ -6,9 +6,10 @@
   margin-bottom: 1rem;
 }
 
-.container > button {
+.container button {
   margin-left: rem(6);
   flex-grow: 1;
+  background-color: transparent;
 
   &:first-of-type {
     margin-left: 0;

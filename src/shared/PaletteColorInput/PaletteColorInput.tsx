@@ -2,7 +2,7 @@ import React from "react";
 import { Color, SystemPalette } from "../../types";
 import PaletteColor from "../PaletteColor";
 import { useRovingTabIndex } from "../RovingTabIndex";
-import useFocused from "../utils/use-focus-effect";
+import useFocusEffect from "../utils/use-focus-effect";
 import ColorPickerModal from "./ColorPickerModal";
 import styles from "./PaletteColorInput.module.scss";
 
@@ -28,8 +28,9 @@ const PaletteColorInput = ({ color, systemPalette, onChange }: Props) => {
     buttonRef,
     false
   );
+
   const [dialogState, setDialogState] = React.useState<State>(initialState);
-  useFocused(focused, buttonRef);
+  useFocusEffect(focused, buttonRef);
 
   const handleClick = React.useCallback(() => {
     if (onClick) {

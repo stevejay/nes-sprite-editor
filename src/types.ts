@@ -26,7 +26,12 @@ export type GamePaletteWithColors = GamePalette & {
 
 export type GamePaletteType = "background" | "sprite";
 
-export type GamePaletteCollection = {
+export type Entity = {
+  id: string;
+  label: string;
+};
+
+export type GamePaletteCollection = Entity & {
   id: string;
   label: string;
   gamePalettes: Array<GamePalette>; // 4 palettes
@@ -40,7 +45,7 @@ export type PatternTile = {
 export type PatternTableType = "background" | "sprite";
 
 // 16x16 area of pattern tiles
-export type PatternTable = {
+export type PatternTable = Entity & {
   id: string;
   label: string;
   tiles: Array<PatternTile>; // 256 tiles (16x16)
@@ -53,7 +58,7 @@ export type PatternTable = {
 // };
 
 // 30x32 area of nametable tiles
-export type Nametable = {
+export type Nametable = Entity & {
   id: string;
   label: string;
   tileIndexes: Uint8Array; // 960 bytes

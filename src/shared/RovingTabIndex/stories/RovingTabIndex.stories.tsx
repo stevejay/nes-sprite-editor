@@ -4,7 +4,7 @@ import { State, Store } from "@sambego/storybook-state";
 import * as React from "react";
 import { host } from "storybook-host";
 import "../../../index.scss";
-import useFocused from "../../utils/use-focus-effect";
+import useFocusEffect from "../../utils/use-focus-effect";
 
 const storyHost = host({
   align: "center middle",
@@ -26,8 +26,7 @@ const ToolbarButton = ({ disabled = false, children }: Props) => {
     buttonRef,
     disabled
   );
-  useFocused(focused, buttonRef);
-
+  useFocusEffect(focused, buttonRef);
   return (
     <button
       ref={buttonRef}

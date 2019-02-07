@@ -159,13 +159,6 @@ export type RenderAction =
   | { type: RenderActionTypes.ZOOM_OUT; payload: ViewportCoord }
   | { type: RenderActionTypes.MOVE; payload: ViewportCoord };
 
-// const RENDER_INITIAL_VALUE: RenderCanvasPositioning = {
-//   origin: { xLogicalPx: 0, yLogicalPx: 0 },
-//   size: { widthLogicalPx: 0, heightLogicalPx: 0 },
-//   scale: 1,
-//   viewportOffset: { xLogicalPx: 0, yLogicalPx: 0 }
-// };
-
 function initializeReducer(): RenderState {
   return createInitialRenderCanvasPositioning(VIEWPORT_SIZE);
 }
@@ -287,16 +280,7 @@ const Nametable: React.FunctionComponent<Props> = ({
           />
         </div>
       </div>
-
       <TileCanvas.Container>
-        {/* <NametableCanvas
-        viewportScaling={2}
-        canvasScaling={1}
-        nametable={nametable}
-        patternTiles={patternTable.tiles}
-        palettes={paletteCollection.gamePalettes}
-        ariaLabel="Nametable tiles"
-      /> */}
         <div className={styles.background} style={VIEWPORT_SIZE}>
           <NametableCanvasInteractionTracker
             viewportSize={VIEWPORT_SIZE}
@@ -311,8 +295,6 @@ const Nametable: React.FunctionComponent<Props> = ({
             <NametableCanvas
               viewportSize={VIEWPORT_SIZE}
               renderCanvasPositioning={renderState}
-              // pixelScaling={pixelScaling}
-              // canvasViewport={canvasViewport}
               nametable={nametable}
               patternTiles={patternTable.tiles}
               palettes={paletteCollection.gamePalettes}

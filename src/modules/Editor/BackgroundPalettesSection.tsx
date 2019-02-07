@@ -1,9 +1,12 @@
 import React from "react";
-import { Action, GamePaletteCollectionWithColors } from "../../reducer";
+import {
+  Action,
+  ActionTypes,
+  GamePaletteCollectionWithColors
+} from "../../reducer";
 import { GamePaletteCollection, SystemPalette } from "../../types";
-import PaletteCollection from "./PaletteCollection";
-import PaletteCollectionSelector from "./PaletteCollectionSelector";
-import PaletteCollectionToolbar from "./PaletteCollectionToolbar";
+import EntityManagement from "./EntityManagement";
+import PaletteCollection from "./PaletteCollection/PaletteCollection";
 import Section from "./Section";
 
 type Props = {
@@ -21,22 +24,49 @@ const BackgroundPalettesSection = ({
 }: Props) => (
   <Section>
     <header>
-      <h1>Background Palettes</h1>
+      <h2>Background Palettes</h2>
     </header>
-    <h2>Current Collection</h2>
-    <PaletteCollectionSelector
-      type="background"
-      paletteCollections={paletteCollections}
-      currentCollection={currentCollection}
-      dispatch={dispatch}
+    <h3>Current Collection</h3>
+    <EntityManagement.Selector
+      entities={paletteCollections}
+      currentEntity={currentCollection}
+      onChange={id =>
+        dispatch({
+          type: ActionTypes.SELECT_PALETTE_COLLECTION,
+          payload: { type: "background", id }
+        })
+      }
     />
-    <PaletteCollectionToolbar
-      type="background"
-      paletteCollections={paletteCollections}
-      currentCollection={currentCollection}
-      dispatch={dispatch}
+    <EntityManagement.Toolbar
+      entities={paletteCollections}
+      currentEntity={currentCollection}
+      entityName="Background Palette"
+      onNewEntity={() =>
+        dispatch({
+          type: ActionTypes.ADD_NEW_PALETTE_COLLECTION,
+          payload: { type: "background", label: "New collection" }
+        })
+      }
+      onCopyEntity={id =>
+        dispatch({
+          type: ActionTypes.COPY_PALETTE_COLLECTION,
+          payload: { type: "background", id }
+        })
+      }
+      onDeleteEntity={id =>
+        dispatch({
+          type: ActionTypes.DELETE_PALETTE_COLLECTION,
+          payload: { type: "background", id }
+        })
+      }
+      onRenameEntity={(id, label) =>
+        dispatch({
+          type: ActionTypes.UPDATE_PALETTE_COLLECTION_METADATA,
+          payload: { type: "background", id, label }
+        })
+      }
     />
-    <h2>Collection Palettes</h2>
+    <h3>Collection Palettes</h3>
     <PaletteCollection
       type="background"
       systemPalette={systemPalette}

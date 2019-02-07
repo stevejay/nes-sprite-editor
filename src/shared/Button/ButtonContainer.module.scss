@@ -2,12 +2,12 @@
 
 .container {
   margin-bottom: 1rem;
+}
 
-  button {
-    margin-right: 1rem;
-  }
+.container button {
+  margin-right: 1rem;
 
-  button:last-of-type {
+  &:last-of-type {
     margin-right: 0;
   }
 }

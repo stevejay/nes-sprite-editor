@@ -1,21 +1,17 @@
 import React from "react";
-import { Action, GamePaletteCollectionWithColors } from "../../reducer";
 import {
-  GamePaletteCollection,
-  SystemPalette,
-  PatternTable
-} from "../../types";
-import PaletteCollection from "./PaletteCollection";
-import PaletteCollectionSelector from "./PaletteCollectionSelector";
-import PaletteCollectionToolbar from "./PaletteCollectionToolbar";
+  Action,
+  ActionTypes,
+  GamePaletteCollectionWithColors
+} from "../../reducer";
+import { PatternTable as PatternTableType } from "../../types";
+import PatternTable from "./PatternTable";
+import EntityManagement from "./EntityManagement";
 import Section from "./Section";
-import PatternTableSelector from "./PatternTableSelector";
-import PatternTableToolbar from "./PatternTableToolbar";
-import BackgroundPatternTable from "./BackgroundPatternTable";
 
 type Props = {
-  patternTables: Array<PatternTable>;
-  currentTable: PatternTable | null;
+  patternTables: Array<PatternTableType>;
+  currentTable: PatternTableType | null;
   currentPaletteCollection: GamePaletteCollectionWithColors | null;
   dispatch: React.Dispatch<Action>;
 };
@@ -26,27 +22,56 @@ const BackgroundPatternTablesSection = ({
   currentPaletteCollection,
   dispatch
 }: Props) => {
+  // TODO move down into PatternTable?
   const [currentTile, setCurrentTile] = React.useState({ row: 0, column: 0 });
+
   return (
     <Section>
       <header>
-        <h1>Background Pattern Tables</h1>
+        <h2>Background Pattern Tables</h2>
       </header>
-      <h2>Current Pattern Table</h2>
-      <PatternTableSelector
-        type="background"
-        patternTables={patternTables}
-        currentTable={currentTable}
-        dispatch={dispatch}
+      <h3>Current Pattern Table</h3>
+      <EntityManagement.Selector
+        entities={patternTables}
+        currentEntity={currentTable}
+        onChange={id =>
+          dispatch({
+            type: ActionTypes.SELECT_PATTERN_TABLE,
+            payload: { type: "background", id }
+          })
+        }
       />
-      <PatternTableToolbar
-        type="background"
-        patternTables={patternTables}
-        currentTable={currentTable}
-        dispatch={dispatch}
+      <EntityManagement.Toolbar
+        entities={patternTables}
+        currentEntity={currentTable}
+        entityName="Pattern Table"
+        onNewEntity={() =>
+          dispatch({
+            type: ActionTypes.ADD_NEW_PATTERN_TABLE,
+            payload: { type: "background", label: "New pattern table" }
+          })
+        }
+        onCopyEntity={id =>
+          dispatch({
+            type: ActionTypes.COPY_PATTERN_TABLE,
+            payload: { type: "background", id }
+          })
+        }
+        onDeleteEntity={id =>
+          dispatch({
+            type: ActionTypes.DELETE_PATTERN_TABLE,
+            payload: { type: "background", id }
+          })
+        }
+        onRenameEntity={(id, label) =>
+          dispatch({
+            type: ActionTypes.UPDATE_PATTERN_TABLE_METADATA,
+            payload: { type: "background", id, label }
+          })
+        }
       />
-      <h2>Pattern Table Tiles</h2>
-      <BackgroundPatternTable
+      <h3>Pattern Table Tiles</h3>
+      <PatternTable
         scale={3}
         patternTable={currentTable}
         paletteCollection={currentPaletteCollection}

@@ -1,48 +1,57 @@
 import React from "react";
-import useSizedCanvasEffect from "../../../shared/utils/use-sized-canvas-effect";
-import { GamePaletteWithColors, PatternTile } from "../../../types";
-import styles from "./PatternTable.module.scss";
-import useDrawTilesEffect from "./use-draw-tiles-effect";
-
-const PIXEL_ROWS_PER_TILE = 8;
-const PIXEL_COLUMNS_PER_TILE = PIXEL_ROWS_PER_TILE;
+import { GamePaletteCollectionWithColors } from "../../../reducer";
+import TileCanvas from "../../../shared/TileCanvas";
+import { PatternTable as PatternTableType } from "../../../types";
+import PatternTableCanvas from "./PatternTableCanvas";
 
 type Props = {
-  tilesInRow: number;
-  tilesInColumn: number;
-  scale: number; // in range [1, ...]
-  tiles: Array<PatternTile>;
-  palette: GamePaletteWithColors;
-  ariaLabel: string;
+  scale: number;
+  patternTable: PatternTableType | null;
+  paletteCollection: GamePaletteCollectionWithColors | null;
+  currentTile: { row: number; column: number };
+  onSelectTile: (row: number, column: number) => void;
 };
 
 const PatternTable = ({
-  tilesInRow,
-  tilesInColumn,
   scale,
-  tiles,
-  palette,
-  ariaLabel
+  patternTable,
+  paletteCollection,
+  currentTile,
+  onSelectTile
 }: Props) => {
-  const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
-
-  const canvasSize = useSizedCanvasEffect(
-    canvasRef,
-    tilesInColumn * PIXEL_COLUMNS_PER_TILE,
-    tilesInRow * PIXEL_ROWS_PER_TILE,
-    scale
-  );
-
-  useDrawTilesEffect(canvasRef, tiles, palette, tilesInColumn, scale);
+  if (!patternTable || !paletteCollection) {
+    // TODO default palette?
+    return null;
+  }
 
   return (
-    <canvas
-      ref={canvasRef}
-      className={styles.canvas}
-      style={canvasSize}
-      role="img"
-      aria-label={ariaLabel}
-    />
+    <TileCanvas.Container>
+      <TileCanvas.InteractionTracker
+        rows={16}
+        columns={16}
+        row={currentTile.row}
+        column={currentTile.column}
+        onSelect={onSelectTile}
+      >
+        <PatternTableCanvas
+          tilesInRow={16}
+          tilesInColumn={16}
+          scale={scale}
+          tiles={patternTable.tiles}
+          palette={paletteCollection.gamePalettes[0]}
+          ariaLabel="Pattern table tiles"
+        />
+        <TileCanvas.Highlight
+          tileWidth={8 * scale}
+          tileHeight={8 * scale}
+          row={currentTile.row}
+          column={currentTile.column}
+          ariaLabel={`Metatile row ${currentTile.row}, column ${
+            currentTile.column
+          }`}
+        />
+      </TileCanvas.InteractionTracker>
+    </TileCanvas.Container>
   );
 };
 

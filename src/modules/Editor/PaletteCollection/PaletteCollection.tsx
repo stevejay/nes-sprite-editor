@@ -3,11 +3,11 @@ import {
   Action,
   ActionTypes,
   GamePaletteCollectionWithColors
-} from "../../reducer";
-import { GamePaletteType, SystemPalette } from "../../types";
+} from "../../../reducer";
+import { GamePaletteType, SystemPalette } from "../../../types";
 import styles from "./PaletteCollection.module.scss";
-import PaletteColorInput from "../../shared/PaletteColorInput";
-import { RovingTabIndexProvider } from "../../shared/RovingTabIndex";
+import PaletteColorInput from "../../../shared/PaletteColorInput";
+import { RovingTabIndexProvider } from "../../../shared/RovingTabIndex";
 
 type Props = {
   type: GamePaletteType;
@@ -29,10 +29,10 @@ const PaletteCollection = ({
       {currentCollection &&
         currentCollection.gamePalettes.map((palette, paletteIndex) => (
           <div key={paletteIndex} className={styles.palette}>
-            <h3>
+            <h4>
               <span className="screen-reader-only">{type} palette </span>#
               {paletteIndex}
-            </h3>
+            </h4>
             <PaletteColorInput.Container
               ariaLabel="Color edit toolbar"
               ariaOrientation="horizontal"

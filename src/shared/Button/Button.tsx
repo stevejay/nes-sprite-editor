@@ -3,7 +3,7 @@ import styles from "./Button.module.scss";
 import { IconType } from "react-icons/lib/iconBase";
 import classNames from "classnames";
 
-type Props = {
+export type Props = {
   type?: "button" | "submit";
   icon?: IconType;
   children?: React.ReactNode;
@@ -14,53 +14,49 @@ type Props = {
   color?: "default" | "primary" | "transparent";
   className?: string;
   onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  onKeyDown?: (event: React.KeyboardEvent<HTMLButtonElement>) => void;
 };
 
-const Button = ({
-  type = "button",
-  icon,
-  children,
-  tabIndex = 0,
-  disabled = false,
-  ariaLabel,
-  size = "medium",
-  color = "default",
-  className,
-  onClick
-}: Props) => {
-  const buttonClassNames = classNames(
-    styles.button,
-    styles[size],
-    styles[color],
-    className
-  );
+const Button = React.forwardRef<HTMLButtonElement, Props>(
+  (
+    {
+      type = "button",
+      icon,
+      children,
+      tabIndex = 0,
+      disabled = false,
+      ariaLabel,
+      size = "medium",
+      color = "default",
+      className,
+      onClick,
+      onKeyDown
+    }: Props,
+    ref
+  ) => {
+    const buttonClassNames = classNames(
+      styles.button,
+      styles[size],
+      styles[color],
+      className
+    );
 
-  if (type === "submit") {
     return (
-      <input
-        type="submit"
+      <button
+        ref={ref}
+        type={type}
         disabled={disabled}
         className={buttonClassNames}
         tabIndex={tabIndex}
         aria-label={ariaLabel}
-        value="Submit"
-      />
+        onClick={onClick}
+        onKeyDown={onKeyDown}
+      >
+        {icon && React.createElement(icon)}
+        {children && <span>{children}</span>}
+      </button>
     );
   }
-
-  return (
-    <button
-      type={type}
-      disabled={disabled}
-      className={buttonClassNames}
-      tabIndex={tabIndex}
-      aria-label={ariaLabel}
-      onClick={onClick}
-    >
-      {icon && React.createElement(icon)}
-      {children && <span>{children}</span>}
-    </button>
-  );
-};
+);
 
 export default Button;
