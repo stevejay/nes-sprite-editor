@@ -1,7 +1,10 @@
 import React from "react";
 import TileCanvas from "../../shared/TileCanvas";
-import { Nametable as NametableType, PatternTable } from "../../types";
-import { GamePaletteCollectionWithColors, Action } from "../../reducer";
+import {
+  Nametable as NametableType,
+  PatternTable,
+  GamePaletteCollectionWithColors
+} from "../../types";
 import NametableCanvas from "./NametableCanvas";
 import NametableCanvasInteractionTracker from "./NametableCanvasInteractionTracker";
 import styles from "./Nametable.module.scss";
@@ -17,6 +20,7 @@ import {
   moveRenderCanvas
 } from "./experiment";
 import Button from "../../shared/Button";
+import { Action } from "../../contexts/editor";
 
 export type PaletteOption = {
   id: number;

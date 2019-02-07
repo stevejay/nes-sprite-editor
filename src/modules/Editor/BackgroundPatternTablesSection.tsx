@@ -1,27 +1,21 @@
 import React from "react";
 import {
-  Action,
-  ActionTypes,
-  GamePaletteCollectionWithColors
-} from "../../reducer";
-import { PatternTable as PatternTableType } from "../../types";
-import PatternTable from "./PatternTable";
+  selectCurrentBackgroundPalettes,
+  useEditorContext,
+  selectBackgroundPatternTables,
+  selectCurrentBackgroundPatternTable,
+  ActionTypes
+} from "../../contexts/editor";
 import EntityManagement from "./EntityManagement";
+import PatternTable from "./PatternTable";
 import Section from "./Section";
 
-type Props = {
-  patternTables: Array<PatternTableType>;
-  currentTable: PatternTableType | null;
-  currentPaletteCollection: GamePaletteCollectionWithColors | null;
-  dispatch: React.Dispatch<Action>;
-};
+const BackgroundPatternTablesSection = () => {
+  const [state, dispatch] = useEditorContext();
+  const patternTables = selectBackgroundPatternTables(state);
+  const patternTable = selectCurrentBackgroundPatternTable(state);
+  const paletteCollection = selectCurrentBackgroundPalettes(state);
 
-const BackgroundPatternTablesSection = ({
-  patternTables,
-  currentTable,
-  currentPaletteCollection,
-  dispatch
-}: Props) => {
   // TODO move down into PatternTable?
   const [currentTile, setCurrentTile] = React.useState({ row: 0, column: 0 });
 
@@ -33,7 +27,7 @@ const BackgroundPatternTablesSection = ({
       <h3>Current Pattern Table</h3>
       <EntityManagement.Selector
         entities={patternTables}
-        currentEntity={currentTable}
+        currentEntity={patternTable}
         onChange={id =>
           dispatch({
             type: ActionTypes.SELECT_PATTERN_TABLE,
@@ -43,7 +37,7 @@ const BackgroundPatternTablesSection = ({
       />
       <EntityManagement.Toolbar
         entities={patternTables}
-        currentEntity={currentTable}
+        currentEntity={patternTable}
         entityName="Pattern Table"
         onNewEntity={() =>
           dispatch({
@@ -73,8 +67,8 @@ const BackgroundPatternTablesSection = ({
       <h3>Pattern Table Tiles</h3>
       <PatternTable
         scale={3}
-        patternTable={currentTable}
-        paletteCollection={currentPaletteCollection}
+        patternTable={patternTable}
+        paletteCollection={paletteCollection}
         currentTile={currentTile}
         onSelectTile={(row, column) => setCurrentTile({ row, column })}
       />

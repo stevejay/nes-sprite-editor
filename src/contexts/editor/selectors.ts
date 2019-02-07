@@ -4,13 +4,24 @@ import {
   GamePalette,
   GamePaletteCollection,
   SystemPalette,
-  GamePaletteWithColors
-} from "../types";
-import {
-  GamePaletteCollectionWithColors,
-  PaletteCollectionState,
-  State
-} from "./types";
+  GamePaletteWithColors,
+  GamePaletteCollectionWithColors
+} from "../../types";
+import { PaletteCollectionState, State } from "./types";
+
+export function selectNametables(state: State) {
+  return state.nametables;
+}
+
+export function selectCurrentNametableId(state: State) {
+  return state.currentNametableId;
+}
+
+export const selectCurrentNametable = createSelector(
+  selectNametables,
+  selectCurrentNametableId,
+  (nametables, currentId) => find(nametables, x => x.id === currentId) || null
+);
 
 export function selectSystemPalettes(state: State) {
   return state.systemPalettes;
@@ -35,7 +46,7 @@ export function selectCurrentBackgroundPaletteCollectionId(state: State) {
   return state.paletteCollections.background.currentCollectionId;
 }
 
-export const selectCurrentBackgroundPaletteCollection = createSelector(
+export const selectCurrentBackgroundPalettes = createSelector(
   selectCurrentSystemPalette,
   selectBackgroundPaletteCollections,
   selectCurrentBackgroundPaletteCollectionId,
@@ -81,7 +92,7 @@ export function selectCurrentSpritePaletteCollectionId(state: State) {
   return state.paletteCollections.sprite.currentCollectionId;
 }
 
-export const selectCurrentSpritePaletteCollection = createSelector(
+export const selectCurrentSpritePalettes = createSelector(
   selectCurrentSystemPalette,
   selectSpritePaletteCollections,
   selectCurrentSpritePaletteCollectionId,
@@ -116,18 +127,4 @@ export const selectCurrentSpritePatternTable = createSelector(
   selectCurrentSpritePatternTableId,
   (patternTables, currentId) =>
     find(patternTables, x => x.id === currentId) || null
-);
-
-export function selectNametables(state: State) {
-  return state.nametables;
-}
-
-export function selectCurrentNametableId(state: State) {
-  return state.currentNametableId;
-}
-
-export const selectCurrentNametable = createSelector(
-  selectNametables,
-  selectCurrentNametableId,
-  (nametables, currentId) => find(nametables, x => x.id === currentId) || null
 );

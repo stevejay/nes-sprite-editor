@@ -1,31 +1,24 @@
 import React from "react";
 import {
-  selectCurrentBackgroundPaletteCollection,
-  selectCurrentSpritePaletteCollection,
-  State,
+  selectCurrentBackgroundPalettes,
+  selectCurrentSpritePalettes,
   selectCurrentBackgroundPatternTable
-} from "../../reducer";
-import CodePanel from "./CodePanel";
-import createGameDataText from "./create-game-data-text";
+} from "../../contexts/editor";
 import Button from "../../shared/Button";
+import CodePanel from "./CodePanel";
 import downloadPatternTable from "./download-pattern-table";
+import useGameDataText from "./use-game-text";
+import { useEditorContext } from "../../contexts/editor";
 
-type Props = {
-  state: State;
-};
-
-const GameDataOutput: React.FunctionComponent<Props> = ({ state }) => {
-  const backgroundPaletteCollection = selectCurrentBackgroundPaletteCollection(
-    state
-  );
-  const spritePaletteCollection = selectCurrentSpritePaletteCollection(state);
+const GameDataOutput = () => {
+  const [state] = useEditorContext();
+  const backgroundPalettes = selectCurrentBackgroundPalettes(state);
+  const spritePalettes = selectCurrentSpritePalettes(state);
   const backgroundPatternTable = selectCurrentBackgroundPatternTable(state);
-  const [dataVersion, setDataVersion] = React.useState(0);
 
-  const gameDataText = React.useMemo(
-    () =>
-      createGameDataText(backgroundPaletteCollection, spritePaletteCollection),
-    [dataVersion]
+  const [gameDataText, updateGameDataText] = useGameDataText(
+    backgroundPalettes,
+    spritePalettes
   );
 
   return (
@@ -34,15 +27,10 @@ const GameDataOutput: React.FunctionComponent<Props> = ({ state }) => {
         <h1>ASM Output</h1>
       </header>
       <Button.Container>
-        <Button onClick={() => setDataVersion(Date.now())}>
-          Update text output
-        </Button>
+        <Button onClick={updateGameDataText}>Update text output</Button>
         <Button
           disabled={!backgroundPatternTable}
-          onClick={() =>
-            backgroundPatternTable &&
-            downloadPatternTable(backgroundPatternTable)
-          }
+          onClick={() => downloadPatternTable(backgroundPatternTable)}
         >
           Download background tiles pattern file
         </Button>

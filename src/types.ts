@@ -37,6 +37,12 @@ export type GamePaletteCollection = Entity & {
   gamePalettes: Array<GamePalette>; // 4 palettes
 };
 
+export type GamePaletteCollectionWithColors = {
+  id: GamePaletteCollection["id"];
+  label: GamePaletteCollection["label"];
+  gamePalettes: Array<GamePaletteWithColors>;
+};
+
 // 8x8 area of pixels
 export type PatternTile = {
   pixels: Uint8Array; // 64 pixels, each value 0 to 3 (palette index)

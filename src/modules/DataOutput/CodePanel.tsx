@@ -5,7 +5,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-const CodePanel: React.FunctionComponent<Props> = ({ children }) => (
+const CodePanel = ({ children }: Props) => (
   <pre className={styles.pre}>{children}</pre>
 );
 

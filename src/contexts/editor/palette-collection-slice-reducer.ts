@@ -1,7 +1,7 @@
 import { cloneDeep, find, isEmpty } from "lodash";
 import uuidv4 from "uuid/v4";
-import { GamePaletteCollection } from "../types";
-import { Action, ActionTypes, PaletteCollectionState } from "./types";
+import { GamePaletteCollection } from "../../types";
+import { PaletteCollectionState, Action, ActionTypes } from "./types";
 
 export default function paletteCollectionSliceReducer(
   state: PaletteCollectionState,

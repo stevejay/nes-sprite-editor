@@ -1,13 +1,13 @@
 import React from "react";
 import {
-  Action,
-  ActionTypes,
+  GamePaletteType,
+  SystemPalette,
   GamePaletteCollectionWithColors
-} from "../../../reducer";
-import { GamePaletteType, SystemPalette } from "../../../types";
+} from "../../../types";
 import styles from "./PaletteCollection.module.scss";
 import PaletteColorInput from "../../../shared/PaletteColorInput";
 import { RovingTabIndexProvider } from "../../../shared/RovingTabIndex";
+import { Action, ActionTypes } from "../../../contexts/editor";
 
 type Props = {
   type: GamePaletteType;

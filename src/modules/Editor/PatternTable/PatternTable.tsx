@@ -1,7 +1,9 @@
 import React from "react";
-import { GamePaletteCollectionWithColors } from "../../../reducer";
 import TileCanvas from "../../../shared/TileCanvas";
-import { PatternTable as PatternTableType } from "../../../types";
+import {
+  PatternTable as PatternTableType,
+  GamePaletteCollectionWithColors
+} from "../../../types";
 import PatternTableCanvas from "./PatternTableCanvas";
 
 type Props = {

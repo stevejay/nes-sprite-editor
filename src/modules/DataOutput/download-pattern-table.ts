@@ -3,9 +3,13 @@ import sync from "save-file";
 import { PatternTable, PatternTile } from "../../types";
 
 export default function downloadPatternTable(
-  patternTable: PatternTable,
+  patternTable: PatternTable | null,
   fileNameNoExt?: string
 ): Promise<void> {
+  if (!patternTable) {
+    return Promise.resolve();
+  }
+
   const buffer = new ArrayBuffer(4096);
   const byteView = new Uint8Array(buffer);
 

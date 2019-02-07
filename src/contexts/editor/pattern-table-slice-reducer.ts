@@ -1,6 +1,6 @@
 import { cloneDeep, find, isEmpty, range } from "lodash";
 import uuidv4 from "uuid/v4";
-import { PatternTable } from "../types";
+import { PatternTable } from "../../types";
 import { Action, ActionTypes, PatternTableState } from "./types";
 
 export default function patternTableSliceReducer(

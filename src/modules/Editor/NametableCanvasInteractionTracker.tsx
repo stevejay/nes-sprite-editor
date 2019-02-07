@@ -19,8 +19,8 @@ import {
   ViewportCoord,
   convertViewportCoordToNameablePixel
 } from "./experiment";
-import { Action, ActionTypes } from "../../reducer";
 import { PatternTable, Nametable } from "../../types";
+import { Action, ActionTypes } from "../../contexts/editor";
 
 const DRAG_POSITION = { x: 0, y: 0 };
 
