@@ -331,14 +331,4 @@ const Nametable: React.FunctionComponent<Props> = ({
   );
 };
 
-/* <TileCanvas.Highlight
-          tileWidth={16 * scaling}
-          tileHeight={16 * scaling}
-          row={currentTile.row}
-          column={currentTile.column}
-          ariaLabel={`Metatile row ${currentTile.row}, column ${
-            currentTile.column
-          }`}
-        /> */
-
 export default Nametable;

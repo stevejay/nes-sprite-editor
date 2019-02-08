@@ -15,7 +15,7 @@ const store = new Store({
   value: "Some text"
 });
 
-storiesOf("Form/TextInput", module)
+storiesOf("Form/TextField", module)
   .addDecorator(storyHost)
   .addDecorator(withKnobs)
   .add("Basic", () => (

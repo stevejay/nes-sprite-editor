@@ -60,13 +60,7 @@ export type PatternTable = Entity & {
   tiles: Array<PatternTile>; // 256 tiles (16x16)
 };
 
-// export type PatternMetatile = {
-//   metatileSize: 1 | 2;
-//   row: number;
-//   column: number;
-// };
-
-// 30x32 area of nametable tiles
+// 32x30 area of pattern tiles
 export type Nametable = Entity & {
   id: string;
   label: string;

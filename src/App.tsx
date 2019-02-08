@@ -16,7 +16,7 @@ import {
   NametablesSection
 } from "./modules/Editor";
 import rootReducer from "./root-reducer";
-import { Header } from "./header";
+import Header from "./header";
 
 const store = createStore(rootReducer);
 

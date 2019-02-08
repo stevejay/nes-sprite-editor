@@ -1,2 +1,1 @@
-import PaletteColor from "./PaletteColor";
-export default PaletteColor;
+export { default } from "./PaletteColor";

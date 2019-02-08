@@ -1,11 +1,11 @@
 import PaletteColorInput from "./PaletteColorInput";
 import Panel from "./Panel";
 
-type PaletteColorInputFn = typeof PaletteColorInput & {
+type PaletteColorInputType = typeof PaletteColorInput & {
   Container: typeof Panel;
 };
 
-const PaletteColorInputExport = PaletteColorInput as PaletteColorInputFn;
+const PaletteColorInputExport = PaletteColorInput as PaletteColorInputType;
 PaletteColorInputExport.Container = Panel;
 
 export default PaletteColorInputExport;

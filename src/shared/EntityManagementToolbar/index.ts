@@ -1,2 +1,1 @@
-import EntityManagementToolbar from "./EntityManagementToolbar";
-export default EntityManagementToolbar;
+export { default } from "./EntityManagementToolbar";

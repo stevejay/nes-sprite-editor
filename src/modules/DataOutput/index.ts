@@ -1,2 +1,1 @@
-import GameDataOutput from "./GameDataOutput";
-export default GameDataOutput;
+export { default } from "./GameDataOutput";

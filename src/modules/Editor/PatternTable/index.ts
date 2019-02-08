@@ -1,2 +1,1 @@
-import PatternTable from "./PatternTable";
-export default PatternTable;
+export { default } from "./PatternTable";

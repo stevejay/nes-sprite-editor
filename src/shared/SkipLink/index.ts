@@ -1,2 +1,1 @@
-import SkipLink from "./SkipLink";
-export default SkipLink;
+export { default } from "./SkipLink";

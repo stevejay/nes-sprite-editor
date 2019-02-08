@@ -7,21 +7,21 @@ import ModalFooter from "./ModalFooter";
 import ModalDialog from "./ModalDialog";
 import PointingModalContainer from "./PointingModalContainer";
 
-type ModalDialogFn = typeof ModalDialog & {
+type ModalDialogType = typeof ModalDialog & {
   Header: typeof ModalHeader;
   Content: typeof ModalContent;
   Footer: typeof ModalFooter;
 };
 
-const ModalDialogExt = ModalDialog as ModalDialogFn;
-ModalDialogExt.Header = ModalHeader;
-ModalDialogExt.Content = ModalContent;
-ModalDialogExt.Footer = ModalFooter;
+const ModalDialogExport = ModalDialog as ModalDialogType;
+ModalDialogExport.Header = ModalHeader;
+ModalDialogExport.Content = ModalContent;
+ModalDialogExport.Footer = ModalFooter;
 
 export {
   useAriaHidden,
   usePreventBodyScroll,
   ModalBackdrop,
-  ModalDialogExt as ModalDialog,
+  ModalDialogExport as ModalDialog,
   PointingModalContainer
 };
