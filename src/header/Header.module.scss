@@ -1,0 +1,75 @@
+@import "styles/_base.scss";
+
+$background-color: $md-grey-100; // lighten($md-light-green-a200, 23);
+
+.header {
+  background-color: $background-color;
+  padding: 0 $gutter;
+  box-shadow: $box-shadow;
+}
+
+.header h1 {
+  font-weight: $font-weight-light;
+  font-size: 1.5rem;
+  padding: 0.7em 0;
+  margin: 0;
+  position: relative;
+  user-select: none;
+  cursor: default;
+}
+
+.svg {
+  width: 350px;
+  height: 30px;
+  background-color: $background-color;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.svg text {
+  font-size: 30px;
+}
+
+// .svg tex {
+
+// }
+
+// $colors: #f2385a, #f5a503, $md-grey-600, #56d9cd, #3aa1bf;
+// $max: length($colors);
+// $dash: 70;
+// $dash-gap: 10;
+// $dash-space: $dash * ($max - 1) + $dash-gap * $max;
+// $time: 6s;
+// $time-step: $time/$max;
+
+// .svg :global(.text) {
+//   fill: none;
+//   stroke-width: 1;
+//   stroke-linejoin: round;
+//   stroke-dasharray: $dash $dash-space;
+//   stroke-dashoffset: 0;
+//   animation: stroke $time infinite linear;
+
+//   @for $item from 1 through $max {
+//     &:nth-child(#{$max}n + #{$item}) {
+//       $color: nth($colors, $item);
+//       stroke: $color;
+//       -webkit-animation-delay: -($time-step * $item);
+//       animation-delay: -($time-step * $item);
+//     }
+//   }
+// }
+
+// @-webkit-keyframes stroke {
+//   100% {
+//     stroke-dashoffset: -($dash + $dash-gap) * $max;
+//   }
+// }
+
+// @keyframes stroke {
+//   100% {
+//     stroke-dashoffset: -($dash + $dash-gap) * $max;
+//   }
+// }

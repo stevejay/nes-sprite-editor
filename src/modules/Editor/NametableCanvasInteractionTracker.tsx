@@ -1,16 +1,24 @@
-import React from "react";
+import React, { CSSProperties } from "react";
 import Draggable, { DraggableEventHandler } from "react-draggable";
 import styles from "./NametableCanvasInteractionTracker.module.scss";
 import classNames from "classnames";
-import { RenderAction, RenderActionTypes, ToolState } from "./Nametable";
+import {
+  RenderAction,
+  RenderActionTypes,
+  ToolState,
+  ToolAction,
+  ToolActionTypes
+} from "./Nametable";
 import {
   ViewportSize,
   RenderCanvasPositioning,
   convertViewportCoordToNameablePixel,
-  convertViewportCoordToNameableMetatile
+  convertViewportCoordToNameableMetatile,
+  convertMetatileIndexToCanvasCoords
 } from "./experiment";
 import { PatternTable, Nametable } from "../../types";
 import { Action, ActionTypes } from "../../contexts/editor";
+import { isNil } from "lodash";
 
 const DRAG_POSITION = { x: 0, y: 0 };
 
@@ -21,8 +29,10 @@ type Props = {
   renderCanvasPositioning: RenderCanvasPositioning;
   currentTool: ToolState["currentTool"];
   selectedColorIndex: ToolState["selectedColorIndex"];
+  currentMetatileIndex: ToolState["currentMetatileIndex"];
   dispatch: React.Dispatch<Action>;
   renderDispatch: React.Dispatch<RenderAction>;
+  toolDispatch: React.Dispatch<ToolAction>;
   children: React.ReactNode;
 };
 
@@ -33,8 +43,10 @@ const NametableCanvasInteractionTracker = ({
   renderCanvasPositioning,
   currentTool,
   selectedColorIndex,
+  currentMetatileIndex,
   dispatch,
   renderDispatch,
+  toolDispatch,
   children
 }: Props) => {
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -50,9 +62,14 @@ const NametableCanvasInteractionTracker = ({
         { x: xInContainer, y: yInContainer }
       );
 
-      console.log("mouse over", metatileIndex);
+      if (currentMetatileIndex !== metatileIndex) {
+        toolDispatch({
+          type: ToolActionTypes.CURRENT_METATILE_UPDATED,
+          payload: metatileIndex
+        });
+      }
     },
-    [renderCanvasPositioning]
+    [renderCanvasPositioning, currentMetatileIndex]
   );
 
   const handleClick = React.useCallback(
@@ -135,12 +152,37 @@ const NametableCanvasInteractionTracker = ({
 
   const containerClassNames = classNames(styles.container, styles[currentTool]);
 
+  const metatileArea = isNil(currentMetatileIndex)
+    ? null
+    : convertMetatileIndexToCanvasCoords(
+        renderCanvasPositioning,
+        currentMetatileIndex
+      );
+
+  const metatileStyle = React.useMemo<CSSProperties | null>(() => {
+    const metatileArea = isNil(currentMetatileIndex)
+      ? null
+      : convertMetatileIndexToCanvasCoords(
+          renderCanvasPositioning,
+          currentMetatileIndex
+        );
+    return isNil(metatileArea)
+      ? null
+      : {
+          top: metatileArea.y,
+          left: metatileArea.x,
+          width: metatileArea.width,
+          height: metatileArea.height
+        };
+  }, [renderCanvasPositioning, currentMetatileIndex]);
+
   return (
     <div
       ref={containerRef}
       className={containerClassNames}
       style={viewportSize}
       // onMouseDown={handleMouseDown}
+      // onMouseOver={handleMouseOver}
       onMouseMove={currentTool === "pencil" ? handleMouseMove : undefined}
       // onMouseUp={handleMouseUp}
       onClick={handleClick}
@@ -154,17 +196,9 @@ const NametableCanvasInteractionTracker = ({
       >
         {children}
       </Draggable>
-      <div
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: 150,
-          height: 150,
-          background: "transparent",
-          border: "1px dashed #fff"
-        }}
-      />
+      {currentTool === "pencil" && metatileStyle && (
+        <div className={styles.metatileContainer} style={metatileStyle} />
+      )}
     </div>
   );
 };

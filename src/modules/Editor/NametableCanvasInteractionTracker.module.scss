@@ -31,3 +31,9 @@
 .container.move {
   cursor: grab;
 }
+
+.metatileContainer {
+  position: absolute;
+  background: transparent;
+  border: 1px dashed rgba($md-white, 0.75);
+}

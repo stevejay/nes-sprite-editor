@@ -1,4 +1,10 @@
 import React from "react";
+import { Provider } from "react-redux";
+import { createStore, combineReducers } from "redux";
+import {
+  reducer as editorReducer,
+  State as EditorState
+} from "./modules/Editor/redux";
 import styles from "./App.module.scss";
 import DataOutput from "./modules/DataOutput";
 import SkipLink from "./shared/SkipLink";
@@ -10,15 +16,17 @@ import {
   BackgroundPatternTablesSection,
   NametablesSection
 } from "./modules/Editor";
+import rootReducer from "./root-reducer";
+import { Header } from "./header";
+
+const store = createStore(rootReducer);
 
 const App: React.FunctionComponent = () => (
-  <EditorContextProvider>
+  <Provider store={store}>
     <SkipLink href="#main">Skip to main content</SkipLink>
-    <header className={styles.header}>
-      <h1>NES Asset Editor</h1>
-    </header>
+    <Header />
     <main id="main" className={styles.main}>
-      <div className={styles.row}>
+      {/* <div className={styles.row}>
         <div className={styles.column}>
           <BackgroundPalettesSection />
           <SpritePalettesSection />
@@ -34,9 +42,9 @@ const App: React.FunctionComponent = () => (
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </main>
-  </EditorContextProvider>
+  </Provider>
 );
 
 export default App;

@@ -67,6 +67,7 @@ export type ToolState = {
   currentTool: Tool;
   selectedPaletteIndex: number;
   selectedColorIndex: number;
+  currentMetatileIndex: number | null;
   selected: { row: number; column: number } | null; // nulled when tool changed
   // viewArea: { top: number; left: number; width: number; height: number };
 };
@@ -74,7 +75,8 @@ export type ToolState = {
 export enum ToolActionTypes {
   TOOL_SELECTED = "TOOL_SELECTED",
   PALETTE_SELECTED = "PALETTE_SELECTED",
-  COLOR_SELECTED = "COLOR_SELECTED"
+  COLOR_SELECTED = "COLOR_SELECTED",
+  CURRENT_METATILE_UPDATED = "CURRENT_METATILE_UPDATED"
 }
 
 export type ToolAction =
@@ -89,6 +91,10 @@ export type ToolAction =
   | {
       type: ToolActionTypes.COLOR_SELECTED;
       payload: ToolState["selectedColorIndex"];
+    }
+  | {
+      type: ToolActionTypes.CURRENT_METATILE_UPDATED;
+      payload: ToolState["currentMetatileIndex"];
     };
 
 type ScaleOption = {
@@ -113,6 +119,11 @@ function toolReducer(state: ToolState, action: ToolAction): ToolState {
       return {
         ...state,
         selectedPaletteIndex: action.payload
+      };
+    case ToolActionTypes.CURRENT_METATILE_UPDATED:
+      return {
+        ...state,
+        currentMetatileIndex: action.payload
       };
     default:
       return state;
@@ -184,6 +195,14 @@ function renderReducer(state: RenderState, action: RenderAction): RenderState {
   }
 }
 
+const INITIAL_TOOL_STATE: ToolState = {
+  currentTool: "zoomIn",
+  selectedPaletteIndex: 0,
+  selectedColorIndex: 0,
+  currentMetatileIndex: null,
+  selected: null
+};
+
 type Props = {
   nametable: NametableType | null;
   patternTable: PatternTable | null;
@@ -201,7 +220,6 @@ const Nametable: React.FunctionComponent<Props> = ({
     return null;
   }
 
-  // TODO typings problem here:
   const [renderState, renderDispatch] = React.useReducer<
     RenderState,
     RenderAction
@@ -209,12 +227,7 @@ const Nametable: React.FunctionComponent<Props> = ({
 
   const [toolState, toolDispatch] = React.useReducer<ToolState, ToolAction>(
     toolReducer,
-    {
-      currentTool: "zoomIn",
-      selectedPaletteIndex: 0,
-      selectedColorIndex: 0,
-      selected: null
-    }
+    INITIAL_TOOL_STATE
   );
 
   return (
@@ -293,7 +306,9 @@ const Nametable: React.FunctionComponent<Props> = ({
             renderCanvasPositioning={renderState}
             currentTool={toolState.currentTool}
             selectedColorIndex={toolState.selectedColorIndex}
+            currentMetatileIndex={toolState.currentMetatileIndex}
             renderDispatch={renderDispatch}
+            toolDispatch={toolDispatch}
             dispatch={dispatch}
           >
             <NametableCanvas

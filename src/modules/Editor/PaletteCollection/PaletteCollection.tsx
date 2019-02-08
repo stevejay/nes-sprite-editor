@@ -2,25 +2,30 @@ import React from "react";
 import {
   GamePaletteType,
   SystemPalette,
-  GamePaletteCollectionWithColors
+  GamePaletteCollectionWithColors,
+  Color
 } from "../../../types";
 import styles from "./PaletteCollection.module.scss";
 import PaletteColorInput from "../../../shared/PaletteColorInput";
 import { RovingTabIndexProvider } from "../../../shared/RovingTabIndex";
-import { Action, ActionTypes } from "../../../contexts/editor";
 
 type Props = {
   type: GamePaletteType;
   systemPalette: SystemPalette;
   currentCollection: GamePaletteCollectionWithColors | null;
-  dispatch: React.Dispatch<Action>;
+  onChangePaletteColor: (
+    paletteCollectionId: string,
+    gamePaletteIndex: number,
+    valueIndex: number,
+    newColor: Color
+  ) => void;
 };
 
 const PaletteCollection = ({
   type,
   systemPalette,
   currentCollection,
-  dispatch
+  onChangePaletteColor
 }: Props) => {
   const firstColorIndex = type === "sprite" ? 1 : 0;
   return (
@@ -40,23 +45,19 @@ const PaletteCollection = ({
             >
               <RovingTabIndexProvider>
                 {palette.colors
-                  .filter((__, colorIndex) => colorIndex >= firstColorIndex)
+                  .filter((_color, colorIndex) => colorIndex >= firstColorIndex)
                   .map((color, colorIndex) => (
                     <PaletteColorInput
                       key={colorIndex}
                       color={color}
                       systemPalette={systemPalette}
                       onChange={color =>
-                        dispatch({
-                          type: ActionTypes.CHANGE_GAME_PALETTE_COLOR,
-                          payload: {
-                            type,
-                            paletteCollectionId: currentCollection.id,
-                            gamePaletteIndex: paletteIndex,
-                            valueIndex: colorIndex + firstColorIndex,
-                            newColor: color
-                          }
-                        })
+                        onChangePaletteColor(
+                          currentCollection.id,
+                          paletteIndex,
+                          colorIndex + firstColorIndex,
+                          color
+                        )
                       }
                     />
                   ))}

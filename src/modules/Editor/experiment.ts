@@ -9,6 +9,8 @@ export type ViewportSize = {
   height: number;
 };
 
+export type ViewportArea = ViewportCoord & ViewportSize;
+
 export type Scale = 0.5 | 1 | 2 | 4 | 8 | 16;
 
 export type LogicalCoord = {
@@ -382,6 +384,34 @@ export function convertViewportCoordToNameableMetatile(
   }
 
   return yMetatileIndex * totalNametableXMetatiles + xMetatileIndex;
+}
+
+export function convertMetatileIndexToCanvasCoords(
+  renderCanvasPositioning: RenderCanvasPositioning,
+  metatileIndex: number
+): ViewportArea {
+  const scale = renderCanvasPositioning.scale;
+  const dimension = TILE_SIZE_PIXELS * 2 * scale;
+  const enlargedIndex = metatileIndex * 2;
+  const xLogicalPx =
+    (enlargedIndex % TOTAL_NAMETABLE_X_TILES) * TILE_SIZE_PIXELS;
+  const yLogicalPx =
+    Math.floor(enlargedIndex / TOTAL_NAMETABLE_X_TILES) * TILE_SIZE_PIXELS * 2;
+
+  return {
+    x:
+      (xLogicalPx -
+        renderCanvasPositioning.origin.xLogicalPx +
+        renderCanvasPositioning.viewportOffset.xLogicalPx) *
+      scale,
+    y:
+      (yLogicalPx -
+        renderCanvasPositioning.origin.yLogicalPx +
+        renderCanvasPositioning.viewportOffset.yLogicalPx) *
+      scale,
+    width: dimension,
+    height: dimension
+  };
 }
 
 export function isWithinNametable(logicalCoord: LogicalCoord): boolean {
