@@ -6,9 +6,9 @@ import {
   useEditorContext,
   ActionTypes
 } from "../../contexts/editor";
-import EntityManagement from "./EntityManagement";
-import PaletteCollection from "./PaletteCollection/PaletteCollection";
+import PaletteCollection from "./PaletteCollection";
 import Section from "./Section";
+import EntityManagementToolbar from "../../shared/EntityManagementToolbar";
 
 const BackgroundPalettesSection = () => {
   const [state, dispatch] = useEditorContext();
@@ -22,20 +22,16 @@ const BackgroundPalettesSection = () => {
         <h2>Background Palettes</h2>
       </header>
       <h3>Current Collection</h3>
-      <EntityManagement.Selector
+      <EntityManagementToolbar
         entities={paletteCollections}
         currentEntity={currentCollection}
-        onChange={id =>
+        entityName="Background Palette"
+        onSelected={id =>
           dispatch({
             type: ActionTypes.SELECT_PALETTE_COLLECTION,
             payload: { type: "background", id }
           })
         }
-      />
-      <EntityManagement.Toolbar
-        entities={paletteCollections}
-        currentEntity={currentCollection}
-        entityName="Background Palette"
         onNewEntity={() =>
           dispatch({
             type: ActionTypes.ADD_NEW_PALETTE_COLLECTION,

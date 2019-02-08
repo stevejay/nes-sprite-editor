@@ -6,9 +6,9 @@ import {
   selectCurrentBackgroundPatternTable,
   ActionTypes
 } from "../../contexts/editor";
-import EntityManagement from "./EntityManagement";
 import PatternTable from "./PatternTable";
 import Section from "./Section";
+import EntityManagementToolbar from "../../shared/EntityManagementToolbar";
 
 const BackgroundPatternTablesSection = () => {
   const [state, dispatch] = useEditorContext();
@@ -25,20 +25,16 @@ const BackgroundPatternTablesSection = () => {
         <h2>Background Pattern Tables</h2>
       </header>
       <h3>Current Pattern Table</h3>
-      <EntityManagement.Selector
+      <EntityManagementToolbar
         entities={patternTables}
         currentEntity={patternTable}
-        onChange={id =>
+        entityName="Pattern Table"
+        onSelected={id =>
           dispatch({
             type: ActionTypes.SELECT_PATTERN_TABLE,
             payload: { type: "background", id }
           })
         }
-      />
-      <EntityManagement.Toolbar
-        entities={patternTables}
-        currentEntity={patternTable}
-        entityName="Pattern Table"
         onNewEntity={() =>
           dispatch({
             type: ActionTypes.ADD_NEW_PATTERN_TABLE,

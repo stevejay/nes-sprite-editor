@@ -14,5 +14,32 @@
 }
 
 .main {
-  padding: $gutter;
+  margin-top: rem(5);
+}
+
+.row {
+  display: flex;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+
+  &:nth-child(1) {
+    border-right: 1px solid $md-grey-300;
+  }
+
+  &:nth-child(1) section {
+    border-bottom: 1px solid $md-grey-300;
+    // flex-grow: 1;
+
+    &:last-of-type {
+      border-bottom: none;
+    }
+  }
+
+  &:nth-child(2) {
+    flex-grow: 1;
+  }
 }

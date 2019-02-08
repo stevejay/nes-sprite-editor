@@ -1,7 +1,6 @@
 import React from "react";
 import Nametable from "./Nametable";
 import Section from "./Section";
-import EntityManagement from "./EntityManagement";
 import {
   useEditorContext,
   selectNametables,
@@ -10,6 +9,7 @@ import {
   selectCurrentBackgroundPalettes,
   ActionTypes
 } from "../../contexts/editor";
+import EntityManagementToolbar from "../../shared/EntityManagementToolbar";
 
 const NametablesSection = () => {
   const [state, dispatch] = useEditorContext();
@@ -24,20 +24,16 @@ const NametablesSection = () => {
         <h2>Nametables</h2>
       </header>
       <h3>Current Nametable</h3>
-      <EntityManagement.Selector
+      <EntityManagementToolbar
         entities={nametables}
         currentEntity={currentNametable}
-        onChange={id =>
+        entityName="Nametable"
+        onSelected={id =>
           dispatch({
             type: ActionTypes.SELECT_NAMETABLE,
             payload: { id }
           })
         }
-      />
-      <EntityManagement.Toolbar
-        entities={nametables}
-        currentEntity={currentNametable}
-        entityName="Nametable"
         onNewEntity={() =>
           dispatch({
             type: ActionTypes.ADD_NEW_NAMETABLE,
@@ -63,7 +59,7 @@ const NametablesSection = () => {
           })
         }
       />
-      <h3>Nametable Tiles</h3>
+      <h3>Nametable</h3>
       <Nametable
         nametable={currentNametable}
         patternTable={patternTable}

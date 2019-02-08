@@ -74,6 +74,7 @@ h6 {
 body {
   font-family: $font-family-body;
   overscroll-behavior: none;
+  min-width: 1280px;
 }
 
 header > h1 {

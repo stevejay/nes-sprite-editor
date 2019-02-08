@@ -357,6 +357,33 @@ export function convertViewportCoordToNameablePixel(
   };
 }
 
+export function convertViewportCoordToNameableMetatile(
+  renderCanvasPositioning: RenderCanvasPositioning,
+  viewportCoord: ViewportCoord
+): number | null {
+  const logicalCoord = convertViewportCoordToLogicalCoord(
+    renderCanvasPositioning,
+    viewportCoord
+  );
+
+  const metatileSize = TILE_SIZE_PIXELS * 2;
+  const totalNametableXMetatiles = TOTAL_NAMETABLE_X_TILES * 0.5;
+
+  const xMetatileIndex = Math.floor(logicalCoord.xLogicalPx / metatileSize);
+  const yMetatileIndex = Math.floor(logicalCoord.yLogicalPx / metatileSize);
+
+  if (
+    xMetatileIndex < 0 ||
+    xMetatileIndex >= totalNametableXMetatiles ||
+    yMetatileIndex < 0 ||
+    yMetatileIndex >= TOTAL_NAMETABLE_Y_TILES * 0.5
+  ) {
+    return null;
+  }
+
+  return yMetatileIndex * totalNametableXMetatiles + xMetatileIndex;
+}
+
 export function isWithinNametable(logicalCoord: LogicalCoord): boolean {
   return (
     logicalCoord.xLogicalPx >= 0 &&

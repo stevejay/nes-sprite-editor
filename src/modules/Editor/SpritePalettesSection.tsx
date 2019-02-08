@@ -1,6 +1,5 @@
 import React from "react";
-import EntityManagement from "./EntityManagement";
-import PaletteCollection from "./PaletteCollection/PaletteCollection";
+import PaletteCollection from "./PaletteCollection";
 import Section from "./Section";
 import {
   selectCurrentSystemPalette,
@@ -9,6 +8,7 @@ import {
   ActionTypes,
   useEditorContext
 } from "../../contexts/editor";
+import EntityManagementToolbar from "../../shared/EntityManagementToolbar";
 
 const SpritePalettesSection = () => {
   const [state, dispatch] = useEditorContext();
@@ -22,20 +22,16 @@ const SpritePalettesSection = () => {
         <h2>Sprite Palettes</h2>
       </header>
       <h3>Current Collection</h3>
-      <EntityManagement.Selector
+      <EntityManagementToolbar
         entities={paletteCollections}
         currentEntity={currentPaletteCollection}
-        onChange={id =>
+        entityName="Sprite Palette"
+        onSelected={id =>
           dispatch({
             type: ActionTypes.SELECT_PALETTE_COLLECTION,
             payload: { type: "sprite", id }
           })
         }
-      />
-      <EntityManagement.Toolbar
-        entities={paletteCollections}
-        currentEntity={currentPaletteCollection}
-        entityName="Sprite Palette"
         onNewEntity={() =>
           dispatch({
             type: ActionTypes.ADD_NEW_PALETTE_COLLECTION,

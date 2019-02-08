@@ -1,23 +1,16 @@
 import React from "react";
-import styles from "./NametableCanvas.module.scss";
-import {
-  PatternTile,
-  GamePaletteWithColors,
-  Nametable,
-  Color
-} from "../../types";
-import {
-  ViewportSize,
-  RenderCanvasPositioning,
-  createTileIndexBounds
-} from "./experiment";
-import useSizedCanvasEffect from "../../shared/utils/use-sized-canvas-effect";
 import usePositionedCanvasEffect from "../../shared/utils/use-positioned-canvas-effect";
+import useSizedCanvasEffect from "../../shared/utils/use-sized-canvas-effect";
+import { GamePaletteWithColors, Nametable, PatternTile } from "../../types";
 import drawTile from "./draw-tile";
+import {
+  createTileIndexBounds,
+  RenderCanvasPositioning,
+  ViewportSize
+} from "./experiment";
+import styles from "./NametableCanvas.module.scss";
 
-const TILE_SIZE_PIXELS = 8;
 const TOTAL_NAMETABLE_X_TILES = 32;
-const UNAVAILABLE_COLOR = "#000";
 
 function useDrawNametableEffect(
   canvasRef: React.RefObject<HTMLCanvasElement | null>,
@@ -84,7 +77,7 @@ type Props = {
   ariaLabel: string;
   // react-draggable:
   style?: any; // TODO fix any
-  onMouseDown?: any; // TODO fix any
+  onMouseDown?: (event: React.MouseEvent<HTMLElement, MouseEvent>) => void; // TODO fix any
   onMouseUp?: any; // TODO fix any
   onTouchStart?: any; // TODO fix any
   onTouchEnd?: any; // TODO fix any

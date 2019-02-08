@@ -1,23 +1,13 @@
 import React from "react";
-import { clamp } from "lodash";
-import Draggable, {
-  DraggableEventHandler,
-  DraggableBounds
-} from "react-draggable";
+import Draggable, { DraggableEventHandler } from "react-draggable";
 import styles from "./NametableCanvasInteractionTracker.module.scss";
 import classNames from "classnames";
-import {
-  CanvasViewport,
-  Tool,
-  RenderAction,
-  RenderActionTypes,
-  ToolState
-} from "./Nametable";
+import { RenderAction, RenderActionTypes, ToolState } from "./Nametable";
 import {
   ViewportSize,
   RenderCanvasPositioning,
-  ViewportCoord,
-  convertViewportCoordToNameablePixel
+  convertViewportCoordToNameablePixel,
+  convertViewportCoordToNameableMetatile
 } from "./experiment";
 import { PatternTable, Nametable } from "../../types";
 import { Action, ActionTypes } from "../../contexts/editor";
@@ -34,10 +24,8 @@ type Props = {
   dispatch: React.Dispatch<Action>;
   renderDispatch: React.Dispatch<RenderAction>;
   children: React.ReactNode;
-  // onSelect: (row: number, column: number, pressed: boolean) => void;
 };
 
-// TODO this shouldnt take children
 const NametableCanvasInteractionTracker = ({
   viewportSize,
   nametable,
@@ -50,6 +38,22 @@ const NametableCanvasInteractionTracker = ({
   children
 }: Props) => {
   const containerRef = React.useRef<HTMLDivElement>(null);
+
+  const handleMouseMove = React.useCallback(
+    (event: React.MouseEvent<HTMLDivElement>) => {
+      const boundingRect = containerRef!.current!.getBoundingClientRect();
+      const yInContainer = event.clientY - boundingRect.top;
+      const xInContainer = event.clientX - boundingRect.left;
+
+      const metatileIndex = convertViewportCoordToNameableMetatile(
+        renderCanvasPositioning,
+        { x: xInContainer, y: yInContainer }
+      );
+
+      console.log("mouse over", metatileIndex);
+    },
+    [renderCanvasPositioning]
+  );
 
   const handleClick = React.useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
@@ -84,14 +88,9 @@ const NametableCanvasInteractionTracker = ({
             break;
           }
 
-          const viewportCoord: ViewportCoord = {
-            x: xInContainer,
-            y: yInContainer
-          };
-
           const flattenedLogicalCoord = convertViewportCoordToNameablePixel(
             renderCanvasPositioning,
-            viewportCoord
+            { x: xInContainer, y: yInContainer }
           );
 
           if (!flattenedLogicalCoord) {
@@ -110,27 +109,6 @@ const NametableCanvasInteractionTracker = ({
           });
         }
       }
-      // viewportScaling: 1,
-      // topTile: 0,
-      // leftTile: 0
-      // const boundingRect = containerRef!.current!.getBoundingClientRect();
-      // const yInContainer = event.clientY - boundingRect.top;
-      // const heightOfContainer = boundingRect.bottom - boundingRect.top;
-      // const heightOfCell = heightOfContainer / rows;
-      // const xInContainer = event.clientX - boundingRect.left;
-      // const widthOfContainer = boundingRect.right - boundingRect.left;
-      // const widthOfCell = widthOfContainer / columns;
-      // const newRow = clamp(
-      //   Math.floor(yInContainer / heightOfCell),
-      //   0,
-      //   rows - 1
-      // );
-      // const newColumn = clamp(
-      //   Math.floor(xInContainer / widthOfCell),
-      //   0,
-      //   columns - 1
-      // );
-      // onSelect(newRow, newColumn, true);
     },
     [
       currentTool,
@@ -142,69 +120,18 @@ const NametableCanvasInteractionTracker = ({
     ]
   );
 
-  // const handleKeyDown = React.useCallback(
-  //   (event: React.KeyboardEvent<HTMLDivElement>) => {
-  //     if (event.keyCode === ENTER) {
-  //       onSelect(row, column, true);
-  //       return;
-  //     }
-
-  //     let newRow = row;
-  //     let newColumn = column;
-
-  //     // TODO check shift key not pressed
-
-  //     if (event.keyCode === ARROW_UP) {
-  //       event.preventDefault();
-  //       newRow = newRow - 1;
-  //     } else if (event.keyCode === ARROW_DOWN) {
-  //       event.preventDefault();
-  //       newRow = newRow + 1;
-  //     } else if (event.keyCode === ARROW_LEFT) {
-  //       event.preventDefault();
-  //       newColumn = newColumn - 1;
-  //     } else if (event.keyCode === ARROW_RIGHT) {
-  //       event.preventDefault();
-  //       newColumn = newColumn + 1;
-  //     }
-
-  //     newRow = clamp(newRow, 0, rows - 1);
-  //     newColumn = clamp(newColumn, 0, columns - 1);
-  //     onSelect(newRow, newColumn, false);
-  //   },
-  //   [rows, columns, row, column]
-  // );
-
-  // const dragBounds = React.useMemo(() => calculateDragBounds(renderCanvasPositioning), [
-  //   renderCanvasPositioning
-  // ]);
-
   const handleDraggableStop: DraggableEventHandler = (_event, data) => {
-    // const move = { row: 0, column: 0 };
-    // if (data.x > MOVE_BOUNDS_TRIGGER_DELTA) {
-    //   move.column = -1;
-    // } else if (data.x < -MOVE_BOUNDS_TRIGGER_DELTA) {
-    //   move.column = 1;
-    // }
-    // if (data.y > MOVE_BOUNDS_TRIGGER_DELTA) {
-    //   move.row = -1;
-    // } else if (data.y < -MOVE_BOUNDS_TRIGGER_DELTA) {
-    //   move.row = 1;
-    // }
-
     renderDispatch({
       type: RenderActionTypes.MOVE,
       payload: { x: -data.x, y: -data.y }
     });
   };
 
-  const handleMouseDown = React.useCallback(event => {
-    // document.body.classList.add("no-user-select");
-  }, []);
+  // const handleMouseDown = React.useCallback(event => {
+  // }, []);
 
-  const handleMouseUp = React.useCallback(event => {
-    // document.body.classList.remove("no-user-select");
-  }, []);
+  // const handleMouseUp = React.useCallback(event => {
+  // }, []);
 
   const containerClassNames = classNames(styles.container, styles[currentTool]);
 
@@ -213,8 +140,9 @@ const NametableCanvasInteractionTracker = ({
       ref={containerRef}
       className={containerClassNames}
       style={viewportSize}
-      onMouseDown={handleMouseDown}
-      onMouseUp={handleMouseUp}
+      // onMouseDown={handleMouseDown}
+      onMouseMove={currentTool === "pencil" ? handleMouseMove : undefined}
+      // onMouseUp={handleMouseUp}
       onClick={handleClick}
       onKeyDown={undefined}
     >
@@ -226,6 +154,17 @@ const NametableCanvasInteractionTracker = ({
       >
         {children}
       </Draggable>
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: 150,
+          height: 150,
+          background: "transparent",
+          border: "1px dashed #fff"
+        }}
+      />
     </div>
   );
 };

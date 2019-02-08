@@ -1,9 +1,9 @@
 import { isEmpty } from "lodash";
 import React from "react";
 import { Field, Form } from "react-final-form";
-import Button from "../../../shared/Button";
-import { Form as FormElement, TextField } from "../../../shared/Form";
-import { ModalDialog } from "../../../shared/Modal";
+import Button from "../Button";
+import { Form as FormElement, TextField } from "../Form";
+import { ModalDialog } from "../Modal";
 
 const FORM_SUBSCRIPTION = { submitting: true };
 
