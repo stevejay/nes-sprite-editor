@@ -1,20 +1,18 @@
 import { find } from "lodash";
 import { createSelector } from "reselect";
 import {
-  GamePalette,
   GamePaletteCollection,
-  SystemPalette,
-  GamePaletteWithColors,
-  GamePaletteCollectionWithColors
+  GamePaletteCollectionWithColors,
+  SystemPalette
 } from "../../../types";
-import { PaletteCollectionState, ReduxStateSlice } from "./types";
+import { EditorStateSlice } from "./types";
 
-export function selectNametables(state: ReduxStateSlice) {
+export function selectNametables(state: EditorStateSlice) {
   return state.editor.nametables;
 }
 
-export function selectCurrentNametableId(state: ReduxStateSlice) {
-  return state.editor.currentNametableId;
+export function selectCurrentNametableId(state: EditorStateSlice) {
+  return state.editor.selectedNametableId;
 }
 
 export const selectCurrentNametable = createSelector(
@@ -23,29 +21,34 @@ export const selectCurrentNametable = createSelector(
   (nametables, currentId) => find(nametables, x => x.id === currentId) || null
 );
 
-export function selectSystemPalettes(state: ReduxStateSlice) {
+export function selectSystemPalettes(state: EditorStateSlice) {
   return state.editor.systemPalettes;
 }
 
-export function selectCurrentSystemPaletteId(state: ReduxStateSlice) {
-  return state.editor.currentSystemPaletteId;
+export function selectCurrentSystemPaletteId(state: EditorStateSlice) {
+  return state.editor.selectedSystemPaletteId;
 }
 
 export const selectCurrentSystemPalette = createSelector(
   selectSystemPalettes,
   selectCurrentSystemPaletteId,
-  (systemPalettes, currentSystemPaletteId) =>
-    find(systemPalettes, x => x.id === currentSystemPaletteId)!
+  (systemPalettes, selectedSystemPaletteId) =>
+    find(systemPalettes, x => x.id === selectedSystemPaletteId)!
 );
 
-export function selectBackgroundPaletteCollections(state: ReduxStateSlice) {
-  return state.editor.paletteCollections.background.collections;
+export function selectAllPaletteCollections(state: EditorStateSlice) {
+  return state.editor.paletteCollections;
 }
 
+export const selectBackgroundPaletteCollections = createSelector(
+  selectAllPaletteCollections,
+  paletteCollections => paletteCollections.filter(x => x.type === "background")
+);
+
 export function selectCurrentBackgroundPaletteCollectionId(
-  state: ReduxStateSlice
+  state: EditorStateSlice
 ) {
-  return state.editor.paletteCollections.background.currentCollectionId;
+  return state.editor.selectedPaletteCollectionIds["background"];
 }
 
 export const selectCurrentBackgroundPalettes = createSelector(
@@ -58,7 +61,7 @@ export const selectCurrentBackgroundPalettes = createSelector(
 function createGamePaletteCollectionWithColors(
   systemPalette: SystemPalette,
   paletteCollections: Array<GamePaletteCollection>,
-  currentId: PaletteCollectionState["currentCollectionId"]
+  currentId: GamePaletteCollection["id"] | null
 ): GamePaletteCollectionWithColors | null {
   const paletteCollection =
     find(paletteCollections, collection => collection.id === currentId) || null;
@@ -66,32 +69,25 @@ function createGamePaletteCollectionWithColors(
     return null;
   }
   return {
-    id: paletteCollection.id,
-    label: paletteCollection.label,
-    gamePalettes: paletteCollection.gamePalettes.map(gamePalette =>
-      mapToGamePaletteColors(gamePalette, systemPalette)
-    )
+    ...paletteCollection,
+    gamePalettes: paletteCollection.gamePalettes.map(gamePalette => ({
+      ...gamePalette,
+      colors: gamePalette.colorIndexes.map(
+        colorId => systemPalette.values[colorId]
+      )
+    }))
   };
 }
 
-function mapToGamePaletteColors(
-  gamePalette: GamePalette,
-  systemPalette: SystemPalette
-): GamePaletteWithColors {
-  return {
-    ...gamePalette,
-    colors: gamePalette.colorIndexes.map(
-      colorId => systemPalette.values[colorId]
-    )
-  };
-}
+export const selectSpritePaletteCollections = createSelector(
+  selectAllPaletteCollections,
+  paletteCollections => paletteCollections.filter(x => x.type === "sprite")
+);
 
-export function selectSpritePaletteCollections(state: ReduxStateSlice) {
-  return state.editor.paletteCollections.sprite.collections;
-}
-
-export function selectCurrentSpritePaletteCollectionId(state: ReduxStateSlice) {
-  return state.editor.paletteCollections.sprite.currentCollectionId;
+export function selectCurrentSpritePaletteCollectionId(
+  state: EditorStateSlice
+) {
+  return state.editor.selectedPaletteCollectionIds["sprite"];
 }
 
 export const selectCurrentSpritePalettes = createSelector(
@@ -101,12 +97,17 @@ export const selectCurrentSpritePalettes = createSelector(
   createGamePaletteCollectionWithColors
 );
 
-export function selectBackgroundPatternTables(state: ReduxStateSlice) {
-  return state.editor.patternTables.background.tables;
+export function selectAllPatternTables(state: EditorStateSlice) {
+  return state.editor.patternTables;
 }
 
-export function selectCurrentBackgroundPatternTableId(state: ReduxStateSlice) {
-  return state.editor.patternTables.background.currentTableId;
+export const selectBackgroundPatternTables = createSelector(
+  selectAllPatternTables,
+  patternTables => patternTables.filter(x => x.type === "background")
+);
+
+export function selectCurrentBackgroundPatternTableId(state: EditorStateSlice) {
+  return state.editor.selectedPatternTableIds["background"];
 }
 
 export const selectCurrentBackgroundPatternTable = createSelector(
@@ -116,12 +117,13 @@ export const selectCurrentBackgroundPatternTable = createSelector(
     find(patternTables, x => x.id === currentId) || null
 );
 
-export function selectSpritePatternTables(state: ReduxStateSlice) {
-  return state.editor.patternTables.sprite.tables;
-}
+export const selectSpritePatternTables = createSelector(
+  selectAllPatternTables,
+  patternTables => patternTables.filter(x => x.type === "sprite")
+);
 
-export function selectCurrentSpritePatternTableId(state: ReduxStateSlice) {
-  return state.editor.patternTables.sprite.currentTableId;
+export function selectCurrentSpritePatternTableId(state: EditorStateSlice) {
+  return state.editor.selectedPatternTableIds["sprite"];
 }
 
 export const selectCurrentSpritePatternTable = createSelector(

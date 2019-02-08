@@ -1,73 +1,96 @@
 import React from "react";
-import Nametable from "./Nametable";
-import Section from "./Section";
-import {
-  useEditorContext,
-  selectNametables,
-  selectCurrentNametable,
-  selectCurrentBackgroundPatternTable,
-  selectCurrentBackgroundPalettes,
-  ActionTypes
-} from "../../contexts/editor";
+import { connect } from "react-redux";
 import EntityManagementToolbar from "../../shared/EntityManagementToolbar";
+import {
+  GamePaletteCollectionWithColors,
+  Nametable as NametableType,
+  PatternTable
+} from "../../types";
+import Nametable from "./Nametable";
+import {
+  Action,
+  addNewNametable,
+  copyNametable,
+  deleteNametable,
+  EditorStateSlice,
+  renameNametable,
+  changePatternTablePixels,
+  selectCurrentBackgroundPalettes,
+  selectCurrentBackgroundPatternTable,
+  selectCurrentNametable,
+  selectNametables,
+  setNametable
+} from "./redux";
+import Section from "./Section";
 
-const NametablesSection = () => {
-  const [state, dispatch] = useEditorContext();
-  const nametables = selectNametables(state);
-  const currentNametable = selectCurrentNametable(state);
-  const patternTable = selectCurrentBackgroundPatternTable(state);
-  const paletteCollection = selectCurrentBackgroundPalettes(state);
-
-  return (
-    <Section>
-      <header>
-        <h2>Nametables</h2>
-      </header>
-      <h3>Current Nametable</h3>
-      <EntityManagementToolbar
-        entities={nametables}
-        currentEntity={currentNametable}
-        entityName="Nametable"
-        onSelected={id =>
-          dispatch({
-            type: ActionTypes.SELECT_NAMETABLE,
-            payload: { id }
-          })
-        }
-        onNewEntity={() =>
-          dispatch({
-            type: ActionTypes.ADD_NEW_NAMETABLE,
-            payload: { label: "New nametable" }
-          })
-        }
-        onCopyEntity={id =>
-          dispatch({
-            type: ActionTypes.COPY_NAMETABLE,
-            payload: { id }
-          })
-        }
-        onDeleteEntity={id =>
-          dispatch({
-            type: ActionTypes.DELETE_NAMETABLE,
-            payload: { id }
-          })
-        }
-        onRenameEntity={(id, label) =>
-          dispatch({
-            type: ActionTypes.UPDATE_NAMETABLE_METADATA,
-            payload: { id, label }
-          })
-        }
-      />
-      <h3>Nametable</h3>
-      <Nametable
-        nametable={currentNametable}
-        patternTable={patternTable}
-        paletteCollection={paletteCollection}
-        dispatch={dispatch}
-      />
-    </Section>
-  );
+type Props = {
+  nametables: Array<NametableType>;
+  currentNametable: NametableType | null;
+  patternTable: PatternTable | null;
+  paletteCollection: GamePaletteCollectionWithColors | null;
+  setNametable: (id: string) => Action;
+  addNewNametable: () => Action;
+  copyNametable: (id: string) => Action;
+  deleteNametable: (id: string) => Action;
+  renameNametable: (id: string, label: string) => Action;
+  changePatternTablePixels: (
+    id: string,
+    tileIndex: number,
+    startPixelIndex: number,
+    newPixels: Array<number>
+  ) => Action;
 };
 
-export default NametablesSection;
+const NametablesSection = ({
+  nametables,
+  currentNametable,
+  patternTable,
+  paletteCollection,
+  setNametable,
+  addNewNametable,
+  copyNametable,
+  deleteNametable,
+  renameNametable,
+  changePatternTablePixels
+}: Props) => (
+  <Section>
+    <header>
+      <h2>Nametables</h2>
+    </header>
+    <h3>Current Nametable</h3>
+    <EntityManagementToolbar
+      entities={nametables}
+      currentEntity={currentNametable}
+      entityName="Nametable"
+      onSelected={setNametable}
+      onNewEntity={addNewNametable}
+      onCopyEntity={copyNametable}
+      onDeleteEntity={deleteNametable}
+      onRenameEntity={renameNametable}
+    />
+    <h3>Nametable</h3>
+    <Nametable
+      nametable={currentNametable}
+      patternTable={patternTable}
+      paletteCollection={paletteCollection}
+      onChangePatternTable={changePatternTablePixels}
+    />
+  </Section>
+);
+
+export default connect(
+  (state: EditorStateSlice) => ({
+    nametables: selectNametables(state),
+    currentNametable: selectCurrentNametable(state),
+    patternTable: selectCurrentBackgroundPatternTable(state),
+    paletteCollection: selectCurrentBackgroundPalettes(state)
+  }),
+  {
+    setNametable,
+    addNewNametable,
+    copyNametable,
+    deleteNametable,
+    renameNametable,
+    changePatternTablePixels
+  }
+)(NametablesSection);

@@ -8,7 +8,6 @@ import {
 import styles from "./App.module.scss";
 import DataOutput from "./modules/DataOutput";
 import SkipLink from "./shared/SkipLink";
-import { EditorContextProvider } from "./contexts/editor";
 import {
   SystemPaletteSection,
   BackgroundPalettesSection,

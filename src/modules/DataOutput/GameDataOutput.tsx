@@ -1,21 +1,27 @@
 import React from "react";
-import {
-  selectCurrentBackgroundPalettes,
-  selectCurrentSpritePalettes,
-  selectCurrentBackgroundPatternTable
-} from "../../contexts/editor";
 import Button from "../../shared/Button";
 import CodePanel from "./CodePanel";
 import downloadPatternTable from "./download-pattern-table";
 import useGameDataText from "./use-game-text";
-import { useEditorContext } from "../../contexts/editor";
+import {
+  EditorStateSlice,
+  selectCurrentBackgroundPalettes,
+  selectCurrentSpritePalettes,
+  selectCurrentBackgroundPatternTable
+} from "../Editor/redux";
+import { connect } from "react-redux";
+import { GamePaletteCollectionWithColors, PatternTable } from "../../types";
 
-const GameDataOutput = () => {
-  const [state] = useEditorContext();
-  const backgroundPalettes = selectCurrentBackgroundPalettes(state);
-  const spritePalettes = selectCurrentSpritePalettes(state);
-  const backgroundPatternTable = selectCurrentBackgroundPatternTable(state);
-
+type Props = {
+  backgroundPalettes: GamePaletteCollectionWithColors | null;
+  spritePalettes: GamePaletteCollectionWithColors | null;
+  backgroundPatternTable: PatternTable | null;
+};
+const GameDataOutput = ({
+  backgroundPalettes,
+  spritePalettes,
+  backgroundPatternTable
+}: Props) => {
   const [gameDataText, updateGameDataText] = useGameDataText(
     backgroundPalettes,
     spritePalettes
@@ -63,4 +69,11 @@ const GameDataOutput = () => {
   );
 };
 
-export default GameDataOutput;
+export default connect(
+  (state: EditorStateSlice) => ({
+    backgroundPalettes: selectCurrentBackgroundPalettes(state),
+    spritePalettes: selectCurrentSpritePalettes(state),
+    backgroundPatternTable: selectCurrentBackgroundPatternTable(state)
+  }),
+  {}
+)(GameDataOutput);

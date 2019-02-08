@@ -20,7 +20,7 @@ import {
   moveRenderCanvas
 } from "./experiment";
 import Button from "../../shared/Button";
-import { Action } from "../../contexts/editor";
+import { Action } from "./redux";
 
 export type PaletteOption = {
   id: number;
@@ -207,14 +207,19 @@ type Props = {
   nametable: NametableType | null;
   patternTable: PatternTable | null;
   paletteCollection: GamePaletteCollectionWithColors | null;
-  dispatch: React.Dispatch<Action>;
+  onChangePatternTable: (
+    id: string,
+    tileIndex: number,
+    startPixelIndex: number,
+    newPixels: Array<number>
+  ) => Action;
 };
 
 const Nametable: React.FunctionComponent<Props> = ({
   nametable,
   patternTable,
   paletteCollection,
-  dispatch
+  onChangePatternTable
 }) => {
   if (!nametable || !patternTable || !paletteCollection) {
     return null;
@@ -309,7 +314,7 @@ const Nametable: React.FunctionComponent<Props> = ({
             currentMetatileIndex={toolState.currentMetatileIndex}
             renderDispatch={renderDispatch}
             toolDispatch={toolDispatch}
-            dispatch={dispatch}
+            onChangePatternTable={onChangePatternTable}
           >
             <NametableCanvas
               viewportSize={VIEWPORT_SIZE}

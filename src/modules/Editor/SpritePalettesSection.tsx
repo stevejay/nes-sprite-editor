@@ -1,65 +1,93 @@
 import React from "react";
 import PaletteCollection from "./PaletteCollection";
 import Section from "./Section";
+import EntityManagementToolbar from "../../shared/EntityManagementToolbar";
+import { connect } from "react-redux";
 import {
+  EditorStateSlice,
   selectCurrentSystemPalette,
   selectSpritePaletteCollections,
   selectCurrentSpritePalettes,
-  ActionTypes,
-  useEditorContext
-} from "../../contexts/editor";
-import EntityManagementToolbar from "../../shared/EntityManagementToolbar";
-import { ReduxStateSlice } from "./redux";
-import { connect } from "react-redux";
+  setPaletteCollection,
+  addNewSpritePaletteCollection,
+  copyPaletteCollection,
+  deletePaletteCollection,
+  renamePaletteCollection,
+  changePaletteColor,
+  Action
+} from "./redux";
+import {
+  GamePaletteCollectionWithColors,
+  SystemPalette,
+  GamePaletteCollection,
+  Color
+} from "../../types";
 
 type Props = {
   currentSystemPalette: SystemPalette;
   paletteCollections: Array<GamePaletteCollection>;
   currentCollection: GamePaletteCollectionWithColors | null;
+  setPaletteCollection: (id: string) => Action;
+  addNewSpritePaletteCollection: () => Action;
+  copyPaletteCollection: (id: string) => Action;
+  deletePaletteCollection: (id: string) => Action;
+  renamePaletteCollection: (id: string, label: string) => Action;
+  changePaletteColor: (
+    id: string,
+    gamePaletteIndex: number,
+    valueIndex: number,
+    newColor: Color
+  ) => Action;
 };
 
 const SpritePalettesSection = ({
   currentSystemPalette,
   paletteCollections,
-  currentCollection
+  currentCollection,
+  setPaletteCollection,
+  addNewSpritePaletteCollection,
+  copyPaletteCollection,
+  deletePaletteCollection,
+  renamePaletteCollection,
+  changePaletteColor
 }: Props) => (
   <Section>
     <header>
-      <h2>Sprite Palettes</h2>
+      <h2>Background Palettes</h2>
     </header>
     <h3>Current Collection</h3>
     <EntityManagementToolbar
       entities={paletteCollections}
       currentEntity={currentCollection}
       entityName="Sprite Palette"
-      onSelected={setSpritePaletteCollection}
+      onSelected={setPaletteCollection}
       onNewEntity={addNewSpritePaletteCollection}
-      onCopyEntity={copySpritePaletteCollection}
-      onDeleteEntity={deleteSpritePaletteCollection}
-      onRenameEntity={renameSpritePaletteCollection}
+      onCopyEntity={copyPaletteCollection}
+      onDeleteEntity={deletePaletteCollection}
+      onRenameEntity={renamePaletteCollection}
     />
     <h3>Collection Palettes</h3>
     <PaletteCollection
       type="sprite"
       systemPalette={currentSystemPalette}
       currentCollection={currentCollection}
-      dispatch={dispatch}
+      onChangePaletteColor={changePaletteColor}
     />
   </Section>
 );
 
 export default connect(
-  (state: ReduxStateSlice) => ({
+  (state: EditorStateSlice) => ({
     currentSystemPalette: selectCurrentSystemPalette(state),
     paletteCollections: selectSpritePaletteCollections(state),
     currentCollection: selectCurrentSpritePalettes(state)
   }),
   {
-    setSpritePaletteCollection,
+    setPaletteCollection,
     addNewSpritePaletteCollection,
-    copySpritePaletteCollection,
-    deleteSpritePaletteCollection,
-    renameSpritePaletteCollection,
-    changeSpritePaletteColor
+    copyPaletteCollection,
+    deletePaletteCollection,
+    renamePaletteCollection,
+    changePaletteColor
   }
 )(SpritePalettesSection);

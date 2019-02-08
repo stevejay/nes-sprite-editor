@@ -16,7 +16,6 @@ export enum ActionTypes {
   DELETE_NAMETABLE = "DELETE_NAMETABLE",
   CHANGE_NAMETABLE_TILE_INDEX = "CHANGE_NAMETABLE_TILE_INDEX",
   CHANGE_NAMETABLE_PALETTE_INDEX = "CHANGE_NAMETABLE_PALETTE_INDEX",
-
   SELECT_SYSTEM_PALETTE = "SELECT_SYSTEM_PALETTE",
   SELECT_PALETTE_COLLECTION = "SELECT_PALETTE_COLLECTION",
   ADD_NEW_PALETTE_COLLECTION = "ADD_NEW_PALETTE_COLLECTION",
@@ -24,7 +23,6 @@ export enum ActionTypes {
   COPY_PALETTE_COLLECTION = "COPY_PALETTE_COLLECTION",
   DELETE_PALETTE_COLLECTION = "DELETE_PALETTE_COLLECTION",
   CHANGE_GAME_PALETTE_COLOR = "CHANGE_GAME_PALETTE_COLOR",
-
   SELECT_PATTERN_TABLE = "SELECT_PATTERN_TABLE",
   ADD_NEW_PATTERN_TABLE = "ADD_NEW_PATTERN_TABLE",
   UPDATE_PATTERN_TABLE_METADATA = "UPDATE_PATTERN_TABLE_METADATA",
@@ -33,30 +31,22 @@ export enum ActionTypes {
   CHANGE_PATTERN_TABLE_PIXELS = "CHANGE_PATTERN_TABLE_PIXELS"
 }
 
-export type PaletteCollectionState = {
-  collections: Array<GamePaletteCollection>;
-  currentCollectionId: GamePaletteCollection["id"] | null;
-};
-
-export type PatternTableState = {
-  tables: Array<PatternTable>;
-  currentTableId: PatternTable["id"] | null;
-};
-
 export type State = {
   nametables: Array<Nametable>;
-  currentNametableId: Nametable["id"] | null;
-
+  selectedNametableId: Nametable["id"] | null;
   systemPalettes: Array<SystemPalette>;
-  // There will always be at least one system palette,
-  // and so always a current system palette.
-  currentSystemPaletteId: SystemPalette["id"];
-  paletteCollections: { [key in GamePaletteType]: PaletteCollectionState };
-
-  patternTables: { [key in PatternTableType]: PatternTableState };
+  selectedSystemPaletteId: SystemPalette["id"];
+  paletteCollections: Array<GamePaletteCollection>;
+  selectedPaletteCollectionIds: {
+    [key in GamePaletteType]: GamePaletteCollection["id"] | null
+  };
+  patternTables: Array<PatternTable>;
+  selectedPatternTableIds: {
+    [key in PatternTableType]: PatternTable["id"] | null
+  };
 };
 
-export type ReduxStateSlice = {
+export type EditorStateSlice = {
   editor: State;
 };
 
@@ -117,7 +107,6 @@ export type Action =
   | {
       type: ActionTypes.SELECT_PALETTE_COLLECTION;
       payload: {
-        type: GamePaletteType;
         id: GamePaletteCollection["id"];
       };
     }
@@ -131,7 +120,6 @@ export type Action =
   | {
       type: ActionTypes.UPDATE_PALETTE_COLLECTION_METADATA;
       payload: {
-        type: GamePaletteType;
         id: GamePaletteCollection["id"];
         label: GamePaletteCollection["label"];
       };
@@ -139,22 +127,19 @@ export type Action =
   | {
       type: ActionTypes.COPY_PALETTE_COLLECTION;
       payload: {
-        type: GamePaletteType;
         id: GamePaletteCollection["id"];
       };
     }
   | {
       type: ActionTypes.DELETE_PALETTE_COLLECTION;
       payload: {
-        type: GamePaletteType;
         id: GamePaletteCollection["id"];
       };
     }
   | {
       type: ActionTypes.CHANGE_GAME_PALETTE_COLOR;
       payload: {
-        type: GamePaletteType;
-        paletteCollectionId: GamePaletteCollection["id"];
+        id: GamePaletteCollection["id"];
         gamePaletteIndex: number;
         valueIndex: number;
         newColor: Color;
@@ -163,7 +148,6 @@ export type Action =
   | {
       type: ActionTypes.SELECT_PATTERN_TABLE;
       payload: {
-        type: PatternTableType;
         id: PatternTable["id"];
       };
     }
@@ -177,7 +161,6 @@ export type Action =
   | {
       type: ActionTypes.UPDATE_PATTERN_TABLE_METADATA;
       payload: {
-        type: PatternTableType;
         id: PatternTable["id"];
         label: PatternTable["label"];
       };
@@ -185,22 +168,19 @@ export type Action =
   | {
       type: ActionTypes.COPY_PATTERN_TABLE;
       payload: {
-        type: PatternTableType;
         id: PatternTable["id"];
       };
     }
   | {
       type: ActionTypes.DELETE_PATTERN_TABLE;
       payload: {
-        type: PatternTableType;
         id: PatternTable["id"];
       };
     }
   | {
       type: ActionTypes.CHANGE_PATTERN_TABLE_PIXELS;
       payload: {
-        type: PatternTableType;
-        tableId: PatternTable["id"];
+        id: PatternTable["id"];
         tileIndex: number;
         startPixelIndex: number;
         newPixels: Array<number>;

@@ -416,6 +416,7 @@ const HEART_TILE_PIXELS: PatternTile["pixels"] = new Uint8Array([
 
 const BACKGROUND_PATTERN_TABLE_OPTIONS: Array<PatternTable> = [
   {
+    type: "background",
     id: "background-1",
     label: "Background Grid 1",
     tiles: range(0, 256).map(index => ({

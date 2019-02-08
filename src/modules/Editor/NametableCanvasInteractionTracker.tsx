@@ -17,8 +17,8 @@ import {
   convertMetatileIndexToCanvasCoords
 } from "./experiment";
 import { PatternTable, Nametable } from "../../types";
-import { Action, ActionTypes } from "../../contexts/editor";
 import { isNil } from "lodash";
+import { Action } from "./redux";
 
 const DRAG_POSITION = { x: 0, y: 0 };
 
@@ -30,10 +30,15 @@ type Props = {
   currentTool: ToolState["currentTool"];
   selectedColorIndex: ToolState["selectedColorIndex"];
   currentMetatileIndex: ToolState["currentMetatileIndex"];
-  dispatch: React.Dispatch<Action>;
   renderDispatch: React.Dispatch<RenderAction>;
   toolDispatch: React.Dispatch<ToolAction>;
   children: React.ReactNode;
+  onChangePatternTable: (
+    id: string,
+    tileIndex: number,
+    startPixelIndex: number,
+    newPixels: Array<number>
+  ) => Action;
 };
 
 const NametableCanvasInteractionTracker = ({
@@ -44,10 +49,10 @@ const NametableCanvasInteractionTracker = ({
   currentTool,
   selectedColorIndex,
   currentMetatileIndex,
-  dispatch,
   renderDispatch,
   toolDispatch,
-  children
+  children,
+  onChangePatternTable
 }: Props) => {
   const containerRef = React.useRef<HTMLDivElement>(null);
 
@@ -114,16 +119,12 @@ const NametableCanvasInteractionTracker = ({
             break;
           }
 
-          dispatch({
-            type: ActionTypes.CHANGE_PATTERN_TABLE_PIXELS,
-            payload: {
-              type: "background",
-              tableId: patternTable.id,
-              tileIndex: nametable.tileIndexes[flattenedLogicalCoord.tileIndex],
-              startPixelIndex: flattenedLogicalCoord.tilePixelIndex,
-              newPixels: [selectedColorIndex]
-            }
-          });
+          onChangePatternTable(
+            patternTable.id,
+            nametable.tileIndexes[flattenedLogicalCoord.tileIndex],
+            flattenedLogicalCoord.tilePixelIndex,
+            [selectedColorIndex]
+          );
         }
       }
     },
@@ -152,12 +153,12 @@ const NametableCanvasInteractionTracker = ({
 
   const containerClassNames = classNames(styles.container, styles[currentTool]);
 
-  const metatileArea = isNil(currentMetatileIndex)
-    ? null
-    : convertMetatileIndexToCanvasCoords(
-        renderCanvasPositioning,
-        currentMetatileIndex
-      );
+  // const metatileArea = isNil(currentMetatileIndex)
+  //   ? null
+  //   : convertMetatileIndexToCanvasCoords(
+  //       renderCanvasPositioning,
+  //       currentMetatileIndex
+  //     );
 
   const metatileStyle = React.useMemo<CSSProperties | null>(() => {
     const metatileArea = isNil(currentMetatileIndex)

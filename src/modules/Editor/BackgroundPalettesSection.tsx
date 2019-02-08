@@ -4,33 +4,52 @@ import Section from "./Section";
 import EntityManagementToolbar from "../../shared/EntityManagementToolbar";
 import { connect } from "react-redux";
 import {
-  ReduxStateSlice,
+  EditorStateSlice,
   selectCurrentSystemPalette,
   selectBackgroundPaletteCollections,
   selectCurrentBackgroundPalettes,
-  setBackgroundPaletteCollection,
+  setPaletteCollection,
   addNewBackgroundPaletteCollection,
-  copyBackgroundPaletteCollection,
-  deleteBackgroundPaletteCollection,
-  renameBackgroundPaletteCollection,
-  changeBackgroundPaletteColor
+  copyPaletteCollection,
+  deletePaletteCollection,
+  renamePaletteCollection,
+  changePaletteColor,
+  Action
 } from "./redux";
 import {
   GamePaletteCollectionWithColors,
   SystemPalette,
-  GamePaletteCollection
+  GamePaletteCollection,
+  Color
 } from "../../types";
 
 type Props = {
   currentSystemPalette: SystemPalette;
   paletteCollections: Array<GamePaletteCollection>;
   currentCollection: GamePaletteCollectionWithColors | null;
+  setPaletteCollection: (id: string) => Action;
+  addNewBackgroundPaletteCollection: () => Action;
+  copyPaletteCollection: (id: string) => Action;
+  deletePaletteCollection: (id: string) => Action;
+  renamePaletteCollection: (id: string, label: string) => Action;
+  changePaletteColor: (
+    id: string,
+    gamePaletteIndex: number,
+    valueIndex: number,
+    newColor: Color
+  ) => Action;
 };
 
 const BackgroundPalettesSection = ({
   currentSystemPalette,
   paletteCollections,
-  currentCollection
+  currentCollection,
+  setPaletteCollection,
+  addNewBackgroundPaletteCollection,
+  copyPaletteCollection,
+  deletePaletteCollection,
+  renamePaletteCollection,
+  changePaletteColor
 }: Props) => (
   <Section>
     <header>
@@ -41,34 +60,34 @@ const BackgroundPalettesSection = ({
       entities={paletteCollections}
       currentEntity={currentCollection}
       entityName="Background Palette"
-      onSelected={setBackgroundPaletteCollection}
+      onSelected={setPaletteCollection}
       onNewEntity={addNewBackgroundPaletteCollection}
-      onCopyEntity={copyBackgroundPaletteCollection}
-      onDeleteEntity={deleteBackgroundPaletteCollection}
-      onRenameEntity={renameBackgroundPaletteCollection}
+      onCopyEntity={copyPaletteCollection}
+      onDeleteEntity={deletePaletteCollection}
+      onRenameEntity={renamePaletteCollection}
     />
     <h3>Collection Palettes</h3>
     <PaletteCollection
       type="background"
       systemPalette={currentSystemPalette}
       currentCollection={currentCollection}
-      onChangePaletteColor={changeBackgroundPaletteColor}
+      onChangePaletteColor={changePaletteColor}
     />
   </Section>
 );
 
 export default connect(
-  (state: ReduxStateSlice) => ({
+  (state: EditorStateSlice) => ({
     currentSystemPalette: selectCurrentSystemPalette(state),
     paletteCollections: selectBackgroundPaletteCollections(state),
     currentCollection: selectCurrentBackgroundPalettes(state)
   }),
   {
-    setBackgroundPaletteCollection,
+    setPaletteCollection,
     addNewBackgroundPaletteCollection,
-    copyBackgroundPaletteCollection,
-    deleteBackgroundPaletteCollection,
-    renameBackgroundPaletteCollection,
-    changeBackgroundPaletteColor
+    copyPaletteCollection,
+    deletePaletteCollection,
+    renamePaletteCollection,
+    changePaletteColor
   }
 )(BackgroundPalettesSection);

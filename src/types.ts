@@ -1,3 +1,8 @@
+export type Entity = {
+  id: string;
+  label: string;
+};
+
 export type Color =
   | {
       available: false;
@@ -26,18 +31,15 @@ export type GamePaletteWithColors = GamePalette & {
 
 export type GamePaletteType = "background" | "sprite";
 
-export type Entity = {
-  id: string;
-  label: string;
-};
-
 export type GamePaletteCollection = Entity & {
+  type: GamePaletteType;
   id: string;
   label: string;
   gamePalettes: Array<GamePalette>; // 4 palettes
 };
 
 export type GamePaletteCollectionWithColors = {
+  type: GamePaletteType;
   id: GamePaletteCollection["id"];
   label: GamePaletteCollection["label"];
   gamePalettes: Array<GamePaletteWithColors>;
@@ -52,6 +54,7 @@ export type PatternTableType = "background" | "sprite";
 
 // 16x16 area of pattern tiles
 export type PatternTable = Entity & {
+  type: PatternTableType;
   id: string;
   label: string;
   tiles: Array<PatternTile>; // 256 tiles (16x16)

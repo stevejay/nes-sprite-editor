@@ -1,24 +1,48 @@
 import React from "react";
-import {
-  selectCurrentBackgroundPalettes,
-  useEditorContext,
-  selectBackgroundPatternTables,
-  selectCurrentBackgroundPatternTable,
-  ActionTypes
-} from "../../contexts/editor";
 import PatternTable from "./PatternTable";
 import Section from "./Section";
 import EntityManagementToolbar from "../../shared/EntityManagementToolbar";
+import { connect } from "react-redux";
+import {
+  selectBackgroundPatternTables,
+  selectCurrentBackgroundPatternTable,
+  selectCurrentBackgroundPalettes,
+  EditorStateSlice,
+  Action,
+  setPatternTable,
+  addNewBackgroundPatternTable,
+  copyPatternTable,
+  deletePatternTable,
+  renamePatternTable
+} from "./redux";
+import {
+  PatternTable as PatternTableType,
+  GamePaletteCollectionWithColors
+} from "../../types";
 
-const BackgroundPatternTablesSection = () => {
-  const [state, dispatch] = useEditorContext();
-  const patternTables = selectBackgroundPatternTables(state);
-  const patternTable = selectCurrentBackgroundPatternTable(state);
-  const paletteCollection = selectCurrentBackgroundPalettes(state);
+type Props = {
+  patternTables: Array<PatternTableType>;
+  currentPatternTable: PatternTableType | null;
+  paletteCollection: GamePaletteCollectionWithColors | null;
+  setPatternTable: (id: string) => Action;
+  addNewBackgroundPatternTable: () => Action;
+  copyPatternTable: (id: string) => Action;
+  deletePatternTable: (id: string) => Action;
+  renamePatternTable: (id: string, label: string) => Action;
+};
 
+const BackgroundPatternTablesSection = ({
+  patternTables,
+  currentPatternTable,
+  paletteCollection,
+  setPatternTable,
+  addNewBackgroundPatternTable,
+  copyPatternTable,
+  deletePatternTable,
+  renamePatternTable
+}: Props) => {
   // TODO move down into PatternTable?
   const [currentTile, setCurrentTile] = React.useState({ row: 0, column: 0 });
-
   return (
     <Section>
       <header>
@@ -27,43 +51,18 @@ const BackgroundPatternTablesSection = () => {
       <h3>Current Pattern Table</h3>
       <EntityManagementToolbar
         entities={patternTables}
-        currentEntity={patternTable}
+        currentEntity={currentPatternTable}
         entityName="Pattern Table"
-        onSelected={id =>
-          dispatch({
-            type: ActionTypes.SELECT_PATTERN_TABLE,
-            payload: { type: "background", id }
-          })
-        }
-        onNewEntity={() =>
-          dispatch({
-            type: ActionTypes.ADD_NEW_PATTERN_TABLE,
-            payload: { type: "background", label: "New pattern table" }
-          })
-        }
-        onCopyEntity={id =>
-          dispatch({
-            type: ActionTypes.COPY_PATTERN_TABLE,
-            payload: { type: "background", id }
-          })
-        }
-        onDeleteEntity={id =>
-          dispatch({
-            type: ActionTypes.DELETE_PATTERN_TABLE,
-            payload: { type: "background", id }
-          })
-        }
-        onRenameEntity={(id, label) =>
-          dispatch({
-            type: ActionTypes.UPDATE_PATTERN_TABLE_METADATA,
-            payload: { type: "background", id, label }
-          })
-        }
+        onSelected={setPatternTable}
+        onNewEntity={addNewBackgroundPatternTable}
+        onCopyEntity={copyPatternTable}
+        onDeleteEntity={deletePatternTable}
+        onRenameEntity={renamePatternTable}
       />
       <h3>Pattern Table Tiles</h3>
       <PatternTable
         scale={3}
-        patternTable={patternTable}
+        patternTable={currentPatternTable}
         paletteCollection={paletteCollection}
         currentTile={currentTile}
         onSelectTile={(row, column) => setCurrentTile({ row, column })}
@@ -72,4 +71,17 @@ const BackgroundPatternTablesSection = () => {
   );
 };
 
-export default BackgroundPatternTablesSection;
+export default connect(
+  (state: EditorStateSlice) => ({
+    patternTables: selectBackgroundPatternTables(state),
+    currentPatternTable: selectCurrentBackgroundPatternTable(state),
+    paletteCollection: selectCurrentBackgroundPalettes(state)
+  }),
+  {
+    setPatternTable,
+    addNewBackgroundPatternTable,
+    copyPatternTable,
+    deletePatternTable,
+    renamePatternTable
+  }
+)(BackgroundPatternTablesSection);
