@@ -1,3 +1,10 @@
+import {
+  TILE_SIZE_PIXELS,
+  TOTAL_NAMETABLE_X_TILES,
+  TOTAL_NAMETABLE_Y_TILES,
+  CANVAS_OVERDRAW_SCALING
+} from "./constants";
+
 export type ViewportCoord = {
   x: number;
   y: number;
@@ -36,11 +43,6 @@ export type DragBounds = {
   right: number;
   bottom: number;
 };
-
-const TOTAL_NAMETABLE_X_TILES = 32;
-const TOTAL_NAMETABLE_Y_TILES = 30;
-const TILE_SIZE_PIXELS = 8;
-const CANVAS_OVERDRAW_SCALING = 1;
 
 export function calculateBestNaturalScaleForViewportSize(
   viewportSize: ViewportSize

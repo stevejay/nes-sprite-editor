@@ -152,7 +152,7 @@ type Props = {
 };
 
 const Provider = ({ children }: Props) => {
-  const [state, dispatch] = React.useReducer<State, Action>(reducer, {
+  const [state, dispatch] = React.useReducer(reducer, {
     selectedId: null,
     lastActionOrigin: "mouse",
     tabStops: []

@@ -1,6 +1,7 @@
 import { range } from "lodash";
 import sync from "save-file";
 import { PatternTable, PatternTile } from "../../types";
+import { PATTERN_TABLE_COLUMNS } from "../Editor/constants";
 
 export default function downloadPatternTable(
   patternTable: PatternTable | null,
@@ -14,7 +15,9 @@ export default function downloadPatternTable(
   const byteView = new Uint8Array(buffer);
 
   patternTable.tiles.forEach((tile, index) => {
-    const tileByteOffset = (index % 16) * 16 + Math.floor(index / 16) * 256;
+    const tileByteOffset =
+      (index % PATTERN_TABLE_COLUMNS) * PATTERN_TABLE_COLUMNS +
+      Math.floor(index / PATTERN_TABLE_COLUMNS) * 256;
 
     // write first plane bytes for this tile
     range(0, 64, 8)

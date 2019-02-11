@@ -2,6 +2,7 @@ import React from "react";
 import { uniqueId } from "lodash";
 import RadioInput from "./RadioInput";
 import styles from "./RadioInputGroup.module.scss";
+import useId from "../utils/use-id";
 
 type Option<IdT> = {
   id: IdT;
@@ -27,14 +28,14 @@ const RadioInputGroup = <P extends string | number>({
   renderLabel = option => option.label,
   onChange
 }: Props<P>) => {
-  const labelId = React.useRef(uniqueId("radio-group_"));
+  const labelId = useId();
   return (
     <>
-      <p id={labelId.current}>{legend}</p>
+      <p id={labelId}>{legend}</p>
       <div
         role="radiogroup"
         className={styles.groupContainer}
-        aria-labelledby={labelId.current}
+        aria-labelledby={labelId}
       >
         {options.map(option => (
           <div
@@ -43,7 +44,7 @@ const RadioInputGroup = <P extends string | number>({
           >
             <RadioInput
               value={option.id}
-              groupName={labelId.current}
+              groupName={labelId}
               checked={selectedId === option.id}
               disabled={disabled}
               onChange={() => onChange(option.id)}

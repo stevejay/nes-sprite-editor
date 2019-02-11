@@ -1,6 +1,6 @@
 import { Color } from "../../types";
+import { TILE_SIZE_PIXELS } from "./constants";
 
-const PIXEL_COLUMNS_PER_TILE = 8;
 const UNAVAILABLE_COLOR = "#000";
 
 export default function drawTile(
@@ -19,7 +19,7 @@ export default function drawTile(
   const yOffset = yTileOffset * scale;
 
   pixels.forEach((colorIndex, index) => {
-    const columnLoopIndex = index % PIXEL_COLUMNS_PER_TILE;
+    const columnLoopIndex = index % TILE_SIZE_PIXELS;
     if (columnLoopIndex === 0) {
       ++rowLoopIndex;
     }
@@ -29,10 +29,8 @@ export default function drawTile(
     ctx.fillStyle = rgbString;
 
     ctx.fillRect(
-      column * scale * PIXEL_COLUMNS_PER_TILE +
-        columnLoopIndex * scale +
-        xOffset,
-      row * scale * PIXEL_COLUMNS_PER_TILE + rowLoopIndex * scale + yOffset,
+      column * scale * TILE_SIZE_PIXELS + columnLoopIndex * scale + xOffset,
+      row * scale * TILE_SIZE_PIXELS + rowLoopIndex * scale + yOffset,
       scale,
       scale
     );

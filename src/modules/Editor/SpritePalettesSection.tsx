@@ -1,6 +1,6 @@
 import React from "react";
 import PaletteCollection from "./PaletteCollection";
-import Section from "./Section";
+import Section from "../../shared/Section";
 import EntityManagementToolbar from "../../shared/EntityManagementToolbar";
 import { connect } from "react-redux";
 import {
@@ -53,7 +53,7 @@ const SpritePalettesSection = ({
 }: Props) => (
   <Section>
     <header>
-      <h2>Background Palettes</h2>
+      <h2>Sprite Palettes</h2>
     </header>
     <h3>Current Collection</h3>
     <EntityManagementToolbar

@@ -1,0 +1,7 @@
+@import "styles/_base.scss";
+
+.canvas {
+  position: absolute;
+  display: block;
+  background-color: $md-grey-200;
+}

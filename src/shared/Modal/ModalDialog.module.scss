@@ -33,6 +33,7 @@ $dialog-gutter: $gutter / 2;
   background-clip: padding-box;
   outline: 0;
   will-change: opacity, transform;
+  transform-origin: center;
   border-radius: rem(3);
   min-width: 50vw;
   max-width: 1000px;

@@ -1,15 +1,17 @@
 import React from "react";
-import RadioInput from "../../shared/RadioInput";
-import Section from "./Section";
 import { connect } from "react-redux";
-import {
-  selectSystemPalettes,
-  EditorStateSlice,
-  setSystemPalette,
-  selectCurrentSystemPalette,
-  Action
-} from "./redux";
+import { Label } from "../../shared/Form";
+import Section from "../../shared/Section";
+import SelectInput from "../../shared/SelectInput";
+import useId from "../../shared/utils/use-id";
 import { SystemPalette } from "../../types";
+import {
+  Action,
+  EditorStateSlice,
+  selectCurrentSystemPalette,
+  selectSystemPalettes,
+  setSystemPalette
+} from "./redux";
 
 type Props = {
   systemPalettes: Array<SystemPalette>;
@@ -20,19 +22,23 @@ type Props = {
 const SystemPaletteSection = ({
   systemPalettes,
   currentSystemPalette
-}: Props) => (
-  <Section>
-    <header>
-      <h2>System Palette</h2>
-    </header>
-    <RadioInput.Group
-      legend="Current system palette:"
-      options={systemPalettes}
-      selectedId={currentSystemPalette.id}
-      onChange={setSystemPalette}
-    />
-  </Section>
-);
+}: Props) => {
+  const id = useId();
+  return (
+    <Section>
+      <header>
+        <h2>System Palette</h2>
+      </header>
+      <Label forId={id} label="System palette to use:" />
+      <SelectInput<string>
+        id={id}
+        options={systemPalettes}
+        value={currentSystemPalette.id}
+        onChange={setSystemPalette}
+      />
+    </Section>
+  );
+};
 
 export default connect(
   (state: EditorStateSlice) => ({

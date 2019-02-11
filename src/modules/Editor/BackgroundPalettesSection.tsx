@@ -1,6 +1,6 @@
 import React from "react";
 import PaletteCollection from "./PaletteCollection";
-import Section from "./Section";
+import Section from "../../shared/Section";
 import EntityManagementToolbar from "../../shared/EntityManagementToolbar";
 import { connect } from "react-redux";
 import {

@@ -77,7 +77,7 @@ type Props = {
   ariaLabel: string;
   // react-draggable:
   style?: any; // TODO fix any
-  onMouseDown?: (event: React.MouseEvent<HTMLElement, MouseEvent>) => void; // TODO fix any
+  onMouseDown?: (event: React.MouseEvent<HTMLElement>) => void; // TODO fix any
   onMouseUp?: any; // TODO fix any
   onTouchStart?: any; // TODO fix any
   onTouchEnd?: any; // TODO fix any

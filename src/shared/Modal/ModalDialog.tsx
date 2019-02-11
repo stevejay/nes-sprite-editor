@@ -1,7 +1,7 @@
 import FocusTrap from "focus-trap-react";
 import React from "react";
 import { Portal } from "react-portal";
-import { Transition } from "react-spring";
+import { Transition } from "react-spring/renderprops"; // TODO change to hook?
 import { useAriaHidden, usePreventBodyScroll, ModalBackdrop } from ".";
 import styles from "./ModalDialog.module.scss";
 
@@ -19,16 +19,16 @@ const Modal = ({ isOpen, children, onClose }: Props) => {
     <Transition
       config={{ duration: 200 }}
       items={isOpen}
-      from={{ opacity: 0, transform: "translateY(-10px)" }}
-      enter={{ opacity: 1, transform: "translateY(0px)" }}
-      leave={{ opacity: 0, transform: "translateY(-10px)" }}
+      from={{ opacity: 0, transform: "scale(1.1)" }}
+      enter={{ opacity: 1, transform: "scale(1)" }}
+      leave={{ opacity: 0, transform: "scale(1.1)" }}
     >
       {isOpen =>
         isOpen &&
-        (({ opacity, transform }) => (
+        (props => (
           <Portal>
             <>
-              <ModalBackdrop opacity={opacity / 2} onClose={onClose} />
+              <ModalBackdrop opacity={props.opacity / 2} onClose={onClose} />
               <div className={styles.scrollContainer}>
                 <FocusTrap
                   focusTrapOptions={{
@@ -37,10 +37,7 @@ const Modal = ({ isOpen, children, onClose }: Props) => {
                   }}
                 >
                   <div className={styles.positioningContainer}>
-                    <section
-                      className={styles.chromeContainer}
-                      style={{ opacity, transform }}
-                    >
+                    <section className={styles.chromeContainer} style={props}>
                       {children}
                     </section>
                   </div>

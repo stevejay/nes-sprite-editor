@@ -21,7 +21,7 @@ import {
   selectNametables,
   setNametable
 } from "./redux";
-import Section from "./Section";
+import Section from "../../shared/Section";
 
 type Props = {
   nametables: Array<NametableType>;

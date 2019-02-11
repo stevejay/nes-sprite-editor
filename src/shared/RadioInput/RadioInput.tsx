@@ -1,6 +1,7 @@
 import React from "react";
 import { uniqueId } from "lodash";
 import styles from "./RadioInput.module.scss";
+import useId from "../utils/use-id";
 
 type Props = {
   value: string | number;
@@ -19,12 +20,12 @@ const RadioInput: React.FunctionComponent<Props> = ({
   groupName,
   disabled = false
 }) => {
-  const id = React.useRef(uniqueId("radio-input_"));
+  const id = useId();
   return (
     <>
       <input
         type="radio"
-        id={id.current}
+        id={id}
         name={groupName}
         value={value}
         checked={checked}
@@ -32,7 +33,7 @@ const RadioInput: React.FunctionComponent<Props> = ({
         className={styles.input}
         onChange={onChange}
       />
-      <label htmlFor={id.current}>{children}</label>
+      <label htmlFor={id}>{children}</label>
     </>
   );
 };

@@ -225,12 +225,12 @@ const Nametable: React.FunctionComponent<Props> = ({
     return null;
   }
 
-  const [renderState, renderDispatch] = React.useReducer<
-    RenderState,
-    RenderAction
-  >(renderReducer, initializeReducer());
+  const [renderState, renderDispatch] = React.useReducer(
+    renderReducer,
+    initializeReducer()
+  );
 
-  const [toolState, toolDispatch] = React.useReducer<ToolState, ToolAction>(
+  const [toolState, toolDispatch] = React.useReducer(
     toolReducer,
     INITIAL_TOOL_STATE
   );

@@ -30,7 +30,6 @@ const EntityManagementToolbar = ({
 }: Props) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const hasNoOptions = isNil(currentEntity) || isEmpty(entities);
-
   return (
     <div className={styles.container}>
       <SelectInput<string>

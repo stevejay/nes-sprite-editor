@@ -9,7 +9,7 @@ import {
   PointingModalContainer,
   ModalBackdrop
 } from "../Modal";
-import { Transition } from "react-spring";
+import { Transition } from "react-spring/renderprops"; // TODO change to hook?
 
 type Props = {
   isOpen: boolean;

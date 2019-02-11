@@ -17,7 +17,7 @@ type Props = {
 const RenameEntityModal = ({ isOpen, name, onRename, onClose }: Props) => {
   const handleSubmit = React.useCallback(
     (values: any) => {
-      const value = values.name.trim();
+      const value = (values.name || "").trim();
       if (isEmpty(value)) {
         return;
       }

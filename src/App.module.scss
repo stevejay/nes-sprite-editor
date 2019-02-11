@@ -1,11 +1,12 @@
 @import "styles/_base.scss";
 
 .main {
-  margin-top: rem(5);
+  margin: rem(5) 0;
 }
 
 .row {
   display: flex;
+  flex-grow: 1;
 }
 
 .column {

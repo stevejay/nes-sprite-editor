@@ -1,6 +1,6 @@
 import React from "react";
 import PatternTable from "./PatternTable";
-import Section from "./Section";
+import Section from "../../shared/Section";
 import EntityManagementToolbar from "../../shared/EntityManagementToolbar";
 import { connect } from "react-redux";
 import {
@@ -13,17 +13,30 @@ import {
   addNewBackgroundPatternTable,
   copyPatternTable,
   deletePatternTable,
-  renamePatternTable
+  renamePatternTable,
+  selectCurrentNametable
 } from "./redux";
 import {
   PatternTable as PatternTableType,
-  GamePaletteCollectionWithColors
+  GamePaletteCollectionWithColors,
+  Nametable
 } from "../../types";
+import RadioInput from "../../shared/RadioInput";
+import PatternTileDetail from "./PatternTileDetail";
+import { filter } from "lodash";
+
+const PALETTE_OPTIONS = [
+  { id: 0, label: "#0" },
+  { id: 1, label: "#1" },
+  { id: 2, label: "#2" },
+  { id: 3, label: "#3" }
+];
 
 type Props = {
   patternTables: Array<PatternTableType>;
   currentPatternTable: PatternTableType | null;
   paletteCollection: GamePaletteCollectionWithColors | null;
+  currentNametable: Nametable | null;
   setPatternTable: (id: string) => Action;
   addNewBackgroundPatternTable: () => Action;
   copyPatternTable: (id: string) => Action;
@@ -35,14 +48,28 @@ const BackgroundPatternTablesSection = ({
   patternTables,
   currentPatternTable,
   paletteCollection,
+  currentNametable,
   setPatternTable,
   addNewBackgroundPatternTable,
   copyPatternTable,
   deletePatternTable,
   renamePatternTable
 }: Props) => {
-  // TODO move down into PatternTable?
-  const [currentTile, setCurrentTile] = React.useState({ row: 0, column: 0 });
+  const [tileIndex, setTileIndex] = React.useState(0);
+  const [paletteIndex, setPaletteIndex] = React.useState(0);
+
+  const selectedPalette = paletteCollection
+    ? paletteCollection.gamePalettes[paletteIndex]
+    : null;
+
+  const tileUsageCount = React.useMemo<number>(
+    () =>
+      currentNametable
+        ? filter(currentNametable.tileIndexes, x => x === tileIndex).length
+        : 0,
+    [currentNametable, tileIndex]
+  );
+
   return (
     <Section>
       <header>
@@ -59,14 +86,32 @@ const BackgroundPatternTablesSection = ({
         onDeleteEntity={deletePatternTable}
         onRenameEntity={renamePatternTable}
       />
-      <h3>Pattern Table Tiles</h3>
-      <PatternTable
-        scale={3}
-        patternTable={currentPatternTable}
-        paletteCollection={paletteCollection}
-        currentTile={currentTile}
-        onSelectTile={(row, column) => setCurrentTile({ row, column })}
-      />
+      {currentPatternTable && selectedPalette && (
+        <>
+          <h3>Pattern Table Tiles</h3>
+          <RadioInput.Group<number>
+            legend="Preview palette:"
+            options={PALETTE_OPTIONS}
+            selectedId={paletteIndex}
+            onChange={setPaletteIndex}
+            inline
+          />
+          <PatternTable
+            scale={3}
+            patternTable={currentPatternTable}
+            palette={selectedPalette}
+            tileIndex={tileIndex}
+            onSelectTile={setTileIndex}
+          />
+          <PatternTileDetail
+            scale={12}
+            tileIndex={tileIndex}
+            tile={currentPatternTable.tiles[tileIndex]}
+            tileUsageCount={tileUsageCount}
+            palette={selectedPalette}
+          />
+        </>
+      )}
     </Section>
   );
 };
@@ -75,7 +120,8 @@ export default connect(
   (state: EditorStateSlice) => ({
     patternTables: selectBackgroundPatternTables(state),
     currentPatternTable: selectCurrentBackgroundPatternTable(state),
-    paletteCollection: selectCurrentBackgroundPalettes(state)
+    paletteCollection: selectCurrentBackgroundPalettes(state),
+    currentNametable: selectCurrentNametable(state)
   }),
   {
     setPatternTable,
