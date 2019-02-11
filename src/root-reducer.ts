@@ -2,7 +2,7 @@ import { combineReducers } from "redux";
 import {
   reducer as editorReducer,
   EditorStateSlice as EditorState
-} from "./modules/Editor";
+} from "./modules/editor";
 
 export type ReduxState = EditorState;
 

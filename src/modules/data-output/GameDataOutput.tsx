@@ -8,7 +8,7 @@ import {
   selectCurrentBackgroundPalettes,
   selectCurrentSpritePalettes,
   selectCurrentBackgroundPatternTable
-} from "../Editor/store";
+} from "../editor/store";
 import { connect } from "react-redux";
 import { GamePaletteCollectionWithColors, PatternTable } from "../../model";
 

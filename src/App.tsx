@@ -1,12 +1,8 @@
 import React from "react";
 import { Provider } from "react-redux";
 import { createStore, combineReducers } from "redux";
-import {
-  reducer as editorReducer,
-  State as EditorState
-} from "./modules/Editor";
 import styles from "./App.module.scss";
-import DataOutput from "./modules/DataOutput";
+import DataOutput from "./modules/data-output";
 import SkipLink from "./shared/SkipLink";
 import {
   SystemPaletteSection,
@@ -14,9 +10,9 @@ import {
   SpritePalettesSection,
   BackgroundPatternTablesSection,
   NametablesSection
-} from "./modules/Editor";
+} from "./modules/editor";
 import rootReducer from "./root-reducer";
-import Header from "./header";
+import Header from "./modules/header";
 
 const store = createStore(rootReducer);
 
