@@ -1,8 +1,8 @@
 import { isEmpty, isNil } from "lodash";
 import React from "react";
-import Button from "../Button";
-import { RovingTabIndexProvider } from "../RovingTabIndex";
-import SelectInput from "../SelectInput";
+import Button from "../../../shared/Button";
+import { RovingTabIndexProvider } from "../../../shared/RovingTabIndex";
+import SelectInput from "../../../shared/SelectInput";
 import styles from "./EntityManagementToolbar.module.scss";
 import RenameEntityModal from "./RenameEntityModal";
 

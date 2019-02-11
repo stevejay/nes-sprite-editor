@@ -1,6 +1,6 @@
 import * as React from "react";
 import styles from "./ColorPicker.module.scss";
-import { SystemPalette, Color } from "../../../model";
+import { SystemPalette, Color } from "../store";
 import useSizedCanvasEffect from "../../../shared/utils/use-sized-canvas-effect";
 import TileCanvas from "../../../shared/TileCanvas";
 

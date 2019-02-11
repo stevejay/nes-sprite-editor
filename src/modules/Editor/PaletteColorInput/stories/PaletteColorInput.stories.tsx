@@ -4,7 +4,7 @@ import { State, Store } from "@sambego/storybook-state";
 import { storiesOf } from "@storybook/react";
 import "../../../index.scss";
 import PaletteColorInput from "..";
-import { SYSTEM_PALETTE_OPTIONS } from "../../../../model";
+import { SYSTEM_PALETTE_OPTIONS } from "../../constants";
 
 const storyHost = host({
   align: "center middle",

@@ -4,7 +4,7 @@ import { Label } from "../../shared/Form";
 import Section from "../../shared/Section";
 import SelectInput from "../../shared/SelectInput";
 import useId from "../../shared/utils/use-id";
-import { SystemPalette } from "../../model";
+import { SystemPalette } from "./store";
 import {
   Action,
   EditorStateSlice,

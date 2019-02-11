@@ -4,7 +4,7 @@ import {
   Nametable as NametableType,
   PatternTable,
   GamePaletteCollectionWithColors
-} from "../../model";
+} from "./store";
 import NametableCanvas from "./NametableCanvas";
 import NametableCanvasInteractionTracker from "./NametableCanvasInteractionTracker";
 import styles from "./Nametable.module.scss";

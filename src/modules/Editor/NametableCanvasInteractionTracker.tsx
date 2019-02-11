@@ -16,7 +16,7 @@ import {
   convertViewportCoordToNameableMetatile,
   convertMetatileIndexToCanvasCoords
 } from "./experiment";
-import { PatternTable, Nametable } from "../../model";
+import { PatternTable, Nametable } from "./store";
 import { isNil } from "lodash";
 import { Action } from "./store";
 

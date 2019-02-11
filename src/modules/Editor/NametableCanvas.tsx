@@ -5,7 +5,7 @@ import {
   GamePaletteWithColors,
   Nametable,
   PatternTile
-} from "../../model";
+} from "./store";
 import drawTile from "./draw-tile";
 import {
   createTileIndexBounds,

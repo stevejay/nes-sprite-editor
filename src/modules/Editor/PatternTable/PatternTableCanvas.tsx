@@ -1,6 +1,6 @@
 import React from "react";
 import useSizedCanvasEffect from "../../../shared/utils/use-sized-canvas-effect";
-import { GamePaletteWithColors, PatternTile } from "../../../model";
+import { GamePaletteWithColors, PatternTile } from "../store";
 import styles from "./PatternTableCanvas.module.scss";
 import drawTile from "../draw-tile";
 import { TILE_SIZE_PIXELS } from "../constants";

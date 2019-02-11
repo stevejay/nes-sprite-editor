@@ -10,7 +10,7 @@ import {
   selectCurrentBackgroundPatternTable
 } from "../editor/store";
 import { connect } from "react-redux";
-import { GamePaletteCollectionWithColors, PatternTable } from "../../model";
+import { GamePaletteCollectionWithColors, PatternTable } from "../editor";
 
 type Props = {
   backgroundPalettes: GamePaletteCollectionWithColors | null;

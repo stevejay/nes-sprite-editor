@@ -1,11 +1,11 @@
 import React from "react";
 import { connect } from "react-redux";
-import EntityManagementToolbar from "../../shared/EntityManagementToolbar";
+import EntityManagementToolbar from "./EntityManagementToolbar";
 import {
   GamePaletteCollectionWithColors,
   Nametable as NametableType,
   PatternTable
-} from "../../model";
+} from "./store";
 import Nametable from "./Nametable";
 import {
   Action,

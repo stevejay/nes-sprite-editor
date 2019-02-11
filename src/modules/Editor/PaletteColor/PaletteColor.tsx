@@ -1,6 +1,6 @@
 import React from "react";
 import classNames from "classnames";
-import { Color } from "../../../model";
+import { Color } from "../store";
 import formatByteAsHex from "../../../shared/utils/format-byte-as-hex";
 import styles from "./PaletteColor.module.scss";
 

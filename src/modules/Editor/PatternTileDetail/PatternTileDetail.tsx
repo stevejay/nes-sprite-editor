@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./PatternTileDetail.module.scss";
-import { PatternTile, GamePaletteWithColors } from "../../../model";
+import { PatternTile, GamePaletteWithColors } from "../store";
 import Tile from "./Tile";
 import TileCanvas from "../../../shared/TileCanvas";
 

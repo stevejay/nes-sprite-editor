@@ -2,7 +2,7 @@ import FocusTrap from "focus-trap-react";
 import React from "react";
 import { Portal } from "react-portal";
 import ColorPicker from "./ColorPicker";
-import { Color, SystemPalette } from "../../../model";
+import { Color, SystemPalette } from "../store";
 import {
   useAriaHidden,
   usePreventBodyScroll,

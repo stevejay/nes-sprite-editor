@@ -1,7 +1,0 @@
-{
-  "tags": ["model"],
-  "exports": {
-    "index": "*"
-  },
-  "imports": []
-}

@@ -1,6 +1,6 @@
 import { range } from "lodash";
 import sync from "save-file";
-import { PatternTable, PatternTile } from "../../model";
+import { PatternTable, PatternTile } from "../editor";
 import { PATTERN_TABLE_COLUMNS } from "../editor/constants";
 
 export default function downloadPatternTable(

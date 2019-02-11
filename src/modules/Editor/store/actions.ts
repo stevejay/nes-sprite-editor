@@ -1,5 +1,5 @@
 import { ActionTypes, Action } from "./types";
-import { Color } from "../../../model";
+import { Color } from "../store";
 
 export function setSystemPalette(id: string): Action {
   return {

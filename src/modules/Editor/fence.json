@@ -3,5 +3,5 @@
   "exports": {
     "index": "*"
   },
-  "imports": ["shared", "model"]
+  "imports": ["shared"]
 }

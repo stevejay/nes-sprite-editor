@@ -5,7 +5,7 @@ import SystemPaletteSection from "../SystemPaletteSection";
 import { Provider } from "react-redux";
 import { createStore, combineReducers } from "redux";
 import { State, reducer, EditorStateSlice } from "../store";
-import { SYSTEM_PALETTE_OPTIONS } from "../../../model";
+import { SYSTEM_PALETTE_OPTIONS } from "../constants";
 
 const initialState: State = {
   nametables: [],

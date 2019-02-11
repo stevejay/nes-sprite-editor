@@ -1,7 +1,7 @@
 import React from "react";
 import PatternTable from "./PatternTable";
 import Section from "../../shared/Section";
-import EntityManagementToolbar from "../../shared/EntityManagementToolbar";
+import EntityManagementToolbar from "./EntityManagementToolbar";
 import { connect } from "react-redux";
 import {
   selectBackgroundPatternTables,
@@ -20,7 +20,7 @@ import {
   PatternTable as PatternTableType,
   GamePaletteCollectionWithColors,
   Nametable
-} from "../../model";
+} from "./store";
 import RadioInput from "../../shared/RadioInput";
 import PatternTileDetail from "./PatternTileDetail";
 import { filter } from "lodash";

@@ -4,7 +4,7 @@ import {
   PatternTable as PatternTableType,
   GamePaletteCollectionWithColors,
   GamePaletteWithColors
-} from "../../../model";
+} from "../store";
 import PatternTableCanvas from "./PatternTableCanvas";
 import {
   TILE_SIZE_PIXELS,

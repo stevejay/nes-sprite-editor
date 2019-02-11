@@ -4,7 +4,7 @@ import {
   SystemPalette,
   GamePaletteCollectionWithColors,
   Color
-} from "../../../model";
+} from "../store";
 import styles from "./PaletteCollection.module.scss";
 import PaletteColorInput from "../PaletteColorInput";
 import { RovingTabIndexProvider } from "../../../shared/RovingTabIndex";

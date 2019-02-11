@@ -3,7 +3,7 @@ import { host } from "storybook-host";
 import { State, Store } from "@sambego/storybook-state";
 import { storiesOf } from "@storybook/react";
 import "../../../index.scss";
-import { SYSTEM_PALETTE_OPTIONS } from "../../../../model";
+import { SYSTEM_PALETTE_OPTIONS } from "../../constants";
 import ColorPicker from "../ColorPicker";
 
 const storyHost = host({

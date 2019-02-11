@@ -1,5 +1,5 @@
 import React from "react";
-import { Color, SystemPalette } from "../../../model";
+import { Color, SystemPalette } from "../store";
 import PaletteColor from "../PaletteColor";
 import { useRovingTabIndex } from "../../../shared/RovingTabIndex";
 import useFocusEffect from "../../../shared/utils/use-focus-effect";
