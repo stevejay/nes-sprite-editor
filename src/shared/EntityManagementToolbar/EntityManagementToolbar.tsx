@@ -1,11 +1,16 @@
 import { isEmpty, isNil } from "lodash";
 import React from "react";
-import { Entity } from "../../types";
 import Button from "../Button";
 import { RovingTabIndexProvider } from "../RovingTabIndex";
 import SelectInput from "../SelectInput";
 import styles from "./EntityManagementToolbar.module.scss";
 import RenameEntityModal from "./RenameEntityModal";
+
+// TODO think about a different way of doing this:
+type Entity = {
+  id: string;
+  label: string;
+};
 
 type Props = {
   entities: Array<Entity>;

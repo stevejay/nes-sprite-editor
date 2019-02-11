@@ -1,7 +1,7 @@
 import React from "react";
 import classNames from "classnames";
-import { Color } from "../../types";
-import formatByteAsHex from "../utils/format-byte-as-hex";
+import { Color } from "../../../model";
+import formatByteAsHex from "../../../shared/utils/format-byte-as-hex";
 import styles from "./PaletteColor.module.scss";
 
 type Props = {

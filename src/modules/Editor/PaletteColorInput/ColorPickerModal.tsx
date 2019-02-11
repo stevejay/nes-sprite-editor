@@ -2,14 +2,14 @@ import FocusTrap from "focus-trap-react";
 import React from "react";
 import { Portal } from "react-portal";
 import ColorPicker from "./ColorPicker";
-import { Color, SystemPalette } from "../../types";
+import { Color, SystemPalette } from "../../../model";
 import {
   useAriaHidden,
   usePreventBodyScroll,
   PointingModalContainer,
   ModalBackdrop
-} from "../Modal";
-import { Transition } from "react-spring/renderprops"; // TODO change to hook?
+} from "../../../shared/Modal";
+import { Transition } from "react-spring/renderprops"; // TODO change to hook
 
 type Props = {
   isOpen: boolean;
@@ -30,6 +30,7 @@ const ColorPickerModal: React.FunctionComponent<Props> = ({
 }) => {
   usePreventBodyScroll(isOpen);
   useAriaHidden(isOpen);
+
   return (
     <Transition
       config={{ duration: 150 }}

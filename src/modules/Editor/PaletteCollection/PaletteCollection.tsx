@@ -4,9 +4,9 @@ import {
   SystemPalette,
   GamePaletteCollectionWithColors,
   Color
-} from "../../../types";
+} from "../../../model";
 import styles from "./PaletteCollection.module.scss";
-import PaletteColorInput from "../../../shared/PaletteColorInput";
+import PaletteColorInput from "../PaletteColorInput";
 import { RovingTabIndexProvider } from "../../../shared/RovingTabIndex";
 
 type Props = {

@@ -1,8 +1,8 @@
 import * as React from "react";
 import styles from "./ColorPicker.module.scss";
-import { SystemPalette, Color } from "../../types";
-import useSizedCanvasEffect from "../utils/use-sized-canvas-effect";
-import TileCanvas from "../TileCanvas";
+import { SystemPalette, Color } from "../../../model";
+import useSizedCanvasEffect from "../../../shared/utils/use-sized-canvas-effect";
+import TileCanvas from "../../../shared/TileCanvas";
 
 const COLUMNS = 16;
 const ROWS = 64 / COLUMNS;

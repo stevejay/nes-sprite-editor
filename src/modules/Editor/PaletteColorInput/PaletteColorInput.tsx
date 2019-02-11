@@ -1,14 +1,14 @@
 import React from "react";
-import { Color, SystemPalette } from "../../types";
+import { Color, SystemPalette } from "../../../model";
 import PaletteColor from "../PaletteColor";
-import { useRovingTabIndex } from "../RovingTabIndex";
-import useFocusEffect from "../utils/use-focus-effect";
+import { useRovingTabIndex } from "../../../shared/RovingTabIndex";
+import useFocusEffect from "../../../shared/utils/use-focus-effect";
 import ColorPickerModal from "./ColorPickerModal";
 import styles from "./PaletteColorInput.module.scss";
 
 type Props = {
   color: Color;
-  systemPalette: SystemPalette; // TODO remove this when using redux
+  systemPalette: SystemPalette;
   onChange: (color: Color) => void;
 };
 

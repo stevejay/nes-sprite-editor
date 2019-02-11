@@ -1,0 +1,18 @@
+@import "styles/_base.scss";
+
+.header {
+  padding: 0 $gutter;
+  box-shadow: $box-shadow;
+  background: #8a2387; /* fallback for old browsers */
+  background: linear-gradient(to right, #f27121, #e94057, #8a2387);
+}
+
+.header h1 {
+  font-weight: $font-weight-light;
+  font-size: rem(32);
+  padding: rem(12) 0;
+  color: $md-white;
+  margin: 0;
+  user-select: none;
+  cursor: default;
+}

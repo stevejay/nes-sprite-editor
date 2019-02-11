@@ -15,12 +15,12 @@ import {
   deletePatternTable,
   renamePatternTable,
   selectCurrentNametable
-} from "./redux";
+} from "./store";
 import {
   PatternTable as PatternTableType,
   GamePaletteCollectionWithColors,
   Nametable
-} from "../../types";
+} from "../../model";
 import RadioInput from "../../shared/RadioInput";
 import PatternTileDetail from "./PatternTileDetail";
 import { filter } from "lodash";

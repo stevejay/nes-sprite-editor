@@ -1,5 +1,5 @@
 import React from "react";
-import { GamePaletteCollectionWithColors } from "../../types";
+import { GamePaletteCollectionWithColors } from "../../model";
 import createGameDataText from "./create-game-data-text";
 import useVersion from "../../shared/utils/use-version";
 

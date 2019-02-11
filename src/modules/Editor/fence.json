@@ -1,0 +1,7 @@
+{
+  "tags": ["editor"],
+  "exports": {
+    "index": "*"
+  },
+  "imports": ["shared", "model"]
+}

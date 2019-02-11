@@ -1,0 +1,7 @@
+{
+  "tags": ["dataOutput"],
+  "exports": {
+    "index": "*"
+  },
+  "imports": ["shared", "model"]
+}

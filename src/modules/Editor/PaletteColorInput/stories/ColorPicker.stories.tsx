@@ -3,8 +3,8 @@ import { host } from "storybook-host";
 import { State, Store } from "@sambego/storybook-state";
 import { storiesOf } from "@storybook/react";
 import "../../../index.scss";
-import PaletteColorInput from "..";
-import { SYSTEM_PALETTE_OPTIONS } from "../../../constants";
+import { SYSTEM_PALETTE_OPTIONS } from "../../../../model";
+import ColorPicker from "../ColorPicker";
 
 const storyHost = host({
   align: "center middle",
@@ -12,18 +12,19 @@ const storyHost = host({
 });
 
 const store = new Store({
-  color: SYSTEM_PALETTE_OPTIONS[0].values[13]
+  colorId: 0
 });
 
-storiesOf("PaletteColorInput/PaletteColorInput", module)
+storiesOf("PaletteColorInput/ColorPicker", module)
   .addDecorator(storyHost)
   .add("Basic", () => (
     <State store={store}>
       {state => (
-        <PaletteColorInput
-          color={state.color}
-          systemPalette={SYSTEM_PALETTE_OPTIONS[0]}
-          onChange={color => store.set({ color })}
+        <ColorPicker
+          palette={SYSTEM_PALETTE_OPTIONS[0]}
+          selectedColorId={state.colorId}
+          scale={24}
+          onChange={color => store.set({ colorId: color.id })}
         />
       )}
     </State>

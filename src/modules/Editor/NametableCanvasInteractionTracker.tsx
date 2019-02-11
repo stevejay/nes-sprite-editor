@@ -16,9 +16,9 @@ import {
   convertViewportCoordToNameableMetatile,
   convertMetatileIndexToCanvasCoords
 } from "./experiment";
-import { PatternTable, Nametable } from "../../types";
+import { PatternTable, Nametable } from "../../model";
 import { isNil } from "lodash";
-import { Action } from "./redux";
+import { Action } from "./store";
 
 const DRAG_POSITION = { x: 0, y: 0 };
 

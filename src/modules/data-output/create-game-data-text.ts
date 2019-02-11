@@ -2,7 +2,7 @@ import formatByteAsHex from "../../shared/utils/format-byte-as-hex";
 import {
   GamePaletteWithColors,
   GamePaletteCollectionWithColors
-} from "../../types";
+} from "../../model";
 
 export default function createGameDataText(
   backgroundPaletteCollection: GamePaletteCollectionWithColors | null,

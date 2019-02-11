@@ -1,0 +1,9 @@
+{
+  "tags": ["shared"],
+  "exports": {
+    "index": "*",
+    "*/index": "*",
+    "utils/*": "*"
+  },
+  "imports": []
+}

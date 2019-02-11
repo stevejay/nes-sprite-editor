@@ -4,7 +4,7 @@ import {
   Nametable as NametableType,
   PatternTable,
   GamePaletteCollectionWithColors
-} from "../../types";
+} from "../../model";
 import NametableCanvas from "./NametableCanvas";
 import NametableCanvasInteractionTracker from "./NametableCanvasInteractionTracker";
 import styles from "./Nametable.module.scss";
@@ -20,7 +20,7 @@ import {
   moveRenderCanvas
 } from "./experiment";
 import Button from "../../shared/Button";
-import { Action } from "./redux";
+import { Action } from "./store";
 
 export type PaletteOption = {
   id: number;

@@ -1,4 +1,4 @@
-import { Color } from "../../types";
+import { Color } from "../../model";
 import { TILE_SIZE_PIXELS } from "./constants";
 
 const UNAVAILABLE_COLOR = "#000";

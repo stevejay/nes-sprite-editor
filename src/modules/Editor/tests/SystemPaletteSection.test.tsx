@@ -3,10 +3,9 @@ import { render, cleanup } from "react-testing-library";
 import "jest-dom/extend-expect";
 import SystemPaletteSection from "../SystemPaletteSection";
 import { Provider } from "react-redux";
-import { createStore } from "redux";
-import { State } from "../redux";
-import { SYSTEM_PALETTE_OPTIONS } from "../../../constants";
-import rootReducer from "../../../root-reducer";
+import { createStore, combineReducers } from "redux";
+import { State, reducer, EditorStateSlice } from "../store";
+import { SYSTEM_PALETTE_OPTIONS } from "../../../model";
 
 const initialState: State = {
   nametables: [],
@@ -18,6 +17,10 @@ const initialState: State = {
   patternTables: [],
   selectedPatternTableIds: { background: null, sprite: null }
 };
+
+const rootReducer = combineReducers<EditorStateSlice>({
+  editor: reducer
+});
 
 const renderComponent = (mergeState: Partial<State>) =>
   render(
@@ -36,5 +39,3 @@ test("displays system palette section", async () => {
   const { container } = renderComponent({});
   expect(container.querySelector("h2")).toHaveTextContent("System Palette");
 });
-
-// access via accessibility

@@ -5,7 +5,7 @@ import {
   GamePaletteCollectionWithColors,
   Nametable as NametableType,
   PatternTable
-} from "../../types";
+} from "../../model";
 import Nametable from "./Nametable";
 import {
   Action,
@@ -20,7 +20,7 @@ import {
   selectCurrentNametable,
   selectNametables,
   setNametable
-} from "./redux";
+} from "./store";
 import Section from "../../shared/Section";
 
 type Props = {

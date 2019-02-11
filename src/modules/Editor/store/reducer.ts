@@ -4,8 +4,8 @@ import { Action, ActionTypes, State } from "./types";
 import {
   SYSTEM_PALETTE_OPTIONS,
   BACKGROUND_PATTERN_TABLE_OPTIONS
-} from "../../../constants";
-import { GamePaletteCollection, PatternTable } from "../../../types";
+} from "../../../model";
+import { GamePaletteCollection, PatternTable } from "../../../model";
 
 export const initialState: State = {
   nametables: [

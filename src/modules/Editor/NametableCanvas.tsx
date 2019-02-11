@@ -1,7 +1,11 @@
 import React from "react";
 import usePositionedCanvasEffect from "../../shared/utils/use-positioned-canvas-effect";
 import useSizedCanvasEffect from "../../shared/utils/use-sized-canvas-effect";
-import { GamePaletteWithColors, Nametable, PatternTile } from "../../types";
+import {
+  GamePaletteWithColors,
+  Nametable,
+  PatternTile
+} from "../../model";
 import drawTile from "./draw-tile";
 import {
   createTileIndexBounds,

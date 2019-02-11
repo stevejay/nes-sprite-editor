@@ -4,7 +4,7 @@ import {
   GamePaletteCollection,
   GamePaletteCollectionWithColors,
   SystemPalette
-} from "../../../types";
+} from "../../../model";
 import { EditorStateSlice } from "./types";
 
 export function selectNametables(state: EditorStateSlice) {

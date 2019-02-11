@@ -15,13 +15,13 @@ import {
   renamePaletteCollection,
   changePaletteColor,
   Action
-} from "./redux";
+} from "./store";
 import {
   GamePaletteCollectionWithColors,
   SystemPalette,
   GamePaletteCollection,
   Color
-} from "../../types";
+} from "../../model";
 
 type Props = {
   currentSystemPalette: SystemPalette;

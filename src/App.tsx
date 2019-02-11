@@ -4,7 +4,7 @@ import { createStore, combineReducers } from "redux";
 import {
   reducer as editorReducer,
   State as EditorState
-} from "./modules/Editor/redux";
+} from "./modules/Editor";
 import styles from "./App.module.scss";
 import DataOutput from "./modules/DataOutput";
 import SkipLink from "./shared/SkipLink";

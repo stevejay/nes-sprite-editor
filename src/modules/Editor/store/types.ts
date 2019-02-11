@@ -6,7 +6,7 @@ import {
   GamePaletteType,
   PatternTableType,
   Color
-} from "../../../types";
+} from "../../../model";
 
 export enum ActionTypes {
   SELECT_NAMETABLE = "SELECT_NAMETABLE",

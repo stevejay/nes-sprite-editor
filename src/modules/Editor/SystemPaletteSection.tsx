@@ -4,14 +4,14 @@ import { Label } from "../../shared/Form";
 import Section from "../../shared/Section";
 import SelectInput from "../../shared/SelectInput";
 import useId from "../../shared/utils/use-id";
-import { SystemPalette } from "../../types";
+import { SystemPalette } from "../../model";
 import {
   Action,
   EditorStateSlice,
   selectCurrentSystemPalette,
   selectSystemPalettes,
   setSystemPalette
-} from "./redux";
+} from "./store";
 
 type Props = {
   systemPalettes: Array<SystemPalette>;

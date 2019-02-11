@@ -29,6 +29,7 @@
     "classnames": "^2.2.6",
     "final-form": "^4.11.1",
     "focus-trap-react": "^6.0.0",
+    "good-fences": "^0.5.1",
     "jest-dom": "^3.1.0",
     "lodash": "^4.17.11",
     "material-colors": "^1.2.6",
@@ -59,7 +60,8 @@
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 9009 -s public",
     "build-storybook": "build-storybook -s public",
-    "upgrade-interactive": "npm-check --update"
+    "upgrade-interactive": "npm-check --update",
+    "check-modules": "gf"
   },
   "eslintConfig": {
     "extends": "react-app"

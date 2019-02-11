@@ -8,9 +8,9 @@ import {
   selectCurrentBackgroundPalettes,
   selectCurrentSpritePalettes,
   selectCurrentBackgroundPatternTable
-} from "../Editor/redux";
+} from "../Editor/store";
 import { connect } from "react-redux";
-import { GamePaletteCollectionWithColors, PatternTable } from "../../types";
+import { GamePaletteCollectionWithColors, PatternTable } from "../../model";
 
 type Props = {
   backgroundPalettes: GamePaletteCollectionWithColors | null;
