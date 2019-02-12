@@ -64,7 +64,7 @@ const ColorPicker = ({ palette, selectedColorId, scale, onChange }: Props) => {
         tileHeight={scale}
         row={currentRow}
         column={currentColumn}
-        ariaLabel="todo"
+        aria-label="todo"
       />
     </TileCanvas.InteractionTracker>
   );

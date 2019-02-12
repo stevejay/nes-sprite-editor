@@ -11,7 +11,9 @@ type Props = {
 const ModalHeader: React.FunctionComponent<Props> = ({ onClose, children }) => (
   <header className={styles.header}>
     <h1>{children}</h1>
-    {onClose && <Button icon={FiX} onClick={onClose} color="transparent" />}
+    {onClose && (
+      <Button icon={FiX} onClick={onClose} appearance="transparent" />
+    )}
   </header>
 );
 

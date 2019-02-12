@@ -322,7 +322,7 @@ const Nametable: React.FunctionComponent<Props> = ({
               nametable={nametable}
               patternTiles={patternTable.tiles}
               palettes={paletteCollection.gamePalettes}
-              ariaLabel="Nametable tiles"
+              aria-label="Nametable tiles"
             />
           </NametableCanvasInteractionTracker>
         </div>

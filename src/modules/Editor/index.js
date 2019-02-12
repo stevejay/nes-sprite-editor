@@ -1,4 +1,4 @@
-export { default as SystemPaletteSection } from "./SystemPaletteSection";
+export { default as SystemPaletteSection } from "./areas/SystemPaletteSection";
 export {
   default as BackgroundPalettesSection
 } from "./BackgroundPalettesSection";

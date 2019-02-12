@@ -1,7 +1,7 @@
 import React from "react";
 import { render, cleanup } from "react-testing-library";
 import "jest-dom/extend-expect";
-import SystemPaletteSection from "../SystemPaletteSection";
+import SystemPaletteSection from "../areas/SystemPaletteSection";
 import { Provider } from "react-redux";
 import { createStore, combineReducers } from "redux";
 import { State, reducer, EditorStateSlice } from "../store";

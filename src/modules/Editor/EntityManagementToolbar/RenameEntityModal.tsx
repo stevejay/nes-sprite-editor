@@ -47,7 +47,7 @@ const RenameEntityModal = ({ isOpen, name, onRename, onClose }: Props) => {
             </ModalDialog.Content>
             <ModalDialog.Footer>
               <Button onClick={onClose}>Cancel</Button>
-              <Button type="submit" color="primary" disabled={submitting}>
+              <Button type="submit" appearance="primary" disabled={submitting}>
                 Rename
               </Button>
             </ModalDialog.Footer>

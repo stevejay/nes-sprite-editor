@@ -85,14 +85,14 @@ const PatternTable = ({
           scale={scale}
           tiles={patternTable.tiles}
           palette={palette}
-          ariaLabel="Pattern table tiles"
+          aria-label="Pattern table tiles"
         />
         <TileCanvas.Highlight
           tileWidth={TILE_SIZE_PIXELS * scale}
           tileHeight={TILE_SIZE_PIXELS * scale}
           row={row}
           column={column}
-          ariaLabel={`Tile ${tileIndex}, row ${row}, column ${column}`}
+          aria-label={`Tile ${tileIndex}, row ${row}, column ${column}`}
         />
       </TileCanvas.InteractionTracker>
     </TileCanvas.Container>

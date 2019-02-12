@@ -1,11 +1,7 @@
 import React from "react";
 import usePositionedCanvasEffect from "../../shared/utils/use-positioned-canvas-effect";
 import useSizedCanvasEffect from "../../shared/utils/use-sized-canvas-effect";
-import {
-  GamePaletteWithColors,
-  Nametable,
-  PatternTile
-} from "./store";
+import { GamePaletteWithColors, Nametable, PatternTile } from "./store";
 import drawTile from "./draw-tile";
 import {
   createTileIndexBounds,
@@ -78,7 +74,7 @@ type Props = {
   nametable: Nametable;
   patternTiles: Array<PatternTile>;
   palettes: Array<GamePaletteWithColors>;
-  ariaLabel: string;
+  ["aria-label"]: string;
   // react-draggable:
   style?: any; // TODO fix any
   onMouseDown?: (event: React.MouseEvent<HTMLElement>) => void; // TODO fix any
@@ -92,13 +88,13 @@ const NametableCanvas = ({
   nametable,
   patternTiles,
   palettes,
-  ariaLabel,
   // react-draggable:
   style,
   onMouseDown,
   onMouseUp,
   onTouchStart,
-  onTouchEnd
+  onTouchEnd,
+  ...rest
 }: Props) => {
   const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
 
@@ -126,11 +122,11 @@ const NametableCanvas = ({
 
   return (
     <canvas
+      {...rest}
       ref={canvasRef}
       className={styles.canvas}
       style={style}
       role="img"
-      aria-label={ariaLabel}
       onMouseDown={onMouseDown}
       onMouseUp={onMouseUp}
       onTouchStart={onTouchStart}

@@ -39,8 +39,8 @@ const PaletteCollection = ({
               {paletteIndex}
             </h4>
             <PaletteColorInput.Container
-              ariaLabel="Color edit toolbar"
-              ariaOrientation="horizontal"
+              aria-label="Color edit toolbar"
+              aria-orientation="horizontal"
               role="toolbar"
             >
               <RovingTabIndexProvider>

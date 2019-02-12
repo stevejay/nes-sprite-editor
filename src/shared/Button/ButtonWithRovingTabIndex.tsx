@@ -8,9 +8,8 @@ type Props = {
   icon?: ButtonProps["icon"];
   children?: ButtonProps["children"];
   disabled?: ButtonProps["disabled"];
-  ariaLabel?: ButtonProps["ariaLabel"];
   size?: ButtonProps["size"];
-  color?: ButtonProps["color"];
+  appearance?: ButtonProps["appearance"];
   className?: ButtonProps["className"];
   onClick?: ButtonProps["onClick"];
   onKeyDown?: ButtonProps["onKeyDown"];

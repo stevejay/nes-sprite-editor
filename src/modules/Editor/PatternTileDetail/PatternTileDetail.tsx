@@ -25,7 +25,7 @@ const PatternTileDetail = ({
         scale={scale}
         tile={tile}
         palette={palette}
-        ariaLabel={`Tile number ${tileIndex}`}
+        aria-label={`Tile number ${tileIndex}`}
       />
     </TileCanvas.Container>
     <div>

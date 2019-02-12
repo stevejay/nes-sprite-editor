@@ -1,0 +1,117 @@
+@import "styles/_base.scss";
+
+.container {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.container label {
+  margin-bottom: rem(8);
+}
+
+.toggleButton {
+  text-align: left;
+  padding-right: rem(26);
+}
+
+.toggleButton::after {
+  position: absolute;
+  top: 50%;
+  right: 1em;
+  transform: translateY(-50%);
+  display: inline-block;
+  content: "";
+  border-top: 0.35em solid;
+  border-right: 0.35em solid transparent;
+  border-bottom: 0;
+  border-left: 0.35em solid transparent;
+  color: $md-grey-700;
+}
+
+.menu {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  background-color: $md-white;
+  border-radius: rem(3);
+  border-style: solid;
+  border-width: 1px;
+  border-color: $md-grey-300;
+  padding: rem(5);
+}
+
+.menu.open {
+  display: flex;
+  flex-direction: column;
+}
+
+.menu li {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/*
+$button-v-padding: 10;
+
+.container {
+  position: relative;
+  color: inherit;
+  width: 100%;
+}
+
+.container::after {
+  content: "\25BE";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: rem(13);
+  color: $md-grey-800;
+  pointer-events: none;
+}
+
+.container.disabled::after {
+  color: $md-grey-500;
+}
+
+.container > select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 100%;
+  height: rem($button-v-padding + $button-v-padding + 16 + 2);
+  padding: rem($button-v-padding) rem(32) rem($button-v-padding) rem(12);
+  font-family: inherit;
+  font-size: rem(16);
+  line-height: 1;
+  vertical-align: middle;
+  border: 1px solid $md-grey-500;
+  border-radius: rem(3);
+  outline: 0;
+  background-color: $md-white;
+  line-height: 1.5rem;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.container > select:disabled {
+  background-color: $md-grey-200;
+  border-color: $md-grey-400;
+  cursor: not-allowed;
+}
+
+.container > select:-moz-focusring,
+.container > select::-moz-focus-inner {
+  color: transparent !important;
+  text-shadow: 0 0 0 #000 !important;
+  background-image: none !important;
+  border: 0;
+}
+
+.container > select:focus {
+  @include focus-ring;
+}
+
+*/

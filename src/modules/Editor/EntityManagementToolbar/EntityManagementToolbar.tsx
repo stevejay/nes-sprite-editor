@@ -45,14 +45,14 @@ const EntityManagementToolbar = ({
       <div className={styles.buttonsContainer}>
         <RovingTabIndexProvider>
           <Button.WithRovingTabIndex
-            ariaLabel={`Create a new ${entityName}`}
+            aria-label={`Create a new ${entityName}`}
             size="small"
             onClick={onNewEntity}
           >
             New
           </Button.WithRovingTabIndex>
           <Button.WithRovingTabIndex
-            ariaLabel={`Rename the current ${entityName}`}
+            aria-label={`Rename the current ${entityName}`}
             disabled={hasNoOptions}
             size="small"
             onClick={() => setIsOpen(true)}
@@ -60,7 +60,7 @@ const EntityManagementToolbar = ({
             Rename
           </Button.WithRovingTabIndex>
           <Button.WithRovingTabIndex
-            ariaLabel={`Copy the current ${entityName}`}
+            aria-label={`Copy the current ${entityName}`}
             disabled={hasNoOptions}
             size="small"
             onClick={() => currentEntity && onCopyEntity(currentEntity.id)}
@@ -68,7 +68,7 @@ const EntityManagementToolbar = ({
             Copy
           </Button.WithRovingTabIndex>
           <Button.WithRovingTabIndex
-            ariaLabel={`Delete the current ${entityName}`}
+            aria-label={`Delete the current ${entityName}`}
             disabled={hasNoOptions}
             size="small"
             onClick={() => currentEntity && onDeleteEntity(currentEntity.id)}

@@ -20,7 +20,7 @@ storiesOf("TileCanvas/Highlight", module)
         column={3}
         tileWidth={50}
         tileHeight={30}
-        ariaLabel="The aria label"
+        aria-label="The aria label"
         focusOnly={boolean("Focus only", false)}
       >
         foo

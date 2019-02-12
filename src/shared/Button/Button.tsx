@@ -5,13 +5,14 @@ import classNames from "classnames";
 
 export type Props = {
   type?: "button" | "submit";
+  role?: string;
   icon?: IconType;
   children?: React.ReactNode;
   tabIndex?: number;
   disabled?: boolean;
-  ariaLabel?: string;
+  ["aria-label"]?: string;
   size?: "small" | "medium";
-  color?: "default" | "primary" | "transparent";
+  appearance?: "default" | "primary" | "input" | "transparent";
   className?: string;
   onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   onKeyDown?: (event: React.KeyboardEvent<HTMLButtonElement>) => void;
@@ -21,34 +22,36 @@ const Button = React.forwardRef<HTMLButtonElement, Props>(
   (
     {
       type = "button",
+      role,
       icon,
       children,
       tabIndex = 0,
       disabled = false,
-      ariaLabel,
       size = "medium",
-      color = "default",
+      appearance = "default",
       className,
       onClick,
-      onKeyDown
+      onKeyDown,
+      ...rest
     }: Props,
     ref
   ) => {
     const buttonClassNames = classNames(
       styles.button,
       styles[size],
-      styles[color],
+      styles[appearance],
       className
     );
 
     return (
       <button
+        {...rest}
         ref={ref}
         type={type}
+        role={role}
         disabled={disabled}
         className={buttonClassNames}
         tabIndex={tabIndex}
-        aria-label={ariaLabel}
         onClick={onClick}
         onKeyDown={onKeyDown}
       >

@@ -12,9 +12,9 @@ const storyHost = host({
   backdrop: "transparent"
 });
 
-const options = ["default", "primary", "transparent"];
+const options = ["default", "primary", "input", "transparent"];
 
-type Options = "default" | "primary" | "transparent";
+type Options = "default" | "primary" | "input" | "transparent";
 
 const Spacer = () => <div style={{ display: "inline-block", width: 16 }} />;
 
@@ -27,8 +27,9 @@ storiesOf("Button", module)
         icon={FiEdit3}
         tabIndex={0}
         onClick={noop}
+        aria-label="some aria label"
         disabled={boolean("Disabled", false)}
-        color={select("Color", options, "default") as Options}
+        appearance={select("Color", options, "default") as Options}
       />
       <Spacer />
       <Button
@@ -36,7 +37,7 @@ storiesOf("Button", module)
         tabIndex={0}
         onClick={noop}
         disabled={boolean("Disabled", false)}
-        color={select("Color", options, "default") as Options}
+        appearance={select("Color", options, "default") as Options}
       >
         Edit
       </Button>
@@ -45,7 +46,7 @@ storiesOf("Button", module)
         tabIndex={0}
         onClick={noop}
         disabled={boolean("Disabled", false)}
-        color={select("Color", options, "default") as Options}
+        appearance={select("Color", options, "default") as Options}
       >
         Edit
       </Button>
@@ -55,7 +56,7 @@ storiesOf("Button", module)
         tabIndex={0}
         onClick={noop}
         disabled={boolean("Disabled", false)}
-        color={select("Color", options, "default") as Options}
+        appearance={select("Color", options, "default") as Options}
       >
         Submit
       </Button>

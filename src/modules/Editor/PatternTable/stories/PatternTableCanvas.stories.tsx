@@ -34,7 +34,7 @@ storiesOf("PatternTableCanvas", module)
         pixels
       }))}
       palette={BACKGROUND_PALETTE}
-      ariaLabel="The aria label"
+      aria-label="The aria label"
     />
   ))
   .add("1 x 1", () => (
@@ -46,6 +46,6 @@ storiesOf("PatternTableCanvas", module)
         pixels
       }))}
       palette={BACKGROUND_PALETTE}
-      ariaLabel="The aria label"
+      aria-label="The aria label"
     />
   ));

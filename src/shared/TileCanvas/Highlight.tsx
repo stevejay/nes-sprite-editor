@@ -7,7 +7,7 @@ type Props = {
   tileHeight: number;
   row: number;
   column: number;
-  ariaLabel: string;
+  ["aria-label"]: string;
   focusOnly?: boolean;
 };
 
@@ -17,8 +17,8 @@ const Highlight = ({
   tileHeight,
   row,
   column,
-  ariaLabel,
-  focusOnly = false
+  focusOnly = false,
+  ...rest
 }: Props) => {
   const tileRef = React.useRef<HTMLDivElement | null>(null);
 
@@ -36,12 +36,12 @@ const Highlight = ({
 
   return (
     <div
+      {...rest}
       ref={tileRef}
       className={`${styles.container} ${focusOnly ? styles.focusOnly : ""}`}
       tabIndex={0}
       style={style}
       onClick={event => event.stopPropagation()}
-      aria-label={ariaLabel}
     >
       {children}
     </div>

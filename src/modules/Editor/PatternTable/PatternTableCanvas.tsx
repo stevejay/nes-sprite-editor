@@ -11,7 +11,7 @@ type Props = {
   scale: number; // in range [1, ...]
   tiles: Array<PatternTile>;
   palette: GamePaletteWithColors;
-  ariaLabel: string;
+  ["aria-label"]: string;
 };
 
 const PatternTableCanvas = ({
@@ -20,7 +20,7 @@ const PatternTableCanvas = ({
   scale,
   tiles,
   palette,
-  ariaLabel
+  ...rest
 }: Props) => {
   const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
 
@@ -50,11 +50,11 @@ const PatternTableCanvas = ({
 
   return (
     <canvas
+      {...rest}
       ref={canvasRef}
       className={styles.canvas}
       style={canvasSize}
       role="img"
-      aria-label={ariaLabel}
     />
   );
 };

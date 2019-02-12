@@ -39,7 +39,7 @@ storiesOf("Modal/ModalDialog", module)
             </ModalDialog.Content>
             <ModalDialog.Footer>
               <Button
-                color="primary"
+                appearance="primary"
                 onClick={() => store.set({ isOpen: false })}
               >
                 Done

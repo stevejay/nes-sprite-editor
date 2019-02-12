@@ -10,10 +10,10 @@ type Props = {
   scale: number; // in range [1, ...]
   tile: PatternTile;
   palette: GamePaletteWithColors;
-  ariaLabel: string;
+  ["aria-label"]: string;
 };
 
-const Tile = ({ scale, tile, palette, ariaLabel }: Props) => {
+const Tile = ({ scale, tile, palette, ...rest }: Props) => {
   const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
 
   const canvasSize = useSizedCanvasEffect(
@@ -29,14 +29,7 @@ const Tile = ({ scale, tile, palette, ariaLabel }: Props) => {
     drawTile(ctx, 0, 0, 0, 0, tile.pixels, palette.colors, scale);
   }, [tile, palette, scale]);
 
-  return (
-    <canvas
-      ref={canvasRef}
-      style={canvasSize}
-      role="img"
-      aria-label={ariaLabel}
-    />
-  );
+  return <canvas {...rest} ref={canvasRef} style={canvasSize} role="img" />;
 };
 
 export default Tile;
