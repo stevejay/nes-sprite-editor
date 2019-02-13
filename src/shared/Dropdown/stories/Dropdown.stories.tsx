@@ -1,10 +1,12 @@
 import { State, Store } from "@sambego/storybook-state";
-import { boolean, withKnobs } from "@storybook/addon-knobs";
+import { boolean, withKnobs, select } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/react";
 import * as React from "react";
 import { host } from "storybook-host";
 import "../../../index.scss";
 import Dropdown from "../Dropdown";
+import { PopperProps } from "react-popper";
+import { range } from "lodash";
 
 const storyHost = host({
   align: "center middle",
@@ -13,14 +15,18 @@ const storyHost = host({
 });
 
 const store = new Store({
-  value: 1
+  value: 0
 });
 
-const options = [
-  { id: 1, label: "Some text 1 asdfasd asfasdfa asdf asdfasf asdf adfasf" },
-  { id: 2, label: "Some text 2" },
-  { id: 3, label: "Some text 3" }
-];
+const placementOptions = ["top", "bottom"];
+
+const options = range(0, 20).map(id => ({
+  id,
+  label: `Some text label #${id}`
+}));
+
+options[0].label =
+  "Some text label #0 that is long and so will have an ellipsis or wrap";
 
 storiesOf("Dropdown", module)
   .addDecorator(storyHost)
@@ -29,11 +35,18 @@ storiesOf("Dropdown", module)
     <State store={store}>
       {state => (
         <Dropdown<number>
-          id="select-basic"
           label="Some label:"
           options={options}
           value={state.value}
           disabled={boolean("Disabled", false)}
+          showScrollbar={boolean("Show scrollbar", true)}
+          placement={
+            select(
+              "Placement",
+              placementOptions,
+              "bottom"
+            ) as PopperProps["placement"]
+          }
           onChange={(value: number) => store.set({ value })}
         />
       )}

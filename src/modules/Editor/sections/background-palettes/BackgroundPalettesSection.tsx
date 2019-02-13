@@ -1,47 +1,38 @@
 import React from "react";
-import PaletteCollection from "./PaletteCollection";
-import Section from "../../shared/Section";
-import EntityManagementToolbar from "./EntityManagementToolbar";
 import { connect } from "react-redux";
+import Section from "../../../../shared/Section";
+import EntityManagementToolbar from "../../EntityManagementToolbar";
+import PaletteCollection from "../../PaletteCollection";
 import {
-  EditorStateSlice,
-  selectCurrentSystemPalette,
-  selectBackgroundPaletteCollections,
-  selectCurrentBackgroundPalettes,
-  setPaletteCollection,
   addNewBackgroundPaletteCollection,
+  changePaletteColor,
   copyPaletteCollection,
   deletePaletteCollection,
-  renamePaletteCollection,
-  changePaletteColor,
-  Action
-} from "./store";
-import {
-  GamePaletteCollectionWithColors,
-  SystemPalette,
+  EditorStateSlice,
   GamePaletteCollection,
-  Color
-} from "./store";
+  GamePaletteCollectionWithColors,
+  renamePaletteCollection,
+  selectBackgroundPaletteCollections,
+  selectCurrentBackgroundPalettes,
+  selectCurrentSystemPalette,
+  setPaletteCollection,
+  SystemPalette
+} from "../../store";
 
 type Props = {
-  currentSystemPalette: SystemPalette;
+  systemPalette: SystemPalette;
   paletteCollections: Array<GamePaletteCollection>;
   currentCollection: GamePaletteCollectionWithColors | null;
-  setPaletteCollection: (id: string) => Action;
-  addNewBackgroundPaletteCollection: () => Action;
-  copyPaletteCollection: (id: string) => Action;
-  deletePaletteCollection: (id: string) => Action;
-  renamePaletteCollection: (id: string, label: string) => Action;
-  changePaletteColor: (
-    id: string,
-    gamePaletteIndex: number,
-    valueIndex: number,
-    newColor: Color
-  ) => Action;
+  setPaletteCollection: typeof setPaletteCollection;
+  addNewBackgroundPaletteCollection: typeof addNewBackgroundPaletteCollection;
+  copyPaletteCollection: typeof copyPaletteCollection;
+  deletePaletteCollection: typeof deletePaletteCollection;
+  renamePaletteCollection: typeof renamePaletteCollection;
+  changePaletteColor: typeof changePaletteColor;
 };
 
 const BackgroundPalettesSection = ({
-  currentSystemPalette,
+  systemPalette,
   paletteCollections,
   currentCollection,
   setPaletteCollection,
@@ -69,7 +60,7 @@ const BackgroundPalettesSection = ({
     <h3>Collection Palettes</h3>
     <PaletteCollection
       type="background"
-      systemPalette={currentSystemPalette}
+      systemPalette={systemPalette}
       currentCollection={currentCollection}
       onChangePaletteColor={changePaletteColor}
     />
@@ -78,7 +69,7 @@ const BackgroundPalettesSection = ({
 
 export default connect(
   (state: EditorStateSlice) => ({
-    currentSystemPalette: selectCurrentSystemPalette(state),
+    systemPalette: selectCurrentSystemPalette(state),
     paletteCollections: selectBackgroundPaletteCollections(state),
     currentCollection: selectCurrentBackgroundPalettes(state)
   }),
@@ -90,4 +81,12 @@ export default connect(
     renamePaletteCollection,
     changePaletteColor
   }
-)(BackgroundPalettesSection);
+)(
+  React.memo(
+    BackgroundPalettesSection,
+    (prevProps, nextProps) =>
+      prevProps.systemPalette === nextProps.systemPalette &&
+      prevProps.paletteCollections === nextProps.paletteCollections &&
+      prevProps.currentCollection === nextProps.currentCollection
+  )
+);

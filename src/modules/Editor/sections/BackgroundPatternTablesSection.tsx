@@ -1,7 +1,7 @@
 import React from "react";
-import PatternTable from "./PatternTable";
-import Section from "../../shared/Section";
-import EntityManagementToolbar from "./EntityManagementToolbar";
+import PatternTable from "../PatternTable";
+import Section from "../../../shared/Section";
+import EntityManagementToolbar from "../EntityManagementToolbar";
 import { connect } from "react-redux";
 import {
   selectBackgroundPatternTables,
@@ -15,14 +15,14 @@ import {
   deletePatternTable,
   renamePatternTable,
   selectCurrentNametable
-} from "./store";
+} from "../store";
 import {
   PatternTable as PatternTableType,
   GamePaletteCollectionWithColors,
   Nametable
-} from "./store";
-import RadioInput from "../../shared/RadioInput";
-import PatternTileDetail from "./PatternTileDetail";
+} from "../store";
+import RadioInput from "../../../shared/RadioInput";
+import PatternTileDetail from "../PatternTileDetail";
 import { filter } from "lodash";
 
 const PALETTE_OPTIONS = [
@@ -90,7 +90,7 @@ const BackgroundPatternTablesSection = ({
         <>
           <h3>Pattern Table Tiles</h3>
           <RadioInput.Group<number>
-            legend="Preview palette:"
+            legend="Background palette for preview:"
             options={PALETTE_OPTIONS}
             selectedId={paletteIndex}
             onChange={setPaletteIndex}

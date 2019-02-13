@@ -1,7 +1,7 @@
 import React from "react";
-import PaletteCollection from "./PaletteCollection";
-import Section from "../../shared/Section";
-import EntityManagementToolbar from "./EntityManagementToolbar";
+import PaletteCollection from "../PaletteCollection";
+import Section from "../../../shared/Section";
+import EntityManagementToolbar from "../EntityManagementToolbar";
 import { connect } from "react-redux";
 import {
   EditorStateSlice,
@@ -15,13 +15,13 @@ import {
   renamePaletteCollection,
   changePaletteColor,
   Action
-} from "./store";
+} from "../store";
 import {
   GamePaletteCollectionWithColors,
   SystemPalette,
   GamePaletteCollection,
   Color
-} from "./store";
+} from "../store";
 
 type Props = {
   currentSystemPalette: SystemPalette;

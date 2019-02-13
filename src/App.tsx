@@ -29,9 +29,9 @@ const App: React.FunctionComponent = () => (
         </div>
         <div className={styles.column}>
           <div className={styles.row}>
-            {/* <div className={styles.column}>
+            <div className={styles.column}>
               <NametablesSection />
-            </div> */}
+            </div>
             <div className={styles.column}>
               <BackgroundPatternTablesSection />
             </div>

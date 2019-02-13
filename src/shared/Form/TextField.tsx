@@ -1,32 +1,32 @@
 import React from "react";
-import styles from "./TextField.module.scss";
-import { uniqueId } from "lodash";
 import TextInput from "../TextInput";
-import { FieldRenderProps } from "react-final-form";
 import Label from "./Label";
 import useId from "../utils/use-id";
+import { FieldContainer } from ".";
 
-type Props = FieldRenderProps & {
+type Props = {
+  value: string;
+  onChange: (value: string) => void;
   label: string;
   type?: "text";
   disabled?: boolean;
-  name: string;
+  name?: string;
 };
 
-const TextField = ({ input, label, type, disabled, name }: Props) => {
+const TextField = ({ value, onChange, label, type, disabled, name }: Props) => {
   const id = useId();
   return (
-    <div className={styles.container}>
-      <Label forId={id} label={label} />
+    <FieldContainer>
+      <Label forId={id}>{label}</Label>
       <TextInput
         type={type}
-        value={input.value}
+        value={value}
         name={name}
         disabled={disabled}
         id={id}
-        onChange={input.onChange}
+        onChange={onChange}
       />
-    </div>
+    </FieldContainer>
   );
 };
 

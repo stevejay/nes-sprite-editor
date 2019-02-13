@@ -1,12 +1,14 @@
 import React from "react";
 import { connect } from "react-redux";
-import EntityManagementToolbar from "./EntityManagementToolbar";
+import EntityManagementToolbar from "../EntityManagementToolbar";
 import {
   GamePaletteCollectionWithColors,
   Nametable as NametableType,
-  PatternTable
-} from "./store";
-import Nametable from "./Nametable";
+  PatternTable,
+  changeNametablePaletteIndex,
+  changeNametableTileIndex
+} from "../store";
+import Nametable from "../Nametable";
 import {
   Action,
   addNewNametable,
@@ -20,8 +22,8 @@ import {
   selectCurrentNametable,
   selectNametables,
   setNametable
-} from "./store";
-import Section from "../../shared/Section";
+} from "../store";
+import Section from "../../../shared/Section";
 
 type Props = {
   nametables: Array<NametableType>;
@@ -38,7 +40,17 @@ type Props = {
     tileIndex: number,
     startPixelIndex: number,
     newPixels: Array<number>
-  ) => Action;
+  ) => void;
+  changeNametablePaletteIndex: (
+    id: string,
+    paletteIndex: number,
+    newIndex: number
+  ) => void;
+  changeNametableTileIndex: (
+    id: string,
+    tileIndex: number,
+    newValue: number
+  ) => void;
 };
 
 const NametablesSection = ({
@@ -51,7 +63,9 @@ const NametablesSection = ({
   copyNametable,
   deleteNametable,
   renameNametable,
-  changePatternTablePixels
+  changePatternTablePixels,
+  changeNametablePaletteIndex,
+  changeNametableTileIndex
 }: Props) => (
   <Section>
     <header>
@@ -74,6 +88,8 @@ const NametablesSection = ({
       patternTable={patternTable}
       paletteCollection={paletteCollection}
       onChangePatternTable={changePatternTablePixels}
+      onChangePalette={changeNametablePaletteIndex}
+      onChangeTile={changeNametableTileIndex}
     />
   </Section>
 );
@@ -91,6 +107,8 @@ export default connect(
     copyNametable,
     deleteNametable,
     renameNametable,
-    changePatternTablePixels
+    changePatternTablePixels,
+    changeNametablePaletteIndex,
+    changeNametableTileIndex
   }
 )(NametablesSection);

@@ -8,7 +8,6 @@ import {
 import NametableCanvas from "./NametableCanvas";
 import NametableCanvasInteractionTracker from "./NametableCanvasInteractionTracker";
 import styles from "./Nametable.module.scss";
-import RadioInput from "../../shared/RadioInput";
 import {
   ViewportSize,
   RenderCanvasPositioning,
@@ -17,43 +16,11 @@ import {
   ViewportCoord,
   zoomIntoRenderCanvas,
   zoomOutOfRenderCanvas,
-  moveRenderCanvas
+  moveRenderCanvas,
+  TilePosition
 } from "./experiment";
-import Button from "../../shared/Button";
-import { Action } from "./store";
-
-export type PaletteOption = {
-  id: number;
-  label: string;
-};
-
-const PALETTE_OPTIONS: Array<PaletteOption> = [
-  { id: 0, label: "#0" },
-  { id: 1, label: "#1" },
-  { id: 2, label: "#2" },
-  { id: 3, label: "#3" }
-];
-
-export type ColorIndexOption = {
-  id: number;
-  label: string;
-};
-
-const COLOR_INDEX_OPTIONS: Array<ColorIndexOption> = [
-  { id: 0, label: "0" },
-  { id: 1, label: "1" },
-  { id: 2, label: "2" },
-  { id: 3, label: "3" }
-];
-
-// visible tile area in canvas viewport
-export type CanvasViewport = {
-  scaling: 1 | 2 | 4 | 8 | 16;
-  topTile: number;
-  leftTile: number;
-};
-
-export type PixelScaling = 1 | 2 | 3;
+import NametableToolbar from "./NametableToolbar";
+import { isNil } from "lodash";
 
 export type Tool =
   | "palette"
@@ -67,43 +34,55 @@ export type ToolState = {
   currentTool: Tool;
   selectedPaletteIndex: number;
   selectedColorIndex: number;
-  currentMetatileIndex: number | null;
+  currentTile: {
+    tileIndex: number | null;
+    metatileIndex: number | null;
+  };
   selected: { row: number; column: number } | null; // nulled when tool changed
-  // viewArea: { top: number; left: number; width: number; height: number };
 };
 
 export enum ToolActionTypes {
+  PENCIL_SELECTED = "PENCIL_SELECTED",
   TOOL_SELECTED = "TOOL_SELECTED",
   PALETTE_SELECTED = "PALETTE_SELECTED",
   COLOR_SELECTED = "COLOR_SELECTED",
-  CURRENT_METATILE_UPDATED = "CURRENT_METATILE_UPDATED"
+  CURRENT_TILE_UPDATED = "CURRENT_TILE_UPDATED"
 }
 
 export type ToolAction =
+  | {
+      type: ToolActionTypes.PENCIL_SELECTED;
+      payload: { colorIndex: ToolState["selectedColorIndex"] };
+    }
   | {
       type: ToolActionTypes.TOOL_SELECTED;
       payload: Tool;
     }
   | {
       type: ToolActionTypes.PALETTE_SELECTED;
-      payload: ToolState["selectedPaletteIndex"];
+      payload: { paletteIndex: ToolState["selectedPaletteIndex"] };
     }
   | {
       type: ToolActionTypes.COLOR_SELECTED;
       payload: ToolState["selectedColorIndex"];
     }
   | {
-      type: ToolActionTypes.CURRENT_METATILE_UPDATED;
-      payload: ToolState["currentMetatileIndex"];
+      type: ToolActionTypes.CURRENT_TILE_UPDATED;
+      payload: TilePosition;
     };
-
-type ScaleOption = {
-  id: RenderCanvasPositioning["scale"];
-  label: string;
-};
 
 function toolReducer(state: ToolState, action: ToolAction): ToolState {
   switch (action.type) {
+    case ToolActionTypes.PENCIL_SELECTED:
+      return {
+        ...state,
+        currentTool: "pencil",
+        selectedColorIndex: action.payload.colorIndex,
+        currentTile: {
+          tileIndex: null,
+          metatileIndex: null
+        }
+      };
     case ToolActionTypes.TOOL_SELECTED:
       const currentTool = action.payload;
       if (currentTool === state.currentTool) {
@@ -118,41 +97,24 @@ function toolReducer(state: ToolState, action: ToolAction): ToolState {
     case ToolActionTypes.PALETTE_SELECTED:
       return {
         ...state,
-        selectedPaletteIndex: action.payload
+        currentTool: "palette",
+        selectedPaletteIndex: action.payload.paletteIndex,
+        currentTile: {
+          tileIndex: null,
+          metatileIndex: null
+        }
       };
-    case ToolActionTypes.CURRENT_METATILE_UPDATED:
+    case ToolActionTypes.CURRENT_TILE_UPDATED:
       return {
         ...state,
-        currentMetatileIndex: action.payload
+        currentTile: action.payload
       };
     default:
       return state;
   }
 }
 
-type ToolOption = {
-  id: Tool;
-  label: string;
-};
-
-const TOOL_OPTIONS: Array<ToolOption> = [
-  { id: "pencil", label: "Pencil" },
-  { id: "palette", label: "Palette" },
-  { id: "move", label: "Move" },
-  { id: "zoomIn", label: "Zoom in" },
-  { id: "zoomOut", label: "Zoom out" }
-];
-
 const VIEWPORT_SIZE: ViewportSize = { width: 512, height: 512 };
-
-const SCALE_OPTIONS: Array<ScaleOption> = [
-  { id: 0.5, label: "50%" },
-  { id: 1, label: "100%" },
-  { id: 2, label: "200%" },
-  { id: 4, label: "400%" },
-  { id: 8, label: "800%" },
-  { id: 16, label: "1600%" }
-];
 
 export type RenderState = RenderCanvasPositioning;
 
@@ -199,7 +161,10 @@ const INITIAL_TOOL_STATE: ToolState = {
   currentTool: "zoomIn",
   selectedPaletteIndex: 0,
   selectedColorIndex: 0,
-  currentMetatileIndex: null,
+  currentTile: {
+    tileIndex: null,
+    metatileIndex: null
+  },
   selected: null
 };
 
@@ -212,14 +177,18 @@ type Props = {
     tileIndex: number,
     startPixelIndex: number,
     newPixels: Array<number>
-  ) => Action;
+  ) => void;
+  onChangePalette: (id: string, paletteIndex: number, newIndex: number) => void;
+  onChangeTile: (id: string, tileIndex: number, newValue: number) => void;
 };
 
 const Nametable: React.FunctionComponent<Props> = ({
   nametable,
   patternTable,
   paletteCollection,
-  onChangePatternTable
+  onChangePatternTable,
+  onChangePalette,
+  onChangeTile
 }) => {
   if (!nametable || !patternTable || !paletteCollection) {
     return null;
@@ -235,73 +204,34 @@ const Nametable: React.FunctionComponent<Props> = ({
     INITIAL_TOOL_STATE
   );
 
+  const currentPalette = !isNil(toolState.currentTile.metatileIndex)
+    ? paletteCollection.gamePalettes[
+        nametable.paletteIndexes[toolState.currentTile.metatileIndex]
+      ]
+    : // TODO should this just be gamePalettes[0]?
+      paletteCollection.gamePalettes[toolState.selectedPaletteIndex];
+
   return (
     <>
-      <div className={styles.toolbarRow}>
-        <div className={styles.toolbarColumn}>
-          <RadioInput.Group<Tool>
-            legend="Selected tool:"
-            options={TOOL_OPTIONS}
-            selectedId={toolState.currentTool}
-            onChange={id =>
-              toolDispatch({
-                type: ToolActionTypes.TOOL_SELECTED,
-                payload: id
-              })
-            }
-          />
-        </div>
-        <div className={styles.toolbarColumn}>
-          <RadioInput.Group<RenderCanvasPositioning["scale"]>
-            legend="Zoom level:"
-            options={SCALE_OPTIONS}
-            selectedId={renderState.scale}
-            onChange={scale =>
-              renderDispatch({
-                type: RenderActionTypes.CHANGE_SCALE,
-                payload: scale
-              })
-            }
-          />
-          <Button.Container>
-            <Button
-              onClick={() =>
-                renderDispatch({
-                  type: RenderActionTypes.INITIALIZE
-                })
-              }
-            >
-              Reset View
-            </Button>
-          </Button.Container>
-        </div>
-        <div className={styles.toolbarColumn}>
-          <RadioInput.Group<ToolState["selectedPaletteIndex"]>
-            legend="Palette:"
-            options={PALETTE_OPTIONS}
-            selectedId={toolState.selectedPaletteIndex}
-            onChange={index =>
-              toolDispatch({
-                type: ToolActionTypes.PALETTE_SELECTED,
-                payload: index
-              })
-            }
-          />
-        </div>
-        <div className={styles.toolbarColumn}>
-          <RadioInput.Group<ToolState["selectedColorIndex"]>
-            legend="Color:"
-            options={COLOR_INDEX_OPTIONS}
-            selectedId={toolState.selectedColorIndex}
-            onChange={index =>
-              toolDispatch({
-                type: ToolActionTypes.COLOR_SELECTED,
-                payload: index
-              })
-            }
-          />
-        </div>
-      </div>
+      <NametableToolbar
+        toolDispatch={toolDispatch}
+        tool={toolState.currentTool}
+        colorIndex={toolState.selectedColorIndex}
+        paletteIndex={toolState.selectedPaletteIndex}
+        currentPalette={currentPalette}
+        scale={renderState.scale}
+        onReset={() =>
+          renderDispatch({
+            type: RenderActionTypes.INITIALIZE
+          })
+        }
+        onSetScale={scale =>
+          renderDispatch({
+            type: RenderActionTypes.CHANGE_SCALE,
+            payload: scale
+          })
+        }
+      />
       <TileCanvas.Container>
         <div className={styles.background} style={VIEWPORT_SIZE}>
           <NametableCanvasInteractionTracker
@@ -310,11 +240,15 @@ const Nametable: React.FunctionComponent<Props> = ({
             patternTable={patternTable}
             renderCanvasPositioning={renderState}
             currentTool={toolState.currentTool}
+            currentPalette={currentPalette}
             selectedColorIndex={toolState.selectedColorIndex}
-            currentMetatileIndex={toolState.currentMetatileIndex}
+            selectedPaletteIndex={toolState.selectedPaletteIndex}
+            currentTile={toolState.currentTile}
             renderDispatch={renderDispatch}
             toolDispatch={toolDispatch}
             onChangePatternTable={onChangePatternTable}
+            onChangePalette={onChangePalette}
+            onChangeTile={onChangeTile}
           >
             <NametableCanvas
               viewportSize={VIEWPORT_SIZE}

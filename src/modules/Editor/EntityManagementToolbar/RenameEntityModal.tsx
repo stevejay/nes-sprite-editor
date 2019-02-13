@@ -41,14 +41,15 @@ const RenameEntityModal = ({ isOpen, name, onRename, onClose }: Props) => {
             <ModalDialog.Content>
               <Field
                 name="name"
-                label="Collection name:"
-                component={TextField as any}
+                render={({ input }) => (
+                  <TextField {...input} label="Collection name:" />
+                )}
               />
             </ModalDialog.Content>
             <ModalDialog.Footer>
               <Button onClick={onClose}>Cancel</Button>
               <Button type="submit" appearance="primary" disabled={submitting}>
-                Rename
+                Perform rename
               </Button>
             </ModalDialog.Footer>
           </FormElement>

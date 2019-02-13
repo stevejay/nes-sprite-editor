@@ -31,7 +31,9 @@ const RadioInputGroup = <P extends string | number>({
   const labelId = useId();
   return (
     <>
-      <p id={labelId}>{legend}</p>
+      <p className={styles.label} id={labelId}>
+        {legend}
+      </p>
       <div
         role="radiogroup"
         className={styles.groupContainer}

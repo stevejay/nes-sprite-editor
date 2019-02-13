@@ -3,4 +3,5 @@
 .label {
   display: inline-block;
   margin-bottom: rem(8);
+  flex-shrink: 0;
 }

@@ -93,7 +93,7 @@ $button-v-padding: 10;
 
 .button.input {
   color: $foreground-color;
-  background-color: transparent;
+  background-color: $md-white;
   border-color: darken($background-color, 20);
 
   &:active {
@@ -140,7 +140,16 @@ $button-v-padding: 10;
   }
 }
 
-.button.input,
+.button.input {
+  &:disabled,
+  &:disabled:hover,
+  &:disabled:active {
+    background-color: $md-white;
+    border-color: rgba($background-color, 0.66);
+    color: rgba($foreground-color, 0.33);
+  }
+}
+
 .button.transparent {
   &:disabled,
   &:disabled:hover,

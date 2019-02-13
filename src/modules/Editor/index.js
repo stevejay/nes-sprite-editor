@@ -1,11 +1,13 @@
-export { default as SystemPaletteSection } from "./areas/SystemPaletteSection";
+export { default as SystemPaletteSection } from "./sections/system-palette";
 export {
   default as BackgroundPalettesSection
-} from "./BackgroundPalettesSection";
-export { default as SpritePalettesSection } from "./SpritePalettesSection";
+} from "./sections/background-palettes/BackgroundPalettesSection";
+export {
+  default as SpritePalettesSection
+} from "./sections/SpritePalettesSection";
 export {
   default as BackgroundPatternTablesSection
-} from "./BackgroundPatternTablesSection";
-export { default as NametablesSection } from "./NametablesSection";
+} from "./sections/BackgroundPatternTablesSection";
+export { default as NametablesSection } from "./sections/NametablesSection";
 export { reducer, SLICE_NAME } from "./store";
 export * from "./store/types"; // hack

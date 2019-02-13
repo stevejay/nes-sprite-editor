@@ -5,21 +5,12 @@ import { useRovingTabIndex } from "../../../shared/RovingTabIndex";
 import useFocusEffect from "../../../shared/utils/use-focus-effect";
 import ColorPickerModal from "./ColorPickerModal";
 import styles from "./PaletteColorInput.module.scss";
+import useOpenDialog from "../../../shared/utils/use-open-dialog";
 
 type Props = {
   color: Color;
   systemPalette: SystemPalette;
   onChange: (color: Color) => void;
-};
-
-type State = {
-  isOpen: boolean;
-  originElement: HTMLElement | null;
-};
-
-const initialState: State = {
-  isOpen: false,
-  originElement: null
 };
 
 const PaletteColorInput = ({ color, systemPalette, onChange }: Props) => {
@@ -28,25 +19,8 @@ const PaletteColorInput = ({ color, systemPalette, onChange }: Props) => {
     buttonRef,
     false
   );
-
-  const [dialogState, setDialogState] = React.useState<State>(initialState);
+  const [isOpen, handleOpen, handleClose] = useOpenDialog();
   useFocusEffect(focused, buttonRef);
-
-  const handleClick = React.useCallback(() => {
-    if (onClick) {
-      onClick();
-    }
-
-    const originElement = buttonRef.current;
-
-    if (!dialogState.isOpen && originElement) {
-      setDialogState({ isOpen: true, originElement });
-    }
-  }, [onClick, buttonRef, dialogState]);
-
-  const handleClose = () => {
-    setDialogState(initialState);
-  };
 
   return (
     <>
@@ -54,7 +28,10 @@ const PaletteColorInput = ({ color, systemPalette, onChange }: Props) => {
         ref={buttonRef}
         className={styles.button}
         onKeyDown={onKeyDown}
-        onClick={handleClick}
+        onClick={() => {
+          onClick && onClick();
+          handleOpen();
+        }}
         tabIndex={tabIndex}
       >
         <PaletteColor
@@ -63,7 +40,8 @@ const PaletteColorInput = ({ color, systemPalette, onChange }: Props) => {
         />
       </button>
       <ColorPickerModal
-        {...dialogState}
+        isOpen={isOpen}
+        originElement={buttonRef.current}
         color={color}
         systemPalette={systemPalette}
         onChange={onChange}

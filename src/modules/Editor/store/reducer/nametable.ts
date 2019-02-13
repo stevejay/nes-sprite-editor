@@ -114,6 +114,7 @@ export function reducer(state: State, action: Action): State {
       };
     }
     case ActionTypes.CHANGE_NAMETABLE_TILE_INDEX: {
+      console.log("yep, CHANGE_NAMETABLE_TILE_INDEX");
       const { nametableId, tileIndex, newValue } = action.payload;
       const nametableMatch = find(
         state.nametables,

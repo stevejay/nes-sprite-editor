@@ -1,11 +1,11 @@
 import React from "react";
 import { render, cleanup } from "react-testing-library";
 import "jest-dom/extend-expect";
-import SystemPaletteSection from "../areas/SystemPaletteSection";
+import SystemPaletteSection from "..";
 import { Provider } from "react-redux";
 import { createStore, combineReducers } from "redux";
-import { State, reducer, EditorStateSlice } from "../store";
-import { SYSTEM_PALETTE_OPTIONS } from "../constants";
+import { State, reducer, EditorStateSlice } from "../../../store";
+import { SYSTEM_PALETTE_OPTIONS } from "../../../constants";
 
 const initialState: State = {
   nametables: [],
@@ -35,7 +35,8 @@ const renderComponent = (mergeState: Partial<State>) =>
 
 afterEach(cleanup);
 
-test("displays system palette section", async () => {
-  const { container } = renderComponent({});
+test("displays the system palette section", async () => {
+  const { container, getByLabelText } = renderComponent({});
   expect(container.querySelector("h2")).toHaveTextContent("System Palette");
+  expect(getByLabelText("System palette to use:")).toBeTruthy();
 });

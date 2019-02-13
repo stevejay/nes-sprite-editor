@@ -3,7 +3,7 @@ import { isEmpty, isNil } from "lodash";
 import React from "react";
 import styles from "./SelectInput.module.scss";
 
-type Option<IdT> = {
+export type Option<IdT> = {
   id: IdT;
   label: string;
 };
@@ -12,6 +12,7 @@ type Props<IdT> = {
   id?: string;
   options: Array<Option<IdT>>;
   value: IdT | null;
+  name?: string;
   disabled?: boolean;
   onChange: (id: IdT) => void;
   className?: string;
@@ -35,6 +36,7 @@ const SelectInput = <P extends string | number>({
     <div className={containerClassNames}>
       <select
         id={id}
+        name={name}
         value={value || undefined}
         onChange={event => onChange(event.target.value as P)}
         disabled={showDisabled}

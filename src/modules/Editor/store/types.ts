@@ -67,7 +67,7 @@ export type Nametable = Entity & {
   id: string;
   label: string;
   tileIndexes: Uint8Array; // 960 bytes
-  paletteIndexes: Uint8Array; // 64 bytes, 4 color index in each byte
+  paletteIndexes: Uint8Array; // 64 * 4 indexes, which gets output as 4 indexes to a byte
 };
 
 export enum ActionTypes {

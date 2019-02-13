@@ -6,6 +6,7 @@ import { host } from "storybook-host";
 import "../../../index.scss";
 import { withKnobs, boolean, select } from "@storybook/addon-knobs";
 import { FiEdit3 } from "react-icons/fi";
+import { ButtonProps } from "..";
 
 const storyHost = host({
   align: "center middle",
@@ -13,8 +14,6 @@ const storyHost = host({
 });
 
 const options = ["default", "primary", "input", "transparent"];
-
-type Options = "default" | "primary" | "input" | "transparent";
 
 const Spacer = () => <div style={{ display: "inline-block", width: 16 }} />;
 
@@ -29,7 +28,9 @@ storiesOf("Button", module)
         onClick={noop}
         aria-label="some aria label"
         disabled={boolean("Disabled", false)}
-        appearance={select("Color", options, "default") as Options}
+        appearance={
+          select("Color", options, "default") as ButtonProps["appearance"]
+        }
       />
       <Spacer />
       <Button
@@ -37,7 +38,9 @@ storiesOf("Button", module)
         tabIndex={0}
         onClick={noop}
         disabled={boolean("Disabled", false)}
-        appearance={select("Color", options, "default") as Options}
+        appearance={
+          select("Color", options, "default") as ButtonProps["appearance"]
+        }
       >
         Edit
       </Button>
@@ -46,7 +49,9 @@ storiesOf("Button", module)
         tabIndex={0}
         onClick={noop}
         disabled={boolean("Disabled", false)}
-        appearance={select("Color", options, "default") as Options}
+        appearance={
+          select("Color", options, "default") as ButtonProps["appearance"]
+        }
       >
         Edit
       </Button>
@@ -56,7 +61,9 @@ storiesOf("Button", module)
         tabIndex={0}
         onClick={noop}
         disabled={boolean("Disabled", false)}
-        appearance={select("Color", options, "default") as Options}
+        appearance={
+          select("Color", options, "default") as ButtonProps["appearance"]
+        }
       >
         Submit
       </Button>

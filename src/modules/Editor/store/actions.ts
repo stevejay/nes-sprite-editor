@@ -1,4 +1,4 @@
-import { ActionTypes, Action } from "./types";
+import { ActionTypes, Action, Nametable } from "./types";
 import { Color } from "../store";
 
 export function setSystemPalette(id: string): Action {
@@ -102,6 +102,23 @@ export function renamePatternTable(id: string, label: string): Action {
   };
 }
 
+export function changePatternTablePixels(
+  id: string,
+  tileIndex: number,
+  startPixelIndex: number,
+  newPixels: Array<number>
+): Action {
+  return {
+    type: ActionTypes.CHANGE_PATTERN_TABLE_PIXELS,
+    payload: {
+      id,
+      tileIndex,
+      startPixelIndex,
+      newPixels
+    }
+  };
+}
+
 export function setNametable(id: string): Action {
   return {
     type: ActionTypes.SELECT_NAMETABLE,
@@ -137,19 +154,24 @@ export function renameNametable(id: string, label: string): Action {
   };
 }
 
-export function changePatternTablePixels(
-  id: string,
-  tileIndex: number,
-  startPixelIndex: number,
-  newPixels: Array<number>
+export function changeNametablePaletteIndex(
+  id: Nametable["id"],
+  paletteIndex: number,
+  newIndex: number
 ): Action {
   return {
-    type: ActionTypes.CHANGE_PATTERN_TABLE_PIXELS,
-    payload: {
-      id,
-      tileIndex,
-      startPixelIndex,
-      newPixels
-    }
+    type: ActionTypes.CHANGE_NAMETABLE_PALETTE_INDEX,
+    payload: { nametableId: id, paletteIndex, newValue: newIndex }
+  };
+}
+
+export function changeNametableTileIndex(
+  id: Nametable["id"],
+  tileIndex: number,
+  newValue: number
+): Action {
+  return {
+    type: ActionTypes.CHANGE_NAMETABLE_TILE_INDEX,
+    payload: { nametableId: id, tileIndex, newValue }
   };
 }

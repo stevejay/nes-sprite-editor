@@ -1,4 +1,4 @@
-import Button from "./Button";
+import Button, { Props } from "./Button";
 import ButtonContainer from "./ButtonContainer";
 import ButtonWithRovingTabIndex from "./ButtonWithRovingTabIndex";
 
@@ -12,3 +12,4 @@ ButtonExport.Container = ButtonContainer;
 ButtonExport.WithRovingTabIndex = ButtonWithRovingTabIndex;
 
 export default ButtonExport;
+export type ButtonProps = Props;

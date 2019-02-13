@@ -17,7 +17,7 @@ type Props = {
 
 const ColorPicker = ({ palette, selectedColorId, scale, onChange }: Props) => {
   const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
-  const canvasSize = useSizedCanvasEffect(canvasRef, COLUMNS, ROWS, scale);
+  useSizedCanvasEffect(canvasRef, COLUMNS, ROWS, scale);
 
   React.useLayoutEffect(() => {
     const canvas = canvasRef.current!;
@@ -55,7 +55,7 @@ const ColorPicker = ({ palette, selectedColorId, scale, onChange }: Props) => {
       <canvas
         ref={canvasRef}
         className={styles.canvas}
-        style={canvasSize}
+        // style={canvasSize}
         role="img"
         aria-label="Todo"
       />

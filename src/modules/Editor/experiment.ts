@@ -30,6 +30,11 @@ export type LogicalSize = {
   heightLogicalPx: number;
 };
 
+export type TilePosition = {
+  tileIndex: number | null;
+  metatileIndex: number | null;
+};
+
 export type RenderCanvasPositioning = {
   origin: LogicalCoord;
   size: LogicalSize;
@@ -361,44 +366,60 @@ export function convertViewportCoordToNameablePixel(
   };
 }
 
-export function convertViewportCoordToNameableMetatile(
+export function convertViewportCoordToNametableMetatile(
   renderCanvasPositioning: RenderCanvasPositioning,
   viewportCoord: ViewportCoord
-): number | null {
+): TilePosition {
   const logicalCoord = convertViewportCoordToLogicalCoord(
     renderCanvasPositioning,
     viewportCoord
   );
 
-  const metatileSize = TILE_SIZE_PIXELS * 2;
-  const totalNametableXMetatiles = TOTAL_NAMETABLE_X_TILES * 0.5;
-
-  const xMetatileIndex = Math.floor(logicalCoord.xLogicalPx / metatileSize);
-  const yMetatileIndex = Math.floor(logicalCoord.yLogicalPx / metatileSize);
+  const columnIndex = Math.floor(logicalCoord.xLogicalPx / TILE_SIZE_PIXELS);
+  const rowIndex = Math.floor(logicalCoord.yLogicalPx / TILE_SIZE_PIXELS);
 
   if (
-    xMetatileIndex < 0 ||
-    xMetatileIndex >= totalNametableXMetatiles ||
-    yMetatileIndex < 0 ||
-    yMetatileIndex >= TOTAL_NAMETABLE_Y_TILES * 0.5
+    columnIndex < 0 ||
+    columnIndex >= TOTAL_NAMETABLE_X_TILES ||
+    rowIndex < 0 ||
+    rowIndex >= TOTAL_NAMETABLE_Y_TILES
   ) {
-    return null;
+    return {
+      tileIndex: null,
+      metatileIndex: null
+    };
   }
 
-  return yMetatileIndex * totalNametableXMetatiles + xMetatileIndex;
+  const tileIndex = rowIndex * TOTAL_NAMETABLE_X_TILES + columnIndex;
+
+  return {
+    tileIndex,
+    metatileIndex:
+      Math.floor(rowIndex * 0.5) * (TOTAL_NAMETABLE_X_TILES * 0.5) +
+      Math.floor(columnIndex * 0.5)
+  };
 }
 
-export function convertMetatileIndexToCanvasCoords(
+export function convertTilePositionToCanvasCoords(
   renderCanvasPositioning: RenderCanvasPositioning,
-  metatileIndex: number
+  tilePosition: TilePosition,
+  useMetatileIndex: boolean
 ): ViewportArea {
+  const index = useMetatileIndex
+    ? tilePosition.metatileIndex
+    : tilePosition.tileIndex;
+  const tileDimension = useMetatileIndex ? 2 : 1;
   const scale = renderCanvasPositioning.scale;
-  const dimension = TILE_SIZE_PIXELS * 2 * scale;
-  const enlargedIndex = metatileIndex * 2;
+  const dimension = TILE_SIZE_PIXELS * tileDimension * scale;
+  const enlargedIndex = index! * tileDimension; // TODO fix !
+
   const xLogicalPx =
     (enlargedIndex % TOTAL_NAMETABLE_X_TILES) * TILE_SIZE_PIXELS;
+
   const yLogicalPx =
-    Math.floor(enlargedIndex / TOTAL_NAMETABLE_X_TILES) * TILE_SIZE_PIXELS * 2;
+    Math.floor(enlargedIndex / TOTAL_NAMETABLE_X_TILES) *
+    TILE_SIZE_PIXELS *
+    tileDimension;
 
   return {
     x:

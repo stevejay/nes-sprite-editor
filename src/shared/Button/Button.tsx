@@ -2,6 +2,7 @@ import React from "react";
 import styles from "./Button.module.scss";
 import { IconType } from "react-icons/lib/iconBase";
 import classNames from "classnames";
+import { isNil } from "lodash";
 
 export type Props = {
   type?: "button" | "submit";
@@ -56,7 +57,7 @@ const Button = React.forwardRef<HTMLButtonElement, Props>(
         onKeyDown={onKeyDown}
       >
         {icon && React.createElement(icon)}
-        {children && <span>{children}</span>}
+        {!isNil(children) && <span>{children}</span>}
       </button>
     );
   }
