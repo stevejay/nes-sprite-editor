@@ -1,47 +1,40 @@
 import React from "react";
-import PaletteCollection from "../PaletteCollection";
-import Section from "../../../shared/Section";
-import EntityManagementToolbar from "../EntityManagementToolbar";
 import { connect } from "react-redux";
+import Section from "../../../../shared/Section";
+import EntityManagementToolbar from "../../EntityManagementToolbar";
+import PaletteCollection from "../../PaletteCollection";
 import {
-  EditorStateSlice,
-  selectCurrentSystemPalette,
-  selectSpritePaletteCollections,
-  selectCurrentSpritePalettes,
-  setPaletteCollection,
   addNewSpritePaletteCollection,
+  changePaletteColor,
   copyPaletteCollection,
   deletePaletteCollection,
+  EditorStateSlice,
   renamePaletteCollection,
-  changePaletteColor,
-  Action
-} from "../store";
+  selectCurrentSpritePalettes,
+  selectCurrentSystemPalette,
+  selectSpritePaletteCollections,
+  setPaletteCollection
+} from "../../store";
 import {
-  GamePaletteCollectionWithColors,
-  SystemPalette,
   GamePaletteCollection,
-  Color
-} from "../store";
+  GamePaletteCollectionWithColors,
+  SystemPalette
+} from "../../store";
 
 type Props = {
-  currentSystemPalette: SystemPalette;
+  systemPalette: SystemPalette;
   paletteCollections: Array<GamePaletteCollection>;
   currentCollection: GamePaletteCollectionWithColors | null;
-  setPaletteCollection: (id: string) => Action;
-  addNewSpritePaletteCollection: () => Action;
-  copyPaletteCollection: (id: string) => Action;
-  deletePaletteCollection: (id: string) => Action;
-  renamePaletteCollection: (id: string, label: string) => Action;
-  changePaletteColor: (
-    id: string,
-    gamePaletteIndex: number,
-    valueIndex: number,
-    newColor: Color
-  ) => Action;
+  setPaletteCollection: typeof setPaletteCollection;
+  addNewSpritePaletteCollection: typeof addNewSpritePaletteCollection;
+  copyPaletteCollection: typeof copyPaletteCollection;
+  deletePaletteCollection: typeof deletePaletteCollection;
+  renamePaletteCollection: typeof renamePaletteCollection;
+  changePaletteColor: typeof changePaletteColor;
 };
 
 const SpritePalettesSection = ({
-  currentSystemPalette,
+  systemPalette,
   paletteCollections,
   currentCollection,
   setPaletteCollection,
@@ -69,7 +62,7 @@ const SpritePalettesSection = ({
     <h3>Collection Palettes</h3>
     <PaletteCollection
       type="sprite"
-      systemPalette={currentSystemPalette}
+      systemPalette={systemPalette}
       currentCollection={currentCollection}
       onChangePaletteColor={changePaletteColor}
     />
@@ -78,7 +71,7 @@ const SpritePalettesSection = ({
 
 export default connect(
   (state: EditorStateSlice) => ({
-    currentSystemPalette: selectCurrentSystemPalette(state),
+    systemPalette: selectCurrentSystemPalette(state),
     paletteCollections: selectSpritePaletteCollections(state),
     currentCollection: selectCurrentSpritePalettes(state)
   }),
@@ -90,4 +83,12 @@ export default connect(
     renamePaletteCollection,
     changePaletteColor
   }
-)(SpritePalettesSection);
+)(
+  React.memo(
+    SpritePalettesSection,
+    (prevProps, nextProps) =>
+      prevProps.systemPalette === nextProps.systemPalette &&
+      prevProps.paletteCollections === nextProps.paletteCollections &&
+      prevProps.currentCollection === nextProps.currentCollection
+  )
+);

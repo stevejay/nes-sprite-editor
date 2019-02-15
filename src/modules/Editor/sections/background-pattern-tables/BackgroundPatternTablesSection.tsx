@@ -1,29 +1,28 @@
+import { filter } from "lodash";
 import React from "react";
-import PatternTable from "../PatternTable";
-import Section from "../../../shared/Section";
-import EntityManagementToolbar from "../EntityManagementToolbar";
 import { connect } from "react-redux";
+import RadioInput from "../../../../shared/RadioInput";
+import Section from "../../../../shared/Section";
+import EntityManagementToolbar from "../../EntityManagementToolbar";
+import PatternTable from "../../PatternTable";
+import PatternTileDetail from "../../PatternTileDetail";
 import {
-  selectBackgroundPatternTables,
-  selectCurrentBackgroundPatternTable,
-  selectCurrentBackgroundPalettes,
-  EditorStateSlice,
-  Action,
-  setPatternTable,
   addNewBackgroundPatternTable,
   copyPatternTable,
   deletePatternTable,
+  EditorStateSlice,
   renamePatternTable,
-  selectCurrentNametable
-} from "../store";
+  selectBackgroundPatternTables,
+  selectCurrentBackgroundPalettes,
+  selectCurrentBackgroundPatternTable,
+  selectCurrentNametable,
+  setPatternTable
+} from "../../store";
 import {
-  PatternTable as PatternTableType,
   GamePaletteCollectionWithColors,
-  Nametable
-} from "../store";
-import RadioInput from "../../../shared/RadioInput";
-import PatternTileDetail from "../PatternTileDetail";
-import { filter } from "lodash";
+  Nametable,
+  PatternTable as PatternTableType
+} from "../../store";
 
 const PALETTE_OPTIONS = [
   { id: 0, label: "#0" },
@@ -37,11 +36,11 @@ type Props = {
   currentPatternTable: PatternTableType | null;
   paletteCollection: GamePaletteCollectionWithColors | null;
   currentNametable: Nametable | null;
-  setPatternTable: (id: string) => Action;
-  addNewBackgroundPatternTable: () => Action;
-  copyPatternTable: (id: string) => Action;
-  deletePatternTable: (id: string) => Action;
-  renamePatternTable: (id: string, label: string) => Action;
+  setPatternTable: typeof setPatternTable;
+  addNewBackgroundPatternTable: typeof addNewBackgroundPatternTable;
+  copyPatternTable: typeof copyPatternTable;
+  deletePatternTable: typeof deletePatternTable;
+  renamePatternTable: typeof renamePatternTable;
 };
 
 const BackgroundPatternTablesSection = ({
@@ -57,18 +56,9 @@ const BackgroundPatternTablesSection = ({
 }: Props) => {
   const [tileIndex, setTileIndex] = React.useState(0);
   const [paletteIndex, setPaletteIndex] = React.useState(0);
-
   const selectedPalette = paletteCollection
     ? paletteCollection.gamePalettes[paletteIndex]
     : null;
-
-  const tileUsageCount = React.useMemo<number>(
-    () =>
-      currentNametable
-        ? filter(currentNametable.tileIndexes, x => x === tileIndex).length
-        : 0,
-    [currentNametable, tileIndex]
-  );
 
   return (
     <Section>
@@ -106,8 +96,8 @@ const BackgroundPatternTablesSection = ({
           <PatternTileDetail
             scale={12}
             tileIndex={tileIndex}
-            tile={currentPatternTable.tiles[tileIndex]}
-            tileUsageCount={tileUsageCount}
+            currentPatternTable={currentPatternTable}
+            currentNametable={currentNametable}
             palette={selectedPalette}
           />
         </>
@@ -130,4 +120,13 @@ export default connect(
     deletePatternTable,
     renamePatternTable
   }
-)(BackgroundPatternTablesSection);
+)(
+  React.memo(
+    BackgroundPatternTablesSection,
+    (prevProps, nextProps) =>
+      prevProps.patternTables === nextProps.patternTables &&
+      prevProps.currentPatternTable === nextProps.currentPatternTable &&
+      prevProps.paletteCollection === nextProps.paletteCollection &&
+      prevProps.currentNametable === nextProps.currentNametable
+  )
+);
