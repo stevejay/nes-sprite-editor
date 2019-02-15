@@ -15,7 +15,7 @@ type Props = {
   onClose: () => void;
 };
 
-const Modal = ({ isOpen, children, onClose }: Props) => {
+const ModalDialog = ({ isOpen, children, onClose }: Props) => {
   usePreventBodyScroll(isOpen);
   useAriaHidden(isOpen);
 
@@ -56,6 +56,6 @@ const Modal = ({ isOpen, children, onClose }: Props) => {
 };
 
 export default React.memo(
-  Modal,
+  ModalDialog,
   (prevProps, nextProps) => prevProps.isOpen === nextProps.isOpen
 );

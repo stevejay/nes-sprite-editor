@@ -449,3 +449,4 @@ export const TILE_SIZE_PIXELS = 8;
 export const CANVAS_OVERDRAW_SCALING = 1;
 export const PATTERN_TABLE_ROWS = 16;
 export const PATTERN_TABLE_COLUMNS = 16;
+export const UNAVAILABLE_COLOR = "#000";

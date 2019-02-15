@@ -1,0 +1,13 @@
+@import "styles/_base.scss";
+
+.button {
+  padding-left: rem(8);
+  padding-right: rem(8);
+}
+
+.swatch {
+  display: inline-block;
+  width: rem(16);
+  height: rem(24);
+  margin-left: 4px;
+}

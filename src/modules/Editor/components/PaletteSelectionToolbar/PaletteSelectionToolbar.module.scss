@@ -1,0 +1,21 @@
+@import "styles/_base.scss";
+
+.button {
+  padding-left: rem(8);
+  padding-right: rem(8);
+}
+
+.swatch {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  width: rem(26);
+  height: rem(28);
+  border-radius: rem(2);
+}
+
+.swatch span {
+  width: rem(12);
+  height: rem(12);
+  border-radius: rem(2);
+}

@@ -1,0 +1,17 @@
+@import "styles/_base.scss";
+
+.container {
+  display: flex;
+}
+
+.container h4 {
+  margin-bottom: rem(3);
+}
+
+.container > * {
+  margin-right: rem(10);
+
+  &:last-child {
+    margin-right: 0;
+  }
+}

@@ -1,0 +1,18 @@
+@import "styles/_base.scss";
+
+.container {
+  display: inline-flex;
+  box-shadow: $box-shadow;
+  background-color: $md-white;
+  border-radius: rem(3);
+  padding: rem(3);
+}
+
+.container > button {
+  margin-right: rem(3);
+  border-radius: rem(3);
+
+  &:last-of-type {
+    margin-right: 0;
+  }
+}

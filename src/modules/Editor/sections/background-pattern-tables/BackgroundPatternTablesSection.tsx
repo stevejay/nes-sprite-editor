@@ -1,11 +1,11 @@
-import { filter } from "lodash";
 import React from "react";
 import { connect } from "react-redux";
-import RadioInput from "../../../../shared/RadioInput";
 import Section from "../../../../shared/Section";
-import EntityManagementToolbar from "../../EntityManagementToolbar";
+import EntityManagementToolbar from "../../components/EntityManagementToolbar";
+import PaletteSelectionToolbar from "../../components/PaletteSelectionToolbar";
+import Toolbar from "../../components/Toolbar";
 import PatternTable from "../../PatternTable";
-import PatternTileDetail from "../../PatternTileDetail";
+import PatternTableTileDetail from "../../PatternTableTileDetail";
 import {
   addNewBackgroundPatternTable,
   copyPatternTable,
@@ -23,13 +23,6 @@ import {
   Nametable,
   PatternTable as PatternTableType
 } from "../../store";
-
-const PALETTE_OPTIONS = [
-  { id: 0, label: "#0" },
-  { id: 1, label: "#1" },
-  { id: 2, label: "#2" },
-  { id: 3, label: "#3" }
-];
 
 type Props = {
   patternTables: Array<PatternTableType>;
@@ -76,16 +69,16 @@ const BackgroundPatternTablesSection = ({
         onDeleteEntity={deletePatternTable}
         onRenameEntity={renamePatternTable}
       />
-      {currentPatternTable && selectedPalette && (
+      {currentPatternTable && selectedPalette && paletteCollection && (
         <>
           <h3>Pattern Table Tiles</h3>
-          <RadioInput.Group<number>
-            legend="Background palette for preview:"
-            options={PALETTE_OPTIONS}
-            selectedId={paletteIndex}
-            onChange={setPaletteIndex}
-            inline
-          />
+          <Toolbar.Container>
+            <PaletteSelectionToolbar
+              paletteIndex={paletteIndex}
+              paletteCollection={paletteCollection}
+              onPaletteSelected={setPaletteIndex}
+            />
+          </Toolbar.Container>
           <PatternTable
             scale={3}
             patternTable={currentPatternTable}
@@ -93,7 +86,7 @@ const BackgroundPatternTablesSection = ({
             tileIndex={tileIndex}
             onSelectTile={setTileIndex}
           />
-          <PatternTileDetail
+          <PatternTableTileDetail
             scale={12}
             tileIndex={tileIndex}
             currentPatternTable={currentPatternTable}

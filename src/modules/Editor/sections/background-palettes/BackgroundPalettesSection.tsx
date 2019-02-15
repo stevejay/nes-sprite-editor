@@ -1,8 +1,8 @@
 import React from "react";
 import { connect } from "react-redux";
 import Section from "../../../../shared/Section";
-import EntityManagementToolbar from "../../EntityManagementToolbar";
-import PaletteCollection from "../../PaletteCollection";
+import EntityManagementToolbar from "../../components/EntityManagementToolbar";
+import PaletteCollection from "../../components/PaletteCollection";
 import {
   addNewBackgroundPaletteCollection,
   changePaletteColor,

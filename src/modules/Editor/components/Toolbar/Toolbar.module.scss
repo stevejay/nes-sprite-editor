@@ -1,0 +1,24 @@
+@import "styles/_base.scss";
+
+.toolbar {
+  display: inline-block;
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.toolbar button {
+  border-radius: 0;
+  border: none;
+  border-right: 1px solid $md-grey-200;
+
+  &:first-of-type {
+    border-top-left-radius: rem(3);
+    border-bottom-left-radius: rem(3);
+  }
+
+  &:last-of-type {
+    border-top-right-radius: rem(3);
+    border-bottom-right-radius: rem(3);
+    border-right: none;
+  }
+}

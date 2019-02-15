@@ -1,21 +1,18 @@
 import React from "react";
-import styles from "./NametableToolbar.module.scss";
-import { RovingTabIndexProvider } from "../../shared/RovingTabIndex";
+import { FiMove, FiSquare, FiZoomIn, FiZoomOut } from "react-icons/fi";
 import Button from "../../shared/Button";
-import { ToolAction, ToolActionTypes, ToolState } from "./Nametable";
-import { range } from "lodash";
-import {
-  FiEdit2,
-  FiGrid,
-  FiZoomIn,
-  FiZoomOut,
-  FiMove,
-  FiSquare
-} from "react-icons/fi";
+import { RovingTabIndexProvider } from "../../shared/RovingTabIndex";
 import SelectInput from "../../shared/SelectInput";
 import useId from "../../shared/utils/use-id";
+import PaletteSelectionToolbar from "./components/PaletteSelectionToolbar";
+import Toolbar from "./components/Toolbar";
 import { RenderCanvasPositioning } from "./experiment";
-import { GamePaletteWithColors } from "./store";
+import { ToolAction, ToolActionTypes, ToolState } from "./Nametable";
+import {
+  GamePaletteCollectionWithColors,
+  GamePaletteWithColors
+} from "./store";
+import PencilSelectionToolbar from "./components/PencilSelectionToolbar";
 
 type ScaleOption = {
   id: RenderCanvasPositioning["scale"];
@@ -35,9 +32,10 @@ type Props = {
   tool: ToolState["currentTool"];
   colorIndex: ToolState["selectedColorIndex"];
   paletteIndex: ToolState["selectedPaletteIndex"];
+  paletteCollection: GamePaletteCollectionWithColors;
   currentPalette: GamePaletteWithColors;
   scale: RenderCanvasPositioning["scale"];
-  toolDispatch: React.Dispatch<ToolAction>;
+  dispatch: React.Dispatch<ToolAction>;
   onReset: () => void;
   onSetScale: (scale: RenderCanvasPositioning["scale"]) => void;
 };
@@ -46,130 +44,100 @@ const NametableToolbar = ({
   tool,
   colorIndex,
   paletteIndex,
+  paletteCollection,
   currentPalette,
   scale,
-  toolDispatch,
+  dispatch,
   onReset,
   onSetScale
 }: Props) => {
   const scaleId = useId();
   return (
-    <div className={styles.container}>
-      <div className={styles.row}>
-        <div className={styles.toolbar}>
-          <RovingTabIndexProvider>
-            {range(0, 4).map(index => {
-              const selected = tool === "pencil" && colorIndex === index;
-              const color = currentPalette.colors[index];
-              return (
-                <Button.WithRovingTabIndex
-                  key={index}
-                  aria-label={`Pencil tool for color #${index}`}
-                  icon={FiEdit2}
-                  appearance={selected ? "dark" : "default"}
-                  onClick={() =>
-                    toolDispatch({
-                      type: ToolActionTypes.PENCIL_SELECTED,
-                      payload: { colorIndex: index }
-                    })
-                  }
-                  className={styles.buttonWithSwatch}
-                >
-                  <span
-                    className={styles.swatch}
-                    style={{
-                      backgroundColor: color.available ? color.rgb : "#FFF"
-                    }}
-                  />
-                </Button.WithRovingTabIndex>
-              );
-            })}
-            {range(0, 4).map(index => {
-              const selected = tool === "palette" && paletteIndex === index;
-              return (
-                <Button.WithRovingTabIndex
-                  key={index}
-                  aria-label={`Palette tool for background palette #${index}`}
-                  icon={FiGrid}
-                  appearance={selected ? "dark" : "default"}
-                  onClick={() =>
-                    toolDispatch({
-                      type: ToolActionTypes.PALETTE_SELECTED,
-                      payload: { paletteIndex: index }
-                    })
-                  }
-                >
-                  {index}
-                </Button.WithRovingTabIndex>
-              );
-            })}
-            <Button.WithRovingTabIndex
-              aria-label="Select pattern tile"
-              icon={FiSquare}
-              appearance={tool === "pattern" ? "dark" : "default"}
-              onClick={() =>
-                toolDispatch({
-                  type: ToolActionTypes.TOOL_SELECTED,
-                  payload: "pattern"
-                })
-              }
-            />
-          </RovingTabIndexProvider>
-        </div>
-      </div>
-      <div className={styles.row}>
-        <div className={styles.toolbar}>
-          <RovingTabIndexProvider>
-            <Button.WithRovingTabIndex
-              aria-label="move visible canvas"
-              icon={FiMove}
-              appearance={tool === "move" ? "dark" : "default"}
-              onClick={() =>
-                toolDispatch({
-                  type: ToolActionTypes.TOOL_SELECTED,
-                  payload: "move"
-                })
-              }
-            />
-            <Button.WithRovingTabIndex
-              aria-label="Zoom into canvas"
-              icon={FiZoomIn}
-              appearance={tool === "zoomIn" ? "dark" : "default"}
-              onClick={() =>
-                toolDispatch({
-                  type: ToolActionTypes.TOOL_SELECTED,
-                  payload: "zoomIn"
-                })
-              }
-            />
-            <Button.WithRovingTabIndex
-              aria-label="Zoom out of canvas"
-              icon={FiZoomOut}
-              appearance={tool === "zoomOut" ? "dark" : "default"}
-              onClick={() =>
-                toolDispatch({
-                  type: ToolActionTypes.TOOL_SELECTED,
-                  payload: "zoomOut"
-                })
-              }
-            />
-          </RovingTabIndexProvider>
-        </div>
-        <div className={styles.toolbar}>
-          <SelectInput<RenderCanvasPositioning["scale"]>
-            id={scaleId}
-            options={SCALE_OPTIONS}
-            value={scale}
-            onChange={onSetScale}
+    <Toolbar.Container>
+      <PencilSelectionToolbar
+        colorIndex={tool === "pencil" ? colorIndex : null}
+        currentPalette={currentPalette}
+        onPencilSelected={colorIndex =>
+          dispatch({
+            type: ToolActionTypes.PENCIL_SELECTED,
+            payload: { colorIndex }
+          })
+        }
+      />
+      <PaletteSelectionToolbar
+        paletteIndex={tool === "palette" ? paletteIndex : null}
+        paletteCollection={paletteCollection}
+        onPaletteSelected={paletteIndex =>
+          dispatch({
+            type: ToolActionTypes.PALETTE_SELECTED,
+            payload: { paletteIndex }
+          })
+        }
+      />
+      <Toolbar>
+        <Button
+          aria-label="Select pattern tile"
+          icon={FiSquare}
+          appearance={tool === "pattern" ? "dark" : "default"}
+          onClick={() =>
+            dispatch({
+              type: ToolActionTypes.TOOL_SELECTED,
+              payload: "pattern"
+            })
+          }
+        />
+      </Toolbar>
+      <Toolbar>
+        <RovingTabIndexProvider>
+          <Button.WithRovingTabIndex
+            aria-label="move visible canvas"
+            icon={FiMove}
+            appearance={tool === "move" ? "dark" : "default"}
+            onClick={() =>
+              dispatch({
+                type: ToolActionTypes.TOOL_SELECTED,
+                payload: "move"
+              })
+            }
           />
-        </div>
-        <div className={styles.toolbar}>
-          <Button aria-label="Reset canvas view" onClick={onReset}>
-            Reset zoom
-          </Button>
-        </div>
-      </div>
-    </div>
+          <Button.WithRovingTabIndex
+            aria-label="Zoom into canvas"
+            icon={FiZoomIn}
+            appearance={tool === "zoomIn" ? "dark" : "default"}
+            onClick={() =>
+              dispatch({
+                type: ToolActionTypes.TOOL_SELECTED,
+                payload: "zoomIn"
+              })
+            }
+          />
+          <Button.WithRovingTabIndex
+            aria-label="Zoom out of canvas"
+            icon={FiZoomOut}
+            appearance={tool === "zoomOut" ? "dark" : "default"}
+            onClick={() =>
+              dispatch({
+                type: ToolActionTypes.TOOL_SELECTED,
+                payload: "zoomOut"
+              })
+            }
+          />
+        </RovingTabIndexProvider>
+      </Toolbar>
+      <Toolbar>
+        <SelectInput
+          id={scaleId}
+          options={SCALE_OPTIONS}
+          value={scale}
+          onChange={onSetScale}
+        />
+      </Toolbar>
+      <Toolbar>
+        <Button aria-label="Reset canvas view" onClick={onReset}>
+          Reset zoom
+        </Button>
+      </Toolbar>
+    </Toolbar.Container>
   );
 };
 

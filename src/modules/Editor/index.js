@@ -6,6 +6,6 @@ export { default as SpritePalettesSection } from "./sections/sprite-palettes";
 export {
   default as BackgroundPatternTablesSection
 } from "./sections/background-pattern-tables";
-export { default as NametablesSection } from "./sections/NametablesSection";
+export { default as NametablesSection } from "./sections/nametables";
 export { reducer, SLICE_NAME } from "./store";
 export * from "./store/types"; // hack

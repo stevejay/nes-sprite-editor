@@ -13,7 +13,7 @@ const options = [
 
 test("displays correctly", async () => {
   const { container } = render(
-    <SelectInput<number>
+    <SelectInput
       id="the-id"
       name="the-name"
       options={options}

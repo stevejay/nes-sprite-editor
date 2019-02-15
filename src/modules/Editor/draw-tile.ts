@@ -1,7 +1,5 @@
 import { Color } from "./store";
-import { TILE_SIZE_PIXELS } from "./constants";
-
-const UNAVAILABLE_COLOR = "#000";
+import { TILE_SIZE_PIXELS, UNAVAILABLE_COLOR } from "./constants";
 
 export default function drawTile(
   ctx: CanvasRenderingContext2D,

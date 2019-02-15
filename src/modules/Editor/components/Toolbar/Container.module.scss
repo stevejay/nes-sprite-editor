@@ -1,0 +1,8 @@
+@import "styles/_base.scss";
+
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  width: 512px;
+  margin-bottom: 0.5rem;
+}

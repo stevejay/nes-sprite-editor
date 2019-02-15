@@ -214,10 +214,11 @@ const Nametable = ({
   return (
     <>
       <NametableToolbar
-        toolDispatch={toolDispatch}
+        dispatch={toolDispatch}
         tool={toolState.currentTool}
         colorIndex={toolState.selectedColorIndex}
         paletteIndex={toolState.selectedPaletteIndex}
+        paletteCollection={paletteCollection}
         currentPalette={currentPalette}
         scale={renderState.scale}
         onReset={() =>

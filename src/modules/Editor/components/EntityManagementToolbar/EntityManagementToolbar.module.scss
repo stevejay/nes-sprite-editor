@@ -1,0 +1,21 @@
+@import "styles/_base.scss";
+
+.container {
+  max-width: 400px;
+}
+
+.buttonsRow {
+  display: flex;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.buttonsRow button {
+  margin-left: rem(6);
+  flex-grow: 1;
+  background-color: transparent;
+
+  &:first-of-type {
+    margin-left: 0;
+  }
+}

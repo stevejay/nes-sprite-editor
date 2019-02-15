@@ -28,7 +28,7 @@ storiesOf("SelectInput", module)
   .add("Basic", () => (
     <State store={store}>
       {state => (
-        <SelectInput<number>
+        <SelectInput
           id="select-basic"
           options={options}
           value={state.value}
@@ -41,7 +41,7 @@ storiesOf("SelectInput", module)
   .add("No options", () => (
     <State store={store}>
       {state => (
-        <SelectInput<number>
+        <SelectInput
           id="select-basic"
           options={[]}
           value={null}
