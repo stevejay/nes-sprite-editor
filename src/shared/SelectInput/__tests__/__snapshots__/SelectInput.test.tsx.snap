@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`displays correctly 1`] = `
+<div>
+  <div
+    class="container"
+  >
+    <select
+      id="the-id"
+      name="the-name"
+      tabindex="0"
+    >
+      <option
+        value="1"
+      >
+        Some text 1
+      </option>
+      <option
+        value="2"
+      >
+        Some text 2
+      </option>
+      <option
+        value="3"
+      >
+        Some text 3
+      </option>
+    </select>
+  </div>
+</div>
+`;

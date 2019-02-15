@@ -28,25 +28,29 @@ const RadioInputGroup = <P extends string | number>({
   renderLabel = option => option.label,
   onChange
 }: Props<P>) => {
-  const labelId = useId();
+  const groupId = useId("radio-group_");
   return (
     <>
-      <p className={styles.label} id={labelId}>
+      <p className={styles.label} id={groupId}>
         {legend}
       </p>
       <div
         role="radiogroup"
         className={styles.groupContainer}
-        aria-labelledby={labelId}
+        aria-labelledby={groupId}
       >
         {options.map(option => (
           <div
             key={option.id}
-            className={inline ? styles.inlineInput : styles.blockInput}
+            className={
+              inline
+                ? styles.inlineInputsContainer
+                : styles.blockInputsContainer
+            }
           >
             <RadioInput
               value={option.id}
-              groupName={labelId}
+              groupName={groupId}
               checked={selectedId === option.id}
               disabled={disabled}
               onChange={() => onChange(option.id)}

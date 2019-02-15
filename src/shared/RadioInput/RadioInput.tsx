@@ -1,5 +1,4 @@
 import React from "react";
-import { uniqueId } from "lodash";
 import styles from "./RadioInput.module.scss";
 import useId from "../utils/use-id";
 
@@ -12,15 +11,15 @@ type Props = {
   disabled?: boolean;
 };
 
-const RadioInput: React.FunctionComponent<Props> = ({
+const RadioInput = ({
   value,
   children,
   checked,
   onChange,
   groupName,
   disabled = false
-}) => {
-  const id = useId();
+}: Props) => {
+  const id = useId("radio-input_");
   return (
     <>
       <input

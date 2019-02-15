@@ -4,6 +4,8 @@ $background-color: $md-grey-300;
 $foreground-color: $md-black;
 $primary-background-color: $md-green-700;
 $primary-foreground-color: $md-white;
+$dark-background-color: $md-grey-700;
+$dark-foreground-color: $md-white;
 $button-v-padding: 10;
 
 .button {
@@ -126,6 +128,22 @@ $button-v-padding: 10;
   &:active {
     background-color: darken($primary-background-color, 10);
     border-color: darken($primary-background-color, 10);
+  }
+}
+
+.button.dark {
+  color: $dark-foreground-color;
+  background-color: $dark-background-color;
+  border-color: $dark-background-color;
+
+  &:hover {
+    background-color: darken($dark-background-color, 3);
+    border-color: darken($dark-background-color, 3);
+  }
+
+  &:active {
+    background-color: darken($dark-background-color, 10);
+    border-color: darken($dark-background-color, 10);
   }
 }
 

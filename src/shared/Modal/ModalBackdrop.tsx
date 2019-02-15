@@ -6,13 +6,10 @@ type Props = {
   onClose?: () => void;
 };
 
-const ModalBackdrop: React.FunctionComponent<Props> = ({
-  opacity,
-  onClose
-}) => {
+const ModalBackdrop = ({ opacity, onClose }: Props) => {
   const eventHandler = (event: React.SyntheticEvent) => {
     event.preventDefault();
-    onClose!();
+    onClose && onClose();
   };
 
   return (

@@ -5,7 +5,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-const ModalContent: React.FunctionComponent<Props> = ({ children }) => (
+const ModalContent = ({ children }: Props) => (
   <div className={styles.container}>{children}</div>
 );
 

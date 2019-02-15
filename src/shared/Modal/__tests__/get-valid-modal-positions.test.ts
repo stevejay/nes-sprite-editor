@@ -1,6 +1,6 @@
 import getValidModalPositions, {
   ModalPosition
-} from "./get-valid-modal-positions";
+} from "../get-valid-modal-positions";
 
 type RowCase = [
   string,

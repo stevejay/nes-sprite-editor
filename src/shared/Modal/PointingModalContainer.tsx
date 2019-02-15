@@ -38,7 +38,7 @@ const PointingModalContainerInner = ({
           left: 0,
           top: 0,
           right: window.innerWidth - 1,
-          bottom: window.innerWidth - 1
+          bottom: window.innerHeight - 1
         };
 
     const modalRect = ref.current.getBoundingClientRect();
@@ -54,6 +54,12 @@ const PointingModalContainerInner = ({
     );
 
     const position = selectModalPosition(positions);
+    if (!position) {
+      // TODO maybe have a fallback position.
+      // but this scenario is not possible?
+      return;
+    }
+
     ref.current.style.left = position.left + "px";
     ref.current.style.top = position.top + "px";
     ref.current.classList.add(position.basicPosition);

@@ -55,7 +55,6 @@ const ColorPicker = ({ palette, selectedColorId, scale, onChange }: Props) => {
       <canvas
         ref={canvasRef}
         className={styles.canvas}
-        // style={canvasSize}
         role="img"
         aria-label="Todo"
       />

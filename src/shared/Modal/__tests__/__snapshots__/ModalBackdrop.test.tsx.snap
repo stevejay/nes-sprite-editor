@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`displays correctly 1`] = `
+<div>
+  <div
+    class="backdrop"
+    style="opacity: 0.5;"
+    tabindex="-1"
+  />
+</div>
+`;

@@ -1,5 +1,5 @@
 import { testHook, cleanup, act } from "react-testing-library";
-import useOpenDialog from "./use-open-dialog";
+import useOpenDialog from "../use-open-dialog";
 
 afterEach(cleanup);
 

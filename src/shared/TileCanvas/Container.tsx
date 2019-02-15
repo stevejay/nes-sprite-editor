@@ -8,21 +8,8 @@ type Props = {
   onMouseUp?: (event: React.MouseEvent<HTMLElement>) => void;
 };
 
-const Container = React.forwardRef(
-  (
-    { children, onMouseMove, onMouseDown, onMouseUp }: Props,
-    ref: Ref<HTMLDivElement>
-  ) => (
-    <div
-      ref={ref}
-      className={styles.container}
-      onMouseMove={onMouseMove}
-      onMouseDown={onMouseDown}
-      onMouseUp={onMouseUp}
-    >
-      {children}
-    </div>
-  )
-);
+const Container = React.forwardRef((props: Props, ref: Ref<HTMLDivElement>) => (
+  <div {...props} ref={ref} className={styles.container} />
+));
 
 export default Container;

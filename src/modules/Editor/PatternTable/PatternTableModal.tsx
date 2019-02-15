@@ -24,7 +24,7 @@ type Props = {
   onClose: () => void;
 };
 
-const PatternTableModal: React.FunctionComponent<Props> = ({
+const PatternTableModal = ({
   isOpen,
   patternTable,
   palette,
@@ -32,7 +32,7 @@ const PatternTableModal: React.FunctionComponent<Props> = ({
   originElement,
   onSelectTile,
   onClose
-}) => {
+}: Props) => {
   usePreventBodyScroll(isOpen);
   useAriaHidden(isOpen);
 

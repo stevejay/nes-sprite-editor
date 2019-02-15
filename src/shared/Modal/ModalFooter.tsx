@@ -5,7 +5,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-const ModalFooter: React.FunctionComponent<Props> = ({ children }) => (
+const ModalFooter = ({ children }: Props) => (
   <div className={styles.footer}>{children}</div>
 );
 

@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`displays correctly 1`] = `
+<div>
+  <a
+    class="link"
+    href="/some/href"
+  >
+    The link text
+  </a>
+</div>
+`;

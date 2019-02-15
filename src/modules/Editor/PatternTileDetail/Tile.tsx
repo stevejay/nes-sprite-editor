@@ -16,7 +16,7 @@ type Props = {
 const Tile = ({ scale, tile, palette, ...rest }: Props) => {
   const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
 
-  const canvasSize = useSizedCanvasEffect(
+  useSizedCanvasEffect(
     canvasRef,
     PIXEL_COLUMNS_PER_TILE,
     PIXEL_ROWS_PER_TILE,
@@ -29,7 +29,7 @@ const Tile = ({ scale, tile, palette, ...rest }: Props) => {
     drawTile(ctx, 0, 0, 0, 0, tile.pixels, palette.colors, scale);
   }, [tile, palette, scale]);
 
-  return <canvas {...rest} ref={canvasRef} style={canvasSize} role="img" />;
+  return <canvas {...rest} ref={canvasRef} role="img" />;
 };
 
 export default Tile;

@@ -13,7 +13,7 @@ export type Props = {
   disabled?: boolean;
   ["aria-label"]?: string;
   size?: "small" | "medium";
-  appearance?: "default" | "primary" | "input" | "transparent";
+  appearance?: "default" | "dark" | "primary" | "input" | "transparent";
   className?: string;
   onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   onKeyDown?: (event: React.KeyboardEvent<HTMLButtonElement>) => void;

@@ -182,14 +182,14 @@ type Props = {
   onChangeTile: (id: string, tileIndex: number, newValue: number) => void;
 };
 
-const Nametable: React.FunctionComponent<Props> = ({
+const Nametable = ({
   nametable,
   patternTable,
   paletteCollection,
   onChangePatternTable,
   onChangePalette,
   onChangeTile
-}) => {
+}: Props) => {
   if (!nametable || !patternTable || !paletteCollection) {
     return null;
   }

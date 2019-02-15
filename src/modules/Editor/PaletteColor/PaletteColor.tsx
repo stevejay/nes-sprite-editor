@@ -10,11 +10,11 @@ type Props = {
   screenReaderLabel?: string;
 };
 
-const PaletteColor: React.FunctionComponent<Props> = ({
+const PaletteColor = ({
   color,
   isTransparent = false,
   screenReaderLabel
-}) => {
+}: Props) => {
   const containerStyle =
     color.available && !isTransparent
       ? { backgroundColor: color.rgb }

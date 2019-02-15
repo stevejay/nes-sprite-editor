@@ -15,15 +15,9 @@ const store = new Store({
   selectedId: 1
 });
 
-const stringIdOptions = [
-  {
-    id: 1,
-    label: "First option"
-  },
-  {
-    id: 2,
-    label: "Second option"
-  }
+const options = [
+  { id: 1, label: "First option" },
+  { id: 2, label: "Second option" }
 ];
 
 storiesOf("RadioInput", module)
@@ -34,7 +28,7 @@ storiesOf("RadioInput", module)
       {state => (
         <RadioInput.Group
           legend="The Radio Group Legend:"
-          options={stringIdOptions}
+          options={options}
           selectedId={state.selectedId}
           disabled={boolean("Disabled", false)}
           inline={boolean("Inline", false)}

@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`displays correctly 1`] = `
+<div>
+  <section
+    class="section"
+  >
+    content
+  </section>
+</div>
+`;

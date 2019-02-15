@@ -1,7 +1,9 @@
 import { ModalPosition } from "./get-valid-modal-positions";
 import { isEmpty, inRange } from "lodash";
 
-export default function selectModalPosition(positions: Array<ModalPosition>) {
+export default function selectModalPosition(
+  positions: Array<ModalPosition>
+): ModalPosition | null {
   let position: ModalPosition | null = null;
 
   const fitsPositions = positions.filter(position => position.fits);
@@ -15,7 +17,7 @@ export default function selectModalPosition(positions: Array<ModalPosition>) {
       position = fitsPositions[0];
     }
   } else {
-    position = positions[0];
+    position = isEmpty(positions) ? null : positions[0];
   }
 
   return position;

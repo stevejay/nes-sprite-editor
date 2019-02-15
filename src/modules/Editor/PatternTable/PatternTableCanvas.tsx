@@ -24,7 +24,7 @@ const PatternTableCanvas = ({
 }: Props) => {
   const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
 
-  const canvasSize = useSizedCanvasEffect(
+  useSizedCanvasEffect(
     canvasRef,
     tilesInColumn * TILE_SIZE_PIXELS,
     tilesInRow * TILE_SIZE_PIXELS,
@@ -49,13 +49,7 @@ const PatternTableCanvas = ({
   }, [tiles, palette, scale]);
 
   return (
-    <canvas
-      {...rest}
-      ref={canvasRef}
-      className={styles.canvas}
-      style={canvasSize}
-      role="img"
-    />
+    <canvas {...rest} ref={canvasRef} className={styles.canvas} role="img" />
   );
 };
 

@@ -1,0 +1,51 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`displays correctly 1`] = `
+<div>
+  <p
+    class="label"
+    id="radio-group_1"
+  >
+    The Radio Group Legend:
+  </p>
+  <div
+    aria-labelledby="radio-group_1"
+    class="groupContainer"
+    role="radiogroup"
+  >
+    <div
+      class="blockInputsContainer"
+    >
+      <input
+        class="input"
+        id="radio-input_2"
+        name="radio-group_1"
+        type="radio"
+        value="1"
+      />
+      <label
+        for="radio-input_2"
+      >
+        First option
+      </label>
+    </div>
+    <div
+      class="blockInputsContainer"
+    >
+      <input
+        checked=""
+        class="input"
+        id="radio-input_3"
+        name="radio-group_1"
+        type="radio"
+        value="2"
+      />
+      <label
+        for="radio-input_3"
+      >
+        Second option
+      </label>
+    </div>
+  </div>
+</div>
+`;

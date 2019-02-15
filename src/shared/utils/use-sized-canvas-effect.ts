@@ -7,26 +7,23 @@ export default function useSizedCanvasEffect(
   heightLogicalPx: number,
   scale: number
 ) {
-  const canvasSize = React.useMemo(
-    () => ({
-      width: widthLogicalPx * scale,
-      height: heightLogicalPx * scale
-    }),
-    [widthLogicalPx, heightLogicalPx, scale]
-  );
-
   React.useLayoutEffect(() => {
+    const width = widthLogicalPx * scale;
+    const height = heightLogicalPx * scale;
+
     const canvas = canvasRef.current!;
-    canvas.style.width = canvasSize.width + "px";
-    canvas.style.height = canvasSize.height + "px";
+
+    // make conditional to support integration testing using node-canvas:
+    if (canvas.style) {
+      canvas.style.width = width + "px";
+      canvas.style.height = height + "px";
+    }
 
     const deviceScale = window.devicePixelRatio;
-    canvas.width = canvasSize.width * deviceScale;
-    canvas.height = canvasSize.height * deviceScale;
+    canvas.width = width * deviceScale;
+    canvas.height = height * deviceScale;
 
     const ctx = canvas.getContext("2d")!;
     ctx.scale(deviceScale, deviceScale);
-  }, [canvasSize]);
-
-  return canvasSize;
+  }, [widthLogicalPx, heightLogicalPx, scale]);
 }

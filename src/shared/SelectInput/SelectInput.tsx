@@ -20,6 +20,7 @@ type Props<IdT> = {
 
 const SelectInput = <P extends string | number>({
   id,
+  name,
   options,
   value,
   disabled = false,

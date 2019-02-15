@@ -9,12 +9,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-const Panel: React.FunctionComponent<Props> = ({
-  role,
-  className = "",
-  children,
-  ...rest
-}) => (
+const Panel = ({ role, className = "", children, ...rest }: Props) => (
   <div {...rest} role={role} className={`${styles.container} ${className}`}>
     {children}
   </div>

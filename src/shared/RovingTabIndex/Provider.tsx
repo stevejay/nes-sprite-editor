@@ -1,5 +1,6 @@
 import { noop, findIndex, isEmpty, findLastIndex } from "lodash";
 import React from "react";
+import warning from "warning";
 
 const DOCUMENT_POSITION_FOLLOWING = 4;
 
@@ -60,7 +61,7 @@ function reducer(state: State, action: Action): State {
         tabStop => tabStop.id === newTabStop.id
       );
       if (index >= 0) {
-        // already registered (should never happen)
+        warning(false, `${newTabStop.id} tab stop already registered`);
         return state;
       }
       const indexBefore = findLastIndex(
@@ -85,7 +86,7 @@ function reducer(state: State, action: Action): State {
       const id = action.payload.id;
       const tabStops = state.tabStops.filter(tabStop => tabStop.id !== id);
       if (tabStops.length === state.tabStops.length) {
-        // Already unregistered (should never happen)
+        warning(false, `${id} tab stop already unregistered`);
         return state;
       }
       return {
@@ -104,7 +105,7 @@ function reducer(state: State, action: Action): State {
       const id = action.payload.id;
       const index = findIndex(state.tabStops, tabStop => tabStop.id === id);
       if (index === -1) {
-        // unregistered (should never happen)
+        warning(false, `${id} tab stop not registered`);
         return state;
       }
       const newIndex =

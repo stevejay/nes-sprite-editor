@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`displays correctly 1`] = `
+<div>
+  <input
+    autocapitalize="off"
+    autocomplete="off"
+    autocorrect="off"
+    class="input"
+    id="the-id"
+    name="the-name"
+    spellcheck="false"
+    type="text"
+    value="the value"
+  />
+</div>
+`;

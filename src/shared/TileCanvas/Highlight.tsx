@@ -1,5 +1,6 @@
 import React from "react";
 import styles from "./Highlight.module.scss";
+import classNames from "classnames";
 
 type Props = {
   children?: React.ReactNode;
@@ -20,7 +21,7 @@ const Highlight = ({
   focusOnly = false,
   ...rest
 }: Props) => {
-  const tileRef = React.useRef<HTMLDivElement | null>(null);
+  const tileRef = React.useRef<HTMLDivElement>(null);
 
   const style = React.useMemo(
     () => ({
@@ -34,11 +35,15 @@ const Highlight = ({
     [tileWidth, tileHeight, row, column]
   );
 
+  const className = classNames(styles.container, {
+    [styles.focusOnly]: focusOnly
+  });
+
   return (
     <div
       {...rest}
       ref={tileRef}
-      className={`${styles.container} ${focusOnly ? styles.focusOnly : ""}`}
+      className={className}
       tabIndex={0}
       style={style}
       onClick={event => event.stopPropagation()}

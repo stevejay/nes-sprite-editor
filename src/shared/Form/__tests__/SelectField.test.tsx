@@ -1,6 +1,5 @@
 import React from "react";
 import { render, cleanup } from "react-testing-library";
-import userEvent from "user-event";
 import { SelectField } from "..";
 
 afterEach(cleanup);
@@ -19,7 +18,6 @@ const SelectFieldWithState = () => {
       value={value}
       options={options}
       onChange={(value: string) => {
-        console.log("value", value);
         setValue(value);
       }}
     />

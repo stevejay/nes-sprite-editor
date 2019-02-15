@@ -15,17 +15,14 @@ type Props = {
 };
 
 const RenameEntityModal = ({ isOpen, name, onRename, onClose }: Props) => {
-  const handleSubmit = React.useCallback(
-    (values: any) => {
-      const value = (values.name || "").trim();
-      if (isEmpty(value)) {
-        return;
-      }
-      onRename(value);
-      onClose();
-    },
-    [onRename, onClose]
-  );
+  const handleSubmit = (values: any) => {
+    const value = (values.name || "").trim();
+    if (isEmpty(value)) {
+      return;
+    }
+    onRename(value);
+    onClose();
+  };
 
   return (
     <ModalDialog isOpen={isOpen} onClose={onClose}>

@@ -13,7 +13,7 @@ const storyHost = host({
   backdrop: "transparent"
 });
 
-const options = ["default", "primary", "input", "transparent"];
+const options = ["default", "dark", "primary", "input", "transparent"];
 
 const Spacer = () => <div style={{ display: "inline-block", width: 16 }} />;
 

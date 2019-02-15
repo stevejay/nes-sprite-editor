@@ -66,7 +66,7 @@ const NametableToolbar = ({
                   key={index}
                   aria-label={`Pencil tool for color #${index}`}
                   icon={FiEdit2}
-                  appearance={selected ? "primary" : "default"}
+                  appearance={selected ? "dark" : "default"}
                   onClick={() =>
                     toolDispatch({
                       type: ToolActionTypes.PENCIL_SELECTED,
@@ -91,7 +91,7 @@ const NametableToolbar = ({
                   key={index}
                   aria-label={`Palette tool for background palette #${index}`}
                   icon={FiGrid}
-                  appearance={selected ? "primary" : "default"}
+                  appearance={selected ? "dark" : "default"}
                   onClick={() =>
                     toolDispatch({
                       type: ToolActionTypes.PALETTE_SELECTED,
@@ -106,7 +106,7 @@ const NametableToolbar = ({
             <Button.WithRovingTabIndex
               aria-label="Select pattern tile"
               icon={FiSquare}
-              appearance={tool === "pattern" ? "primary" : "default"}
+              appearance={tool === "pattern" ? "dark" : "default"}
               onClick={() =>
                 toolDispatch({
                   type: ToolActionTypes.TOOL_SELECTED,
@@ -123,7 +123,7 @@ const NametableToolbar = ({
             <Button.WithRovingTabIndex
               aria-label="move visible canvas"
               icon={FiMove}
-              appearance={tool === "move" ? "primary" : "default"}
+              appearance={tool === "move" ? "dark" : "default"}
               onClick={() =>
                 toolDispatch({
                   type: ToolActionTypes.TOOL_SELECTED,
@@ -134,7 +134,7 @@ const NametableToolbar = ({
             <Button.WithRovingTabIndex
               aria-label="Zoom into canvas"
               icon={FiZoomIn}
-              appearance={tool === "zoomIn" ? "primary" : "default"}
+              appearance={tool === "zoomIn" ? "dark" : "default"}
               onClick={() =>
                 toolDispatch({
                   type: ToolActionTypes.TOOL_SELECTED,
@@ -145,7 +145,7 @@ const NametableToolbar = ({
             <Button.WithRovingTabIndex
               aria-label="Zoom out of canvas"
               icon={FiZoomOut}
-              appearance={tool === "zoomOut" ? "primary" : "default"}
+              appearance={tool === "zoomOut" ? "dark" : "default"}
               onClick={() =>
                 toolDispatch({
                   type: ToolActionTypes.TOOL_SELECTED,

@@ -2,9 +2,6 @@ import React from "react";
 import { RovingTabIndexContext, ActionTypes } from "./Provider";
 import { uniqueId } from "lodash";
 
-const ARROW_LEFT = 37;
-const ARROW_RIGHT = 39;
-
 type ReturnType = [
   number,
   boolean,
@@ -15,6 +12,7 @@ type ReturnType = [
 // domElementRef:
 //   - must remain stable for the lifetime of the component
 //   - it must support focus() being invoked on it
+// The returned callbacks handleKeyDown and handleClick are stable.
 export default function useRovingTabIndex(
   domElementRef: React.RefObject<any>,
   disabled: boolean
@@ -24,7 +22,7 @@ export default function useRovingTabIndex(
   const context = React.useContext(RovingTabIndexContext);
 
   // Registering and unregistering are tied to whether the input is disabled or not.
-  // Context is not in the inputs because context.dispatch never changes.
+  // Context is not in the inputs because context.dispatch is stable.
   React.useLayoutEffect(() => {
     if (disabled) {
       return;
@@ -42,13 +40,13 @@ export default function useRovingTabIndex(
   }, [disabled]);
 
   const handleKeyDown = React.useCallback((event: React.KeyboardEvent<any>) => {
-    if (event.keyCode === ARROW_LEFT) {
+    if (event.key === "ArrowLeft") {
       context.dispatch({
         type: ActionTypes.TAB_TO_PREVIOUS,
         payload: { id: id.current }
       });
       event.preventDefault();
-    } else if (event.keyCode === ARROW_RIGHT) {
+    } else if (event.key === "ArrowRight") {
       context.dispatch({
         type: ActionTypes.TAB_TO_NEXT,
         payload: { id: id.current }

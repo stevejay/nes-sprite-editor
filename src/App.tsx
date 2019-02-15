@@ -16,7 +16,7 @@ import Header from "./modules/header";
 
 const store = createStore(rootReducer);
 
-const App: React.FunctionComponent = () => (
+const App = () => (
   <Provider store={store}>
     <SkipLink href="#main">Skip to main content</SkipLink>
     <Header />

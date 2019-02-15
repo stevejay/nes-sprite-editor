@@ -5,6 +5,10 @@ import { Transition } from "react-spring/renderprops"; // TODO change to hook?
 import { useAriaHidden, usePreventBodyScroll, ModalBackdrop } from ".";
 import styles from "./ModalDialog.module.scss";
 
+const CONFIG = { duration: 200 };
+const FROM_AND_LEAVE = { opacity: 0, transform: "scale(1.1)" };
+const ENTER = { opacity: 1, transform: "scale(1)" };
+
 type Props = {
   isOpen: boolean;
   children: React.ReactNode;
@@ -17,18 +21,18 @@ const Modal = ({ isOpen, children, onClose }: Props) => {
 
   return (
     <Transition
-      config={{ duration: 200 }}
+      config={CONFIG}
       items={isOpen}
-      from={{ opacity: 0, transform: "scale(1.1)" }}
-      enter={{ opacity: 1, transform: "scale(1)" }}
-      leave={{ opacity: 0, transform: "scale(1.1)" }}
+      from={FROM_AND_LEAVE}
+      enter={ENTER}
+      leave={FROM_AND_LEAVE}
     >
       {isOpen =>
         isOpen &&
         (props => (
           <Portal>
             <>
-              <ModalBackdrop opacity={props.opacity / 2} onClose={onClose} />
+              <ModalBackdrop opacity={props.opacity * 0.5} onClose={onClose} />
               <div className={styles.scrollContainer}>
                 <FocusTrap
                   focusTrapOptions={{

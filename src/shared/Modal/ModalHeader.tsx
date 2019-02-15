@@ -8,11 +8,16 @@ type Props = {
   children: React.ReactNode;
 };
 
-const ModalHeader: React.FunctionComponent<Props> = ({ onClose, children }) => (
+const ModalHeader = ({ onClose, children }: Props) => (
   <header className={styles.header}>
-    <h1>{children}</h1>
+    <h2>{children}</h2>
     {onClose && (
-      <Button icon={FiX} onClick={onClose} appearance="transparent" />
+      <Button
+        aria-label="Close the dialog"
+        icon={FiX}
+        onClick={onClose}
+        appearance="transparent"
+      />
     )}
   </header>
 );

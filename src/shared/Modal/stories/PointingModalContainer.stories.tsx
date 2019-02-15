@@ -48,10 +48,7 @@ const Modal = ({
       <>
         <ModalBackdrop opacity={0} onClose={onClose} />
         <FocusTrap focusTrapOptions={{ onDeactivate: onClose }}>
-          <PointingModalContainer
-            originElement={originElement}
-            containerElement={document.body}
-          >
+          <PointingModalContainer originElement={originElement}>
             <div
               style={{ width: 200, height: 50, backgroundColor: "papayawhip" }}
             >
@@ -70,7 +67,7 @@ storiesOf("Modal/PointingModalContainer", module).add("Basic", () => (
   <div
     style={{
       width: "100vw",
-      height: "100vh"
+      height: "120vh"
     }}
   >
     <div

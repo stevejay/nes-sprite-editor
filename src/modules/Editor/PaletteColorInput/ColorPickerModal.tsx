@@ -20,14 +20,14 @@ type Props = {
   onClose: () => void;
 };
 
-const ColorPickerModal: React.FunctionComponent<Props> = ({
+const ColorPickerModal = ({
   isOpen,
   color,
   systemPalette,
   originElement,
   onChange,
   onClose
-}) => {
+}: Props) => {
   usePreventBodyScroll(isOpen);
   useAriaHidden(isOpen);
 

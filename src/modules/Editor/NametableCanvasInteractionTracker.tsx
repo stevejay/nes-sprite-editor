@@ -67,108 +67,93 @@ const NametableCanvasInteractionTracker = ({
   const highlightBoxRef = React.useRef<HTMLDivElement>(null);
   const [isOpen, handleOpen, handleClose] = useOpenDialog();
 
-  const handleMouseMove = React.useCallback(
-    (event: React.MouseEvent<HTMLDivElement>) => {
-      const boundingRect = containerRef!.current!.getBoundingClientRect();
-      const yInContainer = event.clientY - boundingRect.top;
-      const xInContainer = event.clientX - boundingRect.left;
+  const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
+    const boundingRect = containerRef!.current!.getBoundingClientRect();
+    const yInContainer = event.clientY - boundingRect.top;
+    const xInContainer = event.clientX - boundingRect.left;
 
-      const tilePosition = convertViewportCoordToNametableMetatile(
-        renderCanvasPositioning,
-        { x: xInContainer, y: yInContainer }
-      );
-
-      if (currentTile.tileIndex !== tilePosition.tileIndex) {
-        toolDispatch({
-          type: ToolActionTypes.CURRENT_TILE_UPDATED,
-          payload: tilePosition
-        });
-      }
-    },
-    [renderCanvasPositioning, currentTile, currentTool]
-  );
-
-  const handleClick = React.useCallback(
-    (event: React.MouseEvent<HTMLDivElement>) => {
-      const boundingRect = containerRef!.current!.getBoundingClientRect();
-      const yInContainer = event.clientY - boundingRect.top;
-      const xInContainer = event.clientX - boundingRect.left;
-
-      if (
-        xInContainer < 0 ||
-        xInContainer > viewportSize.width ||
-        yInContainer < 0 ||
-        yInContainer > viewportSize.height
-      ) {
-        return;
-      }
-
-      switch (currentTool) {
-        case "zoomIn":
-          renderDispatch({
-            type: RenderActionTypes.ZOOM_IN,
-            payload: { x: xInContainer, y: yInContainer }
-          });
-          break;
-        case "zoomOut":
-          renderDispatch({
-            type: RenderActionTypes.ZOOM_OUT,
-            payload: { x: xInContainer, y: yInContainer }
-          });
-          break;
-        case "pencil": {
-          if (!patternTable || !nametable) {
-            break;
-          }
-
-          const flattenedLogicalCoord = convertViewportCoordToNameablePixel(
-            renderCanvasPositioning,
-            { x: xInContainer, y: yInContainer }
-          );
-
-          if (!flattenedLogicalCoord) {
-            break;
-          }
-
-          onChangePatternTable(
-            patternTable.id,
-            nametable.tileIndexes[flattenedLogicalCoord.tileIndex],
-            flattenedLogicalCoord.tilePixelIndex,
-            [selectedColorIndex]
-          );
-          break;
-        }
-        case "palette": {
-          if (isNil(currentTile.metatileIndex) || isNil(nametable)) {
-            break;
-          }
-          onChangePalette(
-            nametable.id,
-            currentTile.metatileIndex,
-            selectedPaletteIndex
-          );
-          break;
-        }
-        case "pattern": {
-          if (!patternTable) {
-            break;
-          }
-
-          break;
-        }
-      }
-    },
-    [
-      currentTool,
-      selectedColorIndex,
-      selectedPaletteIndex,
-      viewportSize,
-      patternTable,
-      nametable,
+    const tilePosition = convertViewportCoordToNametableMetatile(
       renderCanvasPositioning,
-      currentTile
-    ]
-  );
+      { x: xInContainer, y: yInContainer }
+    );
+
+    if (currentTile.tileIndex !== tilePosition.tileIndex) {
+      toolDispatch({
+        type: ToolActionTypes.CURRENT_TILE_UPDATED,
+        payload: tilePosition
+      });
+    }
+  };
+
+  const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    const boundingRect = containerRef!.current!.getBoundingClientRect();
+    const yInContainer = event.clientY - boundingRect.top;
+    const xInContainer = event.clientX - boundingRect.left;
+
+    if (
+      xInContainer < 0 ||
+      xInContainer > viewportSize.width ||
+      yInContainer < 0 ||
+      yInContainer > viewportSize.height
+    ) {
+      return;
+    }
+
+    switch (currentTool) {
+      case "zoomIn":
+        renderDispatch({
+          type: RenderActionTypes.ZOOM_IN,
+          payload: { x: xInContainer, y: yInContainer }
+        });
+        break;
+      case "zoomOut":
+        renderDispatch({
+          type: RenderActionTypes.ZOOM_OUT,
+          payload: { x: xInContainer, y: yInContainer }
+        });
+        break;
+      case "pencil": {
+        if (!patternTable || !nametable) {
+          break;
+        }
+
+        const flattenedLogicalCoord = convertViewportCoordToNameablePixel(
+          renderCanvasPositioning,
+          { x: xInContainer, y: yInContainer }
+        );
+
+        if (!flattenedLogicalCoord) {
+          break;
+        }
+
+        onChangePatternTable(
+          patternTable.id,
+          nametable.tileIndexes[flattenedLogicalCoord.tileIndex],
+          flattenedLogicalCoord.tilePixelIndex,
+          [selectedColorIndex]
+        );
+        break;
+      }
+      case "palette": {
+        if (isNil(currentTile.metatileIndex) || isNil(nametable)) {
+          break;
+        }
+        onChangePalette(
+          nametable.id,
+          currentTile.metatileIndex,
+          selectedPaletteIndex
+        );
+        break;
+      }
+      case "pattern": {
+        if (!patternTable) {
+          break;
+        }
+
+        break;
+      }
+    }
+  };
 
   const handleDraggableStop: DraggableEventHandler = (_event, data) => {
     renderDispatch({
@@ -207,7 +192,6 @@ const NametableCanvasInteractionTracker = ({
       if (isNil(nametable) || isNil(currentTile.tileIndex)) {
         return;
       }
-      console.log("change", nametable.id, currentTile.tileIndex, value);
       onChangeTile(nametable.id, currentTile.tileIndex, value);
     },
     [onChangeTile, nametable, currentTile]
