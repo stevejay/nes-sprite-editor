@@ -20,8 +20,6 @@ storiesOf("PatternTableCanvas", module)
   .addDecorator(storyHost)
   .add("3 x 2", () => (
     <PatternTableCanvas
-      tilesInRow={3}
-      tilesInColumn={2}
       scale={8}
       tiles={[
         PINK_PIXELS,
@@ -34,13 +32,10 @@ storiesOf("PatternTableCanvas", module)
         pixels
       }))}
       palette={BACKGROUND_PALETTE}
-      aria-label="The aria label"
     />
   ))
   .add("1 x 1", () => (
     <PatternTableCanvas
-      tilesInRow={1}
-      tilesInColumn={1}
       scale={16}
       tiles={[RANDOM_PIXELS].map(pixels => ({
         pixels

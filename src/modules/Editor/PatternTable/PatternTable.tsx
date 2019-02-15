@@ -31,6 +31,11 @@ const PatternTable = ({
   const column = tileIndex % PATTERN_TABLE_COLUMNS;
   return (
     <TileCanvas.Container>
+      <PatternTableCanvas
+        scale={scale}
+        tiles={patternTable.tiles}
+        palette={palette}
+      />
       <TileCanvas.InteractionTracker
         rows={PATTERN_TABLE_ROWS}
         columns={PATTERN_TABLE_COLUMNS}
@@ -40,14 +45,6 @@ const PatternTable = ({
           onSelectTile(row * PATTERN_TABLE_COLUMNS + column);
         }}
       >
-        <PatternTableCanvas
-          tilesInRow={PATTERN_TABLE_ROWS}
-          tilesInColumn={PATTERN_TABLE_COLUMNS}
-          scale={scale}
-          tiles={patternTable.tiles}
-          palette={palette}
-          aria-label="Pattern table tiles"
-        />
         <TileCanvas.Highlight
           tileWidth={TILE_SIZE_PIXELS * scale}
           tileHeight={TILE_SIZE_PIXELS * scale}

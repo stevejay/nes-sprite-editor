@@ -25,7 +25,14 @@ storiesOf("TileCanvas/InteractionTracker", module)
           <p>
             row={state.row}, column={state.column}, pressed={`${state.pressed}`}
           </p>
-          <div>
+          <div
+            tabIndex={0}
+            style={{
+              width: 8 * 8 * 3 * 2,
+              height: 8 * 8 * 2 * 2,
+              backgroundColor: "papayawhip"
+            }}
+          >
             <TileCanvas.InteractionTracker
               rows={2}
               columns={3}
@@ -35,14 +42,7 @@ storiesOf("TileCanvas/InteractionTracker", module)
                 store.set({ row, column, pressed })
               }
             >
-              <div
-                tabIndex={0}
-                style={{
-                  width: 8 * 8 * 3 * 2,
-                  height: 8 * 8 * 2 * 2,
-                  backgroundColor: "papayawhip"
-                }}
-              />
+              <div />
             </TileCanvas.InteractionTracker>
           </div>
         </>

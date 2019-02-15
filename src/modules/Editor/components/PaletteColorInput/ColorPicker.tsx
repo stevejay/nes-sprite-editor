@@ -1,8 +1,8 @@
 import * as React from "react";
-import styles from "./ColorPicker.module.scss";
-import { SystemPalette, Color } from "../../store";
-import useSizedCanvasEffect from "../../../../shared/utils/use-sized-canvas-effect";
 import TileCanvas from "../../../../shared/TileCanvas";
+import useSizedCanvasEffect from "../../../../shared/utils/use-sized-canvas-effect";
+import { Color, SystemPalette } from "../../store";
+import styles from "./ColorPicker.module.scss";
 
 const COLUMNS = 16;
 const ROWS = 64 / COLUMNS;
@@ -45,27 +45,29 @@ const ColorPicker = ({ palette, selectedColorId, scale, onChange }: Props) => {
   const currentColumn = selectedColorId % COLUMNS;
 
   return (
-    <TileCanvas.InteractionTracker
-      rows={ROWS}
-      columns={COLUMNS}
-      row={currentRow}
-      column={currentColumn}
-      onSelect={handleSelect}
-    >
+    <>
       <canvas
         ref={canvasRef}
         className={styles.canvas}
         role="img"
         aria-label="todo"
       />
-      <TileCanvas.Highlight
-        tileWidth={scale}
-        tileHeight={scale}
+      <TileCanvas.InteractionTracker
+        rows={ROWS}
+        columns={COLUMNS}
         row={currentRow}
         column={currentColumn}
-        aria-label="todo"
-      />
-    </TileCanvas.InteractionTracker>
+        onSelect={handleSelect}
+      >
+        <TileCanvas.Highlight
+          tileWidth={scale}
+          tileHeight={scale}
+          row={currentRow}
+          column={currentColumn}
+          aria-label="todo"
+        />
+      </TileCanvas.InteractionTracker>
+    </>
   );
 };
 

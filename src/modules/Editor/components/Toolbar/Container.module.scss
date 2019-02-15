@@ -3,6 +3,6 @@
 .container {
   display: flex;
   flex-wrap: wrap;
-  width: 512px;
+  max-width: 512px;
   margin-bottom: 0.5rem;
 }
