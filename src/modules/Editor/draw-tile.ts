@@ -12,40 +12,33 @@ export default function drawTile(
   colors: Array<Color>,
   scale: number
 ) {
-  let rowLoopIndex = -1;
-
-  const xOffset = xTileOffset * scale;
-  const yOffset = yTileOffset * scale;
+  const x = column * scale * TILE_SIZE_PIXELS + xTileOffset * scale;
+  const y = row * scale * TILE_SIZE_PIXELS + yTileOffset * scale;
 
   if (isNumber(pixels)) {
     // Optimization for a tile that is a solid color:
-    const color = colors[pixels];
-    const rgbString = color.available ? color.rgb : UNAVAILABLE_COLOR;
-    ctx.fillStyle = rgbString;
-    ctx.fillRect(
-      column * scale * TILE_SIZE_PIXELS + xOffset,
-      row * scale * TILE_SIZE_PIXELS + yOffset,
-      scale * TILE_SIZE_PIXELS,
-      scale * TILE_SIZE_PIXELS
-    );
+    ctx.fillStyle = getFillStyle(colors, pixels);
+    ctx.fillRect(x, y, scale * TILE_SIZE_PIXELS, scale * TILE_SIZE_PIXELS);
   } else {
     // A tile that is not a solid color; draw 64 pixels:
+    let rowLoopIndex = -1;
     pixels.forEach((colorIndex, index) => {
-      const columnLoopIndex = index % TILE_SIZE_PIXELS;
+      const columnLoopIndex = index & (TILE_SIZE_PIXELS - 1);
       if (columnLoopIndex === 0) {
         ++rowLoopIndex;
       }
-
-      const color = colors[colorIndex];
-      const rgbString = color.available ? color.rgb : UNAVAILABLE_COLOR;
-      ctx.fillStyle = rgbString;
-
+      ctx.fillStyle = getFillStyle(colors, colorIndex);
       ctx.fillRect(
-        column * scale * TILE_SIZE_PIXELS + columnLoopIndex * scale + xOffset,
-        row * scale * TILE_SIZE_PIXELS + rowLoopIndex * scale + yOffset,
+        x + columnLoopIndex * scale,
+        y + rowLoopIndex * scale,
         scale,
         scale
       );
     });
   }
+}
+
+function getFillStyle(colors: Array<Color>, colorIndex: number) {
+  const color = colors[colorIndex];
+  return color.available ? color.rgb : UNAVAILABLE_COLOR;
 }

@@ -1,5 +1,9 @@
 @import "styles/_base.scss";
 
+.container {
+  margin-bottom: 0;
+}
+
 .canvas {
   display: block;
   @include unavailableColor;

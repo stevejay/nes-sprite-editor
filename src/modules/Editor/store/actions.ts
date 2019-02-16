@@ -119,6 +119,21 @@ export function changePatternTablePixels(
   };
 }
 
+export function changePatternTableTileLock(
+  id: string,
+  tileIndex: number,
+  isLocked: boolean
+): Action {
+  return {
+    type: ActionTypes.CHANGE_PATTERN_TABLE_TILE_LOCK,
+    payload: {
+      id,
+      tileIndex,
+      isLocked
+    }
+  };
+}
+
 export function setNametable(id: string): Action {
   return {
     type: ActionTypes.SELECT_NAMETABLE,

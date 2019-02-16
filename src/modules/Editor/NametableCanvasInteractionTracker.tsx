@@ -1,25 +1,26 @@
+import classNames from "classnames";
+import { isNil } from "lodash";
 import React, { CSSProperties } from "react";
 import Draggable, { DraggableEventHandler } from "react-draggable";
-import styles from "./NametableCanvasInteractionTracker.module.scss";
-import classNames from "classnames";
+import { FiLock } from "react-icons/fi";
+import useOpenDialog from "../../shared/utils/use-open-dialog";
+import {
+  convertTilePositionToCanvasCoords,
+  convertViewportCoordToNameablePixel,
+  convertViewportCoordToNametableMetatile,
+  RenderCanvasPositioning,
+  ViewportSize
+} from "./experiment";
 import {
   RenderAction,
   RenderActionTypes,
-  ToolState,
   ToolAction,
-  ToolActionTypes
+  ToolActionTypes,
+  ToolState
 } from "./Nametable";
-import {
-  ViewportSize,
-  RenderCanvasPositioning,
-  convertViewportCoordToNameablePixel,
-  convertViewportCoordToNametableMetatile,
-  convertTilePositionToCanvasCoords
-} from "./experiment";
-import { PatternTable, Nametable, GamePaletteWithColors } from "./store";
-import { isNil } from "lodash";
-import useOpenDialog from "../../shared/utils/use-open-dialog";
+import styles from "./NametableCanvasInteractionTracker.module.scss";
 import { PatternTableModal } from "./PatternTable";
+import { GamePaletteWithColors, Nametable, PatternTable } from "./store";
 
 const DRAG_POSITION = { x: 0, y: 0 };
 
@@ -33,6 +34,7 @@ type Props = {
   selectedColorIndex: ToolState["selectedColorIndex"];
   selectedPaletteIndex: ToolState["selectedPaletteIndex"];
   currentTile: ToolState["currentTile"];
+  scale: number;
   renderDispatch: React.Dispatch<RenderAction>;
   toolDispatch: React.Dispatch<ToolAction>;
   children: React.ReactNode;
@@ -56,6 +58,7 @@ const NametableCanvasInteractionTracker = ({
   selectedColorIndex,
   selectedPaletteIndex,
   currentTile,
+  scale,
   renderDispatch,
   toolDispatch,
   children,
@@ -66,6 +69,7 @@ const NametableCanvasInteractionTracker = ({
   const containerRef = React.useRef<HTMLDivElement>(null);
   const highlightBoxRef = React.useRef<HTMLDivElement>(null);
   const [isOpen, handleOpen, handleClose] = useOpenDialog();
+  const [patternTileIndex, setPatternTileIndex] = React.useState(0);
 
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
     const boundingRect = containerRef!.current!.getBoundingClientRect();
@@ -81,6 +85,15 @@ const NametableCanvasInteractionTracker = ({
       toolDispatch({
         type: ToolActionTypes.CURRENT_TILE_UPDATED,
         payload: tilePosition
+      });
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (currentTile.tileIndex) {
+      toolDispatch({
+        type: ToolActionTypes.CURRENT_TILE_UPDATED,
+        payload: { tileIndex: null, metatileIndex: null }
       });
     }
   };
@@ -189,13 +202,23 @@ const NametableCanvasInteractionTracker = ({
 
   const handleSelectTile = React.useCallback(
     (value: number) => {
-      if (isNil(nametable) || isNil(currentTile.tileIndex)) {
+      console.log("handleSelectTile", nametable, patternTileIndex, value);
+
+      if (isNil(nametable) || isNil(patternTileIndex)) {
         return;
       }
-      onChangeTile(nametable.id, currentTile.tileIndex, value);
+
+      onChangeTile(nametable.id, patternTileIndex, value);
     },
-    [onChangeTile, nametable, currentTile]
+    [onChangeTile, nametable, patternTileIndex]
   );
+
+  const handleHighlightClick = () => {
+    if (currentTile.tileIndex) {
+      setPatternTileIndex(currentTile.tileIndex);
+    }
+    handleOpen();
+  };
 
   return (
     <>
@@ -204,6 +227,7 @@ const NametableCanvasInteractionTracker = ({
         className={containerClassNames}
         style={viewportSize}
         onMouseMove={isHighlightTool ? handleMouseMove : undefined}
+        onMouseLeave={handleMouseLeave}
         onClick={handleClick}
         onKeyDown={undefined}
       >
@@ -217,17 +241,26 @@ const NametableCanvasInteractionTracker = ({
         {isHighlightTool && highlightBoxStyle && (
           <div
             ref={highlightBoxRef}
-            className={styles.metatileContainer}
+            className={styles.highlightBox}
             style={highlightBoxStyle}
-            onClick={currentTool === "pattern" ? handleOpen : undefined}
-          />
+            onClick={
+              currentTool === "pattern" ? handleHighlightClick : undefined
+            }
+          >
+            {patternTable &&
+              nametable &&
+              scale >= 2 &&
+              !isNil(currentTile.tileIndex) &&
+              patternTable.tiles[nametable.tileIndexes[currentTile.tileIndex]]
+                .isLocked && <FiLock />}
+          </div>
         )}
       </div>
       <PatternTableModal
         isOpen={isOpen}
         patternTable={patternTable}
         palette={currentPalette}
-        selectedTileIndex={nametable!.tileIndexes[currentTile.tileIndex!]}
+        selectedTileIndex={nametable!.tileIndexes[patternTileIndex]}
         originElement={highlightBoxRef.current}
         onSelectTile={handleSelectTile}
         onClose={handleClose}

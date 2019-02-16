@@ -32,8 +32,20 @@
   cursor: grab;
 }
 
-.metatileContainer {
+.highlightBox {
   position: absolute;
   background: transparent;
   border: 1px dashed rgba($md-white, 0.75);
+}
+
+.highlightBox svg {
+  width: 60%;
+  height: 60%;
+  position: absolute;
+  right: 5%;
+  bottom: 5%;
+  color: $md-white;
+  background-color: rgba($md-black, 0.33);
+  border-radius: 10%;
+  padding: 5%;
 }

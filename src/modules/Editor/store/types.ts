@@ -53,6 +53,7 @@ export type PatternTile = {
   // - 64 pixels, each value 0 to 3 (palette index)
   // - one value 0 to 3 that all 64 pixels have
   pixels: Uint8Array | number;
+  isLocked: boolean;
 };
 
 export type PatternTableType = "background" | "sprite";
@@ -93,7 +94,8 @@ export enum ActionTypes {
   UPDATE_PATTERN_TABLE_METADATA = "UPDATE_PATTERN_TABLE_METADATA",
   COPY_PATTERN_TABLE = "COPY_PATTERN_TABLE",
   DELETE_PATTERN_TABLE = "DELETE_PATTERN_TABLE",
-  CHANGE_PATTERN_TABLE_PIXELS = "CHANGE_PATTERN_TABLE_PIXELS"
+  CHANGE_PATTERN_TABLE_PIXELS = "CHANGE_PATTERN_TABLE_PIXELS",
+  CHANGE_PATTERN_TABLE_TILE_LOCK = "CHANGE_PATTERN_TABLE_TILE_LOCK"
 }
 
 export type State = {
@@ -250,5 +252,13 @@ export type Action =
         tileIndex: number;
         startPixelIndex: number;
         newPixels: Array<number>;
+      };
+    }
+  | {
+      type: ActionTypes.CHANGE_PATTERN_TABLE_TILE_LOCK;
+      payload: {
+        id: PatternTable["id"];
+        tileIndex: number;
+        isLocked: boolean;
       };
     };

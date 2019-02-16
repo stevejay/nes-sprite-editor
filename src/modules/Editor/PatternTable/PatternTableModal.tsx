@@ -1,18 +1,24 @@
 import FocusTrap from "focus-trap-react";
 import React from "react";
 import { Portal } from "react-portal";
+import { Transition } from "react-spring/renderprops";
 import {
-  PatternTable as PatternTableType,
-  GamePaletteWithColors
-} from "../store";
-import {
-  useAriaHidden,
-  usePreventBodyScroll,
+  ModalBackdrop,
   PointingModalContainer,
-  ModalBackdrop
+  useAriaHidden,
+  usePreventBodyScroll
 } from "../../../shared/Modal";
-import { Transition } from "react-spring/renderprops"; // TODO change to hook
+import {
+  GamePaletteWithColors,
+  PatternTable as PatternTableType
+} from "../store";
 import PatternTable from "./PatternTable";
+import styles from "./PatternTableModal.module.scss";
+// TODO change to hook
+
+const CONFIG = { duration: 150 };
+const FROM_AND_LEAVE = { opacity: 0 };
+const ENTER = { opacity: 1 };
 
 type Props = {
   isOpen: boolean;
@@ -42,11 +48,11 @@ const PatternTableModal = ({
 
   return (
     <Transition
-      config={{ duration: 150 }}
+      config={CONFIG}
       items={isOpen}
-      from={{ opacity: 0 }}
-      enter={{ opacity: 1 }}
-      leave={{ opacity: 0 }}
+      from={FROM_AND_LEAVE}
+      enter={ENTER}
+      leave={FROM_AND_LEAVE}
     >
       {isOpen =>
         isOpen &&
@@ -64,10 +70,8 @@ const PatternTableModal = ({
                     patternTable={patternTable}
                     palette={palette}
                     tileIndex={selectedTileIndex}
-                    onSelectTile={index => {
-                      onSelectTile(index);
-                      // onClose();
-                    }}
+                    containerClassName={styles.patternTableContainer}
+                    onSelectTile={onSelectTile}
                   />
                 </PointingModalContainer>
               </FocusTrap>
@@ -79,7 +83,11 @@ const PatternTableModal = ({
   );
 };
 
+// export default PatternTableModal;
+
 export default React.memo(
   PatternTableModal,
-  (prevProps, nextProps) => prevProps.isOpen === nextProps.isOpen
+  (prevProps, nextProps) =>
+    prevProps.isOpen === nextProps.isOpen &&
+    prevProps.selectedTileIndex === nextProps.selectedTileIndex
 );

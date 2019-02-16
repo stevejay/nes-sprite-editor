@@ -105,6 +105,7 @@ function toolReducer(state: ToolState, action: ToolAction): ToolState {
         }
       };
     case ToolActionTypes.CURRENT_TILE_UPDATED:
+      console.log("CURRENT_TILE_UPDATED", action.payload);
       return {
         ...state,
         currentTile: action.payload
@@ -245,6 +246,7 @@ const Nametable = ({
             selectedColorIndex={toolState.selectedColorIndex}
             selectedPaletteIndex={toolState.selectedPaletteIndex}
             currentTile={toolState.currentTile}
+            scale={renderState.scale}
             renderDispatch={renderDispatch}
             toolDispatch={toolDispatch}
             onChangePatternTable={onChangePatternTable}

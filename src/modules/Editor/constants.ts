@@ -426,7 +426,8 @@ const BACKGROUND_PATTERN_TABLE_OPTIONS: Array<PatternTable> = [
           ? BLANK_3_TILE_PIXELS
           : index === 4
           ? HEART_TILE_PIXELS
-          : BLANK_0_TILE_PIXELS
+          : BLANK_0_TILE_PIXELS,
+      isLocked: index <= 4
     })) as PatternTable["tiles"]
   }
 ];

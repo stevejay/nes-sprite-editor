@@ -16,21 +16,22 @@ type Props = {
   patternTable: PatternTableType;
   palette: GamePaletteWithColors;
   tileIndex: number;
+  containerClassName?: string;
   onSelectTile: (index: number) => void;
 };
 
-// TODO prevent rendering when possible
 const PatternTable = ({
   scale,
   patternTable,
   palette,
   tileIndex,
+  containerClassName,
   onSelectTile
 }: Props) => {
   const row = Math.floor(tileIndex / PATTERN_TABLE_COLUMNS);
   const column = tileIndex % PATTERN_TABLE_COLUMNS;
   return (
-    <TileCanvas.Container>
+    <TileCanvas.Container className={containerClassName}>
       <PatternTableCanvas
         scale={scale}
         tiles={patternTable.tiles}

@@ -1,12 +1,6 @@
 import { cloneDeep, find, range, isNumber } from "lodash";
 import uuidv4 from "uuid/v4";
-import {
-  Action,
-  ActionTypes,
-  State,
-  PatternTable,
-  PatternTile
-} from "../types";
+import { Action, ActionTypes, State, PatternTable } from "../types";
 import { BACKGROUND_PATTERN_TABLE_OPTIONS } from "../../constants";
 
 export const initialState: Partial<State> = {
@@ -41,7 +35,8 @@ export function reducer(state: State, action: Action): State {
         id: uuidv4(),
         label: action.payload.label,
         tiles: range(0, 256).map(() => ({
-          pixels: 0
+          pixels: 0,
+          isLocked: false
         }))
       };
       return {
@@ -133,6 +128,9 @@ export function reducer(state: State, action: Action): State {
       if (!tableMatch) {
         return state;
       }
+      if (tableMatch.tiles[tileIndex].isLocked) {
+        return state;
+      }
       return {
         ...state,
         patternTables: state.patternTables.map(table => {
@@ -150,7 +148,36 @@ export function reducer(state: State, action: Action): State {
                 : tile.pixels;
               const pixels = new Uint8Array(sourcePixels);
               pixels.set(newPixels, startPixelIndex);
-              return { ...tile, pixels };
+              return {
+                ...tile,
+                pixels: pixels.every(value => value === pixels[0])
+                  ? pixels[0]
+                  : pixels
+              };
+            })
+          };
+        })
+      };
+    }
+    case ActionTypes.CHANGE_PATTERN_TABLE_TILE_LOCK: {
+      const { id, tileIndex, isLocked } = action.payload;
+      const tableMatch = find(state.patternTables, table => table.id === id);
+      if (!tableMatch) {
+        return state;
+      }
+      return {
+        ...state,
+        patternTables: state.patternTables.map(table => {
+          if (table.id !== tableMatch.id) {
+            return table;
+          }
+          return {
+            ...table,
+            tiles: table.tiles.map((tile, index) => {
+              if (index !== tileIndex) {
+                return tile;
+              }
+              return { ...tile, isLocked };
             })
           };
         })

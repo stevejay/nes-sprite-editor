@@ -8,10 +8,29 @@
   margin-bottom: rem(3);
 }
 
-.container > * {
+.column {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   margin-right: rem(10);
 
   &:last-child {
     margin-right: 0;
   }
+}
+
+.statistic {
+  font-weight: bold;
+}
+
+.lockIndicator {
+  position: absolute;
+  right: rem(5);
+  bottom: rem(5);
+  padding: rem(5);
+  border-radius: rem(3);
+  background: rgba($md-black, 0.33);
+  color: $md-white;
+  width: rem(44);
+  height: rem(44);
 }

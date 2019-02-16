@@ -29,7 +29,8 @@ storiesOf("PatternTableCanvas", module)
         JADE_PIXELS,
         JADE_PIXELS
       ].map(pixels => ({
-        pixels
+        pixels,
+        isLocked: true
       }))}
       palette={BACKGROUND_PALETTE}
     />
@@ -38,7 +39,8 @@ storiesOf("PatternTableCanvas", module)
     <PatternTableCanvas
       scale={16}
       tiles={[RANDOM_PIXELS].map(pixels => ({
-        pixels
+        pixels,
+        isLocked: true
       }))}
       palette={BACKGROUND_PALETTE}
       aria-label="The aria label"

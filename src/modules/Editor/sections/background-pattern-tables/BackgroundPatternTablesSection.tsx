@@ -8,6 +8,7 @@ import PatternTable from "../../PatternTable";
 import PatternTableTileDetail from "../../PatternTableTileDetail";
 import {
   addNewBackgroundPatternTable,
+  changePatternTableTileLock,
   copyPatternTable,
   deletePatternTable,
   EditorStateSlice,
@@ -16,9 +17,7 @@ import {
   selectCurrentBackgroundPalettes,
   selectCurrentBackgroundPatternTable,
   selectCurrentNametable,
-  setPatternTable
-} from "../../store";
-import {
+  setPatternTable,
   GamePaletteCollectionWithColors,
   Nametable,
   PatternTable as PatternTableType
@@ -34,6 +33,7 @@ type Props = {
   copyPatternTable: typeof copyPatternTable;
   deletePatternTable: typeof deletePatternTable;
   renamePatternTable: typeof renamePatternTable;
+  changePatternTableTileLock: typeof changePatternTableTileLock;
 };
 
 const BackgroundPatternTablesSection = ({
@@ -45,14 +45,14 @@ const BackgroundPatternTablesSection = ({
   addNewBackgroundPatternTable,
   copyPatternTable,
   deletePatternTable,
-  renamePatternTable
+  renamePatternTable,
+  changePatternTableTileLock
 }: Props) => {
   const [tileIndex, setTileIndex] = React.useState(0);
   const [paletteIndex, setPaletteIndex] = React.useState(0);
   const selectedPalette = paletteCollection
     ? paletteCollection.gamePalettes[paletteIndex]
     : null;
-
   return (
     <Section>
       <header>
@@ -71,7 +71,7 @@ const BackgroundPatternTablesSection = ({
       />
       {currentPatternTable && selectedPalette && paletteCollection && (
         <>
-          <h3>Pattern Table Tiles</h3>
+          <h3>Pattern Table</h3>
           <Toolbar.Container>
             <PaletteSelectionToolbar
               paletteIndex={paletteIndex}
@@ -92,6 +92,13 @@ const BackgroundPatternTablesSection = ({
             currentPatternTable={currentPatternTable}
             currentNametable={currentNametable}
             palette={selectedPalette}
+            onUpdateLocked={isLocked => {
+              changePatternTableTileLock(
+                currentPatternTable.id,
+                tileIndex,
+                isLocked
+              );
+            }}
           />
         </>
       )}
@@ -111,7 +118,8 @@ export default connect(
     addNewBackgroundPatternTable,
     copyPatternTable,
     deletePatternTable,
-    renamePatternTable
+    renamePatternTable,
+    changePatternTableTileLock
   }
 )(
   React.memo(

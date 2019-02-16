@@ -45,7 +45,7 @@ const ColorPicker = ({ palette, selectedColorId, scale, onChange }: Props) => {
   const currentColumn = selectedColorId % COLUMNS;
 
   return (
-    <>
+    <TileCanvas.Container className={styles.container}>
       <canvas
         ref={canvasRef}
         className={styles.canvas}
@@ -67,7 +67,7 @@ const ColorPicker = ({ palette, selectedColorId, scale, onChange }: Props) => {
           aria-label="todo"
         />
       </TileCanvas.InteractionTracker>
-    </>
+    </TileCanvas.Container>
   );
 };
 
