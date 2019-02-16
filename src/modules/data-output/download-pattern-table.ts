@@ -1,4 +1,4 @@
-import { range } from "lodash";
+import { range, isNumber } from "lodash";
 import sync from "save-file";
 import { PatternTable, PatternTile } from "../editor";
 import { PATTERN_TABLE_COLUMNS } from "../editor/constants";
@@ -46,7 +46,7 @@ function createPatternTableByte(
 ) {
   let result = 0;
   for (let i = 0; i < 8; ++i) {
-    const pixel = pixels[offset + i];
+    const pixel = isNumber(pixels) ? pixels : pixels[offset + i];
     if (pixel & mask) {
       result = result | (1 << i);
     }

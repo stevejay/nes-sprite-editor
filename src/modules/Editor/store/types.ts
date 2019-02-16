@@ -49,7 +49,10 @@ export type GamePaletteCollectionWithColors = {
 
 // 8x8 area of pixels
 export type PatternTile = {
-  pixels: Uint8Array; // 64 pixels, each value 0 to 3 (palette index)
+  // Either:
+  // - 64 pixels, each value 0 to 3 (palette index)
+  // - one value 0 to 3 that all 64 pixels have
+  pixels: Uint8Array | number;
 };
 
 export type PatternTableType = "background" | "sprite";

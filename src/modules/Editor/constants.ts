@@ -328,16 +328,10 @@ if (process.env.NODE_ENV === "development") {
 
 export { SYSTEM_PALETTE_OPTIONS };
 
-const BLANK_0_TILE_PIXELS: PatternTile["pixels"] = new Uint8Array(64);
-
-const BLANK_1_TILE_PIXELS: PatternTile["pixels"] = new Uint8Array(64);
-BLANK_1_TILE_PIXELS.fill(1);
-
-const BLANK_2_TILE_PIXELS: PatternTile["pixels"] = new Uint8Array(64);
-BLANK_2_TILE_PIXELS.fill(2);
-
-const BLANK_3_TILE_PIXELS: PatternTile["pixels"] = new Uint8Array(64);
-BLANK_3_TILE_PIXELS.fill(3);
+const BLANK_0_TILE_PIXELS: PatternTile["pixels"] = 0;
+const BLANK_1_TILE_PIXELS: PatternTile["pixels"] = 1;
+const BLANK_2_TILE_PIXELS: PatternTile["pixels"] = 2;
+const BLANK_3_TILE_PIXELS: PatternTile["pixels"] = 3;
 
 const HEART_TILE_PIXELS: PatternTile["pixels"] = new Uint8Array([
   // 0

@@ -1,6 +1,12 @@
-import { cloneDeep, find, range } from "lodash";
+import { cloneDeep, find, range, isNumber } from "lodash";
 import uuidv4 from "uuid/v4";
-import { Action, ActionTypes, State, PatternTable } from "../types";
+import {
+  Action,
+  ActionTypes,
+  State,
+  PatternTable,
+  PatternTile
+} from "../types";
 import { BACKGROUND_PATTERN_TABLE_OPTIONS } from "../../constants";
 
 export const initialState: Partial<State> = {
@@ -35,7 +41,7 @@ export function reducer(state: State, action: Action): State {
         id: uuidv4(),
         label: action.payload.label,
         tiles: range(0, 256).map(() => ({
-          pixels: new Uint8Array(64)
+          pixels: 0
         }))
       };
       return {
@@ -139,7 +145,10 @@ export function reducer(state: State, action: Action): State {
               if (index !== tileIndex) {
                 return tile;
               }
-              const pixels = new Uint8Array(tile.pixels);
+              const sourcePixels = isNumber(tile.pixels)
+                ? Uint8Array.from(range(0, 64).map(() => tile.pixels as number))
+                : tile.pixels;
+              const pixels = new Uint8Array(sourcePixels);
               pixels.set(newPixels, startPixelIndex);
               return { ...tile, pixels };
             })
