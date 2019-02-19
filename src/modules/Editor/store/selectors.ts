@@ -52,7 +52,7 @@ export function selectCurrentBackgroundPaletteCollectionId(
   return state[SLICE_NAME].selectedPaletteCollectionIds["background"];
 }
 
-export const selectCurrentBackgroundPalettes = createSelector(
+export const selectCurrentBackgroundPaletteCollection = createSelector(
   selectCurrentSystemPalette,
   selectBackgroundPaletteCollections,
   selectCurrentBackgroundPaletteCollectionId,
@@ -91,7 +91,7 @@ export function selectCurrentSpritePaletteCollectionId(
   return state[SLICE_NAME].selectedPaletteCollectionIds["sprite"];
 }
 
-export const selectCurrentSpritePalettes = createSelector(
+export const selectCurrentSpritePaletteCollection = createSelector(
   selectCurrentSystemPalette,
   selectSpritePaletteCollections,
   selectCurrentSpritePaletteCollectionId,

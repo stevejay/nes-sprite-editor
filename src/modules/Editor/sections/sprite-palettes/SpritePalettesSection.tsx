@@ -9,15 +9,13 @@ import {
   copyPaletteCollection,
   deletePaletteCollection,
   EditorStateSlice,
-  renamePaletteCollection,
-  selectCurrentSpritePalettes,
-  selectCurrentSystemPalette,
-  selectSpritePaletteCollections,
-  setPaletteCollection
-} from "../../store";
-import {
   GamePaletteCollection,
   GamePaletteCollectionWithColors,
+  renamePaletteCollection,
+  selectCurrentSpritePaletteCollection,
+  selectCurrentSystemPalette,
+  selectSpritePaletteCollections,
+  setPaletteCollection,
   SystemPalette
 } from "../../store";
 
@@ -73,7 +71,7 @@ export default connect(
   (state: EditorStateSlice) => ({
     systemPalette: selectCurrentSystemPalette(state),
     paletteCollections: selectSpritePaletteCollections(state),
-    currentCollection: selectCurrentSpritePalettes(state)
+    currentCollection: selectCurrentSpritePaletteCollection(state)
   }),
   {
     setPaletteCollection,

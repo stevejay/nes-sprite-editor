@@ -4,21 +4,19 @@ import Section from "../../../../shared/Section";
 import EntityManagementToolbar from "../../components/EntityManagementToolbar";
 import Nametable from "../../Nametable";
 import {
-  changeNametablePaletteIndex,
-  changeNametableTileIndex,
-  GamePaletteCollectionWithColors,
-  Nametable as NametableType,
-  PatternTable
-} from "../../store";
-import {
   Action,
   addNewNametable,
+  changeNametablePaletteIndex,
+  changeNametableTileIndex,
   changePatternTablePixels,
   copyNametable,
   deleteNametable,
   EditorStateSlice,
+  GamePaletteCollectionWithColors,
+  Nametable as NametableType,
+  PatternTable,
   renameNametable,
-  selectCurrentBackgroundPalettes,
+  selectCurrentBackgroundPaletteCollection,
   selectCurrentBackgroundPatternTable,
   selectCurrentNametable,
   selectNametables,
@@ -99,7 +97,7 @@ export default connect(
     nametables: selectNametables(state),
     currentNametable: selectCurrentNametable(state),
     patternTable: selectCurrentBackgroundPatternTable(state),
-    paletteCollection: selectCurrentBackgroundPalettes(state)
+    paletteCollection: selectCurrentBackgroundPaletteCollection(state)
   }),
   {
     setNametable,

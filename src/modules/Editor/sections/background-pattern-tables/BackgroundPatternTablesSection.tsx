@@ -14,7 +14,7 @@ import {
   EditorStateSlice,
   renamePatternTable,
   selectBackgroundPatternTables,
-  selectCurrentBackgroundPalettes,
+  selectCurrentBackgroundPaletteCollection,
   selectCurrentBackgroundPatternTable,
   selectCurrentNametable,
   setPatternTable,
@@ -110,7 +110,7 @@ export default connect(
   (state: EditorStateSlice) => ({
     patternTables: selectBackgroundPatternTables(state),
     currentPatternTable: selectCurrentBackgroundPatternTable(state),
-    paletteCollection: selectCurrentBackgroundPalettes(state),
+    paletteCollection: selectCurrentBackgroundPaletteCollection(state),
     currentNametable: selectCurrentNametable(state)
   }),
   {

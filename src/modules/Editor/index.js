@@ -7,5 +7,6 @@ export {
   default as BackgroundPatternTablesSection
 } from "./sections/background-pattern-tables";
 export { default as NametablesSection } from "./sections/nametables";
+export { default as ExportsSection } from "./sections/exports";
 export { reducer, SLICE_NAME } from "./store";
 export * from "./store/types"; // hack

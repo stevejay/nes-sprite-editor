@@ -18,15 +18,15 @@
     border-right: 1px solid $md-grey-300;
   }
 
-  &:nth-child(1) section {
-    border-bottom: 1px solid $md-grey-300;
-
-    &:last-of-type {
-      border-bottom: none;
-    }
-  }
-
   &:nth-child(2) {
     flex-grow: 1;
+  }
+}
+
+.column section {
+  border-bottom: 1px solid $md-grey-300;
+
+  &:last-of-type {
+    border-bottom: none;
   }
 }

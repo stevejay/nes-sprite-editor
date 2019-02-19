@@ -1,20 +1,21 @@
 import React from "react";
 import { Provider } from "react-redux";
-import { createStore, combineReducers } from "redux";
+import { applyMiddleware, createStore } from "redux";
+import thunk from "redux-thunk";
 import styles from "./App.module.scss";
-import DataOutput from "./modules/data-output";
-import SkipLink from "./shared/SkipLink";
 import {
-  SystemPaletteSection,
   BackgroundPalettesSection,
-  SpritePalettesSection,
   BackgroundPatternTablesSection,
-  NametablesSection
+  ExportsSection,
+  NametablesSection,
+  SpritePalettesSection,
+  SystemPaletteSection
 } from "./modules/editor";
-import rootReducer from "./root-reducer";
 import Header from "./modules/header";
+import rootReducer from "./root-reducer";
+import SkipLink from "./shared/SkipLink";
 
-const store = createStore(rootReducer);
+const store = createStore(rootReducer, applyMiddleware(thunk));
 
 const App = () => (
   <Provider store={store}>
@@ -34,6 +35,7 @@ const App = () => (
             </div>
             <div className={styles.column}>
               <BackgroundPatternTablesSection />
+              <ExportsSection />
             </div>
           </div>
         </div>

@@ -13,7 +13,7 @@ import {
   GamePaletteCollectionWithColors,
   renamePaletteCollection,
   selectBackgroundPaletteCollections,
-  selectCurrentBackgroundPalettes,
+  selectCurrentBackgroundPaletteCollection,
   selectCurrentSystemPalette,
   setPaletteCollection,
   SystemPalette
@@ -71,7 +71,7 @@ export default connect(
   (state: EditorStateSlice) => ({
     systemPalette: selectCurrentSystemPalette(state),
     paletteCollections: selectBackgroundPaletteCollections(state),
-    currentCollection: selectCurrentBackgroundPalettes(state)
+    currentCollection: selectCurrentBackgroundPaletteCollection(state)
   }),
   {
     setPaletteCollection,
