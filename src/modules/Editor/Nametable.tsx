@@ -1,21 +1,25 @@
+import { isNil } from "lodash";
 import React from "react";
 import TileCanvas from "../../shared/TileCanvas";
-import {
-  Nametable as NametableType,
-  PatternTable,
-  GamePaletteCollectionWithColors
-} from "./store";
-import NametableCanvas from "./NametableCanvas";
-import NametableCanvasInteractionTracker from "./NametableCanvasInteractionTracker";
+import DraggableNametableCanvas from "./DraggableNametableCanvas";
 import styles from "./Nametable.module.scss";
 import NametableToolbar from "./NametableToolbar";
-import { isNil } from "lodash";
+import {
+  GamePaletteCollectionWithColors,
+  Nametable as NametableType,
+  PatternTable
+} from "./store";
 import { useToolReducer } from "./tool-reducer";
 import {
-  useViewportReducer,
   ActionTypes as ViewportActionTypes,
+  useViewportReducer,
   VIEWPORT_SIZE
 } from "./viewport-reducer";
+import ZoomInTool from "./ZoomInTool";
+import ZoomOutTool from "./ZoomOutTool";
+import PaletteTool from "./PaletteTool";
+import PencilTool from "./PencilTool";
+import PatternTool from "./PatternTool";
 
 type Props = {
   nametable: NametableType | null;
@@ -50,8 +54,15 @@ const Nametable = ({
     ? paletteCollection.gamePalettes[
         nametable.paletteIndexes[toolState.currentTile.metatileIndex]
       ]
-    : // TODO should this just be gamePalettes[0]?
-      paletteCollection.gamePalettes[toolState.selectedPaletteIndex];
+    : paletteCollection.gamePalettes[toolState.selectedPaletteIndex];
+
+  const isLocked =
+    patternTable &&
+    nametable &&
+    viewportState.scale >= 2 &&
+    !isNil(toolState.currentTile.tileIndex) &&
+    patternTable.tiles[nametable.tileIndexes[toolState.currentTile.tileIndex]]
+      .isLocked;
 
   return (
     <>
@@ -77,32 +88,66 @@ const Nametable = ({
       />
       <TileCanvas.Container>
         <div className={styles.background} style={VIEWPORT_SIZE}>
-          <NametableCanvasInteractionTracker
+          <DraggableNametableCanvas
             viewportSize={VIEWPORT_SIZE}
-            nametable={nametable}
+            viewportState={viewportState}
             patternTable={patternTable}
-            renderCanvasPositioning={viewportState}
             currentTool={toolState.currentTool}
-            currentPalette={currentPalette}
-            selectedColorIndex={toolState.selectedColorIndex}
-            selectedPaletteIndex={toolState.selectedPaletteIndex}
-            currentTile={toolState.currentTile}
-            scale={viewportState.scale}
+            nametable={nametable}
+            gamePalettes={paletteCollection.gamePalettes}
             viewportDispatch={viewportDispatch}
-            toolDispatch={toolDispatch}
-            onChangePatternTable={onChangePatternTable}
-            onChangePalette={onChangePalette}
-            onChangeTile={onChangeTile}
-          >
-            <NametableCanvas
+          />
+          {toolState.currentTool === "zoomIn" && (
+            <ZoomInTool
               viewportSize={VIEWPORT_SIZE}
-              renderCanvasPositioning={viewportState}
-              nametable={nametable}
-              patternTiles={patternTable.tiles}
-              palettes={paletteCollection.gamePalettes}
-              aria-label="Nametable tiles"
+              viewportDispatch={viewportDispatch}
             />
-          </NametableCanvasInteractionTracker>
+          )}
+          {toolState.currentTool === "zoomOut" && (
+            <ZoomOutTool
+              viewportSize={VIEWPORT_SIZE}
+              viewportDispatch={viewportDispatch}
+            />
+          )}
+          {toolState.currentTool === "palette" && (
+            <PaletteTool
+              viewportSize={VIEWPORT_SIZE}
+              viewportState={viewportState}
+              toolDispatch={toolDispatch}
+              isLocked={isLocked}
+              currentTile={toolState.currentTile}
+              selectedPaletteIndex={toolState.selectedPaletteIndex}
+              nametable={nametable}
+              onChange={onChangePalette}
+            />
+          )}
+          {toolState.currentTool === "pencil" && (
+            <PencilTool
+              viewportSize={VIEWPORT_SIZE}
+              viewportState={viewportState}
+              toolDispatch={toolDispatch}
+              isLocked={isLocked}
+              currentTile={toolState.currentTile}
+              selectedColorIndex={toolState.selectedColorIndex}
+              nametable={nametable}
+              patternTable={patternTable}
+              onChange={onChangePatternTable}
+            />
+          )}
+          {toolState.currentTool === "pattern" && (
+            <PatternTool
+              viewportSize={VIEWPORT_SIZE}
+              viewportState={viewportState}
+              toolDispatch={toolDispatch}
+              isLocked={isLocked}
+              currentTile={toolState.currentTile}
+              currentPalette={currentPalette}
+              selectedColorIndex={toolState.selectedColorIndex}
+              nametable={nametable}
+              patternTable={patternTable}
+              onChange={onChangeTile}
+            />
+          )}
         </div>
       </TileCanvas.Container>
     </>

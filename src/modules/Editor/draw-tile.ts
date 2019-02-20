@@ -6,14 +6,14 @@ export default function drawTile(
   ctx: CanvasRenderingContext2D,
   row: number,
   column: number,
-  xTileOffset: number,
-  yTileOffset: number,
+  xTileIndex: number,
+  yTileIndex: number,
   pixels: Uint8Array | number,
   colors: Array<Color>,
   scale: number
 ) {
-  const x = column * scale * TILE_SIZE_PIXELS + xTileOffset * scale;
-  const y = row * scale * TILE_SIZE_PIXELS + yTileOffset * scale;
+  const x = column * scale * TILE_SIZE_PIXELS + xTileIndex * scale;
+  const y = row * scale * TILE_SIZE_PIXELS + yTileIndex * scale;
 
   if (isNumber(pixels)) {
     // Optimization for a tile that is a solid color:
