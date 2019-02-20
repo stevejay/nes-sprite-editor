@@ -7,13 +7,15 @@ import {
   PointingModalContainer,
   useAriaHidden,
   usePreventBodyScroll
-} from "../../../shared/Modal";
+} from "../../../../shared/Modal";
+import TileCanvas from "../../../../shared/TileCanvas";
 import {
   GamePaletteWithColors,
   PatternTable as PatternTableType
-} from "../store";
-import PatternTable from "./PatternTable";
+} from "../../store";
+import PatternTableCanvas from "./PatternTableCanvas";
 import styles from "./PatternTableModal.module.scss";
+import TileSelectionTool from "./TileSelectionTool";
 // TODO change to hook
 
 const CONFIG = { duration: 150 };
@@ -65,14 +67,20 @@ const PatternTableModal = ({
                   originElement={originElement}
                   style={{ opacity }}
                 >
-                  <PatternTable
-                    scale={3}
-                    patternTable={patternTable}
-                    palette={palette}
-                    tileIndex={selectedTileIndex}
-                    containerClassName={styles.patternTableContainer}
-                    onSelectTile={onSelectTile}
-                  />
+                  <TileCanvas.Container
+                    className={styles.patternTableContainer}
+                  >
+                    <PatternTableCanvas
+                      scale={3}
+                      tiles={patternTable.tiles}
+                      palette={palette}
+                    />
+                    <TileSelectionTool
+                      scale={3}
+                      tileIndex={selectedTileIndex}
+                      onTileSelected={onSelectTile}
+                    />
+                  </TileCanvas.Container>
                 </PointingModalContainer>
               </FocusTrap>
             </>
@@ -82,8 +90,6 @@ const PatternTableModal = ({
     </Transition>
   );
 };
-
-// export default PatternTableModal;
 
 export default React.memo(
   PatternTableModal,

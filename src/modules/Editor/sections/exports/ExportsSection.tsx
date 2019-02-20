@@ -4,7 +4,7 @@ import Button from "../../../../shared/Button";
 import Section from "../../../../shared/Section";
 import {
   EditorStateSlice,
-  exportStateForNES,
+  exportCurrentState,
   GamePaletteCollectionWithColors,
   Nametable as NametableType,
   PatternTable,
@@ -17,14 +17,14 @@ type Props = {
   nametable: NametableType | null;
   patternTable: PatternTable | null;
   paletteCollection: GamePaletteCollectionWithColors | null;
-  exportStateForNES: any; // typeof exportStateForNES;
+  exportCurrentState: any; // typeof exportCurrentState; // can I fix this?
 };
 
 const ExportsSection = ({
   nametable,
   patternTable,
   paletteCollection,
-  exportStateForNES
+  exportCurrentState
 }: Props) => {
   const cannotExport = !nametable || !patternTable || !paletteCollection;
   return (
@@ -34,10 +34,10 @@ const ExportsSection = ({
       </header>
       <Button
         appearance="primary"
-        onClick={() => exportStateForNES()}
+        onClick={exportCurrentState}
         disabled={cannotExport}
       >
-        Export current state as NES files
+        Export current state as files for NES
       </Button>
     </Section>
   );
@@ -50,6 +50,6 @@ export default connect(
     paletteCollection: selectCurrentBackgroundPaletteCollection(state)
   }),
   {
-    exportStateForNES
+    exportCurrentState
   }
 )(ExportsSection);

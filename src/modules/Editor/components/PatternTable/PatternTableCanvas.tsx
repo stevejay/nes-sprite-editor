@@ -1,16 +1,16 @@
 import React from "react";
-import useSizedCanvasEffect from "../../../shared/utils/use-sized-canvas-effect";
+import useSizedCanvasEffect from "../../../../shared/utils/use-sized-canvas-effect";
 import {
   PATTERN_TABLE_COLUMNS,
   PATTERN_TABLE_ROWS,
   TILE_SIZE_PIXELS
-} from "../constants";
-import drawTile from "../draw-tile";
-import { GamePaletteWithColors, PatternTile } from "../store";
+} from "../../constants";
+import drawTile from "../../draw-tile";
+import { GamePaletteWithColors, PatternTile } from "../../store";
 import styles from "./PatternTableCanvas.module.scss";
 
 type Props = {
-  scale: number; // in range [1, ...]
+  scale: number;
   tiles: Array<PatternTile>;
   palette: GamePaletteWithColors;
 };
@@ -31,8 +31,8 @@ const PatternTableCanvas = ({ scale, tiles, palette }: Props) => {
     tiles.forEach((tile, index) => {
       drawTile(
         ctx,
-        index >> 4, // Math.floor(index / PATTERN_TABLE_COLUMNS),
-        index % PATTERN_TABLE_COLUMNS,
+        index >> 4, // equivalent of Math.floor(index / PATTERN_TABLE_COLUMNS),
+        index & 0x0f, // equivalent of index % PATTERN_TABLE_COLUMNS,
         0,
         0,
         tile.pixels,

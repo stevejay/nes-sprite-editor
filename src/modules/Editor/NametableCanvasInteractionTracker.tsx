@@ -19,7 +19,7 @@ import {
   ToolState
 } from "./Nametable";
 import styles from "./NametableCanvasInteractionTracker.module.scss";
-import { PatternTableModal } from "./PatternTable";
+import { PatternTableModal } from "./components/PatternTable";
 import { GamePaletteWithColors, Nametable, PatternTable } from "./store";
 
 const DRAG_POSITION = { x: 0, y: 0 };

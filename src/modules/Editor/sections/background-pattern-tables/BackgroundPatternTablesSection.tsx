@@ -2,10 +2,8 @@ import React from "react";
 import { connect } from "react-redux";
 import Section from "../../../../shared/Section";
 import EntityManagementToolbar from "../../components/EntityManagementToolbar";
-import PaletteSelectionToolbar from "../../components/PaletteSelectionToolbar";
-import Toolbar from "../../components/Toolbar";
-import PatternTable from "../../PatternTable";
-import PatternTableTileDetail from "../../PatternTableTileDetail";
+import PatternTable from "../../components/PatternTable";
+import PatternTableTileDetail from "../../components/PatternTableTileDetail";
 import {
   addNewBackgroundPatternTable,
   changePatternTableTileLock,
@@ -50,7 +48,7 @@ const BackgroundPatternTablesSection = ({
 }: Props) => {
   const [tileIndex, setTileIndex] = React.useState(0);
   const [paletteIndex, setPaletteIndex] = React.useState(0);
-  const selectedPalette = paletteCollection
+  const palette = paletteCollection
     ? paletteCollection.gamePalettes[paletteIndex]
     : null;
   return (
@@ -69,29 +67,25 @@ const BackgroundPatternTablesSection = ({
         onDeleteEntity={deletePatternTable}
         onRenameEntity={renamePatternTable}
       />
-      {currentPatternTable && selectedPalette && paletteCollection && (
+      {currentPatternTable && palette && paletteCollection && (
         <>
           <h3>Pattern Table</h3>
-          <Toolbar.Container>
-            <PaletteSelectionToolbar
-              paletteIndex={paletteIndex}
-              paletteCollection={paletteCollection}
-              onPaletteSelected={setPaletteIndex}
-            />
-          </Toolbar.Container>
           <PatternTable
             scale={3}
             patternTable={currentPatternTable}
-            palette={selectedPalette}
+            paletteCollection={paletteCollection}
+            paletteIndex={paletteIndex}
+            palette={palette}
             tileIndex={tileIndex}
-            onSelectTile={setTileIndex}
+            onTileSelected={setTileIndex}
+            onPaletteSelected={setPaletteIndex}
           />
           <PatternTableTileDetail
             scale={12}
             tileIndex={tileIndex}
             currentPatternTable={currentPatternTable}
             currentNametable={currentNametable}
-            palette={selectedPalette}
+            palette={palette}
             onUpdateLocked={isLocked => {
               changePatternTableTileLock(
                 currentPatternTable.id,

@@ -1,10 +1,10 @@
 import { filter } from "lodash";
 import React from "react";
 import { FiLock } from "react-icons/fi";
-import Button from "../../../shared/Button";
-import TileCanvas from "../../../shared/TileCanvas";
-import Toolbar from "../components/Toolbar";
-import { GamePaletteWithColors, Nametable, PatternTable } from "../store";
+import Button from "../../../../shared/Button";
+import TileCanvas from "../../../../shared/TileCanvas";
+import Toolbar from "../../components/Toolbar";
+import { GamePaletteWithColors, Nametable, PatternTable } from "../../store";
 import styles from "./PatternTableTileDetail.module.scss";
 import Tile from "./Tile";
 
