@@ -5,14 +5,18 @@ import { RovingTabIndexProvider } from "../../shared/RovingTabIndex";
 import SelectInput from "../../shared/SelectInput";
 import useId from "../../shared/utils/use-id";
 import PaletteSelectionToolbar from "./components/PaletteSelectionToolbar";
+import PencilSelectionToolbar from "./components/PencilSelectionToolbar";
 import Toolbar from "./components/Toolbar";
 import { RenderCanvasPositioning } from "./experiment";
-import { ToolAction, ToolActionTypes, ToolState } from "./Nametable";
 import {
   GamePaletteCollectionWithColors,
   GamePaletteWithColors
 } from "./store";
-import PencilSelectionToolbar from "./components/PencilSelectionToolbar";
+import {
+  Action as ToolAction,
+  ActionTypes as ToolActionTypes,
+  State as ToolState
+} from "./tool-reducer";
 
 type ScaleOption = {
   id: RenderCanvasPositioning["scale"];

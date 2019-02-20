@@ -4,6 +4,7 @@ import React, { CSSProperties } from "react";
 import Draggable, { DraggableEventHandler } from "react-draggable";
 import { FiLock } from "react-icons/fi";
 import useOpenDialog from "../../shared/utils/use-open-dialog";
+import { PatternTableModal } from "./components/PatternTable";
 import {
   convertTilePositionToCanvasCoords,
   convertViewportCoordToNameablePixel,
@@ -11,16 +12,17 @@ import {
   RenderCanvasPositioning,
   ViewportSize
 } from "./experiment";
-import {
-  RenderAction,
-  RenderActionTypes,
-  ToolAction,
-  ToolActionTypes,
-  ToolState
-} from "./Nametable";
 import styles from "./NametableCanvasInteractionTracker.module.scss";
-import { PatternTableModal } from "./components/PatternTable";
 import { GamePaletteWithColors, Nametable, PatternTable } from "./store";
+import {
+  Action as ToolAction,
+  ActionTypes as ToolActionTypes,
+  State as ToolState
+} from "./tool-reducer";
+import {
+  Action as ViewportAction,
+  ActionTypes as ViewportActionTypes
+} from "./viewport-reducer";
 
 const DRAG_POSITION = { x: 0, y: 0 };
 
@@ -35,7 +37,7 @@ type Props = {
   selectedPaletteIndex: ToolState["selectedPaletteIndex"];
   currentTile: ToolState["currentTile"];
   scale: number;
-  renderDispatch: React.Dispatch<RenderAction>;
+  viewportDispatch: React.Dispatch<ViewportAction>;
   toolDispatch: React.Dispatch<ToolAction>;
   children: React.ReactNode;
   onChangePatternTable: (
@@ -59,7 +61,7 @@ const NametableCanvasInteractionTracker = ({
   selectedPaletteIndex,
   currentTile,
   scale,
-  renderDispatch,
+  viewportDispatch,
   toolDispatch,
   children,
   onChangePatternTable,
@@ -114,14 +116,14 @@ const NametableCanvasInteractionTracker = ({
 
     switch (currentTool) {
       case "zoomIn":
-        renderDispatch({
-          type: RenderActionTypes.ZOOM_IN,
+        viewportDispatch({
+          type: ViewportActionTypes.ZOOM_IN,
           payload: { x: xInContainer, y: yInContainer }
         });
         break;
       case "zoomOut":
-        renderDispatch({
-          type: RenderActionTypes.ZOOM_OUT,
+        viewportDispatch({
+          type: ViewportActionTypes.ZOOM_OUT,
           payload: { x: xInContainer, y: yInContainer }
         });
         break;
@@ -169,8 +171,8 @@ const NametableCanvasInteractionTracker = ({
   };
 
   const handleDraggableStop: DraggableEventHandler = (_event, data) => {
-    renderDispatch({
-      type: RenderActionTypes.MOVE,
+    viewportDispatch({
+      type: ViewportActionTypes.MOVE,
       payload: { x: -data.x, y: -data.y }
     });
   };

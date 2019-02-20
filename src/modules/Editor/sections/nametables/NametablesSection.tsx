@@ -33,22 +33,9 @@ type Props = {
   copyNametable: (id: string) => Action;
   deleteNametable: (id: string) => Action;
   renameNametable: (id: string, label: string) => Action;
-  changePatternTablePixels: (
-    id: string,
-    tileIndex: number,
-    startPixelIndex: number,
-    newPixels: Array<number>
-  ) => void;
-  changeNametablePaletteIndex: (
-    id: string,
-    paletteIndex: number,
-    newIndex: number
-  ) => void;
-  changeNametableTileIndex: (
-    id: string,
-    tileIndex: number,
-    newValue: number
-  ) => void;
+  changePatternTablePixels: typeof changePatternTablePixels;
+  changeNametablePaletteIndex: typeof changeNametablePaletteIndex;
+  changeNametableTileIndex: typeof changeNametableTileIndex;
 };
 
 const NametablesSection = ({
