@@ -4,7 +4,7 @@ import CanvasHighlight from "./CanvasHighlight";
 import CanvasInteractionTracker from "./CanvasInteractionTracker";
 import { TilePosition, ViewportSize } from "./experiment";
 import styles from "./PaletteTool.module.scss";
-import { Nametable } from "./store";
+import { Nametable } from "../../store";
 import {
   Action as ToolAction,
   ActionTypes as ToolActionTypes,

@@ -1,6 +1,6 @@
 import React from "react";
-import { GamePaletteWithColors, Nametable, PatternTile } from "./store";
-import drawTile from "./draw-tile";
+import { GamePaletteWithColors, Nametable, PatternTile } from "../../store";
+import drawTile from "../../draw-tile";
 import { createTileIndexBounds, RenderCanvasPositioning } from "./experiment";
 
 const TOTAL_NAMETABLE_X_TILES = 32;

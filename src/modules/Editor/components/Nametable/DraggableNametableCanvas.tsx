@@ -7,7 +7,7 @@ import {
 } from "./viewport-reducer";
 import { State as ToolState } from "./tool-reducer";
 import { ViewportSize } from "./experiment";
-import { Nametable, GamePaletteWithColors, PatternTable } from "./store";
+import { Nametable, GamePaletteWithColors, PatternTable } from "../../store";
 import NametableCanvas from "./NametableCanvas";
 
 const DRAG_POSITION = { x: 0, y: 0 };

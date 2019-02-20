@@ -1,17 +1,17 @@
 import React from "react";
 import { FiMove, FiSquare, FiZoomIn, FiZoomOut } from "react-icons/fi";
-import Button from "../../shared/Button";
-import { RovingTabIndexProvider } from "../../shared/RovingTabIndex";
-import SelectInput from "../../shared/SelectInput";
-import useId from "../../shared/utils/use-id";
-import PaletteSelectionToolbar from "./components/PaletteSelectionToolbar";
-import PencilSelectionToolbar from "./components/PencilSelectionToolbar";
-import Toolbar from "./components/Toolbar";
+import Button from "../../../../shared/Button";
+import { RovingTabIndexProvider } from "../../../../shared/RovingTabIndex";
+import SelectInput from "../../../../shared/SelectInput";
+import useId from "../../../../shared/utils/use-id";
+import PaletteSelectionToolbar from "../PaletteSelectionToolbar";
+import PencilSelectionToolbar from "../PencilSelectionToolbar";
+import Toolbar from "../Toolbar";
 import { RenderCanvasPositioning } from "./experiment";
 import {
   GamePaletteCollectionWithColors,
   GamePaletteWithColors
-} from "./store";
+} from "../../store";
 import {
   Action as ToolAction,
   ActionTypes as ToolActionTypes,

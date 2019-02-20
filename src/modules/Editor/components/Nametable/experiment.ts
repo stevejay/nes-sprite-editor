@@ -2,7 +2,7 @@ import {
   TILE_SIZE_PIXELS,
   TOTAL_NAMETABLE_X_TILES,
   TOTAL_NAMETABLE_Y_TILES
-} from "./constants";
+} from "../../constants";
 
 export type ViewportCoord = {
   x: number;

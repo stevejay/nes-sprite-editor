@@ -1,7 +1,7 @@
 import React from "react";
-import usePositionedCanvasEffect from "../../shared/utils/use-positioned-canvas-effect";
-import useSizedCanvasEffect from "../../shared/utils/use-sized-canvas-effect";
-import { GamePaletteWithColors, Nametable, PatternTile } from "./store";
+import usePositionedCanvasEffect from "../../../../shared/utils/use-positioned-canvas-effect";
+import useSizedCanvasEffect from "../../../../shared/utils/use-sized-canvas-effect";
+import { GamePaletteWithColors, Nametable, PatternTile } from "../../store";
 import { RenderCanvasPositioning, ViewportSize } from "./experiment";
 import styles from "./NametableCanvas.module.scss";
 import useDrawNametableEffect from "./use-draw-nametable-effect";

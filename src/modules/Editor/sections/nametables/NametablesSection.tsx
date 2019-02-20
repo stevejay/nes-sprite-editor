@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import Section from "../../../../shared/Section";
 import EntityManagementToolbar from "../../components/EntityManagementToolbar";
-import Nametable from "../../Nametable";
+import Nametable from "../../components/Nametable";
 import {
   Action,
   addNewNametable,

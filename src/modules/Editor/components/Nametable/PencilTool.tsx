@@ -9,7 +9,7 @@ import {
   convertViewportCoordToLogicalCoord
 } from "./experiment";
 import styles from "./PencilTool.module.scss";
-import { Nametable, PatternTable } from "./store";
+import { Nametable, PatternTable } from "../../store";
 import {
   Action as ToolAction,
   ActionTypes as ToolActionTypes,
@@ -20,7 +20,7 @@ import {
   TILE_SIZE_PIXELS,
   TOTAL_NAMETABLE_X_TILES,
   TOTAL_NAMETABLE_Y_TILES
-} from "./constants";
+} from "../../constants";
 
 export type FlattenedLogicalCoord = {
   tileIndex: number;

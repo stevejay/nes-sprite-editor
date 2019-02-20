@@ -1,12 +1,12 @@
 import { isNil } from "lodash";
 import React from "react";
-import useOpenDialog from "../../shared/utils/use-open-dialog";
+import useOpenDialog from "../../../../shared/utils/use-open-dialog";
 import CanvasHighlight from "./CanvasHighlight";
 import CanvasInteractionTracker from "./CanvasInteractionTracker";
-import { PatternTableModal } from "./components/PatternTable";
+import { PatternTableModal } from "../PatternTable";
 import { TilePosition, ViewportSize } from "./experiment";
 import styles from "./PatternTool.module.scss";
-import { Nametable, PatternTable, GamePaletteWithColors } from "./store";
+import { Nametable, PatternTable, GamePaletteWithColors } from "../../store";
 import {
   Action as ToolAction,
   ActionTypes as ToolActionTypes,

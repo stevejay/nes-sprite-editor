@@ -1,6 +1,6 @@
 import { isNil } from "lodash";
 import React from "react";
-import TileCanvas from "../../shared/TileCanvas";
+import TileCanvas from "../../../../shared/TileCanvas";
 import DraggableNametableCanvas from "./DraggableNametableCanvas";
 import styles from "./Nametable.module.scss";
 import NametableToolbar from "./NametableToolbar";
@@ -8,7 +8,7 @@ import {
   GamePaletteCollectionWithColors,
   Nametable as NametableType,
   PatternTable
-} from "./store";
+} from "../../store";
 import { useToolReducer } from "./tool-reducer";
 import {
   ActionTypes as ViewportActionTypes,

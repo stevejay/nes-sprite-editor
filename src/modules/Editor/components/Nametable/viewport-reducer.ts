@@ -13,7 +13,7 @@ import {
   TOTAL_NAMETABLE_X_TILES,
   TOTAL_NAMETABLE_Y_TILES,
   CANVAS_OVERDRAW_SCALING
-} from "./constants";
+} from "../../constants";
 
 export const VIEWPORT_SIZE: ViewportSize = { width: 512, height: 512 };
 
