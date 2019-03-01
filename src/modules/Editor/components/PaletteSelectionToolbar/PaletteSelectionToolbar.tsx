@@ -1,7 +1,7 @@
 import { range } from "lodash";
 import React from "react";
 import Button from "../../../../shared/Button";
-import { RovingTabIndexProvider } from "../../../../shared/RovingTabIndex";
+import { RovingTabIndexProvider } from "react-roving-tabindex";
 import { UNAVAILABLE_COLOR } from "../../constants";
 import { GamePaletteCollectionWithColors } from "../../store";
 import Toolbar from "../Toolbar";

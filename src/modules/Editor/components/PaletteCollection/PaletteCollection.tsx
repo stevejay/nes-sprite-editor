@@ -1,5 +1,5 @@
 import React from "react";
-import { RovingTabIndexProvider } from "../../../../shared/RovingTabIndex";
+import { RovingTabIndexProvider } from "react-roving-tabindex";
 import {
   Color,
   GamePaletteCollectionWithColors,

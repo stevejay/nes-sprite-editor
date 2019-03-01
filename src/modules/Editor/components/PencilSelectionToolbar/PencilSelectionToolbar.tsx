@@ -2,7 +2,7 @@ import { range } from "lodash";
 import React from "react";
 import { FiEdit2 } from "react-icons/fi";
 import Button from "../../../../shared/Button";
-import { RovingTabIndexProvider } from "../../../../shared/RovingTabIndex";
+import { RovingTabIndexProvider } from "react-roving-tabindex";
 import { UNAVAILABLE_COLOR } from "../../constants";
 import { GamePaletteWithColors } from "../../store";
 import Toolbar from "../Toolbar";
