@@ -38,8 +38,6 @@ type Props = {
 };
 
 type State = {
-  dimension: number;
-  height: number;
   data: Array<number>;
 };
 
@@ -66,7 +64,11 @@ class HeatMapCanvas extends React.Component<Props, State> {
       colorInterpolator,
       selectedIndexes
     } = this.props;
-    const { height, dimension } = this.state;
+    const height = HeatMapCanvas.calculateHeight(
+      width,
+      columnCount,
+      data.length
+    );
     this.resizeCanvas(width, height);
     if (width === 0) {
       return;
@@ -75,9 +77,9 @@ class HeatMapCanvas extends React.Component<Props, State> {
       data,
       this._animatingFromValues,
       selectedIndexes,
+      width,
       columnCount,
-      colorInterpolator,
-      dimension
+      colorInterpolator
     );
   }
 
@@ -88,7 +90,12 @@ class HeatMapCanvas extends React.Component<Props, State> {
       colorInterpolator,
       selectedIndexes
     } = this.props;
-    const { height, dimension, data } = this.state;
+    const { data } = this.state;
+    const height = HeatMapCanvas.calculateHeight(
+      width,
+      columnCount,
+      data.length
+    );
 
     // there is an active animation:
     if (this._t < 1) {
@@ -102,7 +109,7 @@ class HeatMapCanvas extends React.Component<Props, State> {
         (value, index) =>
           interpolateNumber(value, prevState.data[index])(this._t)
       );
-      // reset to start of animation timing:
+      // reset to start of animation:
       this._t = 0;
     }
 
@@ -127,9 +134,9 @@ class HeatMapCanvas extends React.Component<Props, State> {
         data,
         this._animatingFromValues,
         selectedIndexes,
+        width,
         columnCount,
-        colorInterpolator,
-        dimension
+        colorInterpolator
       );
     }
   }
@@ -138,10 +145,11 @@ class HeatMapCanvas extends React.Component<Props, State> {
     data: Props["data"],
     startingValues: Array<number>,
     selectedIndexes: Array<number>,
+    width: number,
     columnCount: Props["columnCount"],
-    colorInterpolator: Props["colorInterpolator"],
-    dimension: State["dimension"]
+    colorInterpolator: Props["colorInterpolator"]
   ) {
+    const dimension = HeatMapCanvas.calculateDimension(width, columnCount);
     const canvas = this._canvasRef.current!;
     const ctx = canvas.getContext("2d")!;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -185,9 +193,9 @@ class HeatMapCanvas extends React.Component<Props, State> {
         data,
         this._animatingFromValues,
         selectedIndexes,
+        width,
         columnCount,
-        colorInterpolator,
-        dimension
+        colorInterpolator
       );
     });
   }
@@ -205,31 +213,13 @@ class HeatMapCanvas extends React.Component<Props, State> {
     ctx.scale(deviceScale, deviceScale);
   }
 
-  static calculateState(
-    { width, data, columnCount }: Props,
-    currentData: State["data"]
-  ): State {
-    const dimension = width / columnCount;
-    const rows = Math.ceil(data.length / columnCount);
-    const height = dimension * rows;
-
-    return {
-      dimension,
-      height,
-      data: data !== currentData ? data : currentData
-    };
+  static calculateState({ data }: Props, currentData: State["data"]): State {
+    return { data: data !== currentData ? data : currentData };
   }
 
   static getDerivedStateFromProps(props: Props, state: State): State {
     const newState = HeatMapCanvas.calculateState(props, state.data);
-    if (
-      newState.dimension === state.dimension &&
-      newState.height === state.height &&
-      newState.data === state.data
-    ) {
-      return state;
-    }
-    return newState;
+    return newState.data === state.data ? state : newState;
   }
 
   static calculateDimension(width: number, columnCount: number) {
