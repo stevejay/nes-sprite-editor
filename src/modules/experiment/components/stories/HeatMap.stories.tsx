@@ -5,7 +5,7 @@ import { State, Store } from "@sambego/storybook-state";
 import { storiesOf } from "@storybook/react";
 import HeatMap from "../HeatMap";
 import "../../../../index.scss";
-import { range, random, clamp, sampleSize } from "lodash";
+import { range, random, clamp, sampleSize, includes } from "lodash";
 // import { interpolateRgb } from "d3-interpolate";
 
 const storyHost = host({
@@ -14,7 +14,7 @@ const storyHost = host({
   width: "100%"
 });
 
-let count = 0;
+// let count = 0;
 
 function generateData() {
   const result = range(0, 24 * 7).map(i => {
@@ -26,8 +26,12 @@ function generateData() {
   return result;
 }
 
-const store = new Store({
-  data: generateData()
+const store = new Store<{
+  data: Array<number>;
+  selectedIndexes: Array<number>;
+}>({
+  data: generateData(),
+  selectedIndexes: [] // sampleSize(range(0, 24 * 7), 3)
 });
 
 // const COLOR_CALLBACK = interpolateRgb("#213446", "#0096cb");
@@ -81,7 +85,20 @@ storiesOf("HeatMap", module)
               data={state.data}
               xLabels={X_LABELS}
               yLabels={Y_LABELS}
-              selectedIndexes={sampleSize(range(0, 24 * 7), 3)}
+              selectedIndexes={state.selectedIndexes}
+              onTileClick={value => {
+                let newSelectedIndexes = state.selectedIndexes.slice();
+                if (includes(newSelectedIndexes, value)) {
+                  newSelectedIndexes = newSelectedIndexes.filter(
+                    x => x !== value
+                  );
+                } else {
+                  newSelectedIndexes.push(value);
+                }
+                store.set({
+                  selectedIndexes: newSelectedIndexes
+                });
+              }}
             />
           )}
         </State>

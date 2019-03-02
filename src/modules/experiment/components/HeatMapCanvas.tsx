@@ -2,32 +2,10 @@ import React from "react";
 import styles from "./HeatMapCanvas.module.scss";
 import { interpolateNumber } from "d3-interpolate";
 import { clamp, includes } from "lodash";
+import drawRoundedRect from "./draw-rounded-rect";
 
 const MARGIN_PX = 1;
-
-function drawRoundedRect(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  w: number,
-  h: number,
-  radius: number
-) {
-  var r = x + w;
-  var b = y + h;
-  ctx.beginPath();
-  ctx.moveTo(x + radius, y);
-  ctx.lineTo(r - radius, y);
-  ctx.quadraticCurveTo(r, y, r, y + radius);
-  ctx.lineTo(r, y + h - radius);
-  ctx.quadraticCurveTo(r, b, r - radius, b);
-  ctx.lineTo(x + radius, b);
-  ctx.quadraticCurveTo(x, b, x, b - radius);
-  ctx.lineTo(x, y + radius);
-  ctx.quadraticCurveTo(x, y, x + radius, y);
-  ctx.closePath();
-  ctx.fill();
-}
+const ANIMATION_DURATION_FRAMES = 15;
 
 type Props = {
   width: number;
@@ -147,7 +125,8 @@ class HeatMapCanvas extends React.Component<Props, State> {
     selectedIndexes: Array<number>,
     width: number,
     columnCount: Props["columnCount"],
-    colorInterpolator: Props["colorInterpolator"]
+    colorInterpolator: Props["colorInterpolator"],
+    framesCount: number = 0
   ) {
     const dimension = HeatMapCanvas.calculateDimension(width, columnCount);
     const canvas = this._canvasRef.current!;
@@ -188,14 +167,15 @@ class HeatMapCanvas extends React.Component<Props, State> {
     }
 
     this._rafHandle = requestAnimationFrame(() => {
-      this._t = clamp(this._t + 1 / (300 / 16.666), 0, 1); // 300ms
+      this._t = clamp(framesCount / ANIMATION_DURATION_FRAMES, 0, 1);
       this.renderTiles(
         data,
-        this._animatingFromValues,
+        startingValues,
         selectedIndexes,
         width,
         columnCount,
-        colorInterpolator
+        colorInterpolator,
+        framesCount + 1
       );
     });
   }

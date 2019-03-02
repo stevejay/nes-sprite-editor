@@ -3,6 +3,7 @@ import Measure from "react-measure";
 import styles from "./HeatMap.module.scss";
 import { clamp } from "lodash";
 import HeatMapCanvas from "./HeatMapCanvas";
+import HeatMapInteractionTracker from "./HeatMapInteractionTracker";
 
 const COLOR_INTERPOLATOR = (datum: number) =>
   `rgba(0,150,203,${clamp(0.2 + datum * 1.0, 0, 1)})`;
@@ -13,6 +14,7 @@ type Props = {
   yLabels: Array<string>;
   selectedIndexes: Array<number>;
   colorInterpolator?: (datum: number) => string;
+  onTileClick: (index: number) => void;
 };
 
 class HeatMap extends React.Component<Props> {
@@ -31,7 +33,8 @@ class HeatMap extends React.Component<Props> {
       xLabels,
       yLabels,
       selectedIndexes,
-      colorInterpolator = COLOR_INTERPOLATOR
+      colorInterpolator = COLOR_INTERPOLATOR,
+      onTileClick
     } = this.props;
     return (
       <div className={styles.container}>
@@ -53,17 +56,26 @@ class HeatMap extends React.Component<Props> {
             ))}
           </div>
           <Measure bounds>
-            {({ measureRef, contentRect }) => (
-              <div ref={measureRef} className={styles.chartContainer}>
-                <HeatMapCanvas
-                  width={contentRect.bounds ? contentRect.bounds.width || 0 : 0}
-                  data={data}
-                  selectedIndexes={selectedIndexes}
-                  columnCount={xLabels.length}
-                  colorInterpolator={colorInterpolator}
-                />
-              </div>
-            )}
+            {({ measureRef, contentRect }) => {
+              const width = contentRect.bounds
+                ? contentRect.bounds.width || 0
+                : 0;
+              return (
+                <div ref={measureRef} className={styles.chartContainer}>
+                  <HeatMapCanvas
+                    width={width}
+                    data={data}
+                    selectedIndexes={selectedIndexes}
+                    columnCount={xLabels.length}
+                    colorInterpolator={colorInterpolator}
+                  />
+                  <HeatMapInteractionTracker
+                    columnCount={xLabels.length}
+                    onTileClick={onTileClick}
+                  />
+                </div>
+              );
+            }}
           </Measure>
         </div>
       </div>
