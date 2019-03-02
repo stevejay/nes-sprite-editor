@@ -31,8 +31,8 @@ const store = new Store({
 });
 
 // const COLOR_CALLBACK = interpolateRgb("#213446", "#0096cb");
-const COLOR_CALLBACK = (datum: number) =>
-  `rgba(0,150,203,${clamp(0.2 + datum * 1.0, 0, 1)})`;
+// const COLOR_CALLBACK = (datum: number) =>
+//   `rgba(0,150,203,${clamp(0.2 + datum * 1.0, 0, 1)})`;
 
 const X_LABELS = [
   "1",

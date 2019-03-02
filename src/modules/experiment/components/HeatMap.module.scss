@@ -11,7 +11,6 @@
   &:first-of-type {
     padding-top: 30px;
     flex-grow: 0;
-    // flex-shrink: 0;
   }
 
   &:last-of-type {
@@ -38,6 +37,7 @@
     display: flex;
     justify-content: flex-end;
     align-items: center;
+    margin-top: 1px;
   }
 }
 
@@ -56,7 +56,6 @@
 }
 
 .chartContainer {
-  // background-color: lightpink;
   display: flex;
   flex-grow: 1;
   overflow: hidden;

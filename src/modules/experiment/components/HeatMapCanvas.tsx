@@ -3,7 +3,7 @@ import styles from "./HeatMapCanvas.module.scss";
 import { interpolateNumber } from "d3-interpolate";
 import { clamp, includes } from "lodash";
 
-const MARGIN_PX = 2;
+const MARGIN_PX = 1;
 
 function drawRoundedRect(
   ctx: CanvasRenderingContext2D,
@@ -34,10 +34,7 @@ type Props = {
   data: Array<number>; // values in range [0, 1]
   columnCount: number;
   selectedIndexes: Array<number>;
-  colorCallback: (
-    datum: number
-  ) => // , selected: boolean
-  string;
+  colorInterpolator: (datum: number) => string;
 };
 
 type State = {
@@ -47,18 +44,18 @@ type State = {
 };
 
 class HeatMapCanvas extends React.Component<Props, State> {
-  _startingValues: Array<number>;
+  _animatingFromValues: Array<number>;
   _canvasRef: React.RefObject<HTMLCanvasElement>;
-  _raf: any;
-  _t: number;
+  _rafHandle: number | null;
+  _t: number; // range is [0, 1]
 
   constructor(props: Props) {
     super(props);
     this._canvasRef = React.createRef();
-    this._startingValues = new Array(props.data.length).fill(0);
-    this._t = 0;
-    this._raf = null;
-    this.state = HeatMapCanvas.calculateState(props, this._startingValues);
+    this._animatingFromValues = new Array(props.data.length).fill(0);
+    this._t = 0; // zero causes animation to kick off on mount
+    this._rafHandle = null; // handle to any pending raf callback
+    this.state = HeatMapCanvas.calculateState(props, this._animatingFromValues);
   }
 
   componentDidMount() {
@@ -66,43 +63,59 @@ class HeatMapCanvas extends React.Component<Props, State> {
       width,
       data,
       columnCount,
-      colorCallback,
+      colorInterpolator,
       selectedIndexes
     } = this.props;
     const { height, dimension } = this.state;
     this.resizeCanvas(width, height);
+
+    console.log("width on mount", width);
+
     this.renderTiles(
       data,
-      this._startingValues,
+      this._animatingFromValues,
       selectedIndexes,
       columnCount,
-      colorCallback,
+      colorInterpolator,
       dimension
     );
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
-    const { width, columnCount, colorCallback, selectedIndexes } = this.props;
+    const {
+      width,
+      columnCount,
+      colorInterpolator,
+      selectedIndexes
+    } = this.props;
     const { height, dimension, data } = this.state;
 
     if (width !== prevProps.width) {
+      console.log(`width changed: ${prevProps.width} => ${width}`);
       this.resizeCanvas(width, height);
     }
 
+    // Look into width !== prevProps.width in Chrome
+    //  || width !== prevProps.width
+
     if (data !== prevState.data) {
-      if (this._raf) {
-        cancelAnimationFrame(this._raf);
-        this._raf = null;
+      console.log("data changed");
+
+      if (this._rafHandle) {
+        console.log("cancel raf in updated");
+        cancelAnimationFrame(this._rafHandle);
+        this._rafHandle = null;
       }
 
       if (this._t >= 1) {
         // animation already finished so use old data as starting point
-        this._startingValues = prevState.data.slice();
+        this._animatingFromValues = prevState.data.slice();
       } else {
         // animation was in progress so calculate where we'd got to and
         // use that as the starting values
-        this._startingValues = this._startingValues.map((value, index) =>
-          interpolateNumber(value, prevState.data[index])(this._t)
+        this._animatingFromValues = this._animatingFromValues.map(
+          (value, index) =>
+            interpolateNumber(value, prevState.data[index])(this._t)
         );
       }
 
@@ -114,12 +127,13 @@ class HeatMapCanvas extends React.Component<Props, State> {
       width !== prevProps.width ||
       selectedIndexes !== prevProps.selectedIndexes
     ) {
+      console.log("rendering tiles");
       this.renderTiles(
         data,
-        this._startingValues,
+        this._animatingFromValues,
         selectedIndexes,
         columnCount,
-        colorCallback,
+        colorInterpolator,
         dimension
       );
     }
@@ -130,7 +144,7 @@ class HeatMapCanvas extends React.Component<Props, State> {
     startingValues: Array<number>,
     selectedIndexes: Array<number>,
     columnCount: Props["columnCount"],
-    colorCallback: Props["colorCallback"],
+    colorInterpolator: Props["colorInterpolator"],
     dimension: State["dimension"]
   ) {
     const canvas = this._canvasRef.current!;
@@ -141,37 +155,52 @@ class HeatMapCanvas extends React.Component<Props, State> {
     for (let i = 0; i < data.length; ++i) {
       const column = i % columnCount;
       const row = Math.floor(i / columnCount);
-      const x = (dimension + MARGIN_PX) * column;
-      const y = (dimension + MARGIN_PX) * row;
+      // const x = (dimension + MARGIN_PX) * column;
+      // const y = (dimension + MARGIN_PX) * row;
+
+      const x = dimension * column;
+      const y = dimension * row;
 
       if (includes(selectedIndexes, i)) {
         ctx.fillStyle = "#00cb8e";
       } else {
-        ctx.fillStyle = colorCallback(
+        ctx.fillStyle = colorInterpolator(
           interpolateNumber(startingValues[i], data[i])(this._t)
         );
       }
 
-      drawRoundedRect(ctx, x, y, dimension, dimension, MARGIN_PX);
+      // console.log("foo", dimension);
+
+      // drawRoundedRect(ctx, x, y, dimension, dimension, MARGIN_PX);
+      drawRoundedRect(
+        ctx,
+        x + MARGIN_PX,
+        y + MARGIN_PX,
+        dimension - MARGIN_PX * 2,
+        dimension - MARGIN_PX * 2,
+        MARGIN_PX * 2
+      );
     }
 
     if (this._t >= 1) {
       // completed the animation
-      if (this._raf) {
-        cancelAnimationFrame(this._raf);
-        this._raf = null;
+      if (this._rafHandle) {
+        console.log("animation complete");
+
+        cancelAnimationFrame(this._rafHandle);
+        this._rafHandle = null;
       }
       return;
     }
 
-    this._raf = requestAnimationFrame(() => {
+    this._rafHandle = requestAnimationFrame(() => {
       this._t = clamp(this._t + 1 / (300 / 16.666), 0, 1); // 300ms
       this.renderTiles(
         data,
-        this._startingValues,
+        this._animatingFromValues,
         selectedIndexes,
         columnCount,
-        colorCallback,
+        colorInterpolator,
         dimension
       );
     });
@@ -194,9 +223,14 @@ class HeatMapCanvas extends React.Component<Props, State> {
     { width, data, columnCount }: Props,
     currentData: State["data"]
   ): State {
-    const dimension = (width - MARGIN_PX * (columnCount - 1)) / columnCount;
+    // const dimension = (width - MARGIN_PX * (columnCount - 1)) / columnCount;
+    // const rows = Math.ceil(data.length / columnCount);
+    // const height = dimension * rows + MARGIN_PX * (rows - 1);
+
+    const dimension = width / columnCount;
     const rows = Math.ceil(data.length / columnCount);
-    const height = dimension * rows + MARGIN_PX * (rows - 1);
+    const height = dimension * rows;
+
     return {
       dimension,
       height,

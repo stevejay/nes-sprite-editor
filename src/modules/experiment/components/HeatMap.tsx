@@ -4,7 +4,7 @@ import styles from "./HeatMap.module.scss";
 import { clamp } from "lodash";
 import HeatMapCanvas from "./HeatMapCanvas";
 
-const COLOR_CALLBACK = (datum: number) =>
+const COLOR_INTERPOLATOR = (datum: number) =>
   `rgba(0,150,203,${clamp(0.2 + datum * 1.0, 0, 1)})`;
 
 type Props = {
@@ -12,15 +12,27 @@ type Props = {
   xLabels: Array<string>;
   yLabels: Array<string>;
   selectedIndexes: Array<number>;
-  // colorCallback: (
-  //   datum: number
-  // ) => // , selected: boolean
-  // string;
+  colorInterpolator?: (datum: number) => string;
 };
 
 class HeatMap extends React.Component<Props> {
+  constructor(props: Props) {
+    super(props);
+    if (props.data.length !== props.xLabels.length * props.yLabels.length) {
+      throw new Error(
+        "Labels need to be given for all columns and rows; " +
+          "use an empty string for no label"
+      );
+    }
+  }
   render() {
-    const { data, xLabels, yLabels, selectedIndexes } = this.props;
+    const {
+      data,
+      xLabels,
+      yLabels,
+      selectedIndexes,
+      colorInterpolator = COLOR_INTERPOLATOR
+    } = this.props;
     return (
       <div className={styles.container}>
         <div className={styles.column}>
@@ -41,24 +53,17 @@ class HeatMap extends React.Component<Props> {
             ))}
           </div>
           <Measure bounds>
-            {({ measureRef, contentRect }) => {
-              console.log(
-                "width",
-                contentRect.bounds ? contentRect.bounds.width : 0
-              );
-              return (
-                <div ref={measureRef} className={styles.chartContainer}>
-                  {/* The chart {contentRect.bounds ? contentRect.bounds.width : "--"} */}
-                  <HeatMapCanvas
-                    width={contentRect.bounds ? contentRect.bounds.width : 0}
-                    data={data}
-                    selectedIndexes={selectedIndexes}
-                    columnCount={xLabels.length}
-                    colorCallback={COLOR_CALLBACK}
-                  />
-                </div>
-              );
-            }}
+            {({ measureRef, contentRect }) => (
+              <div ref={measureRef} className={styles.chartContainer}>
+                <HeatMapCanvas
+                  width={contentRect.bounds ? contentRect.bounds.width || 0 : 0}
+                  data={data}
+                  selectedIndexes={selectedIndexes}
+                  columnCount={xLabels.length}
+                  colorInterpolator={colorInterpolator}
+                />
+              </div>
+            )}
           </Measure>
         </div>
       </div>

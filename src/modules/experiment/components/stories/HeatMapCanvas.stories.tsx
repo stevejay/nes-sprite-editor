@@ -52,7 +52,7 @@ storiesOf("HeatMap", module)
               data={state.data}
               selectedIndexes={sampleSize(range(0, 24 * 7), 3)}
               columnCount={24}
-              colorCallback={COLOR_CALLBACK}
+              colorInterpolator={COLOR_CALLBACK}
             />
           )}
         </State>
