@@ -1,11 +1,11 @@
+import { State, Store } from "@sambego/storybook-state";
+import { withKnobs } from "@storybook/addon-knobs";
+import { storiesOf } from "@storybook/react";
+import { includes, random, range } from "lodash";
 import * as React from "react";
 import { host } from "storybook-host";
-import { withKnobs, boolean } from "@storybook/addon-knobs";
-import { State, Store } from "@sambego/storybook-state";
-import { storiesOf } from "@storybook/react";
+import "../../../../../index.scss";
 import HeatMap from "../HeatMap";
-import "../../../../index.scss";
-import { range, random, clamp, sampleSize, includes } from "lodash";
 // import { interpolateRgb } from "d3-interpolate";
 
 const storyHost = host({

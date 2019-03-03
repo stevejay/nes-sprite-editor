@@ -1,10 +1,10 @@
 import * as React from "react";
 import { host } from "storybook-host";
-import { withKnobs, boolean } from "@storybook/addon-knobs";
+import { withKnobs } from "@storybook/addon-knobs";
 import { State, Store } from "@sambego/storybook-state";
 import { storiesOf } from "@storybook/react";
 import HeatMapCanvas from "../HeatMapCanvas";
-import "../../../../index.scss";
+import "../../../../../index.scss";
 import { range, random, clamp, sampleSize } from "lodash";
 // import { interpolateRgb } from "d3-interpolate";
 

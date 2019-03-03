@@ -61,3 +61,16 @@
   overflow: hidden;
   position: relative;
 }
+
+.tooltipContainer {
+  // width: 20px;
+  // height: 20px;
+  position: absolute;
+  pointer-events: none;
+  transform: translate(-50%, -100%);
+}
+
+.tooltip {
+  background-color: red;
+  // margin-bottom: 20px;
+}

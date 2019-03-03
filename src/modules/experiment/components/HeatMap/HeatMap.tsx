@@ -1,9 +1,12 @@
 import React from "react";
 import Measure from "react-measure";
 import styles from "./HeatMap.module.scss";
-import { clamp } from "lodash";
+import { clamp, isNil } from "lodash";
 import HeatMapCanvas from "./HeatMapCanvas";
-import HeatMapInteractionTracker from "./HeatMapInteractionTracker";
+import HeatMapInteractionTracker, {
+  TooltipData
+} from "./HeatMapInteractionTracker";
+import { Portal } from "react-portal";
 
 const COLOR_INTERPOLATOR = (datum: number) =>
   `rgba(0,150,203,${clamp(0.2 + datum * 1.0, 0, 1)})`;
@@ -17,7 +20,13 @@ type Props = {
   onTileClick: (index: number) => void;
 };
 
-class HeatMap extends React.Component<Props> {
+type State = {
+  index: number | null;
+  originRect?: TooltipData["originRect"];
+  boundingRect?: TooltipData["boundingRect"];
+};
+
+class HeatMap extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     if (props.data.length !== props.xLabels.length * props.yLabels.length) {
@@ -26,7 +35,19 @@ class HeatMap extends React.Component<Props> {
           "use an empty string for no label"
       );
     }
+    this.state = { index: null };
   }
+
+  handleShowTooltip = (data: TooltipData) => {
+    if (data.index !== this.state.index) {
+      this.setState(data);
+    }
+  };
+
+  handleHideTooltip = () => {
+    this.setState({ index: null });
+  };
+
   render() {
     const {
       data,
@@ -36,6 +57,7 @@ class HeatMap extends React.Component<Props> {
       colorInterpolator = COLOR_INTERPOLATOR,
       onTileClick
     } = this.props;
+    const { index: tooltipIndex, originRect, boundingRect } = this.state;
     return (
       <div className={styles.container}>
         <div className={styles.column}>
@@ -72,7 +94,26 @@ class HeatMap extends React.Component<Props> {
                   <HeatMapInteractionTracker
                     columnCount={xLabels.length}
                     onTileClick={onTileClick}
+                    onShowTooltip={this.handleShowTooltip}
+                    onHideTooltip={this.handleHideTooltip}
                   />
+                  {!isNil(tooltipIndex) && (
+                    <Portal>
+                      <div
+                        className={styles.tooltipContainer}
+                        style={{
+                          top: originRect!.top,
+                          left: originRect!.left + originRect!.width * 0.5
+                        }}
+                      >
+                        <div className={styles.tooltip}>
+                          <p>{data[tooltipIndex]}</p>
+                          <p>Some info</p>
+                          <p style={{ marginBottom: 0 }}>Some more info</p>
+                        </div>
+                      </div>
+                    </Portal>
+                  )}
                 </div>
               );
             }}
