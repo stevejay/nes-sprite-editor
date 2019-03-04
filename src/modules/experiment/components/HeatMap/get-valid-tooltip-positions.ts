@@ -19,61 +19,7 @@ export default function getValidTooltipPositions(
 ) {
   const result: Array<ModalPosition> = [];
 
-  // Horizontal positions:
-
-  const verticalSlidePosition = getPosition(
-    0,
-    clientHeight,
-    targetTop,
-    targetTop + targetHeight,
-    tooltipHeight
-  );
-
-  // right position:
-
-  const rightPosition: ModalPosition = {
-    basicPosition: "right",
-    arrowPosition: verticalSlidePosition.arrowPosition,
-    fits: false,
-    left: targetLeft + targetWidth + pointerSize * 0.5,
-    top: verticalSlidePosition.value
-  };
-
-  rightPosition.fits = determineIfFits(
-    rightPosition,
-    clientWidth,
-    clientHeight,
-    tooltipWidth,
-    tooltipHeight
-  );
-
-  result.push(rightPosition);
-
-  if (rightPosition.fits) {
-    return result;
-  }
-
-  // left position:
-
-  const leftPosition: ModalPosition = {
-    basicPosition: "left",
-    arrowPosition: verticalSlidePosition.arrowPosition,
-    fits: false,
-    left: targetLeft - tooltipWidth - pointerSize * 0.5,
-    top: verticalSlidePosition.value
-  };
-
-  leftPosition.fits = determineIfFits(
-    leftPosition,
-    clientWidth,
-    clientHeight,
-    tooltipWidth,
-    tooltipHeight
-  );
-
-  result.push(leftPosition);
-
-  // Vertical positions:
+  // ----- Vertical positions -----
 
   const horizontalSlidePosition = getPosition(
     0,
@@ -103,6 +49,10 @@ export default function getValidTooltipPositions(
 
   result.push(bottomPosition);
 
+  if (bottomPosition.fits) {
+    return result;
+  }
+
   // top position
 
   const topPosition: ModalPosition = {
@@ -122,6 +72,57 @@ export default function getValidTooltipPositions(
   );
 
   result.push(topPosition);
+
+  // ----- Horizontal positions -----
+
+  const verticalSlidePosition = getPosition(
+    0,
+    clientHeight,
+    targetTop,
+    targetTop + targetHeight,
+    tooltipHeight
+  );
+
+  // right position:
+
+  const rightPosition: ModalPosition = {
+    basicPosition: "right",
+    arrowPosition: verticalSlidePosition.arrowPosition,
+    fits: false,
+    left: targetLeft + targetWidth + pointerSize * 0.5,
+    top: verticalSlidePosition.value
+  };
+
+  rightPosition.fits = determineIfFits(
+    rightPosition,
+    clientWidth,
+    clientHeight,
+    tooltipWidth,
+    tooltipHeight
+  );
+
+  result.push(rightPosition);
+
+  // left position:
+
+  const leftPosition: ModalPosition = {
+    basicPosition: "left",
+    arrowPosition: verticalSlidePosition.arrowPosition,
+    fits: false,
+    left: targetLeft - tooltipWidth - pointerSize * 0.5,
+    top: verticalSlidePosition.value
+  };
+
+  leftPosition.fits = determineIfFits(
+    leftPosition,
+    clientWidth,
+    clientHeight,
+    tooltipWidth,
+    tooltipHeight
+  );
+
+  result.push(leftPosition);
+
   return result;
 }
 

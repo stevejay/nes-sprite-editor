@@ -1,17 +1,17 @@
-$background-color: red;
+$background-color: white;
 
 .tooltipContainer {
   position: fixed;
   pointer-events: none;
   will-change: top, left;
   transition: top 0.2s, left 0.2s;
-  // will-change: transform;
-  // transition: transform 0.2s;
 }
 
 .tooltip {
   background-color: $background-color;
   position: relative;
+  padding: 6px 8px;
+  border-radius: 3px;
   // use filter to ensure ::after pointer is included in the drop shadow:
   filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.5));
   will-change: opacity;

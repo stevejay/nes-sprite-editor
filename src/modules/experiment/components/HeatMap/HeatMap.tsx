@@ -7,6 +7,7 @@ import HeatMapInteractionTracker, {
   TooltipData
 } from "./HeatMapInteractionTracker";
 import Tooltip from "./Tooltip";
+import ModelessDialog from "./ModelessDialog";
 
 const COLOR_INTERPOLATOR = (datum: number) =>
   `rgba(0,150,203,${clamp(0.2 + datum * 1.0, 0, 1)})`;
@@ -96,13 +97,12 @@ class HeatMap extends React.Component<Props, State> {
                     onShowTooltip={this.handleShowTooltip}
                     onHideTooltip={this.handleHideTooltip}
                   />
-                  <Tooltip
-                    isShowing={!isNil(tooltipIndex)}
-                    content={
-                      !isNil(tooltipIndex) ? `${data[tooltipIndex]}` : null
-                    }
-                    originRect={originRect}
-                  />
+                  <ModelessDialog isShowing={!isNil(tooltipIndex)}>
+                    <Tooltip
+                      data={!isNil(tooltipIndex) ? data[tooltipIndex] : null}
+                      originRect={originRect}
+                    />
+                  </ModelessDialog>
                 </div>
               );
             }}
