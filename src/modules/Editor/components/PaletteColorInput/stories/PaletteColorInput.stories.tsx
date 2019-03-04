@@ -2,7 +2,7 @@ import * as React from "react";
 import { host } from "storybook-host";
 import { State, Store } from "@sambego/storybook-state";
 import { storiesOf } from "@storybook/react";
-import "../../../../index.scss";
+import "../../../../../index.scss";
 import PaletteColorInput from "..";
 import { SYSTEM_PALETTE_OPTIONS } from "../../../constants";
 

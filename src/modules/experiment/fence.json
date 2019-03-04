@@ -1,0 +1,7 @@
+{
+  "tags": ["experiment"],
+  "exports": {
+    "index": "*"
+  },
+  "imports": []
+}
