@@ -75,9 +75,9 @@
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 9009 -s public",
     "build-storybook": "build-storybook -s public",
+    "deploy-storybook": "storybook-to-ghpages",
     "upgrade-interactive": "npm-check --update",
-    "check-fences": "gf",
-    "deploy-storybook": "storybook-to-ghpages"
+    "check-fences": "gf"
   },
   "eslintConfig": {
     "extends": "react-app"
