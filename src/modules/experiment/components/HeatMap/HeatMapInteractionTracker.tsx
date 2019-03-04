@@ -9,12 +9,6 @@ export type TooltipData = {
     width: number;
     height: number;
   };
-  boundingRect: {
-    top: number;
-    left: number;
-    width: number;
-    height: number;
-  };
 };
 
 type Props = {
@@ -55,12 +49,11 @@ class HeatMapInteractionTracker extends React.Component<Props> {
     const column = Math.floor(xInContainer / dimension);
     const row = Math.floor(yInContainer / dimension);
     const index = row * columnCount + column;
-    const left = column * dimension + boundingRect.left + window.scrollX;
-    const top = row * dimension + boundingRect.top + window.scrollY;
+    const left = column * dimension + boundingRect.left; // + window.scrollX;
+    const top = row * dimension + boundingRect.top; // + window.scrollY;
     return {
       index,
-      originRect: { top, left, width: dimension, height: dimension },
-      boundingRect
+      originRect: { top, left, width: dimension, height: dimension }
     };
   }
 

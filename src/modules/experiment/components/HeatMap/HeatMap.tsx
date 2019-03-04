@@ -6,7 +6,7 @@ import HeatMapCanvas from "./HeatMapCanvas";
 import HeatMapInteractionTracker, {
   TooltipData
 } from "./HeatMapInteractionTracker";
-import { Portal } from "react-portal";
+import Tooltip from "./Tooltip";
 
 const COLOR_INTERPOLATOR = (datum: number) =>
   `rgba(0,150,203,${clamp(0.2 + datum * 1.0, 0, 1)})`;
@@ -23,7 +23,6 @@ type Props = {
 type State = {
   index: number | null;
   originRect?: TooltipData["originRect"];
-  boundingRect?: TooltipData["boundingRect"];
 };
 
 class HeatMap extends React.Component<Props, State> {
@@ -57,7 +56,7 @@ class HeatMap extends React.Component<Props, State> {
       colorInterpolator = COLOR_INTERPOLATOR,
       onTileClick
     } = this.props;
-    const { index: tooltipIndex, originRect, boundingRect } = this.state;
+    const { index: tooltipIndex, originRect } = this.state;
     return (
       <div className={styles.container}>
         <div className={styles.column}>
@@ -97,23 +96,13 @@ class HeatMap extends React.Component<Props, State> {
                     onShowTooltip={this.handleShowTooltip}
                     onHideTooltip={this.handleHideTooltip}
                   />
-                  {!isNil(tooltipIndex) && (
-                    <Portal>
-                      <div
-                        className={styles.tooltipContainer}
-                        style={{
-                          top: originRect!.top,
-                          left: originRect!.left + originRect!.width * 0.5
-                        }}
-                      >
-                        <div className={styles.tooltip}>
-                          <p>{data[tooltipIndex]}</p>
-                          <p>Some info</p>
-                          <p style={{ marginBottom: 0 }}>Some more info</p>
-                        </div>
-                      </div>
-                    </Portal>
-                  )}
+                  <Tooltip
+                    isShowing={!isNil(tooltipIndex)}
+                    content={
+                      !isNil(tooltipIndex) ? `${data[tooltipIndex]}` : null
+                    }
+                    originRect={originRect}
+                  />
                 </div>
               );
             }}

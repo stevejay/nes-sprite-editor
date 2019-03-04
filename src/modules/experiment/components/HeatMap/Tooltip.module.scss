@@ -1,0 +1,91 @@
+$background-color: red;
+
+.tooltipContainer {
+  position: fixed;
+  pointer-events: none;
+  will-change: top, left;
+  transition: top 0.2s, left 0.2s;
+  // will-change: transform;
+  // transition: transform 0.2s;
+}
+
+.tooltip {
+  background-color: $background-color;
+  position: relative;
+  // use filter to ensure ::after pointer is included in the drop shadow:
+  filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.5));
+  will-change: opacity;
+}
+
+.tooltip p {
+  margin: 0;
+  padding: 0;
+}
+
+.tooltipContainer .tooltip::after {
+  position: absolute;
+  content: " ";
+  height: 0;
+  width: 0;
+  border: solid transparent;
+  border-width: 12px;
+  pointer-events: none;
+}
+
+.tooltipContainer:global(.left) .tooltip::after {
+  right: -12px;
+  border-right-width: 0;
+  border-left-color: $background-color;
+  margin-top: -12px;
+}
+
+.tooltipContainer:global(.right) .tooltip::after {
+  left: -12px;
+  border-left-width: 0;
+  border-right-color: $background-color;
+  margin-top: -12px;
+}
+
+.tooltipContainer:global(.top) .tooltip::after {
+  bottom: -12px;
+  border-bottom-width: 0;
+  border-top-color: $background-color;
+  margin-left: -12px;
+}
+
+.tooltipContainer:global(.bottom) .tooltip::after {
+  top: -12px;
+  border-top-width: 0;
+  border-bottom-color: $background-color;
+  margin-left: -12px;
+}
+
+.tooltipContainer:global(.top):global(.start) .tooltip::after,
+.tooltipContainer:global(.bottom):global(.start) .tooltip::after {
+  left: 15px;
+}
+
+.tooltipContainer:global(.top):global(.center) .tooltip::after,
+.tooltipContainer:global(.bottom):global(.center) .tooltip::after {
+  left: 50%;
+}
+
+.tooltipContainer:global(.top):global(.end) .tooltip::after,
+.tooltipContainer:global(.bottom):global(.end) .tooltip::after {
+  right: 3px;
+}
+
+.tooltipContainer:global(.left):global(.start) .tooltip::after,
+.tooltipContainer:global(.right):global(.start) .tooltip::after {
+  top: 15px;
+}
+
+.tooltipContainer:global(.left):global(.center) .tooltip::after,
+.tooltipContainer:global(.right):global(.center) .tooltip::after {
+  top: 50%;
+}
+
+.tooltipContainer:global(.left):global(.end) .tooltip::after,
+.tooltipContainer:global(.right):global(.end) .tooltip::after {
+  bottom: 3px;
+}
