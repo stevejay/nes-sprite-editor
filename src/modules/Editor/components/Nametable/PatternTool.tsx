@@ -1,12 +1,10 @@
 import { isNil } from "lodash";
 import React from "react";
-import useOpenDialog from "../../../../shared/utils/use-open-dialog";
 import CanvasHighlight from "./CanvasHighlight";
 import CanvasInteractionTracker from "./CanvasInteractionTracker";
-import { PatternTableModal } from "../PatternTable";
 import { TilePosition, ViewportSize } from "./experiment";
 import styles from "./PatternTool.module.scss";
-import { Nametable, PatternTable, GamePaletteWithColors } from "../../store";
+import { Nametable } from "../../store";
 import {
   Action as ToolAction,
   ActionTypes as ToolActionTypes,
@@ -19,29 +17,23 @@ type Props = {
   selectedColorIndex: ToolState["selectedColorIndex"];
   viewportSize: ViewportSize;
   viewportState: ViewportState;
-  currentPalette: GamePaletteWithColors;
   toolDispatch: React.Dispatch<ToolAction>;
   isLocked: boolean;
-  patternTable: PatternTable | null;
   nametable: Nametable | null;
+  tileIndex: number;
   onChange: (id: string, tileIndex: number, newValue: number) => void;
 };
 
 const PatternTool = ({
   nametable,
-  patternTable,
   currentTile,
-  currentPalette,
   viewportSize,
   viewportState,
+  tileIndex,
   toolDispatch,
   isLocked,
   onChange
 }: Props) => {
-  const highlightBoxRef = React.useRef<HTMLDivElement>(null);
-  const [isOpen, handleOpen, handleClose] = useOpenDialog();
-  const [patternTileIndex, setPatternTileIndex] = React.useState(0);
-
   const handleMouseMove = (
     _event: React.MouseEvent<HTMLDivElement>,
     tilePosition: TilePosition
@@ -63,52 +55,29 @@ const PatternTool = ({
     }
   };
 
-  const handleSelectTile = React.useCallback(
-    (value: number) => {
-      if (isNil(nametable) || isNil(patternTileIndex)) {
-        return;
-      }
-
-      onChange(nametable.id, patternTileIndex, value);
-    },
-    [onChange, nametable, patternTileIndex]
-  );
-
-  const handleHighlightClick = () => {
-    if (currentTile.tileIndex) {
-      setPatternTileIndex(currentTile.tileIndex);
+  const handleClick = React.useCallback(() => {
+    if (isNil(nametable) || isNil(currentTile.tileIndex)) {
+      return;
     }
-    handleOpen();
-  };
+    onChange(nametable.id, currentTile.tileIndex, tileIndex);
+  }, [onChange, nametable, currentTile, tileIndex]);
 
   return (
-    <>
-      <CanvasInteractionTracker
-        className={styles.tool}
-        viewportSize={viewportSize}
+    <CanvasInteractionTracker
+      className={styles.tool}
+      viewportSize={viewportSize}
+      viewportState={viewportState}
+      onClick={handleClick}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+    >
+      <CanvasHighlight
+        currentTile={currentTile}
+        currentTool="pattern"
         viewportState={viewportState}
-        // onClick={handleClick}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-      >
-        <CanvasHighlight
-          currentTile={currentTile}
-          currentTool="pattern"
-          viewportState={viewportState}
-          isLocked={isLocked}
-          onClick={handleHighlightClick}
-        />
-      </CanvasInteractionTracker>
-      <PatternTableModal
-        isOpen={isOpen}
-        patternTable={patternTable}
-        palette={currentPalette}
-        selectedTileIndex={nametable!.tileIndexes[patternTileIndex]}
-        originElement={highlightBoxRef.current}
-        onSelectTile={handleSelectTile}
-        onClose={handleClose}
+        isLocked={isLocked}
       />
-    </>
+    </CanvasInteractionTracker>
   );
 };
 

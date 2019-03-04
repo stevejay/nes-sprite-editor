@@ -18,7 +18,9 @@ import {
   setPatternTable,
   GamePaletteCollectionWithColors,
   Nametable,
-  PatternTable as PatternTableType
+  PatternTable as PatternTableType,
+  selectSelectedPatternTableTileIndex,
+  updateSelectedPatternTableTileIndex
 } from "../../store";
 
 type Props = {
@@ -26,12 +28,14 @@ type Props = {
   currentPatternTable: PatternTableType | null;
   paletteCollection: GamePaletteCollectionWithColors | null;
   currentNametable: Nametable | null;
+  tileIndex: number;
   setPatternTable: typeof setPatternTable;
   addNewBackgroundPatternTable: typeof addNewBackgroundPatternTable;
   copyPatternTable: typeof copyPatternTable;
   deletePatternTable: typeof deletePatternTable;
   renamePatternTable: typeof renamePatternTable;
   changePatternTableTileLock: typeof changePatternTableTileLock;
+  updateSelectedPatternTableTileIndex: typeof updateSelectedPatternTableTileIndex;
 };
 
 const BackgroundPatternTablesSection = ({
@@ -39,14 +43,15 @@ const BackgroundPatternTablesSection = ({
   currentPatternTable,
   paletteCollection,
   currentNametable,
+  tileIndex,
   setPatternTable,
   addNewBackgroundPatternTable,
   copyPatternTable,
   deletePatternTable,
   renamePatternTable,
-  changePatternTableTileLock
+  changePatternTableTileLock,
+  updateSelectedPatternTableTileIndex
 }: Props) => {
-  const [tileIndex, setTileIndex] = React.useState(0);
   const [paletteIndex, setPaletteIndex] = React.useState(0);
   const palette = paletteCollection
     ? paletteCollection.gamePalettes[paletteIndex]
@@ -77,7 +82,7 @@ const BackgroundPatternTablesSection = ({
             paletteIndex={paletteIndex}
             palette={palette}
             tileIndex={tileIndex}
-            onTileSelected={setTileIndex}
+            onTileSelected={updateSelectedPatternTableTileIndex}
             onPaletteSelected={setPaletteIndex}
           />
           <PatternTableTileDetail
@@ -105,7 +110,8 @@ export default connect(
     patternTables: selectBackgroundPatternTables(state),
     currentPatternTable: selectCurrentBackgroundPatternTable(state),
     paletteCollection: selectCurrentBackgroundPaletteCollection(state),
-    currentNametable: selectCurrentNametable(state)
+    currentNametable: selectCurrentNametable(state),
+    tileIndex: selectSelectedPatternTableTileIndex(state)
   }),
   {
     setPatternTable,
@@ -113,7 +119,8 @@ export default connect(
     copyPatternTable,
     deletePatternTable,
     renamePatternTable,
-    changePatternTableTileLock
+    changePatternTableTileLock,
+    updateSelectedPatternTableTileIndex
   }
 )(
   React.memo(
@@ -122,6 +129,7 @@ export default connect(
       prevProps.patternTables === nextProps.patternTables &&
       prevProps.currentPatternTable === nextProps.currentPatternTable &&
       prevProps.paletteCollection === nextProps.paletteCollection &&
-      prevProps.currentNametable === nextProps.currentNametable
+      prevProps.currentNametable === nextProps.currentNametable &&
+      prevProps.tileIndex === nextProps.tileIndex
   )
 );

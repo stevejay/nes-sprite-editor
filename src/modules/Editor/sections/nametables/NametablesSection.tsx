@@ -20,7 +20,8 @@ import {
   selectCurrentBackgroundPatternTable,
   selectCurrentNametable,
   selectNametables,
-  setNametable
+  setNametable,
+  selectSelectedPatternTableTileIndex
 } from "../../store";
 
 type Props = {
@@ -28,6 +29,7 @@ type Props = {
   currentNametable: NametableType | null;
   patternTable: PatternTable | null;
   paletteCollection: GamePaletteCollectionWithColors | null;
+  tileIndex: number;
   setNametable: (id: string) => Action;
   addNewNametable: () => Action;
   copyNametable: (id: string) => Action;
@@ -43,6 +45,7 @@ const NametablesSection = ({
   currentNametable,
   patternTable,
   paletteCollection,
+  tileIndex,
   setNametable,
   addNewNametable,
   copyNametable,
@@ -72,6 +75,7 @@ const NametablesSection = ({
       nametable={currentNametable}
       patternTable={patternTable}
       paletteCollection={paletteCollection}
+      tileIndex={tileIndex}
       onChangePatternTable={changePatternTablePixels}
       onChangePalette={changeNametablePaletteIndex}
       onChangeTile={changeNametableTileIndex}
@@ -84,7 +88,8 @@ export default connect(
     nametables: selectNametables(state),
     currentNametable: selectCurrentNametable(state),
     patternTable: selectCurrentBackgroundPatternTable(state),
-    paletteCollection: selectCurrentBackgroundPaletteCollection(state)
+    paletteCollection: selectCurrentBackgroundPaletteCollection(state),
+    tileIndex: selectSelectedPatternTableTileIndex(state)
   }),
   {
     setNametable,

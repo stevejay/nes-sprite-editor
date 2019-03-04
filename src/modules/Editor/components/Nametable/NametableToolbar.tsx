@@ -1,12 +1,13 @@
 import React from "react";
-import { FiMove, FiSquare, FiZoomIn, FiZoomOut } from "react-icons/fi";
+import { FiMove, FiZoomIn, FiZoomOut } from "react-icons/fi";
 import { RovingTabIndexProvider } from "react-roving-tabindex";
 import Button from "../../../../shared/Button";
 import SelectInput from "../../../../shared/SelectInput";
 import useId from "../../../../shared/utils/use-id";
 import {
   GamePaletteCollectionWithColors,
-  GamePaletteWithColors
+  GamePaletteWithColors,
+  PatternTable
 } from "../../store";
 import PaletteSelectionToolbar from "../PaletteSelectionToolbar";
 import PencilSelectionToolbar from "../PencilSelectionToolbar";
@@ -17,6 +18,7 @@ import {
   ActionTypes as ToolActionTypes,
   State as ToolState
 } from "./tool-reducer";
+import Tile from "../PatternTableTileDetail/Tile";
 
 type ScaleOption = {
   id: RenderCanvasPositioning["scale"];
@@ -38,7 +40,9 @@ type Props = {
   paletteIndex: ToolState["selectedPaletteIndex"];
   paletteCollection: GamePaletteCollectionWithColors;
   currentPalette: GamePaletteWithColors;
+  patternTable: PatternTable;
   scale: RenderCanvasPositioning["scale"];
+  tileIndex: number;
   dispatch: React.Dispatch<ToolAction>;
   onReset: () => void;
   onSetScale: (scale: RenderCanvasPositioning["scale"]) => void;
@@ -50,7 +54,9 @@ const NametableToolbar = ({
   paletteIndex,
   paletteCollection,
   currentPalette,
+  patternTable,
   scale,
+  tileIndex,
   dispatch,
   onReset,
   onSetScale
@@ -81,7 +87,6 @@ const NametableToolbar = ({
       <Toolbar>
         <Button
           aria-label="Select pattern tile"
-          icon={FiSquare}
           appearance={tool === "pattern" ? "dark" : "default"}
           onClick={() =>
             dispatch({
@@ -89,7 +94,14 @@ const NametableToolbar = ({
               payload: "pattern"
             })
           }
-        />
+        >
+          <Tile
+            scale={3}
+            tile={patternTable.tiles[tileIndex]}
+            palette={currentPalette}
+            aria-label={`Tile number ${tileIndex}`}
+          />
+        </Button>
       </Toolbar>
       <Toolbar>
         <RovingTabIndexProvider>

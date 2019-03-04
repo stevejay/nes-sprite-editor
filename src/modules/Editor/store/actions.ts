@@ -134,6 +134,13 @@ export function changePatternTableTileLock(
   };
 }
 
+export function updateSelectedPatternTableTileIndex(tileIndex: number): Action {
+  return {
+    type: ActionTypes.UPDATE_SELECTED_PATTERN_TABLE_TILE_INDEX,
+    payload: { tileIndex }
+  };
+}
+
 export function setNametable(id: string): Action {
   return {
     type: ActionTypes.SELECT_NAMETABLE,

@@ -8,7 +8,8 @@ export const initialState: Partial<State> = {
   selectedPatternTableIds: {
     background: BACKGROUND_PATTERN_TABLE_OPTIONS[0].id,
     sprite: null
-  }
+  },
+  selectedPatternTableTileIndex: 0
 };
 
 export function reducer(state: State, action: Action): State {
@@ -181,6 +182,13 @@ export function reducer(state: State, action: Action): State {
             })
           };
         })
+      };
+    }
+    case ActionTypes.UPDATE_SELECTED_PATTERN_TABLE_TILE_INDEX: {
+      const { tileIndex } = action.payload;
+      return {
+        ...state,
+        selectedPatternTableTileIndex: tileIndex
       };
     }
     default:

@@ -133,3 +133,7 @@ export const selectCurrentSpritePatternTable = createSelector(
   (patternTables, currentId) =>
     find(patternTables, x => x.id === currentId) || null
 );
+
+export function selectSelectedPatternTableTileIndex(state: EditorStateSlice) {
+  return state[SLICE_NAME].selectedPatternTableTileIndex;
+}

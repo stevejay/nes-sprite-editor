@@ -95,7 +95,8 @@ export enum ActionTypes {
   COPY_PATTERN_TABLE = "COPY_PATTERN_TABLE",
   DELETE_PATTERN_TABLE = "DELETE_PATTERN_TABLE",
   CHANGE_PATTERN_TABLE_PIXELS = "CHANGE_PATTERN_TABLE_PIXELS",
-  CHANGE_PATTERN_TABLE_TILE_LOCK = "CHANGE_PATTERN_TABLE_TILE_LOCK"
+  CHANGE_PATTERN_TABLE_TILE_LOCK = "CHANGE_PATTERN_TABLE_TILE_LOCK",
+  UPDATE_SELECTED_PATTERN_TABLE_TILE_INDEX = "UPDATE_SELECTED_PATTERN_TABLE_TILE_INDEX"
 }
 
 export type State = {
@@ -111,6 +112,7 @@ export type State = {
   selectedPatternTableIds: {
     [key in PatternTableType]: PatternTable["id"] | null
   };
+  selectedPatternTableTileIndex: number;
 };
 
 export type EditorStateSlice = {
@@ -260,5 +262,11 @@ export type Action =
         id: PatternTable["id"];
         tileIndex: number;
         isLocked: boolean;
+      };
+    }
+  | {
+      type: ActionTypes.UPDATE_SELECTED_PATTERN_TABLE_TILE_INDEX;
+      payload: {
+        tileIndex: number;
       };
     };

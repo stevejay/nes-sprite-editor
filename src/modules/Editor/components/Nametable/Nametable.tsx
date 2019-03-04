@@ -25,6 +25,7 @@ type Props = {
   nametable: NametableType | null;
   patternTable: PatternTable | null;
   paletteCollection: GamePaletteCollectionWithColors | null;
+  tileIndex: number;
   onChangePatternTable: (
     id: string,
     tileIndex: number,
@@ -39,6 +40,7 @@ const Nametable = ({
   nametable,
   patternTable,
   paletteCollection,
+  tileIndex,
   onChangePatternTable,
   onChangePalette,
   onChangeTile
@@ -72,8 +74,10 @@ const Nametable = ({
         colorIndex={toolState.selectedColorIndex}
         paletteIndex={toolState.selectedPaletteIndex}
         paletteCollection={paletteCollection}
+        patternTable={patternTable}
         currentPalette={currentPalette}
         scale={viewportState.scale}
+        tileIndex={tileIndex}
         onReset={() =>
           viewportDispatch({
             type: ViewportActionTypes.INITIALIZE
@@ -141,10 +145,9 @@ const Nametable = ({
               toolDispatch={toolDispatch}
               isLocked={isLocked}
               currentTile={toolState.currentTile}
-              currentPalette={currentPalette}
               selectedColorIndex={toolState.selectedColorIndex}
               nametable={nametable}
-              patternTable={patternTable}
+              tileIndex={tileIndex}
               onChange={onChangeTile}
             />
           )}
