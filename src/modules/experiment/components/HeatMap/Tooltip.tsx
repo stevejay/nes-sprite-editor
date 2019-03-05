@@ -1,31 +1,20 @@
 import React from "react";
 import styles from "./Tooltip.module.scss";
 import { TooltipData } from "./HeatMapInteractionTracker";
-import getValidTooltipPositions from "./get-valid-tooltip-positions";
-import { find, isNil, round } from "lodash";
+import getTooltipPosition from "./get-tooltip-position";
 
 type Props = {
   opacity?: number;
-  data: number | null;
   originRect?: TooltipData["originRect"]; // relative to the viewport
-  children: (data: number | null) => React.ReactElement;
+  children: React.ReactNode;
 };
 
-type State = {
-  data: Props["data"];
-};
-
-class Tooltip extends React.Component<Props, State> {
+class Tooltip extends React.Component<Props> {
   _tooltipContainer: React.RefObject<HTMLDivElement>;
 
   constructor(props: Props) {
     super(props);
     this._tooltipContainer = React.createRef();
-    this.state = { data: props.data };
-  }
-
-  static getDerivedStateFromProps(props: Props, state: State) {
-    return !isNil(props.data) ? { data: props.data } : state;
   }
 
   componentDidMount() {
@@ -54,11 +43,11 @@ class Tooltip extends React.Component<Props, State> {
 
     const tooltipBoundingRect = this._tooltipContainer.current!.getBoundingClientRect();
 
-    const tooltipPositions = getValidTooltipPositions(
-      originRect!.top,
-      originRect!.left,
-      originRect!.width,
-      originRect!.height,
+    const tooltipPosition = getTooltipPosition(
+      originRect.top,
+      originRect.left,
+      originRect.width,
+      originRect.height,
       clientWidth,
       clientHeight,
       tooltipBoundingRect.width,
@@ -66,15 +55,10 @@ class Tooltip extends React.Component<Props, State> {
       10
     );
 
-    let tooltipPosition = find(tooltipPositions, x => x.fits);
-    if (!tooltipPosition) {
-      tooltipPosition = tooltipPositions[0];
-    }
+    this._tooltipContainer.current.style.top = tooltipPosition.top + "px";
+    this._tooltipContainer.current.style.left = tooltipPosition.left + "px";
 
-    this._tooltipContainer.current!.style.top = tooltipPosition.top + "px";
-    this._tooltipContainer.current!.style.left = tooltipPosition.left + "px";
-
-    this._tooltipContainer.current!.classList.remove(
+    this._tooltipContainer.current.classList.remove(
       "left",
       "right",
       "top",
@@ -84,7 +68,7 @@ class Tooltip extends React.Component<Props, State> {
       "end"
     );
 
-    this._tooltipContainer.current!.classList.add(
+    this._tooltipContainer.current.classList.add(
       tooltipPosition.basicPosition,
       tooltipPosition.arrowPosition
     );
@@ -92,11 +76,10 @@ class Tooltip extends React.Component<Props, State> {
 
   render() {
     const { opacity, children } = this.props;
-    const { data } = this.state;
     return (
       <div ref={this._tooltipContainer} className={styles.tooltipContainer}>
         <div className={styles.tooltip} style={{ opacity }}>
-          {children(data)}
+          {children}
         </div>
       </div>
     );

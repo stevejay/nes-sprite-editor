@@ -16,8 +16,8 @@ export default function getValidTooltipPositions(
   tooltipWidth: number,
   tooltipHeight: number,
   pointerSize: number
-) {
-  const result: Array<ModalPosition> = [];
+): ModalPosition {
+  let fallbackPosition = null;
 
   // ----- Vertical positions -----
 
@@ -47,11 +47,11 @@ export default function getValidTooltipPositions(
     tooltipHeight
   );
 
-  result.push(bottomPosition);
-
   if (bottomPosition.fits) {
-    return result;
+    return bottomPosition;
   }
+
+  fallbackPosition = bottomPosition;
 
   // top position
 
@@ -71,7 +71,9 @@ export default function getValidTooltipPositions(
     tooltipHeight
   );
 
-  result.push(topPosition);
+  if (topPosition.fits) {
+    return topPosition;
+  }
 
   // ----- Horizontal positions -----
 
@@ -101,7 +103,9 @@ export default function getValidTooltipPositions(
     tooltipHeight
   );
 
-  result.push(rightPosition);
+  if (rightPosition.fits) {
+    return rightPosition;
+  }
 
   // left position:
 
@@ -121,9 +125,11 @@ export default function getValidTooltipPositions(
     tooltipHeight
   );
 
-  result.push(leftPosition);
+  if (leftPosition.fits) {
+    return leftPosition;
+  }
 
-  return result;
+  return fallbackPosition;
 }
 
 function determineIfFits(

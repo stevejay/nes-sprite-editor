@@ -22,8 +22,9 @@ type Props = {
 };
 
 type State = {
-  index: number | null;
+  showTooltip: boolean;
   originRect?: TooltipData["originRect"];
+  tooltipData: number;
 };
 
 class HeatMap extends React.Component<Props, State> {
@@ -35,17 +36,19 @@ class HeatMap extends React.Component<Props, State> {
           "use an empty string for no label"
       );
     }
-    this.state = { index: null };
+    this.state = { showTooltip: false, tooltipData: -1 };
   }
 
   handleShowTooltip = (data: TooltipData) => {
-    if (data.index !== this.state.index) {
-      this.setState(data);
-    }
+    this.setState({
+      showTooltip: true,
+      originRect: data.originRect,
+      tooltipData: this.props.data[data.index]
+    });
   };
 
   handleHideTooltip = () => {
-    this.setState({ index: null });
+    this.setState({ showTooltip: false });
   };
 
   render() {
@@ -57,7 +60,7 @@ class HeatMap extends React.Component<Props, State> {
       colorInterpolator = COLOR_INTERPOLATOR,
       onTileClick
     } = this.props;
-    const { index: tooltipIndex, originRect } = this.state;
+    const { showTooltip, originRect, tooltipData } = this.state;
     return (
       <div className={styles.container}>
         <div className={styles.column}>
@@ -93,18 +96,11 @@ class HeatMap extends React.Component<Props, State> {
                   onShowTooltip={this.handleShowTooltip}
                   onHideTooltip={this.handleHideTooltip}
                 />
-                <ModelessDialog isShowing={!isNil(tooltipIndex)}>
-                  <Tooltip
-                    data={!isNil(tooltipIndex) ? data[tooltipIndex] : null}
-                    originRect={originRect}
-                  >
-                    {data => (
-                      <>
-                        <p>{round(data || 0, 4)}</p>
-                        <p>Some info</p>
-                        <p>Some more info 2</p>
-                      </>
-                    )}
+                <ModelessDialog isShowing={showTooltip}>
+                  <Tooltip originRect={originRect}>
+                    <p>{round(tooltipData, 4)}</p>
+                    <p>Some info</p>
+                    <p>Some more info 2</p>
                   </Tooltip>
                 </ModelessDialog>
               </div>

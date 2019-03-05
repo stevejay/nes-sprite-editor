@@ -18,12 +18,17 @@ type Props = {
   onHideTooltip: () => void;
 };
 
-class HeatMapInteractionTracker extends React.Component<Props> {
+type State = {
+  hoverIndex: number | null;
+};
+
+class HeatMapInteractionTracker extends React.Component<Props, State> {
   _containerRef: React.RefObject<HTMLDivElement>;
 
   constructor(props: Props) {
     super(props);
     this._containerRef = React.createRef();
+    this.state = { hoverIndex: null };
   }
 
   handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -33,10 +38,14 @@ class HeatMapInteractionTracker extends React.Component<Props> {
 
   handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
     const data = this.getInteractionData(event.clientX, event.clientY);
-    this.props.onShowTooltip(data);
+    if (data.index !== this.state.hoverIndex) {
+      this.setState({ hoverIndex: data.index });
+      this.props.onShowTooltip(data);
+    }
   };
 
   handleMouseLeave = () => {
+    this.setState({ hoverIndex: null });
     this.props.onHideTooltip();
   };
 
