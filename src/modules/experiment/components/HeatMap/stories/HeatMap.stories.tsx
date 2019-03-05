@@ -6,7 +6,6 @@ import * as React from "react";
 import { host } from "storybook-host";
 import "../../../../../index.scss";
 import HeatMap from "../HeatMap";
-// import { interpolateRgb } from "d3-interpolate";
 
 const storyHost = host({
   align: "center middle",
@@ -14,16 +13,8 @@ const storyHost = host({
   width: "100%"
 });
 
-// let count = 0;
-
 function generateData() {
-  const result = range(0, 24 * 7).map(i => {
-    // const value = count % 2;
-    // return value;
-    return random(0, 1, true);
-  });
-  // count += 1;
-  return result;
+  return range(0, 24 * 7).map(i => random(0, 1, true));
 }
 
 const store = new Store<{
@@ -31,12 +22,8 @@ const store = new Store<{
   selectedIndexes: Array<number>;
 }>({
   data: generateData(),
-  selectedIndexes: [] // sampleSize(range(0, 24 * 7), 3)
+  selectedIndexes: []
 });
-
-// const COLOR_CALLBACK = interpolateRgb("#213446", "#0096cb");
-// const COLOR_CALLBACK = (datum: number) =>
-//   `rgba(0,150,203,${clamp(0.2 + datum * 1.0, 0, 1)})`;
 
 const X_LABELS = [
   "1",
@@ -67,7 +54,7 @@ const X_LABELS = [
 
 const Y_LABELS = ["M", "T", "W", "T", "F", "S", "S"];
 
-storiesOf("HeatMap", module)
+storiesOf("SteelEye/HeatMap", module)
   .addDecorator(storyHost)
   .addDecorator(withKnobs)
   .add("HeatMap", () => (
