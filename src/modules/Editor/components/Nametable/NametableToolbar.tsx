@@ -150,7 +150,7 @@ const NametableToolbar = ({
       </Toolbar>
       <Toolbar>
         <Button aria-label="Reset canvas view" onClick={onReset}>
-          Reset zoom
+          Reset view
         </Button>
       </Toolbar>
     </Toolbar.Container>

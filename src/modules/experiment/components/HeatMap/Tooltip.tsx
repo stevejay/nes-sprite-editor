@@ -8,6 +8,7 @@ type Props = {
   opacity?: number;
   data: number | null;
   originRect?: TooltipData["originRect"]; // relative to the viewport
+  children: (data: number | null) => React.ReactElement;
 };
 
 type State = {
@@ -90,14 +91,12 @@ class Tooltip extends React.Component<Props, State> {
   }
 
   render() {
-    const { opacity } = this.props;
+    const { opacity, children } = this.props;
     const { data } = this.state;
     return (
       <div ref={this._tooltipContainer} className={styles.tooltipContainer}>
         <div className={styles.tooltip} style={{ opacity }}>
-          <p>{round(data || 0, 4)}</p>
-          <p>Some info</p>
-          <p>Some more info</p>
+          {children(data)}
         </div>
       </div>
     );

@@ -1,7 +1,7 @@
 import React from "react";
 import Measure from "react-measure";
 import styles from "./HeatMap.module.scss";
-import { clamp, isNil } from "lodash";
+import { clamp, isNil, round } from "lodash";
 import HeatMapCanvas from "./HeatMapCanvas";
 import HeatMapInteractionTracker, {
   TooltipData
@@ -78,34 +78,37 @@ class HeatMap extends React.Component<Props, State> {
             ))}
           </div>
           <Measure bounds>
-            {({ measureRef, contentRect }) => {
-              const width = contentRect.bounds
-                ? contentRect.bounds.width || 0
-                : 0;
-              return (
-                <div ref={measureRef} className={styles.chartContainer}>
-                  <HeatMapCanvas
-                    width={width}
-                    data={data}
-                    selectedIndexes={selectedIndexes}
-                    columnCount={xLabels.length}
-                    colorInterpolator={colorInterpolator}
-                  />
-                  <HeatMapInteractionTracker
-                    columnCount={xLabels.length}
-                    onTileClick={onTileClick}
-                    onShowTooltip={this.handleShowTooltip}
-                    onHideTooltip={this.handleHideTooltip}
-                  />
-                  <ModelessDialog isShowing={!isNil(tooltipIndex)}>
-                    <Tooltip
-                      data={!isNil(tooltipIndex) ? data[tooltipIndex] : null}
-                      originRect={originRect}
-                    />
-                  </ModelessDialog>
-                </div>
-              );
-            }}
+            {({ measureRef, contentRect }) => (
+              <div ref={measureRef} className={styles.chartContainer}>
+                <HeatMapCanvas
+                  width={contentRect.bounds ? contentRect.bounds.width || 0 : 0}
+                  data={data}
+                  selectedIndexes={selectedIndexes}
+                  columnCount={xLabels.length}
+                  colorInterpolator={colorInterpolator}
+                />
+                <HeatMapInteractionTracker
+                  columnCount={xLabels.length}
+                  onTileClick={onTileClick}
+                  onShowTooltip={this.handleShowTooltip}
+                  onHideTooltip={this.handleHideTooltip}
+                />
+                <ModelessDialog isShowing={!isNil(tooltipIndex)}>
+                  <Tooltip
+                    data={!isNil(tooltipIndex) ? data[tooltipIndex] : null}
+                    originRect={originRect}
+                  >
+                    {data => (
+                      <>
+                        <p>{round(data || 0, 4)}</p>
+                        <p>Some info</p>
+                        <p>Some more info 2</p>
+                      </>
+                    )}
+                  </Tooltip>
+                </ModelessDialog>
+              </div>
+            )}
           </Measure>
         </div>
       </div>
