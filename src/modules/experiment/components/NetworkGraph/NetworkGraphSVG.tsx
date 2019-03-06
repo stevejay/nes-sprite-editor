@@ -82,7 +82,7 @@ function networkGraph(): NetworkGraphRenderer {
       // @ts-ignore
       .merge(linkElements);
 
-    linkElements.attr("stroke-width", () => `${random(1, 4)}px`);
+    linkElements.attr("stroke-width", (d, index) => `${(index % 4) + 1}px`);
 
     // all nodes group:
 
@@ -167,16 +167,20 @@ function networkGraph(): NetworkGraphRenderer {
     nodes[0].fx = width * 0.5;
     nodes[0].fy = height * 0.5;
 
-    simulation
-      .nodes(nodes)
-      .force("link", d3.forceLink<Node, Link>(links).id((d: any) => d.id))
-      .force("charge", d3.forceManyBody())
-      .force("center", d3.forceCenter(width * 0.5, height * 0.5))
-      .force("bounds", boxingForce)
-      .force("collision", d3.forceCollide().radius(() => MAX_RADIUS + 10))
-      .on("tick", ticked)
-      .alpha(1)
-      .restart();
+    // Only restart the animation if the nodes have changed.
+    // TODO Fix this so that links changes also cause a redraw.
+    if (simulation.nodes() !== nodes) {
+      simulation
+        .nodes(nodes)
+        .force("link", d3.forceLink<Node, Link>(links).id((d: any) => d.id))
+        .force("charge", d3.forceManyBody())
+        .force("center", d3.forceCenter(width * 0.5, height * 0.5))
+        .force("bounds", boxingForce)
+        .force("collision", d3.forceCollide().radius(() => MAX_RADIUS + 10))
+        .on("tick", ticked)
+        .alpha(1)
+        .restart();
+    }
 
     function ticked() {
       linkElements
@@ -194,17 +198,26 @@ function networkGraph(): NetworkGraphRenderer {
         .attr("y", d => d.y || 0);
     }
 
-    function handleMouseOver(d: Node) {
+    function handleMouseOver(d: Node, index: number) {
+      if (index === 0) {
+        return;
+      }
       // @ts-ignore
       const boundingRect = this.getBoundingClientRect();
       onShowTooltip && onShowTooltip(d, boundingRect);
     }
 
-    function handleMouseOut(d: Node) {
+    function handleMouseOut(_d: Node, index: number) {
+      if (index === 0) {
+        return;
+      }
       onHideTooltip && onHideTooltip();
     }
 
-    function handleClick(d: Node) {
+    function handleClick(d: Node, index: number) {
+      if (index === 0) {
+        return;
+      }
       // @ts-ignore
       // this.parentNode.classList.toggle("selected");
       onToggleNode && onToggleNode(d);
@@ -257,6 +270,11 @@ type Props = {
   onHideTooltip: () => void;
   onToggleNode: (value: Node) => void;
 };
+
+// type State = {
+//   currentNodes: Array<Node> | null;
+//   currentLinks: Array<Link> | null;
+// }
 
 class NetworkGraphSVG extends React.PureComponent<Props> {
   _svg: React.RefObject<SVGSVGElement>;
