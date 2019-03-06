@@ -43,45 +43,55 @@ $arrow-dimension: 8px;
 .tooltipContainer:global(.left) .tooltip::after {
   right: -$arrow-dimension;
   border-right-width: 0;
-  border-left-color: $background-color;
   margin-top: -$arrow-dimension;
+}
+.tooltipContainer:global(.left) .tooltip::before {
+  border-left-color: $foreground-color;
+}
+.tooltipContainer:global(.left) .tooltip::after {
+  border-left-color: $background-color;
+  transform: translateX(1.5px);
 }
 
 .tooltipContainer:global(.right) .tooltip::before,
 .tooltipContainer:global(.right) .tooltip::after {
   left: -$arrow-dimension;
   border-left-width: 0;
-  border-right-color: $background-color;
   margin-top: -$arrow-dimension;
+}
+.tooltipContainer:global(.right) .tooltip::before {
+  border-right-color: $foreground-color;
+}
+.tooltipContainer:global(.right) .tooltip::after {
+  border-right-color: $background-color;
+  transform: translateX(-1.5px);
 }
 
 .tooltipContainer:global(.top) .tooltip::before,
 .tooltipContainer:global(.top) .tooltip::after {
   bottom: -$arrow-dimension;
   border-bottom-width: 0;
-  border-top-color: $background-color;
   margin-left: -$arrow-dimension;
+}
+.tooltipContainer:global(.top) .tooltip::before {
+  border-top-color: $foreground-color;
+}
+.tooltipContainer:global(.top) .tooltip::after {
+  border-top-color: $background-color;
+  transform: translateY(-1.5px);
 }
 
 .tooltipContainer:global(.bottom) .tooltip::before,
 .tooltipContainer:global(.bottom) .tooltip::after {
   top: -$arrow-dimension;
   border-top-width: 0;
-  // border-bottom-color: $background-color;
   margin-left: -$arrow-dimension;
-  // transform: translateY(1.5px);
 }
 .tooltipContainer:global(.bottom) .tooltip::before {
-  // top: -12px;
-  // border-top-width: 0;
   border-bottom-color: $foreground-color;
-  // margin-left: -12px;
 }
 .tooltipContainer:global(.bottom) .tooltip::after {
-  // top: -12px;
-  // border-top-width: 0;
   border-bottom-color: $background-color;
-  // margin-left: -12px;
   transform: translateY(1.5px);
 }
 
