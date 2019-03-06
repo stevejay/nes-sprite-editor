@@ -1,4 +1,6 @@
-$background-color: white;
+$background-color: rgb(32, 35, 44);
+$foreground-color: rgb(40, 201, 145);
+$arrow-dimension: 8px;
 
 .tooltipContainer {
   position: fixed;
@@ -9,12 +11,16 @@ $background-color: white;
 
 .tooltip {
   background-color: $background-color;
+  color: $foreground-color;
   position: relative;
-  padding: 6px 8px;
+  padding: 4px 6px;
   border-radius: 3px;
   // use filter to ensure ::after pointer is included in the drop shadow:
   filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.5));
   will-change: opacity;
+  border: 1px solid $foreground-color;
+  font-size: 12px;
+  width: 100%;
 }
 
 .tooltip p {
@@ -22,69 +28,100 @@ $background-color: white;
   padding: 0;
 }
 
+.tooltipContainer .tooltip::before,
 .tooltipContainer .tooltip::after {
   position: absolute;
   content: " ";
   height: 0;
   width: 0;
   border: solid transparent;
-  border-width: 12px;
+  border-width: $arrow-dimension;
   pointer-events: none;
 }
 
+.tooltipContainer:global(.left) .tooltip::before,
 .tooltipContainer:global(.left) .tooltip::after {
-  right: -12px;
+  right: -$arrow-dimension;
   border-right-width: 0;
   border-left-color: $background-color;
-  margin-top: -12px;
+  margin-top: -$arrow-dimension;
 }
 
+.tooltipContainer:global(.right) .tooltip::before,
 .tooltipContainer:global(.right) .tooltip::after {
-  left: -12px;
+  left: -$arrow-dimension;
   border-left-width: 0;
   border-right-color: $background-color;
-  margin-top: -12px;
+  margin-top: -$arrow-dimension;
 }
 
+.tooltipContainer:global(.top) .tooltip::before,
 .tooltipContainer:global(.top) .tooltip::after {
-  bottom: -12px;
+  bottom: -$arrow-dimension;
   border-bottom-width: 0;
   border-top-color: $background-color;
-  margin-left: -12px;
+  margin-left: -$arrow-dimension;
 }
 
+.tooltipContainer:global(.bottom) .tooltip::before,
 .tooltipContainer:global(.bottom) .tooltip::after {
-  top: -12px;
+  top: -$arrow-dimension;
   border-top-width: 0;
+  // border-bottom-color: $background-color;
+  margin-left: -$arrow-dimension;
+  // transform: translateY(1.5px);
+}
+.tooltipContainer:global(.bottom) .tooltip::before {
+  // top: -12px;
+  // border-top-width: 0;
+  border-bottom-color: $foreground-color;
+  // margin-left: -12px;
+}
+.tooltipContainer:global(.bottom) .tooltip::after {
+  // top: -12px;
+  // border-top-width: 0;
   border-bottom-color: $background-color;
-  margin-left: -12px;
+  // margin-left: -12px;
+  transform: translateY(1.5px);
 }
 
+.tooltipContainer:global(.top):global(.start) .tooltip::before,
+.tooltipContainer:global(.bottom):global(.start) .tooltip::before,
 .tooltipContainer:global(.top):global(.start) .tooltip::after,
 .tooltipContainer:global(.bottom):global(.start) .tooltip::after {
   left: 15px;
 }
 
+.tooltipContainer:global(.top):global(.center) .tooltip::before,
+.tooltipContainer:global(.bottom):global(.center) .tooltip::before,
 .tooltipContainer:global(.top):global(.center) .tooltip::after,
 .tooltipContainer:global(.bottom):global(.center) .tooltip::after {
   left: 50%;
 }
 
+.tooltipContainer:global(.top):global(.end) .tooltip::before,
+.tooltipContainer:global(.bottom):global(.end) .tooltip::before,
 .tooltipContainer:global(.top):global(.end) .tooltip::after,
 .tooltipContainer:global(.bottom):global(.end) .tooltip::after {
   right: 3px;
 }
 
+.tooltipContainer:global(.left):global(.start) .tooltip::before,
+.tooltipContainer:global(.right):global(.start) .tooltip::before,
 .tooltipContainer:global(.left):global(.start) .tooltip::after,
 .tooltipContainer:global(.right):global(.start) .tooltip::after {
   top: 15px;
 }
 
+.tooltipContainer:global(.left):global(.center) .tooltip::before,
+.tooltipContainer:global(.right):global(.center) .tooltip::before,
 .tooltipContainer:global(.left):global(.center) .tooltip::after,
 .tooltipContainer:global(.right):global(.center) .tooltip::after {
   top: 50%;
 }
 
+.tooltipContainer:global(.left):global(.end) .tooltip::before,
+.tooltipContainer:global(.right):global(.end) .tooltip::before,
 .tooltipContainer:global(.left):global(.end) .tooltip::after,
 .tooltipContainer:global(.right):global(.end) .tooltip::after {
   bottom: 3px;
