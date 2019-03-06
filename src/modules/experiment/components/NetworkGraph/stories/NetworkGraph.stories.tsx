@@ -1,7 +1,7 @@
 import { State, Store } from "@sambego/storybook-state";
 import { withKnobs } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/react";
-import { cloneDeep } from "lodash";
+import { cloneDeep, includes } from "lodash";
 import * as React from "react";
 import { host } from "storybook-host";
 import "../../../../../index.scss";
@@ -152,12 +152,26 @@ storiesOf("SteelEye/NetworkGraph", module)
       </button>
       <div>
         <State store={store}>
-          {state => {
-            // console.log("state.data", state.data);
-            return (
-              <NetworkGraph nodes={state.data.nodes} links={state.data.links} />
-            );
-          }}
+          {state => (
+            <NetworkGraph
+              nodes={state.data.nodes}
+              links={state.data.links}
+              selectedIndexes={state.selectedIndexes}
+              onNodeClick={value => {
+                let newSelectedIndexes = state.selectedIndexes.slice();
+                if (includes(newSelectedIndexes, value)) {
+                  newSelectedIndexes = newSelectedIndexes.filter(
+                    x => x !== value
+                  );
+                } else {
+                  newSelectedIndexes.push(value);
+                }
+                store.set({
+                  selectedIndexes: newSelectedIndexes
+                });
+              }}
+            />
+          )}
         </State>
       </div>
     </div>

@@ -7,12 +7,20 @@
 }
 
 .graphContainer svg line {
-  stroke-width: 2px;
+  // stroke-width: 2px;
   stroke: rgb(0, 150, 203);
 }
 
 .graphContainer svg circle {
   stroke-width: 1px;
+}
+
+.graphContainer svg :global(.node):global(.selected):global(.selected) circle {
+  stroke: #00cb8e;
+  fill: #00cb8e;
+}
+.graphContainer svg :global(.node):global(.selected):global(.selected) text {
+  fill: white;
 }
 
 .graphContainer svg :global(.root) circle {

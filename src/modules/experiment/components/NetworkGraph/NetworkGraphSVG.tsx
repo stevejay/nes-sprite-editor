@@ -1,20 +1,25 @@
 import React from "react";
-// import memoizeOne from "memoize-one";
 import * as d3 from "d3";
 import { Node, Link } from "./NetworkGraph";
-import { clamp, isNil } from "lodash";
+import { clamp, isNil, includes, random } from "lodash";
 
 const MIN_RADIUS = 8;
 const MAX_RADIUS = 13;
 
 type NetworkGraphRenderer = {
-  (svg: SVGSVGElement, nodes: Array<Node>, links: Array<Link>): void;
+  (
+    svg: SVGSVGElement,
+    nodes: Array<Node>,
+    links: Array<Link>,
+    selectedIndexes: Array<number>
+  ): void;
   width(value: number): number | NetworkGraphRenderer;
   height(value: number): number | NetworkGraphRenderer;
   onShowTooltipCallback(
     value: (data: Node, originRect: ClientRect) => void
   ): NetworkGraphRenderer;
   onHideTooltipCallback(value: () => void): NetworkGraphRenderer;
+  onToggleNode(value: (data: Node) => void): NetworkGraphRenderer;
 };
 
 function networkGraph(): NetworkGraphRenderer {
@@ -22,12 +27,14 @@ function networkGraph(): NetworkGraphRenderer {
   let height = 0;
   let onShowTooltip: null | ((data: Node, originRect: any) => void) = null;
   let onHideTooltip: null | (() => void) = null;
+  let onToggleNode: null | ((data: Node) => void) = null;
   const simulation = d3.forceSimulation().stop();
 
   function renderer(
     svgElement: SVGSVGElement,
     nodes: Array<Node>,
-    links: Array<Link>
+    links: Array<Link>,
+    selectedIndexes: Array<number>
   ) {
     const svg = d3.select(svgElement);
     svg.attr("width", width);
@@ -75,6 +82,8 @@ function networkGraph(): NetworkGraphRenderer {
       // @ts-ignore
       .merge(linkElements);
 
+    linkElements.attr("stroke-width", () => `${random(1, 4)}px`);
+
     // all nodes group:
 
     let nodesGroup = svg.selectAll(".nodes-group").data([null]);
@@ -118,7 +127,8 @@ function networkGraph(): NetworkGraphRenderer {
       .attr("cx", width * 0.5)
       .attr("cy", height * 0.5)
       .on("mouseover", handleMouseOver)
-      .on("mouseout", handleMouseOut);
+      .on("mouseout", handleMouseOut)
+      .on("click", handleClick);
     // add a text for each entering node that is a major node:
     nodeElementsEnter
       .filter(d => d.degree === 1 || !!d.isRoot)
@@ -130,6 +140,10 @@ function networkGraph(): NetworkGraphRenderer {
     // merge entering and updating selections:
     // @ts-ignore
     nodeElements = nodeElementsEnter.merge(nodeElements);
+    nodeElements.classed(
+      "selected",
+      (d: Node) => !!includes(selectedIndexes, d.id)
+    );
     // update the circle attributes:
     nodeElements
       .select("circle")
@@ -170,7 +184,6 @@ function networkGraph(): NetworkGraphRenderer {
         .attr("y1", d => (d.source as Node).y || 0)
         .attr("x2", d => (d.target as Node).x || 0)
         .attr("y2", d => (d.target as Node).y || 0);
-      // nodeElements.attr("cx", d => d.x || 0).attr("cy", d => d.y || 0);
       nodeElements
         .select("circle")
         .attr("cx", d => d.x || 0)
@@ -179,20 +192,22 @@ function networkGraph(): NetworkGraphRenderer {
         .select("text")
         .attr("x", d => d.x || 0)
         .attr("y", d => d.y || 0);
-      // nodeElements.attr("cx", function(d) {
-      //   console.log("this", this);
-      // });
     }
 
     function handleMouseOver(d: Node) {
       // @ts-ignore
       const boundingRect = this.getBoundingClientRect();
-      // console.log("mouseover", d.id, boundingRect);
       onShowTooltip && onShowTooltip(d, boundingRect);
     }
 
     function handleMouseOut(d: Node) {
       onHideTooltip && onHideTooltip();
+    }
+
+    function handleClick(d: Node) {
+      // @ts-ignore
+      // this.parentNode.classList.toggle("selected");
+      onToggleNode && onToggleNode(d);
     }
   }
 
@@ -224,16 +239,23 @@ function networkGraph(): NetworkGraphRenderer {
     return renderer;
   };
 
+  renderer.onToggleNode = function(value: (data: Node) => void) {
+    onToggleNode = value;
+    return renderer;
+  };
+
   return renderer;
 }
 
 type Props = {
   nodes: Array<Node>;
   links: Array<Link>;
+  selectedIndexes: Array<number>;
   width: number;
   height: number;
   onShowTooltip: (value: Node, originRect: ClientRect) => void;
   onHideTooltip: () => void;
+  onToggleNode: (value: Node) => void;
 };
 
 class NetworkGraphSVG extends React.PureComponent<Props> {
@@ -262,24 +284,25 @@ class NetworkGraphSVG extends React.PureComponent<Props> {
     this.props.onHideTooltip();
   };
 
+  handleToggleNode = (data: Node) => {
+    this.props.onToggleNode(data);
+  };
+
   private renderSvg() {
-    const { width, height } = this.props;
-    const { nodes, links } = this.props;
-    if (!this._svg.current || isNil(width) || width <= 0) {
+    const { width, height, selectedIndexes, nodes, links } = this.props;
+    if (!this._svg.current || !(width > 0)) {
       return;
     }
     this._renderer.width(width);
     this._renderer.height(height);
     this._renderer.onShowTooltipCallback(this.handleShowTooltip);
     this._renderer.onHideTooltipCallback(this.handleHideTooltip);
-    this._renderer(this._svg.current, nodes, links);
+    this._renderer.onToggleNode(this.handleToggleNode);
+    this._renderer(this._svg.current, nodes, links, selectedIndexes);
   }
 
   render() {
     return <svg ref={this._svg} />;
-    // prevent React from changing the svg or its content:
-    // const memoizedSvg = memoizeOne(() => <svg ref={this._svg} />);
-    // return memoizedSvg();
   }
 }
 

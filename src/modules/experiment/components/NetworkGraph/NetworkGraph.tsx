@@ -27,6 +27,8 @@ export type Link = {
 type Props = {
   nodes: Array<Node>;
   links: Array<Link>;
+  selectedIndexes: Array<number>;
+  onNodeClick: (index: number) => void;
 };
 
 type State = {
@@ -55,8 +57,12 @@ class NetworkGraph extends React.Component<Props, State> {
     this.setState({ showTooltip: false });
   };
 
+  handleToggleNode = (value: Node) => {
+    this.props.onNodeClick(value.id);
+  };
+
   render() {
-    const { nodes, links } = this.props;
+    const { nodes, links, selectedIndexes } = this.props;
     const { showTooltip, originRect, tooltipData } = this.state;
     return (
       <Measure bounds>
@@ -65,10 +71,12 @@ class NetworkGraph extends React.Component<Props, State> {
             <NetworkGraphSVG
               nodes={nodes}
               links={links}
+              selectedIndexes={selectedIndexes}
               width={contentRect.bounds ? contentRect.bounds.width : 0}
               height={contentRect.bounds ? contentRect.bounds.height : 0}
               onShowTooltip={this.handleShowTooltip}
               onHideTooltip={this.handleHideTooltip}
+              onToggleNode={this.handleToggleNode}
             />
             <ModelessDialog isShowing={showTooltip}>
               <Tooltip originRect={originRect}>
