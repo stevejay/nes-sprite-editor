@@ -1,9 +1,11 @@
 import React from "react";
 import memoizeOne from "memoize-one";
-import * as d3Selection from "d3-selection";
-import * as d3Force from "d3-force";
+import * as d3 from "d3";
 import { Node } from "./NetworkGraph";
 import { clamp, isNil } from "lodash";
+
+const MIN_RADIUS = 8;
+const MAX_RADIUS = 13;
 
 type NetworkGraphRenderer = {
   (
@@ -24,17 +26,19 @@ function networkGraph(): NetworkGraphRenderer {
   // .on("tick", ticked)
   // .stop();
 
+  let simulation = d3.forceSimulation().stop();
+
   function renderer(
     svgElement: SVGSVGElement,
     nodes: Array<Node>,
     links: Array<{ source: Node; target: Node }>
   ) {
-    const svg = d3Selection.select(svgElement);
+    const svg = d3.select(svgElement);
     svg.attr("width", width);
     svg.attr("height", height);
 
-    const linkGroup = svg.selectAll(".link-group").data([null]);
-    linkGroup
+    let linkGroup = svg.selectAll(".link-group").data([null]);
+    linkGroup = linkGroup
       .enter()
       .append("g")
       .classed("link-group", true)
@@ -44,15 +48,41 @@ function networkGraph(): NetworkGraphRenderer {
     let linkLines = linkGroup.selectAll("line").data(links, function(d) {
       return `${d.source.id}--${d.target.id}`;
     });
-    linkLines.exit().remove();
+    linkLines
+      .exit()
+      // .transition()
+      // .attr("stroke-opacity", 0)
+      // // .style("opacity", 0)
+      // .attrTween("x1", function(d) {
+      //   return function() {
+      //     return d.source.x;
+      //   };
+      // })
+      // .attrTween("x2", function(d) {
+      //   return function() {
+      //     return d.target.x;
+      //   };
+      // })
+      // .attrTween("y1", function(d) {
+      //   return function() {
+      //     return d.source.y;
+      //   };
+      // })
+      // .attrTween("y2", function(d) {
+      //   return function() {
+      //     return d.target.y;
+      //   };
+      // })
+      .remove();
+
     linkLines = linkLines
       .enter()
       .append("line")
       // @ts-ignore
       .merge(linkLines);
 
-    const nodeGroup = svg.selectAll(".node-group").data([null]);
-    nodeGroup
+    let nodeGroup = svg.selectAll(".node-group").data([null]);
+    nodeGroup = nodeGroup
       .enter()
       .append("g")
       .classed("node-group", true)
@@ -62,10 +92,22 @@ function networkGraph(): NetworkGraphRenderer {
     let nodeCircles = nodeGroup.selectAll("circle").data(nodes, function(d) {
       return d.id;
     });
-    nodeCircles.exit().remove();
+    nodeCircles
+      .exit()
+      .transition()
+      // .attr("fill-opacity", 0)
+      // .style("opacity", 0)
+      .attr("r", 0)
+      .remove();
     nodeCircles = nodeCircles
       .enter()
       .append("circle")
+      // .attr("fill", function(d) { return color(d.id); }) <<< do
+      // .call(function(node) {
+      //   node.transition().attr("r", function(d) {
+      //     return d.isRoot || d.degree === 1 ? MAX_RADIUS : MIN_RADIUS;
+      //   });
+      // })
       .attr("cx", width * 0.5)
       .attr("cy", height * 0.5)
       // @ts-ignore
@@ -73,8 +115,14 @@ function networkGraph(): NetworkGraphRenderer {
       .classed("root", function(d) {
         return d.isRoot;
       })
+      .classed("account", function(d) {
+        return !d.isRoot && d.type === "account";
+      })
+      .classed("market", function(d) {
+        return !d.isRoot && d.type === "market";
+      })
       .attr("r", function(d) {
-        return 20;
+        return d.isRoot || d.degree === 1 ? MAX_RADIUS : MIN_RADIUS;
       });
 
     // const simulation = d3Force.force()
@@ -87,8 +135,8 @@ function networkGraph(): NetworkGraphRenderer {
       for (let node of nodes) {
         // Of the positions exceed the box, set them to the boundary position.
         // You may want to include your nodes width to not overlap with the box.
-        node.x = clamp(node.x, 0 + 20, width - 20);
-        node.y = clamp(node.y, 0 + 20, height - 20);
+        node.x = clamp(node.x, 0 + MAX_RADIUS, width - MAX_RADIUS);
+        node.y = clamp(node.y, 0 + MAX_RADIUS, height - MAX_RADIUS);
       }
     }
 
@@ -103,31 +151,32 @@ function networkGraph(): NetworkGraphRenderer {
     .start();
     */
 
-    let simulation = d3Force
-      .forceSimulation()
-      .stop()
-      .force(
-        "link",
-        d3Force.forceLink(links) //.distance(60)
-        //.strength(0.4)
-      )
-      .force("charge", d3Force.forceManyBody().strength(-10))
-      .force("center", d3Force.forceCenter(width * 0.5, height * 0.5))
-      .force("bounds", boxingForce)
-      .force(
-        "collision",
-        d3Force.forceCollide().radius(function(d) {
-          return 20 + 10; // d.radius
-        })
-      )
-      .on("tick", ticked);
-
     nodes[0].fx = width * 0.5;
     nodes[0].fy = height * 0.5;
 
-    simulation.nodes(nodes);
-    // simulation.links(links); //.links(links);
-    simulation.restart();
+    // let simulation = d3
+    //   .forceSimulation()
+    //   .stop()
+
+    simulation
+      .nodes(nodes)
+      .force(
+        "link",
+        d3.forceLink(links).id(x => x.id) //.distance(60)
+        //.strength(0.4)
+      )
+      .force("charge", d3.forceManyBody()) //.strength(0))
+      .force("center", d3.forceCenter(width * 0.5, height * 0.5))
+      .force("bounds", boxingForce)
+      .force(
+        "collision",
+        d3.forceCollide().radius(function(d) {
+          return MAX_RADIUS + 10; // d.radius
+        })
+      )
+      .on("tick", ticked)
+      .alpha(1)
+      .restart();
 
     function ticked() {
       linkLines
@@ -146,10 +195,10 @@ function networkGraph(): NetworkGraphRenderer {
 
       // nodeCircles
       //   .attr("cx", function(d) {
-      //     return clamp(d.x, 0 + 20, width - 20); // d.x;
+      //     return clamp(d.x, 0 + MAX_RADIUS, width - MAX_RADIUS); // d.x;
       //   })
       //   .attr("cy", function(d) {
-      //     return clamp(d.y, 0 + 20, height - 20); // d.y;
+      //     return clamp(d.y, 0 + MAX_RADIUS, height - MAX_RADIUS); // d.y;
       //   });
 
       nodeCircles

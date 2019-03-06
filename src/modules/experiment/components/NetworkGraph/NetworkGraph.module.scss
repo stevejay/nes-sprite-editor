@@ -2,14 +2,31 @@
   display: flex;
   width: 100%;
   height: 400px;
-  background-color: red;
+  // background-color: papayawhip;
+  background-color: transparent;
+  border: 1px solid rgba(white, 0.1);
 }
 
 .graphContainer svg line {
   stroke-width: 2px;
-  stroke: blue;
+  stroke: rgb(0, 150, 203);
+}
+
+.graphContainer svg circle {
+  stroke-width: 1px;
 }
 
 .graphContainer svg circle:global(.root) {
-  fill: green;
+  stroke: #00cb8e;
+  fill: #00cb8e;
+}
+
+.graphContainer svg circle:global(.market) {
+  stroke: rgb(197, 188, 48);
+  fill: rgb(79, 79, 47); // rgb(197, 188, 48);
+}
+
+.graphContainer svg circle:global(.account) {
+  stroke: rgb(0, 150, 203);
+  fill: rgb(31, 64, 82); // rgb(0, 150, 203);
 }
