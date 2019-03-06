@@ -218,8 +218,9 @@ class NetworkGraphSVG extends React.Component<Props> {
   }
 
   render() {
-    const svg = memoizeOne(() => <svg ref={this._svg} />);
-    return svg();
+    // prevent React from changing the svg or its content:
+    const memoizedSvg = memoizeOne(() => <svg ref={this._svg} />);
+    return memoizedSvg();
   }
 }
 
