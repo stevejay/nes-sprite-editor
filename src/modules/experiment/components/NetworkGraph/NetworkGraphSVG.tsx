@@ -139,6 +139,10 @@ function networkGraph(): NetworkGraphRenderer {
         .attr("x2", d => (d.target as Node).x || 0)
         .attr("y2", d => (d.target as Node).y || 0);
       nodeElements.attr("cx", d => d.x || 0).attr("cy", d => d.y || 0);
+
+      // nodeElements.attr("cx", function(d) {
+      //   console.log("this", this);
+      // });
     }
   }
 
