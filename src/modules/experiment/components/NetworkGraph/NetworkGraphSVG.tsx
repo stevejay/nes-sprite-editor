@@ -1,18 +1,14 @@
 import React from "react";
-import memoizeOne from "memoize-one";
+// import memoizeOne from "memoize-one";
 import * as d3 from "d3";
-import { Node } from "./NetworkGraph";
+import { Node, Link } from "./NetworkGraph";
 import { clamp, isNil } from "lodash";
 
 const MIN_RADIUS = 8;
 const MAX_RADIUS = 13;
 
 type NetworkGraphRenderer = {
-  (
-    svg: SVGSVGElement,
-    nodes: Array<Node>,
-    links: Array<{ source: Node; target: Node }>
-  ): void;
+  (svg: SVGSVGElement, nodes: Array<Node>, links: Array<Link>): void;
   width(value: number): number | NetworkGraphRenderer;
   height(value: number): number | NetworkGraphRenderer;
 };
@@ -20,86 +16,80 @@ type NetworkGraphRenderer = {
 function networkGraph(): NetworkGraphRenderer {
   let width = 0;
   let height = 0;
-  // .force("link", d3Force.forceLink())
-  // .force("charge", d3Force.forceManyBody())
-  // .force("center", d3Force.forceCenter(width / 2, height / 2))
-  // .on("tick", ticked)
-  // .stop();
-
-  let simulation = d3.forceSimulation().stop();
+  const simulation = d3.forceSimulation().stop();
 
   function renderer(
     svgElement: SVGSVGElement,
     nodes: Array<Node>,
-    links: Array<{ source: Node; target: Node }>
+    links: Array<Link>
   ) {
     const svg = d3.select(svgElement);
     svg.attr("width", width);
     svg.attr("height", height);
 
-    let linkGroup = svg.selectAll(".link-group").data([null]);
-    linkGroup = linkGroup
+    let linksGroup = svg.selectAll(".links-group").data([null]);
+    linksGroup = linksGroup
       .enter()
       .append("g")
-      .classed("link-group", true)
+      .classed("links-group", true)
       // @ts-ignore
-      .merge(linkGroup);
+      .merge(linksGroup);
 
-    let linkLines = linkGroup.selectAll("line").data(links, function(d) {
-      return `${d.source.id}--${d.target.id}`;
-    });
-    linkLines
-      .exit()
-      // .transition()
-      // .attr("stroke-opacity", 0)
-      // // .style("opacity", 0)
-      // .attrTween("x1", function(d) {
-      //   return function() {
-      //     return d.source.x;
-      //   };
-      // })
-      // .attrTween("x2", function(d) {
-      //   return function() {
-      //     return d.target.x;
-      //   };
-      // })
-      // .attrTween("y1", function(d) {
-      //   return function() {
-      //     return d.source.y;
-      //   };
-      // })
-      // .attrTween("y2", function(d) {
-      //   return function() {
-      //     return d.target.y;
-      //   };
-      // })
-      .remove();
+    let linkElements = linksGroup
+      .selectAll("line")
+      .data(links, (d: any) => `${d.source.id}--${d.target.id}`);
+    linkElements.exit().remove();
+    // .transition()
+    // .attr("stroke-opacity", 0)
+    // // .style("opacity", 0)
+    // .attrTween("x1", function(d) {
+    //   return function() {
+    //     return d.source.x;
+    //   };
+    // })
+    // .attrTween("x2", function(d) {
+    //   return function() {
+    //     return d.target.x;
+    //   };
+    // })
+    // .attrTween("y1", function(d) {
+    //   return function() {
+    //     return d.source.y;
+    //   };
+    // })
+    // .attrTween("y2", function(d) {
+    //   return function() {
+    //     return d.target.y;
+    //   };
+    // })
 
-    linkLines = linkLines
+    linkElements = linkElements
       .enter()
       .append("line")
       // @ts-ignore
-      .merge(linkLines);
+      .merge(linkElements);
 
-    let nodeGroup = svg.selectAll(".node-group").data([null]);
-    nodeGroup = nodeGroup
+    let nodesGroup = svg.selectAll(".nodes-group").data([null]);
+    nodesGroup = nodesGroup
       .enter()
       .append("g")
-      .classed("node-group", true)
+      .classed("nodes-group", true)
       // @ts-ignore
-      .merge(nodeGroup);
+      .merge(nodesGroup);
 
-    let nodeCircles = nodeGroup.selectAll("circle").data(nodes, function(d) {
-      return d.id;
-    });
-    nodeCircles
+    let nodeElements = nodesGroup
+      .selectAll("circle")
+      .data(nodes, function(d: any) {
+        return d.id;
+      });
+
+    nodeElements
       .exit()
       .transition()
-      // .attr("fill-opacity", 0)
-      // .style("opacity", 0)
       .attr("r", 0)
       .remove();
-    nodeCircles = nodeCircles
+
+    nodeElements = nodeElements
       .enter()
       .append("circle")
       // .attr("fill", function(d) { return color(d.id); }) <<< do
@@ -111,103 +101,44 @@ function networkGraph(): NetworkGraphRenderer {
       .attr("cx", width * 0.5)
       .attr("cy", height * 0.5)
       // @ts-ignore
-      .merge(nodeCircles)
-      .classed("root", function(d) {
-        return d.isRoot;
-      })
-      .classed("account", function(d) {
-        return !d.isRoot && d.type === "account";
-      })
-      .classed("market", function(d) {
-        return !d.isRoot && d.type === "market";
-      })
-      .attr("r", function(d) {
-        return d.isRoot || d.degree === 1 ? MAX_RADIUS : MIN_RADIUS;
-      });
-
-    // const simulation = d3Force.force()
-    // .gravity(.05)
-    // .distance(100)
-    // .charge(-100)
-    // .size([width, height]);
+      .merge(nodeElements)
+      .classed("root", (d: Node) => d.isRoot)
+      .classed("account", (d: Node) => !d.isRoot && d.type === "account")
+      .classed("market", (d: Node) => !d.isRoot && d.type === "market")
+      .attr("r", (d: Node) =>
+        d.isRoot || d.degree === 1 ? MAX_RADIUS : MIN_RADIUS
+      );
 
     function boxingForce() {
       for (let node of nodes) {
-        // Of the positions exceed the box, set them to the boundary position.
+        // If the positions exceed the box, set them to the boundary position.
         // You may want to include your nodes width to not overlap with the box.
-        node.x = clamp(node.x, 0 + MAX_RADIUS, width - MAX_RADIUS);
-        node.y = clamp(node.y, 0 + MAX_RADIUS, height - MAX_RADIUS);
+        node.x = clamp(node.x || 0, 0 + MAX_RADIUS, width - MAX_RADIUS);
+        node.y = clamp(node.y || 0, 0 + MAX_RADIUS, height - MAX_RADIUS);
       }
     }
-
-    /* alternative: Force paramettring
-    var force = d3.layout.force()
-    .charge(-80)
-    .linkDistance(25)
-    .linkStrength(0.2)
-    .size([w, h])
-    .nodes(nodes)
-    .links(links)
-    .start();
-    */
 
     nodes[0].fx = width * 0.5;
     nodes[0].fy = height * 0.5;
 
-    // let simulation = d3
-    //   .forceSimulation()
-    //   .stop()
-
     simulation
       .nodes(nodes)
-      .force(
-        "link",
-        d3.forceLink(links).id(x => x.id) //.distance(60)
-        //.strength(0.4)
-      )
-      .force("charge", d3.forceManyBody()) //.strength(0))
+      .force("link", d3.forceLink<Node, Link>(links).id((d: any) => d.id))
+      .force("charge", d3.forceManyBody())
       .force("center", d3.forceCenter(width * 0.5, height * 0.5))
       .force("bounds", boxingForce)
-      .force(
-        "collision",
-        d3.forceCollide().radius(function(d) {
-          return MAX_RADIUS + 10; // d.radius
-        })
-      )
+      .force("collision", d3.forceCollide().radius(() => MAX_RADIUS + 10))
       .on("tick", ticked)
       .alpha(1)
       .restart();
 
     function ticked() {
-      linkLines
-        .attr("x1", function(d) {
-          return d.source.x;
-        })
-        .attr("y1", function(d) {
-          return d.source.y;
-        })
-        .attr("x2", function(d) {
-          return d.target.x;
-        })
-        .attr("y2", function(d) {
-          return d.target.y;
-        });
-
-      // nodeCircles
-      //   .attr("cx", function(d) {
-      //     return clamp(d.x, 0 + MAX_RADIUS, width - MAX_RADIUS); // d.x;
-      //   })
-      //   .attr("cy", function(d) {
-      //     return clamp(d.y, 0 + MAX_RADIUS, height - MAX_RADIUS); // d.y;
-      //   });
-
-      nodeCircles
-        .attr("cx", function(d) {
-          return d.x;
-        })
-        .attr("cy", function(d) {
-          return d.y;
-        });
+      linkElements
+        .attr("x1", d => (d.source as Node).x || 0)
+        .attr("y1", d => (d.source as Node).y || 0)
+        .attr("x2", d => (d.target as Node).x || 0)
+        .attr("y2", d => (d.target as Node).y || 0);
+      nodeElements.attr("cx", d => d.x || 0).attr("cy", d => d.y || 0);
     }
   }
 
@@ -232,7 +163,7 @@ function networkGraph(): NetworkGraphRenderer {
 
 type Props = {
   nodes: Array<Node>;
-  links: Array<{ source: Node; target: Node }>;
+  links: Array<Link>;
   width: number;
   height: number;
 };
@@ -257,19 +188,20 @@ class NetworkGraphSVG extends React.Component<Props> {
 
   private renderSvg() {
     const { width, height } = this.props;
+    const { nodes, links } = this.props;
     if (!this._svg.current || isNil(width) || width <= 0) {
       return;
     }
-
     this._renderer.width(width);
     this._renderer.height(height);
-    this._renderer(this._svg.current, this.props.nodes, this.props.links);
+    this._renderer(this._svg.current, nodes, links);
   }
 
   render() {
+    return <svg ref={this._svg} />;
     // prevent React from changing the svg or its content:
-    const memoizedSvg = memoizeOne(() => <svg ref={this._svg} />);
-    return memoizedSvg();
+    // const memoizedSvg = memoizeOne(() => <svg ref={this._svg} />);
+    // return memoizedSvg();
   }
 }
 

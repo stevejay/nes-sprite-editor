@@ -1,11 +1,11 @@
 import { State, Store } from "@sambego/storybook-state";
 import { withKnobs } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/react";
-import { random, range, cloneDeep } from "lodash";
+import { cloneDeep } from "lodash";
 import * as React from "react";
 import { host } from "storybook-host";
 import "../../../../../index.scss";
-import NetworkGraph from "../NetworkGraph";
+import { default as NetworkGraph, Node, Link } from "../NetworkGraph";
 
 const storyHost = host({
   align: "center middle",
@@ -13,7 +13,7 @@ const storyHost = host({
   width: "100%"
 });
 
-const NODES = [
+const NODES: Array<Node> = [
   { id: 0, initials: "JS", type: "account", isRoot: true },
   { id: 1, initials: "ZB", type: "account", degree: 1 },
   { id: 2, initials: "DC", type: "account", degree: 1 },
@@ -53,7 +53,7 @@ const NODES = [
   { id: 31, initials: "FF", type: "account" }
 ];
 
-const LINKS = [
+const LINKS: Array<Link> = [
   { source: 0, target: 1 },
   { source: 0, target: 2 },
   { source: 0, target: 3 },

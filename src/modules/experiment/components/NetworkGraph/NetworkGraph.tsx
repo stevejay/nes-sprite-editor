@@ -7,12 +7,24 @@ export type Node = {
   id: number;
   initials: string;
   type: string; // should be account or market
+  degree?: number;
   isRoot?: boolean;
+  x?: number;
+  y?: number;
+  px?: number;
+  py?: number;
+  fx?: number;
+  fy?: number;
+};
+
+export type Link = {
+  source: number | Node;
+  target: number | Node;
 };
 
 type Props = {
   nodes: Array<Node>;
-  links: Array<{ source: Node; target: Node }>;
+  links: Array<Link>;
 };
 
 // Desired height could be passed in as a prop or a style
