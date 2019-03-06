@@ -2,7 +2,6 @@
   display: flex;
   width: 100%;
   height: 400px;
-  // background-color: papayawhip;
   background-color: transparent;
   border: 1px solid rgba(white, 0.1);
 }
@@ -16,17 +15,35 @@
   stroke-width: 1px;
 }
 
-.graphContainer svg circle:global(.root) {
+.graphContainer svg :global(.root) circle {
   stroke: #00cb8e;
   fill: #00cb8e;
 }
 
-.graphContainer svg circle:global(.market) {
-  stroke: rgb(197, 188, 48);
-  fill: rgb(79, 79, 47); // rgb(197, 188, 48);
+.graphContainer svg text {
+  font-size: 10px;
+  user-select: none;
+  pointer-events: none;
 }
 
-.graphContainer svg circle:global(.account) {
+.graphContainer svg :global(.root) text {
+  fill: white;
+}
+
+.graphContainer svg :global(.market) circle {
+  stroke: rgb(197, 188, 48);
+  fill: rgb(79, 79, 47);
+}
+
+.graphContainer svg :global(.market) text {
+  fill: rgb(197, 188, 48);
+}
+
+.graphContainer svg :global(.account) circle {
   stroke: rgb(0, 150, 203);
-  fill: rgb(31, 64, 82); // rgb(0, 150, 203);
+  fill: rgb(31, 64, 82);
+}
+
+.graphContainer svg :global(.account) text {
+  fill: rgb(0, 150, 203);
 }

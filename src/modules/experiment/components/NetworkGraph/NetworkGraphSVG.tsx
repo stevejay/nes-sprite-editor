@@ -11,11 +11,17 @@ type NetworkGraphRenderer = {
   (svg: SVGSVGElement, nodes: Array<Node>, links: Array<Link>): void;
   width(value: number): number | NetworkGraphRenderer;
   height(value: number): number | NetworkGraphRenderer;
+  onShowTooltipCallback(
+    value: (data: Node, originRect: ClientRect) => void
+  ): NetworkGraphRenderer;
+  onHideTooltipCallback(value: () => void): NetworkGraphRenderer;
 };
 
 function networkGraph(): NetworkGraphRenderer {
   let width = 0;
   let height = 0;
+  let onShowTooltip: null | ((data: Node, originRect: any) => void) = null;
+  let onHideTooltip: null | (() => void) = null;
   const simulation = d3.forceSimulation().stop();
 
   function renderer(
@@ -69,6 +75,8 @@ function networkGraph(): NetworkGraphRenderer {
       // @ts-ignore
       .merge(linkElements);
 
+    // all nodes group:
+
     let nodesGroup = svg.selectAll(".nodes-group").data([null]);
     nodesGroup = nodesGroup
       .enter()
@@ -77,37 +85,61 @@ function networkGraph(): NetworkGraphRenderer {
       // @ts-ignore
       .merge(nodesGroup);
 
+    // node groups:
+
+    // bind:
     let nodeElements = nodesGroup
-      .selectAll("circle")
+      .selectAll(".node")
       .data(nodes, function(d: any) {
         return d.id;
       });
-
-    nodeElements
-      .exit()
+    // remove the exiting nodes:
+    const nodeElementsExit = nodeElements.exit();
+    nodeElementsExit.transition().remove();
+    // remove the circle for each exiting node:
+    nodeElementsExit
+      .select("circle")
       .transition()
       .attr("r", 0)
       .remove();
-
-    nodeElements = nodeElements
+    // remove the text elements
+    nodeElementsExit.select("text").remove();
+    // add the entering nodes:
+    const nodeElementsEnter = nodeElements
       .enter()
+      .append("g")
+      .classed("node", true)
+      .classed("root", (d: Node) => !!d.isRoot)
+      .classed("account", (d: Node) => !d.isRoot && d.type === "account")
+      .classed("market", (d: Node) => !d.isRoot && d.type === "market");
+    // add a circle for each entering node:
+    nodeElementsEnter
       .append("circle")
-      // .attr("fill", function(d) { return color(d.id); }) <<< do
-      // .call(function(node) {
-      //   node.transition().attr("r", function(d) {
-      //     return d.isRoot || d.degree === 1 ? MAX_RADIUS : MIN_RADIUS;
-      //   });
-      // })
       .attr("cx", width * 0.5)
       .attr("cy", height * 0.5)
-      // @ts-ignore
-      .merge(nodeElements)
-      .classed("root", (d: Node) => d.isRoot)
-      .classed("account", (d: Node) => !d.isRoot && d.type === "account")
-      .classed("market", (d: Node) => !d.isRoot && d.type === "market")
+      .on("mouseover", handleMouseOver)
+      .on("mouseout", handleMouseOut);
+    // add a text for each entering node that is a major node:
+    nodeElementsEnter
+      .filter(d => d.degree === 1 || !!d.isRoot)
+      .append("text")
+      .attr("x", width * 0.5)
+      .attr("y", height * 0.5)
+      .attr("dx", -7)
+      .attr("dy", 3);
+    // merge entering and updating selections:
+    // @ts-ignore
+    nodeElements = nodeElementsEnter.merge(nodeElements);
+    // update the circle attributes:
+    nodeElements
+      .select("circle")
       .attr("r", (d: Node) =>
         d.isRoot || d.degree === 1 ? MAX_RADIUS : MIN_RADIUS
       );
+    // update the text attributes:
+    nodeElements.select("text").text(function(d) {
+      return d.initials;
+    });
 
     function boxingForce() {
       for (let node of nodes) {
@@ -138,11 +170,29 @@ function networkGraph(): NetworkGraphRenderer {
         .attr("y1", d => (d.source as Node).y || 0)
         .attr("x2", d => (d.target as Node).x || 0)
         .attr("y2", d => (d.target as Node).y || 0);
-      nodeElements.attr("cx", d => d.x || 0).attr("cy", d => d.y || 0);
-
+      // nodeElements.attr("cx", d => d.x || 0).attr("cy", d => d.y || 0);
+      nodeElements
+        .select("circle")
+        .attr("cx", d => d.x || 0)
+        .attr("cy", d => d.y || 0);
+      nodeElements
+        .select("text")
+        .attr("x", d => d.x || 0)
+        .attr("y", d => d.y || 0);
       // nodeElements.attr("cx", function(d) {
       //   console.log("this", this);
       // });
+    }
+
+    function handleMouseOver(d: Node) {
+      // @ts-ignore
+      const boundingRect = this.getBoundingClientRect();
+      // console.log("mouseover", d.id, boundingRect);
+      onShowTooltip && onShowTooltip(d, boundingRect);
+    }
+
+    function handleMouseOut(d: Node) {
+      onHideTooltip && onHideTooltip();
     }
   }
 
@@ -162,6 +212,18 @@ function networkGraph(): NetworkGraphRenderer {
     return renderer;
   };
 
+  renderer.onShowTooltipCallback = function(
+    value: (data: Node, originRect: any) => void
+  ) {
+    onShowTooltip = value;
+    return renderer;
+  };
+
+  renderer.onHideTooltipCallback = function(value: () => void) {
+    onHideTooltip = value;
+    return renderer;
+  };
+
   return renderer;
 }
 
@@ -170,9 +232,11 @@ type Props = {
   links: Array<Link>;
   width: number;
   height: number;
+  onShowTooltip: (value: Node, originRect: ClientRect) => void;
+  onHideTooltip: () => void;
 };
 
-class NetworkGraphSVG extends React.Component<Props> {
+class NetworkGraphSVG extends React.PureComponent<Props> {
   _svg: React.RefObject<SVGSVGElement>;
   _renderer: NetworkGraphRenderer;
 
@@ -190,6 +254,14 @@ class NetworkGraphSVG extends React.Component<Props> {
     this.renderSvg();
   }
 
+  handleShowTooltip = (data: Node, originRect: ClientRect) => {
+    this.props.onShowTooltip(data, originRect);
+  };
+
+  handleHideTooltip = () => {
+    this.props.onHideTooltip();
+  };
+
   private renderSvg() {
     const { width, height } = this.props;
     const { nodes, links } = this.props;
@@ -198,6 +270,8 @@ class NetworkGraphSVG extends React.Component<Props> {
     }
     this._renderer.width(width);
     this._renderer.height(height);
+    this._renderer.onShowTooltipCallback(this.handleShowTooltip);
+    this._renderer.onHideTooltipCallback(this.handleHideTooltip);
     this._renderer(this._svg.current, nodes, links);
   }
 

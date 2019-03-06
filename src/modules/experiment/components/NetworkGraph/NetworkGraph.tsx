@@ -2,6 +2,8 @@ import React from "react";
 import styles from "./NetworkGraph.module.scss";
 import Measure from "react-measure";
 import NetworkGraphSVG from "./NetworkGraphSVG";
+import ModelessDialog from "../HeatMap/ModelessDialog";
+import Tooltip from "../HeatMap/Tooltip";
 
 export type Node = {
   id: number;
@@ -27,11 +29,35 @@ type Props = {
   links: Array<Link>;
 };
 
+type State = {
+  showTooltip: boolean;
+  originRect?: ClientRect;
+  tooltipData: Node | null;
+};
+
 // Desired height could be passed in as a prop or a style
 
-class NetworkGraph extends React.Component<Props> {
+class NetworkGraph extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = { showTooltip: false, tooltipData: null };
+  }
+
+  handleShowTooltip = (value: Node, originRect: ClientRect) => {
+    this.setState({
+      showTooltip: true,
+      originRect: originRect,
+      tooltipData: value
+    });
+  };
+
+  handleHideTooltip = () => {
+    this.setState({ showTooltip: false });
+  };
+
   render() {
     const { nodes, links } = this.props;
+    const { showTooltip, originRect, tooltipData } = this.state;
     return (
       <Measure bounds>
         {({ measureRef, contentRect }) => (
@@ -41,7 +67,16 @@ class NetworkGraph extends React.Component<Props> {
               links={links}
               width={contentRect.bounds ? contentRect.bounds.width : 0}
               height={contentRect.bounds ? contentRect.bounds.height : 0}
+              onShowTooltip={this.handleShowTooltip}
+              onHideTooltip={this.handleHideTooltip}
             />
+            <ModelessDialog isShowing={showTooltip}>
+              <Tooltip originRect={originRect}>
+                <p>{tooltipData ? tooltipData.initials : ""}</p>
+                <p>Some info</p>
+                <p>Some more info 2</p>
+              </Tooltip>
+            </ModelessDialog>
           </div>
         )}
       </Measure>
