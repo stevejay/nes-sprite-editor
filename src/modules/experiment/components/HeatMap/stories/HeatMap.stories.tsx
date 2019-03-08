@@ -57,7 +57,7 @@ const Y_LABELS = ["M", "T", "W", "T", "F", "S", "S"];
 storiesOf("SteelEye/HeatMap", module)
   .addDecorator(storyHost)
   .addDecorator(withKnobs)
-  .add("HeatMap", () => (
+  .add("Basic", () => (
     <div style={{ display: "flex", flexDirection: "column" }}>
       <button
         onClick={() => store.set({ data: generateData() })}

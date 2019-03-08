@@ -2,6 +2,7 @@ import * as d3 from "d3";
 import { Node, Link } from "./NetworkGraph";
 import { random } from "lodash";
 import boundsForce from "./bounds-force";
+import forceEllipsis from "./force-ellipsis";
 import { forceManyBodyReuse } from "d3-force-reuse";
 
 export default function networkGraphForceSimulation() {
@@ -49,11 +50,21 @@ export default function networkGraphForceSimulation() {
             .forceRadial(height * 0.2, width * 0.5, height * 0.5)
             .strength((d: any) => (d.degree === 1 ? 0.5 : 0))
         )
+        // .force(
+        //   "radial",
+        //   d3
+        //     .forceRadial(width * 0.33, width * 0.5, height * 0.5)
+        //     .strength((d: any) => (d.degree >= 2 ? 0.5 : 0))
+        // )
         .force(
-          "radial",
-          d3
-            .forceRadial(width * 0.33, width * 0.5, height * 0.5)
-            .strength((d: any) => (d.degree >= 2 ? 0.5 : 0))
+          "test",
+          forceEllipsis(
+            width * 0.5,
+            height * 0.5,
+            width * 0.45,
+            height * 0.45
+          ).strength((d: any) => (d.degree >= 2 ? 0.25 + d.degree * 0.1 : 0))
+          // .strength((d: any) => (d.degree >= 2 ? 0.5 : 0))
         )
         .force("center", d3.forceCenter(width * 0.5, height * 0.5))
         .force("bounds", boundsForce(width, height, maxRadius))
