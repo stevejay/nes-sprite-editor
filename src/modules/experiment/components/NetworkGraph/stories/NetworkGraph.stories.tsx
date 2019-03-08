@@ -142,7 +142,7 @@ const store = new Store<{
 storiesOf("SteelEye/NetworkGraph", module)
   .addDecorator(storyHost)
   .addDecorator(withKnobs)
-  .add("NetworkGraph", () => (
+  .add("Basic", () => (
     <div style={{ display: "flex", flexDirection: "column" }}>
       <button
         onClick={() => store.set({ data: generateData() })}

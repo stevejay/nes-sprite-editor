@@ -84,7 +84,8 @@ export default function networkGraph(): INetworkGraph {
     // exit:
     linkElements.exit().remove();
     // enter:
-    linkElements = linkElements
+    // linkElements = linkElements
+    linkElements
       .enter()
       .append("line")
       .style("opacity", 0)
@@ -92,17 +93,22 @@ export default function networkGraph(): INetworkGraph {
       .attr("y1", d => (d.source as Node).y || 0)
       .attr("x2", d => (d.target as Node).x || 0)
       .attr("y2", d => (d.target as Node).y || 0)
-      // @ts-ignore
-      .merge(linkElements);
-    // update:
-    linkElements
       .attr("stroke-width", (_d, index) => `${(index % 4) + 1}px`)
       .transition()
-      .style("opacity", 1)
+      .delay(150)
+      .style("opacity", 1);
+    // @ts-ignore
+    // .merge(linkElements);
+    // update:
+    linkElements
+      .transition()
+      // .delay(250)
+      // .style("opacity", 1)
       .attr("x1", d => (d.source as Node).x || 0)
       .attr("y1", d => (d.source as Node).y || 0)
       .attr("x2", d => (d.target as Node).x || 0)
-      .attr("y2", d => (d.target as Node).y || 0);
+      .attr("y2", d => (d.target as Node).y || 0)
+      .attr("stroke-width", (_d, index) => `${(index % 4) + 1}px`);
 
     // create a group to contain all the nodes:
     let nodesGroup = svg.selectAll(".nodes-group").data([null]);
@@ -160,24 +166,24 @@ export default function networkGraph(): INetworkGraph {
 
     // merge entering and updating selections:
     // @ts-ignore
-    nodeElements = nodeElementsEnter.merge(nodeElements);
-    nodeElements.classed(
+    const enterAndUpdateNodeElements = nodeElementsEnter.merge(nodeElements);
+    enterAndUpdateNodeElements.classed(
       "selected",
       (d: Node) => !!includes(selectedIds, d.id)
     );
 
-    // nodeElements
+    // enterAndUpdateNodeElements
     //   .select("circle")
     //   .attr("cx", d => d.x || 0)
     //   .attr("cy", d => d.y || 0);
 
-    // nodeElements
+    // enterAndUpdateNodeElements
     //   .select("text")
     //   .attr("x", d => d.x || 0)
     //   .attr("y", d => d.y || 0);
 
     // update the circle attributes:
-    nodeElements
+    enterAndUpdateNodeElements
       .select("circle")
       .transition()
       .attr("r", (d: Node) =>
@@ -186,7 +192,7 @@ export default function networkGraph(): INetworkGraph {
       .attr("cx", d => d.x || 0)
       .attr("cy", d => d.y || 0);
     // update the text attributes:
-    nodeElements
+    enterAndUpdateNodeElements
       .select("text")
       .text(function(d) {
         return d.initials;

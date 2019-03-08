@@ -106,7 +106,7 @@ const NODES_2 = [
   { id: 1, initials: "ZB", type: "account", degree: 1 },
   { id: 2, initials: "DC", type: "account", degree: 1 },
   { id: 3, initials: "TD", type: "account", degree: 1 },
-  { id: 4, initials: "SS", type: "market", degree: 1 },
+  // { id: 4, initials: "SS", type: "market", degree: 1 },
   { id: 5, initials: "MS", type: "market", degree: 1 }
 ];
 
@@ -114,7 +114,7 @@ const LINKS_2 = [
   { source: 0, target: 1 },
   { source: 0, target: 2 },
   { source: 0, target: 3 },
-  { source: 0, target: 4 },
+  // { source: 0, target: 4 },
   { source: 0, target: 5 },
   { source: 1, target: 5 }
 ];
@@ -140,10 +140,10 @@ const store = new Store<{
   selectedIds: [] // sampleSize(range(0, 24 * 7), 3)
 });
 
-storiesOf("SteelEye/NetworkGraph", module)
+storiesOf("SteelEye/NetworkGraphExperiment", module)
   .addDecorator(storyHost)
   .addDecorator(withKnobs)
-  .add("NetworkGraphExperiment", () => (
+  .add("Basic", () => (
     <div style={{ display: "flex", flexDirection: "column" }}>
       <button
         onClick={() => store.set({ data: generateData() })}
