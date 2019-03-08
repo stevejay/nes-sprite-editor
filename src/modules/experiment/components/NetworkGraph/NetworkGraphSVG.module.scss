@@ -1,0 +1,48 @@
+.svg line {
+  stroke: rgb(0, 150, 203);
+}
+
+.svg circle {
+  stroke-width: 1px;
+}
+
+.svg :global(.node):global(.selected):global(.selected) circle {
+  stroke: #00cb8e;
+  fill: #00cb8e;
+}
+.svg :global(.node):global(.selected):global(.selected) text {
+  fill: white;
+}
+
+.svg :global(.root) circle {
+  stroke: #00cb8e;
+  fill: #00cb8e;
+}
+
+.svg text {
+  font-size: 10px;
+  user-select: none;
+  pointer-events: none;
+}
+
+.svg :global(.root) text {
+  fill: white;
+}
+
+.svg :global(.market) circle {
+  stroke: rgb(197, 188, 48);
+  fill: rgb(79, 79, 47);
+}
+
+.svg :global(.market) text {
+  fill: rgb(197, 188, 48);
+}
+
+.svg :global(.account) circle {
+  stroke: rgb(0, 150, 203);
+  fill: rgb(31, 64, 82);
+}
+
+.svg :global(.account) text {
+  fill: rgb(0, 150, 203);
+}
