@@ -5,7 +5,8 @@ import { cloneDeep, includes } from "lodash";
 import * as React from "react";
 import { host } from "storybook-host";
 import "../../../../../index.scss";
-import { default as NetworkGraph, Node, Link } from "../NetworkGraph";
+import { Node, Link } from "../NetworkGraph";
+import { default as NetworkGraphExperiment } from "../NetworkGraphExperiment";
 
 const storyHost = host({
   align: "center middle",
@@ -142,7 +143,7 @@ const store = new Store<{
 storiesOf("SteelEye/NetworkGraph", module)
   .addDecorator(storyHost)
   .addDecorator(withKnobs)
-  .add("NetworkGraph", () => (
+  .add("NetworkGraphExperiment", () => (
     <div style={{ display: "flex", flexDirection: "column" }}>
       <button
         onClick={() => store.set({ data: generateData() })}
@@ -153,7 +154,7 @@ storiesOf("SteelEye/NetworkGraph", module)
       <div>
         <State store={store}>
           {state => (
-            <NetworkGraph
+            <NetworkGraphExperiment
               nodes={state.data.nodes}
               links={state.data.links}
               selectedIds={state.selectedIds}

@@ -12,6 +12,8 @@ import ModelessDialog from "./ModelessDialog";
 const COLOR_INTERPOLATOR = (datum: number) =>
   `rgba(0,150,203,${clamp(0.2 + datum * 1.0, 0, 1)})`;
 
+// TODO selectedIndexes should be selectedIds
+
 type Props = {
   data: Array<number>; // values in range [0, 1]
   xLabels: Array<string>;

@@ -3,7 +3,7 @@ import boundsForce from "./bounds-force";
 import { forceManyBodyReuse } from "d3-force-reuse";
 import { random } from "lodash";
 
-onmessage = function(event) {
+export default function(event: any) {
   const { nodes, links, width, height, maxRadius, version } = event.data;
 
   // fix the position of the root node to the center of the graph:
@@ -40,20 +40,6 @@ onmessage = function(event) {
     .force("charge", forceManyBodyReuse())
     .stop();
 
-  // var simulation = d3
-  //   .forceSimulation(nodes)
-  //   .force("charge", d3.forceManyBody())
-  //   .force(
-  //     "link",
-  //     d3
-  //       .forceLink(links)
-  //       .distance(20)
-  //       .strength(1)
-  //   )
-  //   .force("x", d3.forceX())
-  //   .force("y", d3.forceY())
-  //   .stop();
-
   const n = Math.ceil(
     Math.log(simulation.alphaMin()) / Math.log(1 - simulation.alphaDecay())
   );
@@ -63,5 +49,5 @@ onmessage = function(event) {
     simulation.tick();
   }
 
-  postMessage({ type: "end", nodes, links, version });
-};
+  return { type: "end", nodes, links, version };
+}
