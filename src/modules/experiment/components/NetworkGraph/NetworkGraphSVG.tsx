@@ -1,44 +1,73 @@
 import React from "react";
 import * as d3 from "d3";
 import { Node, Link } from "./NetworkGraph";
-import { clamp, isNil, includes, random } from "lodash";
+import { clamp, isNil, includes, random, cloneDeep, find } from "lodash";
+import boundsForce from "./bounds-force";
+import forceDrag from "./force-drag";
+import { forceManyBodyReuse } from "d3-force-reuse";
 
 const MIN_RADIUS = 8;
 const MAX_RADIUS = 13;
 
-type NetworkGraphRenderer = {
+interface NetworkGraph {
   (
-    svg: SVGSVGElement,
     nodes: Array<Node>,
     links: Array<Link>,
     selectedIndexes: Array<number>
   ): void;
-  width(value: number): number | NetworkGraphRenderer;
-  height(value: number): number | NetworkGraphRenderer;
-  onShowTooltipCallback(
+  svgElement(element: SVGSVGElement): NetworkGraph;
+  width(x: number): NetworkGraph;
+  height(x: number): NetworkGraph;
+  showTooltipCallback(
     value: (data: Node, originRect: ClientRect) => void
-  ): NetworkGraphRenderer;
-  onHideTooltipCallback(value: () => void): NetworkGraphRenderer;
-  onToggleNode(value: (data: Node) => void): NetworkGraphRenderer;
-};
+  ): NetworkGraph;
+  hideTooltipCallback(value: () => void): NetworkGraph;
+  toggleNodeCallback(value: (data: Node) => void): NetworkGraph;
+}
 
-function networkGraph(): NetworkGraphRenderer {
+function networkGraph(): NetworkGraph {
+  let svgElement: SVGSVGElement | null = null;
   let width = 0;
   let height = 0;
-  let onShowTooltip: null | ((data: Node, originRect: any) => void) = null;
-  let onHideTooltip: null | (() => void) = null;
-  let onToggleNode: null | ((data: Node) => void) = null;
-  const simulation = d3.forceSimulation().stop();
+  let onShowTooltip: ((data: Node, originRect: any) => void) | null = null;
+  let onHideTooltip: (() => void) | null = null;
+  let onToggleNode: ((data: Node) => void) | null = null;
+
+  const simulation = d3
+    .forceSimulation()
+    .stop()
+    .force("collision", d3.forceCollide().radius(() => MAX_RADIUS + 10))
+    .force("charge", forceManyBodyReuse());
+  // .force("charge", d3.forceManyBody());
 
   function renderer(
-    svgElement: SVGSVGElement,
     nodes: Array<Node>,
     links: Array<Link>,
     selectedIndexes: Array<number>
   ) {
     const svg = d3.select(svgElement);
+    const existingWidth = svg.attr("width");
+    const existingHeight = svg.attr("height");
     svg.attr("width", width);
     svg.attr("height", height);
+
+    const dimensionsChanging =
+      +existingWidth !== width || +existingHeight !== height;
+    const dataChanging = nodes !== simulation.nodes();
+
+    if (dataChanging) {
+      const currentNodes = simulation.nodes();
+      nodes.forEach((node, index) => {
+        node.x =
+          currentNodes && currentNodes[index]
+            ? currentNodes[index].x
+            : width * 0.5 + random(-10, 10); // width * 0.5 + random(-10, 10);
+        node.y =
+          currentNodes && currentNodes[index]
+            ? currentNodes[index].y
+            : height * 0.5 + random(-10, 10); // height * 0.5 + random(-10, 10);
+      });
+    }
 
     let linksGroup = svg.selectAll(".links-group").data([null]);
     linksGroup = linksGroup
@@ -52,37 +81,13 @@ function networkGraph(): NetworkGraphRenderer {
       .selectAll("line")
       .data(links, (d: any) => `${d.source.id}--${d.target.id}`);
     linkElements.exit().remove();
-    // .transition()
-    // .attr("stroke-opacity", 0)
-    // // .style("opacity", 0)
-    // .attrTween("x1", function(d) {
-    //   return function() {
-    //     return d.source.x;
-    //   };
-    // })
-    // .attrTween("x2", function(d) {
-    //   return function() {
-    //     return d.target.x;
-    //   };
-    // })
-    // .attrTween("y1", function(d) {
-    //   return function() {
-    //     return d.source.y;
-    //   };
-    // })
-    // .attrTween("y2", function(d) {
-    //   return function() {
-    //     return d.target.y;
-    //   };
-    // })
-
     linkElements = linkElements
       .enter()
       .append("line")
       // @ts-ignore
       .merge(linkElements);
 
-    linkElements.attr("stroke-width", (d, index) => `${(index % 4) + 1}px`);
+    linkElements.attr("stroke-width", (_d, index) => `${(index % 4) + 1}px`);
 
     // all nodes group:
 
@@ -96,12 +101,9 @@ function networkGraph(): NetworkGraphRenderer {
 
     // node groups:
 
-    // bind:
     let nodeElements = nodesGroup
       .selectAll(".node")
-      .data(nodes, function(d: any) {
-        return d.id;
-      });
+      .data(nodes, (d: any) => d.id);
     // remove the exiting nodes:
     const nodeElementsExit = nodeElements.exit();
     nodeElementsExit.transition().remove();
@@ -117,6 +119,8 @@ function networkGraph(): NetworkGraphRenderer {
     const nodeElementsEnter = nodeElements
       .enter()
       .append("g")
+      // .attr("x", width * 0.5)
+      // .attr("y", height * 0.5)
       .classed("node", true)
       .classed("root", (d: Node) => !!d.isRoot)
       .classed("account", (d: Node) => !d.isRoot && d.type === "account")
@@ -124,19 +128,23 @@ function networkGraph(): NetworkGraphRenderer {
     // add a circle for each entering node:
     nodeElementsEnter
       .append("circle")
-      .attr("cx", width * 0.5)
-      .attr("cy", height * 0.5)
       .on("mouseover", handleMouseOver)
       .on("mouseout", handleMouseOut)
-      .on("click", handleClick);
+      .on("click", handleClick)
+      // @ts-ignore
+      .call(forceDrag(simulation));
+    // .call(d3.drag());
+    // .call(simulation.drag);
     // add a text for each entering node that is a major node:
     nodeElementsEnter
       .filter(d => d.degree === 1 || !!d.isRoot)
       .append("text")
-      .attr("x", width * 0.5)
-      .attr("y", height * 0.5)
-      .attr("dx", -7)
-      .attr("dy", 3);
+      // .attr("x", width * 0.5)
+      // .attr("y", height * 0.5)
+      .attr("dx", 0)
+      .attr("dy", 3)
+      .attr("text-anchor", "middle");
+
     // merge entering and updating selections:
     // @ts-ignore
     nodeElements = nodeElementsEnter.merge(nodeElements);
@@ -144,6 +152,17 @@ function networkGraph(): NetworkGraphRenderer {
       "selected",
       (d: Node) => !!includes(selectedIndexes, d.id)
     );
+
+    nodeElements
+      .select("circle")
+      .attr("cx", d => d.x)
+      .attr("cy", d => d.y);
+
+    nodeElements
+      .select("text")
+      .attr("x", d => d.x)
+      .attr("y", d => d.y);
+
     // update the circle attributes:
     nodeElements
       .select("circle")
@@ -155,31 +174,52 @@ function networkGraph(): NetworkGraphRenderer {
       return d.initials;
     });
 
-    function boxingForce() {
-      for (let node of nodes) {
-        // If the positions exceed the box, set them to the boundary position.
-        // You may want to include your nodes width to not overlap with the box.
-        node.x = clamp(node.x || 0, 0 + MAX_RADIUS, width - MAX_RADIUS);
-        node.y = clamp(node.y || 0, 0 + MAX_RADIUS, height - MAX_RADIUS);
-      }
-    }
-
     nodes[0].fx = width * 0.5;
     nodes[0].fy = height * 0.5;
 
+    if (dimensionsChanging) {
+      simulation
+        .force(
+          "radial degree 1",
+          d3
+            .forceRadial(height * 0.2, width * 0.5, height * 0.5)
+            .strength((d: any) => (d.degree === 1 ? 0.5 : 0))
+        )
+        .force(
+          "radial",
+          d3
+            .forceRadial(width * 0.33, width * 0.5, height * 0.5)
+            .strength((d: any) => (d.degree >= 2 ? 0.5 : 0))
+        )
+        .force("center", d3.forceCenter(width * 0.5, height * 0.5))
+        .force("bounds", boundsForce(width, height, MAX_RADIUS));
+    }
+
+    // const links = simulation.force("link").links();
     // Only restart the animation if the nodes have changed.
-    // TODO Fix this so that links changes also cause a redraw.
-    if (simulation.nodes() !== nodes) {
+    if (dataChanging || dimensionsChanging) {
       simulation
         .nodes(nodes)
-        .force("link", d3.forceLink<Node, Link>(links).id((d: any) => d.id))
-        .force("charge", d3.forceManyBody())
-        .force("center", d3.forceCenter(width * 0.5, height * 0.5))
-        .force("bounds", boxingForce)
-        .force("collision", d3.forceCollide().radius(() => MAX_RADIUS + 10))
+        .force("link", d3.forceLink<Node, Link>(links).id((d: any) => d.id));
+      // .force("x", d3.forceX())
+      // .force("y", d3.forceY())
+
+      simulation
         .on("tick", ticked)
         .alpha(1)
         .restart();
+
+      // for (
+      //   var i = 0,
+      //     n = Math.ceil(
+      //       Math.log(simulation.alphaMin()) /
+      //         Math.log(1 - simulation.alphaDecay())
+      //     );
+      //   i < n;
+      //   ++i
+      // ) {
+      //   simulation.tick();
+      // }
     }
 
     function ticked() {
@@ -214,45 +254,42 @@ function networkGraph(): NetworkGraphRenderer {
       onHideTooltip && onHideTooltip();
     }
 
-    function handleClick(d: Node, index: number) {
-      if (index === 0) {
+    function handleClick(d: Node) {
+      if (d.degree !== 1) {
         return;
       }
-      // @ts-ignore
-      // this.parentNode.classList.toggle("selected");
       onToggleNode && onToggleNode(d);
     }
   }
 
-  renderer.width = function(value?: number) {
-    if (!arguments.length) {
-      return width;
-    }
+  renderer.svgElement = function(element: SVGSVGElement) {
+    svgElement = element;
+    return renderer;
+  };
+
+  renderer.width = function(value: number) {
     width = value!;
     return renderer;
   };
 
-  renderer.height = function(value?: number) {
-    if (!arguments.length) {
-      return height;
-    }
+  renderer.height = function(value: number) {
     height = value!;
     return renderer;
   };
 
-  renderer.onShowTooltipCallback = function(
+  renderer.showTooltipCallback = function(
     value: (data: Node, originRect: any) => void
   ) {
     onShowTooltip = value;
     return renderer;
   };
 
-  renderer.onHideTooltipCallback = function(value: () => void) {
+  renderer.hideTooltipCallback = function(value: () => void) {
     onHideTooltip = value;
     return renderer;
   };
 
-  renderer.onToggleNode = function(value: (data: Node) => void) {
+  renderer.toggleNodeCallback = function(value: (data: Node) => void) {
     onToggleNode = value;
     return renderer;
   };
@@ -271,27 +308,48 @@ type Props = {
   onToggleNode: (value: Node) => void;
 };
 
-// type State = {
-//   currentNodes: Array<Node> | null;
-//   currentLinks: Array<Link> | null;
-// }
+type State = {
+  nodes: Array<Node> | null;
+  links: Array<Link> | null;
+  d3Nodes: Array<Node> | null;
+  d3Links: Array<Link> | null;
+};
 
-class NetworkGraphSVG extends React.PureComponent<Props> {
+class NetworkGraphSVG extends React.PureComponent<Props, State> {
   _svg: React.RefObject<SVGSVGElement>;
-  _renderer: NetworkGraphRenderer;
+  _renderer: NetworkGraph;
 
   constructor(props: Props) {
     super(props);
     this._svg = React.createRef();
-    this._renderer = networkGraph();
+    this._renderer = networkGraph()
+      .showTooltipCallback(this.handleShowTooltip)
+      .hideTooltipCallback(this.handleHideTooltip)
+      .toggleNodeCallback(this.handleToggleNode);
+    this.state = NetworkGraphSVG.createState(props);
   }
 
   componentDidMount() {
-    this.renderSvg();
+    this.renderGraph();
   }
 
   componentDidUpdate() {
-    this.renderSvg();
+    this.renderGraph();
+  }
+
+  static getDerivedStateFromProps(props: Props, state: State) {
+    return props.nodes !== state.nodes
+      ? NetworkGraphSVG.createState(props)
+      : state;
+  }
+
+  static createState(props: Props) {
+    return {
+      nodes: props.nodes,
+      links: props.links,
+      d3Nodes: cloneDeep(props.nodes),
+      d3Links: cloneDeep(props.links)
+    };
   }
 
   handleShowTooltip = (data: Node, originRect: ClientRect) => {
@@ -306,17 +364,17 @@ class NetworkGraphSVG extends React.PureComponent<Props> {
     this.props.onToggleNode(data);
   };
 
-  private renderSvg() {
-    const { width, height, selectedIndexes, nodes, links } = this.props;
-    if (!this._svg.current || !(width > 0)) {
+  private renderGraph() {
+    const { width, height, selectedIndexes } = this.props;
+    const { d3Nodes, d3Links } = this.state;
+    if (!(width > 0) || !(height > 0) || !d3Nodes || !d3Links) {
       return;
     }
-    this._renderer.width(width);
-    this._renderer.height(height);
-    this._renderer.onShowTooltipCallback(this.handleShowTooltip);
-    this._renderer.onHideTooltipCallback(this.handleHideTooltip);
-    this._renderer.onToggleNode(this.handleToggleNode);
-    this._renderer(this._svg.current, nodes, links, selectedIndexes);
+    this._renderer
+      .svgElement(this._svg.current!)
+      .width(width)
+      .height(height);
+    this._renderer(d3Nodes, d3Links, selectedIndexes);
   }
 
   render() {
