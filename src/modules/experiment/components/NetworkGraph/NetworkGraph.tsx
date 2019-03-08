@@ -13,8 +13,8 @@ export type Node = {
   isRoot?: boolean;
   x?: number;
   y?: number;
-  px?: number;
-  py?: number;
+  vx?: number;
+  vy?: number;
   fx?: number;
   fy?: number;
 };

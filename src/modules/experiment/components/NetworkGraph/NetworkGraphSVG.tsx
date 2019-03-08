@@ -6,9 +6,6 @@ import boundsForce from "./bounds-force";
 import forceDrag from "./force-drag";
 import { forceManyBodyReuse } from "d3-force-reuse";
 
-const MIN_RADIUS = 8;
-const MAX_RADIUS = 13;
-
 interface NetworkGraph {
   (
     nodes: Array<Node>,
@@ -16,8 +13,10 @@ interface NetworkGraph {
     selectedIndexes: Array<number>
   ): void;
   svgElement(element: SVGSVGElement): NetworkGraph;
-  width(x: number): NetworkGraph;
-  height(x: number): NetworkGraph;
+  width(value: number): NetworkGraph;
+  height(value: number): NetworkGraph;
+  minRadius(value: number): NetworkGraph;
+  maxRadius(value: number): NetworkGraph;
   showTooltipCallback(
     value: (data: Node, originRect: ClientRect) => void
   ): NetworkGraph;
@@ -29,16 +28,12 @@ function networkGraph(): NetworkGraph {
   let svgElement: SVGSVGElement | null = null;
   let width = 0;
   let height = 0;
+  let minRadius = 8;
+  let maxRadius = 13;
   let onShowTooltip: ((data: Node, originRect: any) => void) | null = null;
   let onHideTooltip: (() => void) | null = null;
   let onToggleNode: ((data: Node) => void) | null = null;
-
-  const simulation = d3
-    .forceSimulation()
-    .stop()
-    .force("collision", d3.forceCollide().radius(() => MAX_RADIUS + 10))
-    .force("charge", forceManyBodyReuse());
-  // .force("charge", d3.forceManyBody());
+  const simulation = d3.forceSimulation().stop();
 
   function renderer(
     nodes: Array<Node>,
@@ -50,24 +45,12 @@ function networkGraph(): NetworkGraph {
     const existingHeight = svg.attr("height");
     svg.attr("width", width);
     svg.attr("height", height);
-
     const dimensionsChanging =
       +existingWidth !== width || +existingHeight !== height;
-    const dataChanging = nodes !== simulation.nodes();
 
-    if (dataChanging) {
-      const currentNodes = simulation.nodes();
-      nodes.forEach((node, index) => {
-        node.x =
-          currentNodes && currentNodes[index]
-            ? currentNodes[index].x
-            : width * 0.5 + random(-10, 10); // width * 0.5 + random(-10, 10);
-        node.y =
-          currentNodes && currentNodes[index]
-            ? currentNodes[index].y
-            : height * 0.5 + random(-10, 10); // height * 0.5 + random(-10, 10);
-      });
-    }
+    const currentNodes = simulation.nodes();
+    // const currentLinks = simulation.force("link").links();
+    const dataChanging = nodes !== currentNodes;
 
     let linksGroup = svg.selectAll(".links-group").data([null]);
     linksGroup = linksGroup
@@ -119,8 +102,6 @@ function networkGraph(): NetworkGraph {
     const nodeElementsEnter = nodeElements
       .enter()
       .append("g")
-      // .attr("x", width * 0.5)
-      // .attr("y", height * 0.5)
       .classed("node", true)
       .classed("root", (d: Node) => !!d.isRoot)
       .classed("account", (d: Node) => !d.isRoot && d.type === "account")
@@ -133,14 +114,10 @@ function networkGraph(): NetworkGraph {
       .on("click", handleClick)
       // @ts-ignore
       .call(forceDrag(simulation));
-    // .call(d3.drag());
-    // .call(simulation.drag);
     // add a text for each entering node that is a major node:
     nodeElementsEnter
       .filter(d => d.degree === 1 || !!d.isRoot)
       .append("text")
-      // .attr("x", width * 0.5)
-      // .attr("y", height * 0.5)
       .attr("dx", 0)
       .attr("dy", 3)
       .attr("text-anchor", "middle");
@@ -155,30 +132,49 @@ function networkGraph(): NetworkGraph {
 
     nodeElements
       .select("circle")
-      .attr("cx", d => d.x)
-      .attr("cy", d => d.y);
+      .attr("cx", d => d.x || 0)
+      .attr("cy", d => d.y || 0);
 
     nodeElements
       .select("text")
-      .attr("x", d => d.x)
-      .attr("y", d => d.y);
+      .attr("x", d => d.x || 0)
+      .attr("y", d => d.y || 0);
 
     // update the circle attributes:
     nodeElements
       .select("circle")
       .attr("r", (d: Node) =>
-        d.isRoot || d.degree === 1 ? MAX_RADIUS : MIN_RADIUS
+        d.isRoot || d.degree === 1 ? maxRadius : minRadius
       );
     // update the text attributes:
     nodeElements.select("text").text(function(d) {
       return d.initials;
     });
 
+    // --- data ---
+
     nodes[0].fx = width * 0.5;
     nodes[0].fy = height * 0.5;
 
-    if (dimensionsChanging) {
+    if (dataChanging || dimensionsChanging) {
+      if (dataChanging) {
+        nodes.forEach((node, index) => {
+          node.x =
+            currentNodes && currentNodes[index]
+              ? (currentNodes[index] as Node).x
+              : width * 0.5 + random(-10, 10);
+          node.vx = NaN;
+          node.y =
+            currentNodes && currentNodes[index]
+              ? (currentNodes[index] as Node).y
+              : height * 0.5 + random(-10, 10);
+          node.vy = NaN;
+        });
+      }
+
       simulation
+        .nodes(nodes)
+        .force("link", d3.forceLink<Node, Link>(links).id((d: any) => d.id))
         .force(
           "radial degree 1",
           d3
@@ -192,34 +188,13 @@ function networkGraph(): NetworkGraph {
             .strength((d: any) => (d.degree >= 2 ? 0.5 : 0))
         )
         .force("center", d3.forceCenter(width * 0.5, height * 0.5))
-        .force("bounds", boundsForce(width, height, MAX_RADIUS));
-    }
-
-    // const links = simulation.force("link").links();
-    // Only restart the animation if the nodes have changed.
-    if (dataChanging || dimensionsChanging) {
-      simulation
-        .nodes(nodes)
-        .force("link", d3.forceLink<Node, Link>(links).id((d: any) => d.id));
-      // .force("x", d3.forceX())
-      // .force("y", d3.forceY())
-
-      simulation
+        .force("bounds", boundsForce(width, height, maxRadius))
+        .force("collision", d3.forceCollide().radius(() => maxRadius + 10))
+        .force("charge", forceManyBodyReuse())
+        // .force("charge", d3.forceManyBody());
         .on("tick", ticked)
         .alpha(1)
         .restart();
-
-      // for (
-      //   var i = 0,
-      //     n = Math.ceil(
-      //       Math.log(simulation.alphaMin()) /
-      //         Math.log(1 - simulation.alphaDecay())
-      //     );
-      //   i < n;
-      //   ++i
-      // ) {
-      //   simulation.tick();
-      // }
     }
 
     function ticked() {
@@ -274,6 +249,16 @@ function networkGraph(): NetworkGraph {
 
   renderer.height = function(value: number) {
     height = value!;
+    return renderer;
+  };
+
+  renderer.minRadius = function(value: number) {
+    minRadius = value!;
+    return renderer;
+  };
+
+  renderer.maxRadius = function(value: number) {
+    maxRadius = value!;
     return renderer;
   };
 
