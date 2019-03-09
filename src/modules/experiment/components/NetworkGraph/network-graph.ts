@@ -1,25 +1,42 @@
 import * as d3 from "d3";
-import { CommunicationsNode, Link } from "./NetworkGraph";
 import { includes } from "lodash";
 import forceDrag from "./force-drag";
 import networkGraphForceSimulation from "./network-graph-force-simulation";
+import {
+  GetOrSet,
+  NodeEntity,
+  LinkEntity,
+  D3NodeEntity,
+  D3LinkEntity
+} from "./types";
 
 export interface INetworkGraph {
   (
-    nodes: Array<CommunicationsNode>,
-    links: Array<Link>,
-    selectedIds: Array<number>
+    nodes: Array<NodeEntity>,
+    links: Array<LinkEntity>,
+    selectedIds: Array<NodeEntity["id"]>
   ): void;
-  svgElement(element: SVGSVGElement): INetworkGraph;
-  width(value: number): INetworkGraph;
-  height(value: number): INetworkGraph;
-  minRadius(value: number): INetworkGraph;
-  maxRadius(value: number): INetworkGraph;
+
+  svgElement(element: SVGSVGElement): this;
+
+  width(): number;
+  width(value: number): this;
+
+  height(): number;
+  height(value: number): this;
+
+  minRadius(): number;
+  minRadius(value: number): this;
+
+  maxRadius(): number;
+  maxRadius(value: number): this;
+
   showTooltipCallback(
-    value: (data: CommunicationsNode, originRect: ClientRect) => void
-  ): INetworkGraph;
-  hideTooltipCallback(value: () => void): INetworkGraph;
-  toggleNodeCallback(value: (data: CommunicationsNode) => void): INetworkGraph;
+    value: (value: NodeEntity, originRect: ClientRect) => void
+  ): this;
+  hideTooltipCallback(value: () => void): this;
+  toggleNodeCallback(value: (value: NodeEntity) => void): this;
+  labelAccessor(value: (value: NodeEntity) => string): this;
 }
 
 export default function networkGraph(): INetworkGraph {
@@ -29,16 +46,17 @@ export default function networkGraph(): INetworkGraph {
   let minRadius = 8;
   let maxRadius = 13;
   let onShowTooltip:
-    | ((data: CommunicationsNode, originRect: any) => void)
+    | ((data: NodeEntity, originRect: ClientRect) => void)
     | null = null;
   let onHideTooltip: (() => void) | null = null;
-  let onToggleNode: ((data: CommunicationsNode) => void) | null = null;
+  let onToggleNode: ((data: NodeEntity) => void) | null = null;
+  let labelAccessor: (data: NodeEntity) => string = d => d.id;
   const simulation = networkGraphForceSimulation();
 
   function renderer(
-    nodes: Array<CommunicationsNode>,
-    links: Array<Link>,
-    selectedIds: Array<number>
+    nodes: Array<NodeEntity>,
+    links: Array<LinkEntity>,
+    selectedIds: Array<NodeEntity["id"]>
   ) {
     const svg = d3.select(svgElement);
     const existingWidth = svg.attr("width");
@@ -55,8 +73,11 @@ export default function networkGraph(): INetworkGraph {
       .merge(linksGroup);
 
     let linkElements = linksGroup
-      .selectAll("line")
-      .data(links, (d: any) => `${d.source.id}--${d.target.id}`);
+      .selectAll<SVGLineElement, LinkEntity>("line")
+      .data(
+        links as Array<D3LinkEntity>,
+        (d: any) => `${d.source.id}--${d.target.id}`
+      );
     linkElements.exit().remove();
     linkElements = linkElements
       .enter()
@@ -79,8 +100,8 @@ export default function networkGraph(): INetworkGraph {
     // node groups:
 
     let nodeElements = nodesGroup
-      .selectAll(".node")
-      .data(nodes, (d: any) => d.id);
+      .selectAll<SVGGElement, D3NodeEntity>(".node")
+      .data(nodes as Array<D3NodeEntity>, d => d.id);
     // remove the exiting nodes:
     const nodeElementsExit = nodeElements.exit();
     nodeElementsExit.transition().remove();
@@ -97,15 +118,9 @@ export default function networkGraph(): INetworkGraph {
       .enter()
       .append("g")
       .classed("node", true)
-      .classed("root", (d: CommunicationsNode) => !!d.isRoot)
-      .classed(
-        "account",
-        (d: CommunicationsNode) => !d.isRoot && d.type === "account"
-      )
-      .classed(
-        "market",
-        (d: CommunicationsNode) => !d.isRoot && d.type === "market"
-      );
+      .classed("root", d => !!d.isRoot)
+      .classed("account", d => !d.isRoot && d.type === "account")
+      .classed("market", d => !d.isRoot && d.type === "market");
     // add a circle for each entering node:
     nodeElementsEnter
       .append("circle")
@@ -125,10 +140,7 @@ export default function networkGraph(): INetworkGraph {
     // merge entering and updating selections:
     // @ts-ignore
     nodeElements = nodeElementsEnter.merge(nodeElements);
-    nodeElements.classed(
-      "selected",
-      (d: CommunicationsNode) => !!includes(selectedIds, d.id)
-    );
+    nodeElements.classed("selected", d => !!includes(selectedIds, d.id));
 
     nodeElements
       .select("circle")
@@ -143,13 +155,11 @@ export default function networkGraph(): INetworkGraph {
     // update the circle attributes:
     nodeElements
       .select("circle")
-      .attr("r", (d: CommunicationsNode) =>
+      .attr("r", (d: NodeEntity) =>
         d.isRoot || d.degree === 1 ? maxRadius : minRadius
       );
     // update the text attributes:
-    nodeElements.select("text").text(function(d) {
-      return d.initials;
-    });
+    nodeElements.select("text").text(labelAccessor);
 
     simulation.minRadius(minRadius).maxRadius(maxRadius);
     simulation(
@@ -163,10 +173,10 @@ export default function networkGraph(): INetworkGraph {
 
     function ticked() {
       linkElements
-        .attr("x1", d => (d.source as CommunicationsNode).x || 0)
-        .attr("y1", d => (d.source as CommunicationsNode).y || 0)
-        .attr("x2", d => (d.target as CommunicationsNode).x || 0)
-        .attr("y2", d => (d.target as CommunicationsNode).y || 0);
+        .attr("x1", d => (d.source as D3NodeEntity).x || 0)
+        .attr("y1", d => (d.source as D3NodeEntity).y || 0)
+        .attr("x2", d => (d.target as D3NodeEntity).x || 0)
+        .attr("y2", d => (d.target as D3NodeEntity).y || 0);
       nodeElements
         .select("circle")
         .attr("cx", d => d.x || 0)
@@ -177,8 +187,8 @@ export default function networkGraph(): INetworkGraph {
         .attr("y", d => d.y || 0);
     }
 
-    function handleMouseOver(d: CommunicationsNode, index: number) {
-      if (index === 0) {
+    function handleMouseOver(d: NodeEntity) {
+      if (!!d.isRoot) {
         return;
       }
       // @ts-ignore
@@ -186,15 +196,16 @@ export default function networkGraph(): INetworkGraph {
       onShowTooltip && onShowTooltip(d, boundingRect);
     }
 
-    function handleMouseOut(_d: CommunicationsNode, index: number) {
-      if (index === 0) {
+    function handleMouseOut(d: NodeEntity) {
+      if (!!d.isRoot) {
         return;
       }
       onHideTooltip && onHideTooltip();
     }
 
-    function handleClick(d: CommunicationsNode) {
+    function handleClick(d: NodeEntity) {
       if (d.degree !== 1) {
+        // TODO something like d.selectable?
         return;
       }
       onToggleNode && onToggleNode(d);
@@ -206,28 +217,40 @@ export default function networkGraph(): INetworkGraph {
     return renderer;
   };
 
-  renderer.width = function(value: number) {
-    width = value!;
-    return renderer;
-  };
+  renderer.width = ((value?: number): number | INetworkGraph => {
+    if (typeof value !== "undefined") {
+      width = value || 0;
+      return renderer;
+    }
+    return width;
+  }) as GetOrSet<number, INetworkGraph>;
 
-  renderer.height = function(value: number) {
-    height = value!;
-    return renderer;
-  };
+  renderer.height = ((value?: number): number | INetworkGraph => {
+    if (typeof value !== "undefined") {
+      height = value || 0;
+      return renderer;
+    }
+    return height;
+  }) as GetOrSet<number, INetworkGraph>;
 
-  renderer.minRadius = function(value: number) {
-    minRadius = value!;
-    return renderer;
-  };
+  renderer.minRadius = ((value?: number): number | INetworkGraph => {
+    if (typeof value !== "undefined") {
+      minRadius = value || 0;
+      return renderer;
+    }
+    return minRadius;
+  }) as GetOrSet<number, INetworkGraph>;
 
-  renderer.maxRadius = function(value: number) {
-    maxRadius = value!;
-    return renderer;
-  };
+  renderer.maxRadius = ((value?: number): number | INetworkGraph => {
+    if (typeof value !== "undefined") {
+      maxRadius = value || 0;
+      return renderer;
+    }
+    return maxRadius;
+  }) as GetOrSet<number, INetworkGraph>;
 
   renderer.showTooltipCallback = function(
-    value: (data: CommunicationsNode, originRect: any) => void
+    value: (data: NodeEntity, originRect: ClientRect) => void
   ) {
     onShowTooltip = value;
     return renderer;
@@ -238,10 +261,13 @@ export default function networkGraph(): INetworkGraph {
     return renderer;
   };
 
-  renderer.toggleNodeCallback = function(
-    value: (data: CommunicationsNode) => void
-  ) {
+  renderer.toggleNodeCallback = function(value: (data: NodeEntity) => void) {
     onToggleNode = value;
+    return renderer;
+  };
+
+  renderer.labelAccessor = function(value: (value: NodeEntity) => string) {
+    labelAccessor = value;
     return renderer;
   };
 

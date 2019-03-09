@@ -1,22 +1,28 @@
-import { isNil, clamp } from "lodash";
+import { clamp } from "lodash";
+import * as d3 from "d3";
 
-interface BoundsForce {
+type GetOrSet<ValueT, ThisT> = {
+  (): ValueT;
+  (value: ValueT): ThisT;
+};
+
+interface BoundsForce<NodeT extends d3.SimulationNodeDatum> {
   (): void;
-  initialize(nodes: any): void;
+  initialize(nodes: Array<NodeT>): void;
   width(): number;
-  width(x: number): BoundsForce;
+  width(value: number): this;
   height(): number;
-  height(x: number): BoundsForce;
+  height(value: number): this;
   maxNodeRadius(): number;
-  maxNodeRadius(x: number): BoundsForce;
+  maxNodeRadius(value: number): this;
 }
 
-export default function(
+export default function<NodeT extends d3.SimulationNodeDatum>(
   width: number,
   height: number,
   maxNodeRadius: number
-): BoundsForce {
-  let nodes: any = null;
+): BoundsForce<NodeT> {
+  let nodes: Array<NodeT> = [];
 
   function force() {
     for (let i = 0; i < nodes.length; ++i) {
@@ -30,23 +36,33 @@ export default function(
     }
   }
 
-  force.initialize = function(_nodes: any) {
-    nodes = _nodes;
+  force.initialize = function(newNodes: Array<NodeT>) {
+    nodes = newNodes;
   };
 
-  force.width = function(value?: number) {
-    return arguments.length ? ((width = +(value || 0)), force) : width;
-  };
+  force.width = ((value?: number): number | BoundsForce<NodeT> => {
+    if (typeof value !== "undefined") {
+      width = value || 0;
+      return force;
+    }
+    return width;
+  }) as GetOrSet<number, BoundsForce<NodeT>>;
 
-  force.height = function(value?: number) {
-    return arguments.length ? ((height = +(value || 0)), force) : height;
-  };
+  force.height = ((value?: number): number | BoundsForce<NodeT> => {
+    if (typeof value !== "undefined") {
+      height = value || 0;
+      return force;
+    }
+    return height;
+  }) as GetOrSet<number, BoundsForce<NodeT>>;
 
-  force.maxNodeRadius = function(value?: number) {
-    return arguments.length
-      ? ((maxNodeRadius = +(value || 0)), force)
-      : maxNodeRadius;
-  };
+  force.maxNodeRadius = ((value?: number): number | BoundsForce<NodeT> => {
+    if (typeof value !== "undefined") {
+      maxNodeRadius = value || 0;
+      return force;
+    }
+    return maxNodeRadius;
+  }) as GetOrSet<number, BoundsForce<NodeT>>;
 
-  return force as BoundsForce;
+  return force;
 }

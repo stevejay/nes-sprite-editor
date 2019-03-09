@@ -4,41 +4,26 @@ import Measure from "react-measure";
 import NetworkGraphSVG from "./NetworkGraphSVG";
 import ModelessDialog from "../HeatMap/ModelessDialog";
 import Tooltip from "../HeatMap/Tooltip";
+import { NodeEntity, LinkEntity } from "./types";
 
-export type D3Node = {
-  id: number | string;
-  x?: number;
-  y?: number;
-  vx?: number;
-  vy?: number;
-  fx?: number;
-  fy?: number;
-};
-
-export type CommunicationsNode = {
-  id: number;
+export type CommunicationsNode = NodeEntity & {
+  // id: string;
   initials: string;
   type: string; // should be account or market
-  degree?: number;
-  isRoot?: boolean;
-  x?: number;
-  y?: number;
-  vx?: number;
-  vy?: number;
-  fx?: number;
-  fy?: number;
+  // degree?: number; // TODO change
+  // isRoot?: boolean; // TODO change
 };
 
-export type Link = {
-  source: number | CommunicationsNode;
-  target: number | CommunicationsNode;
+export type CommunicationsLink = LinkEntity & {
+  // source: string;
+  // target: string;
 };
 
 type Props = {
   nodes: Array<CommunicationsNode>;
-  links: Array<Link>;
-  selectedIds: Array<number>;
-  onNodeClick: (index: number) => void;
+  links: Array<CommunicationsLink>;
+  selectedIds: Array<CommunicationsNode["id"]>;
+  onNodeClick: (id: CommunicationsNode["id"]) => void;
 };
 
 type State = {
@@ -55,11 +40,11 @@ class NetworkGraph extends React.Component<Props, State> {
     this.state = { showTooltip: false, tooltipData: null };
   }
 
-  handleShowTooltip = (value: CommunicationsNode, originRect: ClientRect) => {
+  handleShowTooltip = (value: NodeEntity, originRect: ClientRect) => {
     this.setState({
       showTooltip: true,
       originRect: originRect,
-      tooltipData: value
+      tooltipData: value as CommunicationsNode
     });
   };
 
@@ -67,7 +52,7 @@ class NetworkGraph extends React.Component<Props, State> {
     this.setState({ showTooltip: false });
   };
 
-  handleToggleNode = (value: CommunicationsNode) => {
+  handleToggleNode = (value: NodeEntity) => {
     this.props.onNodeClick(value.id);
   };
 
@@ -84,6 +69,7 @@ class NetworkGraph extends React.Component<Props, State> {
               selectedIds={selectedIds}
               width={contentRect.bounds ? contentRect.bounds.width : 0}
               height={contentRect.bounds ? contentRect.bounds.height : 0}
+              labelAccessor={d => (d as CommunicationsNode).initials}
               onShowTooltip={this.handleShowTooltip}
               onHideTooltip={this.handleHideTooltip}
               onToggleNode={this.handleToggleNode}

@@ -1,68 +1,117 @@
-function constant(x: number) {
-  return function() {
-    return x;
-  };
+import { constant } from "lodash";
+import * as d3 from "d3";
+import { ValueFunction, GetOrSet } from "./types";
+
+interface IForceEllipsis<NodeT extends d3.SimulationNodeDatum> {
+  (alpha: number): void;
+  initialize(nodes: Array<NodeT>): void;
+
+  strength(): number | ValueFunction<number, NodeT>;
+  strength(value: number | ValueFunction<number, NodeT>): this;
+
+  x(): number;
+  x(value: number): this;
+
+  y(): number;
+  y(value: number): this;
+
+  radiusX(): number;
+  radiusX(value: number): this;
+
+  radiusY(): number;
+  radiusY(value: number): this;
 }
 
-export default function(
+export default function<NodeT extends d3.SimulationNodeDatum>(
   x: number,
   y: number,
-  radiusW: number,
-  radiusH: number
-) {
-  var nodes,
-    strength = constant(0.1),
-    strengths;
+  radiusX: number,
+  radiusY: number
+): IForceEllipsis<NodeT> {
+  let nodes: Array<NodeT> = [];
+  let strength: ValueFunction<number, NodeT> = constant(0.1);
+  let strengths: Array<number> = [];
 
-  function force(alpha) {
+  function force(alpha: number) {
     for (var i = 0, n = nodes.length; i < n; ++i) {
-      var node = nodes[i];
-      var dx = node.x - x || 1e-6;
-      var dy = node.y - y || 1e-6;
-      var r = Math.sqrt(dx * dx + dy * dy);
-
+      const node = nodes[i];
+      const dx = (node.x || 0) - x || 1e-6;
+      const dy = (node.y || 0) - y || 1e-6;
+      const r = Math.sqrt(dx * dx + dy * dy);
       const angle = Math.atan2(dy, dx) + Math.PI / 2;
       const l = Math.sqrt(
         1 /
-          (Math.pow(Math.sin(angle) / radiusW, 2) +
-            Math.pow(Math.cos(angle) / radiusH, 2))
+          (Math.pow(Math.sin(angle) / radiusX, 2) +
+            Math.pow(Math.cos(angle) / radiusY, 2))
       );
-
-      var k = /*radiuses[i]*/ ((l - r) * strengths[i] * alpha) / r;
-      node.vx += dx * k;
-      node.vy += dy * k;
+      const k = /*radiuses[i]*/ ((l - r) * strengths[i] * alpha) / r;
+      node.vx = (node.vx || 0) + dx * k;
+      node.vy = (node.vy || 0) + dy * k;
     }
   }
 
   function initialize() {
-    if (!nodes) return;
-    var i,
-      n = nodes.length;
+    if (!nodes) {
+      return;
+    }
+    const n = nodes.length;
     strengths = new Array(n);
-    for (i = 0; i < n; ++i) {
+    for (let i = 0; i < n; ++i) {
       strengths[i] = +strength(nodes[i], i, nodes);
     }
   }
 
-  force.initialize = function(_) {
-    (nodes = _), initialize();
+  force.initialize = (newNodes: Array<NodeT>) => {
+    nodes = newNodes;
+    initialize();
   };
 
-  force.strength = function(_) {
-    return arguments.length
-      ? ((strength = typeof _ === "function" ? _ : constant(+_)),
-        initialize(),
-        force)
-      : strength;
-  };
+  force.strength = ((
+    value?: number | ValueFunction<number, NodeT>
+  ): number | ValueFunction<number, NodeT> | IForceEllipsis<NodeT> => {
+    if (typeof value === "number") {
+      strength = constant(value || 0);
+      initialize();
+      return force;
+    } else if (typeof value === "function") {
+      strength = value;
+      initialize();
+      return force;
+    }
+    return strength;
+  }) as GetOrSet<ValueFunction<number, NodeT>, IForceEllipsis<NodeT>>;
 
-  force.x = function(_) {
-    return arguments.length ? ((x = +_), force) : x;
-  };
+  force.x = ((value?: number): number | IForceEllipsis<NodeT> => {
+    if (typeof value !== "undefined") {
+      x = value || 0;
+      return force;
+    }
+    return x;
+  }) as GetOrSet<number, IForceEllipsis<NodeT>>;
 
-  force.y = function(_) {
-    return arguments.length ? ((y = +_), force) : y;
-  };
+  force.y = ((value?: number): number | IForceEllipsis<NodeT> => {
+    if (typeof value !== "undefined") {
+      y = value || 0;
+      return force;
+    }
+    return y;
+  }) as GetOrSet<number, IForceEllipsis<NodeT>>;
+
+  force.radiusX = ((value?: number): number | IForceEllipsis<NodeT> => {
+    if (typeof value !== "undefined") {
+      radiusX = value || 0;
+      return force;
+    }
+    return radiusX;
+  }) as GetOrSet<number, IForceEllipsis<NodeT>>;
+
+  force.radiusY = ((value?: number): number | IForceEllipsis<NodeT> => {
+    if (typeof value !== "undefined") {
+      radiusY = value || 0;
+      return force;
+    }
+    return radiusY;
+  }) as GetOrSet<number, IForceEllipsis<NodeT>>;
 
   return force;
 }

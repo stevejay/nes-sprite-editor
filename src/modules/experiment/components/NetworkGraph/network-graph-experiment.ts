@@ -1,25 +1,42 @@
 import * as d3 from "d3";
-import { CommunicationsNode, Link } from "./NetworkGraph";
 import { includes, cloneDeep } from "lodash";
 import networkGraphFakeWorker from "./network-graph-fake-worker";
+import {
+  NodeEntity,
+  LinkEntity,
+  D3NodeEntity,
+  D3LinkEntity,
+  GetOrSet
+} from "./types";
 
 export interface INetworkGraph {
   (
-    nodes: Array<CommunicationsNode>,
-    links: Array<Link>,
-    selectedIds: Array<number>,
+    nodes: Array<NodeEntity>,
+    links: Array<LinkEntity>,
+    selectedIds: Array<NodeEntity["id"]>,
     recalculateNodes: boolean
   ): void;
-  svgElement(element: SVGSVGElement): INetworkGraph;
-  width(value: number): INetworkGraph;
-  height(value: number): INetworkGraph;
-  minRadius(value: number): INetworkGraph;
-  maxRadius(value: number): INetworkGraph;
+
+  svgElement(element: SVGSVGElement): this;
+
+  width(): number;
+  width(value: number): this;
+
+  height(): number;
+  height(value: number): this;
+
+  minRadius(): number;
+  minRadius(value: number): this;
+
+  maxRadius(): number;
+  maxRadius(value: number): this;
+
   showTooltipCallback(
-    value: (data: CommunicationsNode, originRect: ClientRect) => void
-  ): INetworkGraph;
-  hideTooltipCallback(value: () => void): INetworkGraph;
-  toggleNodeCallback(value: (data: CommunicationsNode) => void): INetworkGraph;
+    value: (value: NodeEntity, originRect: ClientRect) => void
+  ): this;
+  hideTooltipCallback(value: () => void): this;
+  toggleNodeCallback(value: (value: NodeEntity) => void): this;
+  labelAccessor(value: (value: NodeEntity) => string): this;
 }
 
 export default function networkGraph(): INetworkGraph {
@@ -29,18 +46,19 @@ export default function networkGraph(): INetworkGraph {
   let minRadius = 8;
   let maxRadius = 13;
   let onShowTooltip:
-    | ((data: CommunicationsNode, originRect: any) => void)
+    | ((data: NodeEntity, originRect: ClientRect) => void)
     | null = null;
   let onHideTooltip: (() => void) | null = null;
-  let onToggleNode: ((data: CommunicationsNode) => void) | null = null;
+  let onToggleNode: ((data: NodeEntity) => void) | null = null;
+  let labelAccessor: (data: NodeEntity) => string = d => d.id;
   let _version = 0;
-  let _nodes: Array<CommunicationsNode> = [];
-  let _links: Array<Link> = [];
+  let _nodes: Array<D3NodeEntity> = [];
+  let _links: Array<D3LinkEntity> = [];
 
   function renderer(
-    nodes: Array<CommunicationsNode>,
-    links: Array<Link>,
-    selectedIds: Array<number>,
+    nodes: Array<NodeEntity>,
+    links: Array<LinkEntity>,
+    selectedIds: Array<NodeEntity["id"]>,
     recalculateNodes: boolean
   ) {
     // calculate new nodes and links data if the node or area info is changing:
@@ -57,14 +75,12 @@ export default function networkGraph(): INetworkGraph {
         }
       };
       const result = networkGraphFakeWorker(event);
-      _nodes = result.nodes;
-      _links = result.links;
+      _nodes = result.nodes as Array<D3NodeEntity>;
+      _links = result.links as Array<D3LinkEntity>;
     }
 
     // create and size the container svg element:
     const svg = d3.select(svgElement);
-    // const existingWidth = svg.attr("width");
-    // const existingHeight = svg.attr("height");
     svg.attr("width", width);
     svg.attr("height", height);
 
@@ -79,8 +95,11 @@ export default function networkGraph(): INetworkGraph {
 
     // general update pattern for the lines that are the links:
     let linkElements = linksGroup
-      .selectAll("line")
-      .data(_links, (d: any) => `${d.source.id}--${d.target.id}`);
+      .selectAll<SVGLineElement, LinkEntity>("line")
+      .data(
+        _links as Array<D3LinkEntity>,
+        (d: any) => `${d.source.id}--${d.target.id}`
+      );
     // exit:
     linkElements.exit().remove();
     // enter:
@@ -89,25 +108,21 @@ export default function networkGraph(): INetworkGraph {
       .enter()
       .append("line")
       .style("opacity", 0)
-      .attr("x1", d => (d.source as CommunicationsNode).x || 0)
-      .attr("y1", d => (d.source as CommunicationsNode).y || 0)
-      .attr("x2", d => (d.target as CommunicationsNode).x || 0)
-      .attr("y2", d => (d.target as CommunicationsNode).y || 0)
+      .attr("x1", d => (d.source as D3NodeEntity).x || 0)
+      .attr("y1", d => (d.source as D3NodeEntity).y || 0)
+      .attr("x2", d => (d.target as D3NodeEntity).x || 0)
+      .attr("y2", d => (d.target as D3NodeEntity).y || 0)
       .attr("stroke-width", (_d, index) => `${(index % 4) + 1}px`)
       .transition()
       .delay(150)
       .style("opacity", 1);
-    // @ts-ignore
-    // .merge(linkElements);
     // update:
     linkElements
       .transition()
-      // .delay(250)
-      // .style("opacity", 1)
-      .attr("x1", d => (d.source as CommunicationsNode).x || 0)
-      .attr("y1", d => (d.source as CommunicationsNode).y || 0)
-      .attr("x2", d => (d.target as CommunicationsNode).x || 0)
-      .attr("y2", d => (d.target as CommunicationsNode).y || 0)
+      .attr("x1", d => (d.source as D3NodeEntity).x || 0)
+      .attr("y1", d => (d.source as D3NodeEntity).y || 0)
+      .attr("x2", d => (d.target as D3NodeEntity).x || 0)
+      .attr("y2", d => (d.target as D3NodeEntity).y || 0)
       .attr("stroke-width", (_d, index) => `${(index % 4) + 1}px`);
 
     // create a group to contain all the nodes:
@@ -121,8 +136,8 @@ export default function networkGraph(): INetworkGraph {
 
     // for each node, create a group that contains a circle and a text:
     let nodeElements = nodesGroup
-      .selectAll(".node")
-      .data(_nodes, (d: any) => d.id);
+      .selectAll<SVGGElement, D3NodeEntity>(".node")
+      .data(_nodes as Array<D3NodeEntity>, d => d.id);
     const nodeElementsExit = nodeElements.exit();
     // remove the exiting node groups:
     nodeElementsExit.transition().remove();
@@ -140,15 +155,9 @@ export default function networkGraph(): INetworkGraph {
       .enter()
       .append("g")
       .classed("node", true)
-      .classed("root", (d: CommunicationsNode) => !!d.isRoot)
-      .classed(
-        "account",
-        (d: CommunicationsNode) => !d.isRoot && d.type === "account"
-      )
-      .classed(
-        "market",
-        (d: CommunicationsNode) => !d.isRoot && d.type === "market"
-      );
+      .classed("root", d => !!d.isRoot)
+      .classed("account", d => !d.isRoot && d.type === "account")
+      .classed("market", d => !d.isRoot && d.type === "market");
     // add a circle within each entering node group:
     nodeElementsEnter
       .append("circle")
@@ -175,40 +184,26 @@ export default function networkGraph(): INetworkGraph {
     const enterAndUpdateNodeElements = nodeElementsEnter.merge(nodeElements);
     enterAndUpdateNodeElements.classed(
       "selected",
-      (d: CommunicationsNode) => !!includes(selectedIds, d.id)
+      d => !!includes(selectedIds, d.id)
     );
-
-    // enterAndUpdateNodeElements
-    //   .select("circle")
-    //   .attr("cx", d => d.x || 0)
-    //   .attr("cy", d => d.y || 0);
-
-    // enterAndUpdateNodeElements
-    //   .select("text")
-    //   .attr("x", d => d.x || 0)
-    //   .attr("y", d => d.y || 0);
 
     // update the circle attributes:
     enterAndUpdateNodeElements
       .select("circle")
       .transition()
-      .attr("r", (d: CommunicationsNode) =>
-        d.isRoot || d.degree === 1 ? maxRadius : minRadius
-      )
+      .attr("r", d => (d.isRoot || d.degree === 1 ? maxRadius : minRadius))
       .attr("cx", d => d.x || 0)
       .attr("cy", d => d.y || 0);
     // update the text attributes:
     enterAndUpdateNodeElements
       .select("text")
-      .text(function(d) {
-        return d.initials;
-      })
+      .text(labelAccessor)
       .transition()
       .attr("x", d => d.x || 0)
       .attr("y", d => d.y || 0);
 
-    function handleMouseOver(d: CommunicationsNode, index: number) {
-      if (index === 0) {
+    function handleMouseOver(d: NodeEntity) {
+      if (!!d.isRoot) {
         return;
       }
       // @ts-ignore
@@ -216,14 +211,14 @@ export default function networkGraph(): INetworkGraph {
       onShowTooltip && onShowTooltip(d, boundingRect);
     }
 
-    function handleMouseOut(_d: CommunicationsNode, index: number) {
-      if (index === 0) {
+    function handleMouseOut(d: NodeEntity) {
+      if (!!d.isRoot) {
         return;
       }
       onHideTooltip && onHideTooltip();
     }
 
-    function handleClick(d: CommunicationsNode) {
+    function handleClick(d: NodeEntity) {
       if (d.degree !== 1) {
         return;
       }
@@ -236,28 +231,40 @@ export default function networkGraph(): INetworkGraph {
     return renderer;
   };
 
-  renderer.width = function(value: number) {
-    width = value!;
-    return renderer;
-  };
+  renderer.width = ((value?: number): number | INetworkGraph => {
+    if (typeof value !== "undefined") {
+      width = value || 0;
+      return renderer;
+    }
+    return width;
+  }) as GetOrSet<number, INetworkGraph>;
 
-  renderer.height = function(value: number) {
-    height = value!;
-    return renderer;
-  };
+  renderer.height = ((value?: number): number | INetworkGraph => {
+    if (typeof value !== "undefined") {
+      height = value || 0;
+      return renderer;
+    }
+    return height;
+  }) as GetOrSet<number, INetworkGraph>;
 
-  renderer.minRadius = function(value: number) {
-    minRadius = value!;
-    return renderer;
-  };
+  renderer.minRadius = ((value?: number): number | INetworkGraph => {
+    if (typeof value !== "undefined") {
+      minRadius = value || 0;
+      return renderer;
+    }
+    return minRadius;
+  }) as GetOrSet<number, INetworkGraph>;
 
-  renderer.maxRadius = function(value: number) {
-    maxRadius = value!;
-    return renderer;
-  };
+  renderer.maxRadius = ((value?: number): number | INetworkGraph => {
+    if (typeof value !== "undefined") {
+      maxRadius = value || 0;
+      return renderer;
+    }
+    return maxRadius;
+  }) as GetOrSet<number, INetworkGraph>;
 
   renderer.showTooltipCallback = function(
-    value: (data: CommunicationsNode, originRect: any) => void
+    value: (data: NodeEntity, originRect: ClientRect) => void
   ) {
     onShowTooltip = value;
     return renderer;
@@ -268,10 +275,13 @@ export default function networkGraph(): INetworkGraph {
     return renderer;
   };
 
-  renderer.toggleNodeCallback = function(
-    value: (data: CommunicationsNode) => void
-  ) {
+  renderer.toggleNodeCallback = function(value: (data: NodeEntity) => void) {
     onToggleNode = value;
+    return renderer;
+  };
+
+  renderer.labelAccessor = function(value: (value: NodeEntity) => string) {
+    labelAccessor = value;
     return renderer;
   };
 

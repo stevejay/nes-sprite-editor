@@ -1,20 +1,21 @@
 import React from "react";
-import { CommunicationsNode, Link } from "./NetworkGraph";
 import styles from "./NetworkGraphSVG.module.scss";
 import {
   default as networkGraphExperiment,
   INetworkGraph
 } from "./network-graph-experiment";
+import { NodeEntity, LinkEntity } from "./types";
 
 type Props = {
-  nodes: Array<CommunicationsNode>;
-  links: Array<Link>;
-  selectedIds: Array<number>;
+  nodes: Array<NodeEntity>;
+  links: Array<LinkEntity>;
+  selectedIds: Array<NodeEntity["id"]>;
   width: number;
   height: number;
-  onShowTooltip: (value: CommunicationsNode, originRect: ClientRect) => void;
+  labelAccessor: (value: NodeEntity) => string;
+  onShowTooltip: (value: NodeEntity, originRect: ClientRect) => void;
   onHideTooltip: () => void;
-  onToggleNode: (value: CommunicationsNode) => void;
+  onToggleNode: (value: NodeEntity) => void;
 };
 
 class NetworkGraphSVGExperiment extends React.PureComponent<Props> {
@@ -27,7 +28,8 @@ class NetworkGraphSVGExperiment extends React.PureComponent<Props> {
     this._renderer = networkGraphExperiment()
       .showTooltipCallback(this.handleShowTooltip)
       .hideTooltipCallback(this.handleHideTooltip)
-      .toggleNodeCallback(this.handleToggleNode);
+      .toggleNodeCallback(this.handleToggleNode)
+      .labelAccessor(props.labelAccessor);
   }
 
   componentDidMount() {
@@ -42,19 +44,16 @@ class NetworkGraphSVGExperiment extends React.PureComponent<Props> {
     );
   }
 
-  private handleShowTooltip = (
-    data: CommunicationsNode,
-    originRect: ClientRect
-  ) => {
-    this.props.onShowTooltip(data, originRect);
+  private handleShowTooltip = (value: NodeEntity, originRect: ClientRect) => {
+    this.props.onShowTooltip(value, originRect);
   };
 
   private handleHideTooltip = () => {
     this.props.onHideTooltip();
   };
 
-  private handleToggleNode = (data: CommunicationsNode) => {
-    this.props.onToggleNode(data);
+  private handleToggleNode = (value: NodeEntity) => {
+    this.props.onToggleNode(value);
   };
 
   private renderGraph(recalculateNodes: boolean) {

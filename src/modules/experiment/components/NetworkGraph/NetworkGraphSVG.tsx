@@ -1,25 +1,27 @@
 import React from "react";
-import { CommunicationsNode, Link } from "./NetworkGraph";
+import * as d3 from "d3";
 import { cloneDeep } from "lodash";
 import styles from "./NetworkGraphSVG.module.scss";
 import { default as networkGraph, INetworkGraph } from "./network-graph";
+import { NodeEntity, LinkEntity, D3NodeEntity, D3LinkEntity } from "./types";
 
 type Props = {
-  nodes: Array<CommunicationsNode>;
-  links: Array<Link>;
-  selectedIds: Array<number>;
+  nodes: Array<NodeEntity>;
+  links: Array<LinkEntity>;
+  selectedIds: Array<NodeEntity["id"]>;
   width: number;
   height: number;
-  onShowTooltip: (value: CommunicationsNode, originRect: ClientRect) => void;
+  labelAccessor: (value: NodeEntity) => string;
+  onShowTooltip: (value: NodeEntity, originRect: ClientRect) => void;
   onHideTooltip: () => void;
-  onToggleNode: (value: CommunicationsNode) => void;
+  onToggleNode: (value: NodeEntity) => void;
 };
 
 type State = {
-  nodes: Array<CommunicationsNode> | null;
-  links: Array<Link> | null;
-  d3Nodes: Array<CommunicationsNode> | null;
-  d3Links: Array<Link> | null;
+  nodes: Array<NodeEntity> | null;
+  links: Array<LinkEntity> | null;
+  d3Nodes: Array<D3NodeEntity> | null;
+  d3Links: Array<D3LinkEntity> | null;
 };
 
 class NetworkGraphSVG extends React.PureComponent<Props, State> {
@@ -32,7 +34,8 @@ class NetworkGraphSVG extends React.PureComponent<Props, State> {
     this._renderer = networkGraph()
       .showTooltipCallback(this.handleShowTooltip)
       .hideTooltipCallback(this.handleHideTooltip)
-      .toggleNodeCallback(this.handleToggleNode);
+      .toggleNodeCallback(this.handleToggleNode)
+      .labelAccessor(props.labelAccessor);
     this.state = NetworkGraphSVG.createState(props);
   }
 
@@ -54,24 +57,21 @@ class NetworkGraphSVG extends React.PureComponent<Props, State> {
     return {
       nodes: props.nodes,
       links: props.links,
-      d3Nodes: cloneDeep(props.nodes),
-      d3Links: cloneDeep(props.links)
+      d3Nodes: cloneDeep(props.nodes) as Array<D3NodeEntity>,
+      d3Links: cloneDeep(props.links) as Array<D3LinkEntity>
     };
   }
 
-  private handleShowTooltip = (
-    data: CommunicationsNode,
-    originRect: ClientRect
-  ) => {
-    this.props.onShowTooltip(data, originRect);
+  private handleShowTooltip = (value: NodeEntity, originRect: ClientRect) => {
+    this.props.onShowTooltip(value, originRect);
   };
 
   private handleHideTooltip = () => {
     this.props.onHideTooltip();
   };
 
-  private handleToggleNode = (data: CommunicationsNode) => {
-    this.props.onToggleNode(data);
+  private handleToggleNode = (value: NodeEntity) => {
+    this.props.onToggleNode(value);
   };
 
   private renderGraph() {
