@@ -1,24 +1,24 @@
 import React from "react";
-import { Node, Link } from "./NetworkGraph";
+import { CommunicationsNode, Link } from "./NetworkGraph";
 import { cloneDeep } from "lodash";
 import styles from "./NetworkGraphSVG.module.scss";
 import { default as networkGraph, INetworkGraph } from "./network-graph";
 
 type Props = {
-  nodes: Array<Node>;
+  nodes: Array<CommunicationsNode>;
   links: Array<Link>;
   selectedIds: Array<number>;
   width: number;
   height: number;
-  onShowTooltip: (value: Node, originRect: ClientRect) => void;
+  onShowTooltip: (value: CommunicationsNode, originRect: ClientRect) => void;
   onHideTooltip: () => void;
-  onToggleNode: (value: Node) => void;
+  onToggleNode: (value: CommunicationsNode) => void;
 };
 
 type State = {
-  nodes: Array<Node> | null;
+  nodes: Array<CommunicationsNode> | null;
   links: Array<Link> | null;
-  d3Nodes: Array<Node> | null;
+  d3Nodes: Array<CommunicationsNode> | null;
   d3Links: Array<Link> | null;
 };
 
@@ -59,7 +59,10 @@ class NetworkGraphSVG extends React.PureComponent<Props, State> {
     };
   }
 
-  private handleShowTooltip = (data: Node, originRect: ClientRect) => {
+  private handleShowTooltip = (
+    data: CommunicationsNode,
+    originRect: ClientRect
+  ) => {
     this.props.onShowTooltip(data, originRect);
   };
 
@@ -67,7 +70,7 @@ class NetworkGraphSVG extends React.PureComponent<Props, State> {
     this.props.onHideTooltip();
   };
 
-  private handleToggleNode = (data: Node) => {
+  private handleToggleNode = (data: CommunicationsNode) => {
     this.props.onToggleNode(data);
   };
 

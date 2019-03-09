@@ -18,18 +18,6 @@ export default function(
 ): BoundsForce {
   let nodes: any = null;
 
-  if (isNil(width)) {
-    width = 0;
-  }
-
-  if (isNil(height)) {
-    height = 0;
-  }
-
-  if (isNil(maxNodeRadius)) {
-    maxNodeRadius = 0;
-  }
-
   function force() {
     for (let i = 0; i < nodes.length; ++i) {
       // If the positions exceed the box, set them to the boundary position.

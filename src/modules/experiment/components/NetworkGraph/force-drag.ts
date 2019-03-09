@@ -18,8 +18,8 @@ export default function forceDrag(simulation: any) {
     if (!d3.event.active) {
       simulation.alphaTarget(0);
     }
-    d.fx = null;
-    d.fy = null;
+    delete d.fx;
+    delete d.fy;
   }
 
   return d3

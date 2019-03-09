@@ -1,5 +1,5 @@
 import React from "react";
-import { Node, Link } from "./NetworkGraph";
+import { CommunicationsNode, Link } from "./NetworkGraph";
 import styles from "./NetworkGraphSVG.module.scss";
 import {
   default as networkGraphExperiment,
@@ -7,14 +7,14 @@ import {
 } from "./network-graph-experiment";
 
 type Props = {
-  nodes: Array<Node>;
+  nodes: Array<CommunicationsNode>;
   links: Array<Link>;
   selectedIds: Array<number>;
   width: number;
   height: number;
-  onShowTooltip: (value: Node, originRect: ClientRect) => void;
+  onShowTooltip: (value: CommunicationsNode, originRect: ClientRect) => void;
   onHideTooltip: () => void;
-  onToggleNode: (value: Node) => void;
+  onToggleNode: (value: CommunicationsNode) => void;
 };
 
 class NetworkGraphSVGExperiment extends React.PureComponent<Props> {
@@ -42,7 +42,10 @@ class NetworkGraphSVGExperiment extends React.PureComponent<Props> {
     );
   }
 
-  private handleShowTooltip = (data: Node, originRect: ClientRect) => {
+  private handleShowTooltip = (
+    data: CommunicationsNode,
+    originRect: ClientRect
+  ) => {
     this.props.onShowTooltip(data, originRect);
   };
 
@@ -50,7 +53,7 @@ class NetworkGraphSVGExperiment extends React.PureComponent<Props> {
     this.props.onHideTooltip();
   };
 
-  private handleToggleNode = (data: Node) => {
+  private handleToggleNode = (data: CommunicationsNode) => {
     this.props.onToggleNode(data);
   };
 

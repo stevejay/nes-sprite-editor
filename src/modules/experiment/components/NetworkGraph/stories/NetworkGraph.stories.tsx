@@ -5,7 +5,11 @@ import { cloneDeep, includes } from "lodash";
 import * as React from "react";
 import { host } from "storybook-host";
 import "../../../../../index.scss";
-import { default as NetworkGraph, Node, Link } from "../NetworkGraph";
+import {
+  default as NetworkGraph,
+  CommunicationsNode,
+  Link
+} from "../NetworkGraph";
 
 const storyHost = host({
   align: "center middle",
@@ -13,7 +17,7 @@ const storyHost = host({
   width: "100%"
 });
 
-const NODES: Array<Node> = [
+const NODES: Array<CommunicationsNode> = [
   { id: 0, initials: "JS", type: "account", isRoot: true },
   { id: 1, initials: "ZB", type: "account", degree: 1 },
   { id: 2, initials: "DC", type: "account", degree: 1 },

@@ -5,7 +5,17 @@ import NetworkGraphSVG from "./NetworkGraphSVG";
 import ModelessDialog from "../HeatMap/ModelessDialog";
 import Tooltip from "../HeatMap/Tooltip";
 
-export type Node = {
+export type D3Node = {
+  id: number | string;
+  x?: number;
+  y?: number;
+  vx?: number;
+  vy?: number;
+  fx?: number;
+  fy?: number;
+};
+
+export type CommunicationsNode = {
   id: number;
   initials: string;
   type: string; // should be account or market
@@ -20,12 +30,12 @@ export type Node = {
 };
 
 export type Link = {
-  source: number | Node;
-  target: number | Node;
+  source: number | CommunicationsNode;
+  target: number | CommunicationsNode;
 };
 
 type Props = {
-  nodes: Array<Node>;
+  nodes: Array<CommunicationsNode>;
   links: Array<Link>;
   selectedIds: Array<number>;
   onNodeClick: (index: number) => void;
@@ -34,7 +44,7 @@ type Props = {
 type State = {
   showTooltip: boolean;
   originRect?: ClientRect;
-  tooltipData: Node | null;
+  tooltipData: CommunicationsNode | null;
 };
 
 // Desired height could be passed in as a prop or a style
@@ -45,7 +55,7 @@ class NetworkGraph extends React.Component<Props, State> {
     this.state = { showTooltip: false, tooltipData: null };
   }
 
-  handleShowTooltip = (value: Node, originRect: ClientRect) => {
+  handleShowTooltip = (value: CommunicationsNode, originRect: ClientRect) => {
     this.setState({
       showTooltip: true,
       originRect: originRect,
@@ -57,7 +67,7 @@ class NetworkGraph extends React.Component<Props, State> {
     this.setState({ showTooltip: false });
   };
 
-  handleToggleNode = (value: Node) => {
+  handleToggleNode = (value: CommunicationsNode) => {
     this.props.onNodeClick(value.id);
   };
 

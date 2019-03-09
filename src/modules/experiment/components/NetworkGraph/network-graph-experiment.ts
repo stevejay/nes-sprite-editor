@@ -1,13 +1,11 @@
 import * as d3 from "d3";
-import { Node, Link } from "./NetworkGraph";
+import { CommunicationsNode, Link } from "./NetworkGraph";
 import { includes, cloneDeep } from "lodash";
-import forceDrag from "./force-drag";
-import networkGraphForceSimulation from "./network-graph-force-simulation";
 import networkGraphFakeWorker from "./network-graph-fake-worker";
 
 export interface INetworkGraph {
   (
-    nodes: Array<Node>,
+    nodes: Array<CommunicationsNode>,
     links: Array<Link>,
     selectedIds: Array<number>,
     recalculateNodes: boolean
@@ -18,10 +16,10 @@ export interface INetworkGraph {
   minRadius(value: number): INetworkGraph;
   maxRadius(value: number): INetworkGraph;
   showTooltipCallback(
-    value: (data: Node, originRect: ClientRect) => void
+    value: (data: CommunicationsNode, originRect: ClientRect) => void
   ): INetworkGraph;
   hideTooltipCallback(value: () => void): INetworkGraph;
-  toggleNodeCallback(value: (data: Node) => void): INetworkGraph;
+  toggleNodeCallback(value: (data: CommunicationsNode) => void): INetworkGraph;
 }
 
 export default function networkGraph(): INetworkGraph {
@@ -30,15 +28,17 @@ export default function networkGraph(): INetworkGraph {
   let height = 0;
   let minRadius = 8;
   let maxRadius = 13;
-  let onShowTooltip: ((data: Node, originRect: any) => void) | null = null;
+  let onShowTooltip:
+    | ((data: CommunicationsNode, originRect: any) => void)
+    | null = null;
   let onHideTooltip: (() => void) | null = null;
-  let onToggleNode: ((data: Node) => void) | null = null;
+  let onToggleNode: ((data: CommunicationsNode) => void) | null = null;
   let _version = 0;
-  let _nodes: Array<Node> = [];
+  let _nodes: Array<CommunicationsNode> = [];
   let _links: Array<Link> = [];
 
   function renderer(
-    nodes: Array<Node>,
+    nodes: Array<CommunicationsNode>,
     links: Array<Link>,
     selectedIds: Array<number>,
     recalculateNodes: boolean
@@ -89,10 +89,10 @@ export default function networkGraph(): INetworkGraph {
       .enter()
       .append("line")
       .style("opacity", 0)
-      .attr("x1", d => (d.source as Node).x || 0)
-      .attr("y1", d => (d.source as Node).y || 0)
-      .attr("x2", d => (d.target as Node).x || 0)
-      .attr("y2", d => (d.target as Node).y || 0)
+      .attr("x1", d => (d.source as CommunicationsNode).x || 0)
+      .attr("y1", d => (d.source as CommunicationsNode).y || 0)
+      .attr("x2", d => (d.target as CommunicationsNode).x || 0)
+      .attr("y2", d => (d.target as CommunicationsNode).y || 0)
       .attr("stroke-width", (_d, index) => `${(index % 4) + 1}px`)
       .transition()
       .delay(150)
@@ -104,10 +104,10 @@ export default function networkGraph(): INetworkGraph {
       .transition()
       // .delay(250)
       // .style("opacity", 1)
-      .attr("x1", d => (d.source as Node).x || 0)
-      .attr("y1", d => (d.source as Node).y || 0)
-      .attr("x2", d => (d.target as Node).x || 0)
-      .attr("y2", d => (d.target as Node).y || 0)
+      .attr("x1", d => (d.source as CommunicationsNode).x || 0)
+      .attr("y1", d => (d.source as CommunicationsNode).y || 0)
+      .attr("x2", d => (d.target as CommunicationsNode).x || 0)
+      .attr("y2", d => (d.target as CommunicationsNode).y || 0)
       .attr("stroke-width", (_d, index) => `${(index % 4) + 1}px`);
 
     // create a group to contain all the nodes:
@@ -140,9 +140,15 @@ export default function networkGraph(): INetworkGraph {
       .enter()
       .append("g")
       .classed("node", true)
-      .classed("root", (d: Node) => !!d.isRoot)
-      .classed("account", (d: Node) => !d.isRoot && d.type === "account")
-      .classed("market", (d: Node) => !d.isRoot && d.type === "market");
+      .classed("root", (d: CommunicationsNode) => !!d.isRoot)
+      .classed(
+        "account",
+        (d: CommunicationsNode) => !d.isRoot && d.type === "account"
+      )
+      .classed(
+        "market",
+        (d: CommunicationsNode) => !d.isRoot && d.type === "market"
+      );
     // add a circle within each entering node group:
     nodeElementsEnter
       .append("circle")
@@ -169,7 +175,7 @@ export default function networkGraph(): INetworkGraph {
     const enterAndUpdateNodeElements = nodeElementsEnter.merge(nodeElements);
     enterAndUpdateNodeElements.classed(
       "selected",
-      (d: Node) => !!includes(selectedIds, d.id)
+      (d: CommunicationsNode) => !!includes(selectedIds, d.id)
     );
 
     // enterAndUpdateNodeElements
@@ -186,7 +192,7 @@ export default function networkGraph(): INetworkGraph {
     enterAndUpdateNodeElements
       .select("circle")
       .transition()
-      .attr("r", (d: Node) =>
+      .attr("r", (d: CommunicationsNode) =>
         d.isRoot || d.degree === 1 ? maxRadius : minRadius
       )
       .attr("cx", d => d.x || 0)
@@ -201,7 +207,7 @@ export default function networkGraph(): INetworkGraph {
       .attr("x", d => d.x || 0)
       .attr("y", d => d.y || 0);
 
-    function handleMouseOver(d: Node, index: number) {
+    function handleMouseOver(d: CommunicationsNode, index: number) {
       if (index === 0) {
         return;
       }
@@ -210,14 +216,14 @@ export default function networkGraph(): INetworkGraph {
       onShowTooltip && onShowTooltip(d, boundingRect);
     }
 
-    function handleMouseOut(_d: Node, index: number) {
+    function handleMouseOut(_d: CommunicationsNode, index: number) {
       if (index === 0) {
         return;
       }
       onHideTooltip && onHideTooltip();
     }
 
-    function handleClick(d: Node) {
+    function handleClick(d: CommunicationsNode) {
       if (d.degree !== 1) {
         return;
       }
@@ -251,7 +257,7 @@ export default function networkGraph(): INetworkGraph {
   };
 
   renderer.showTooltipCallback = function(
-    value: (data: Node, originRect: any) => void
+    value: (data: CommunicationsNode, originRect: any) => void
   ) {
     onShowTooltip = value;
     return renderer;
@@ -262,7 +268,9 @@ export default function networkGraph(): INetworkGraph {
     return renderer;
   };
 
-  renderer.toggleNodeCallback = function(value: (data: Node) => void) {
+  renderer.toggleNodeCallback = function(
+    value: (data: CommunicationsNode) => void
+  ) {
     onToggleNode = value;
     return renderer;
   };

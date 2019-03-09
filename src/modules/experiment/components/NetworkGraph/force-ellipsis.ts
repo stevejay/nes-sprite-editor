@@ -14,9 +14,6 @@ export default function(
     strength = constant(0.1),
     strengths;
 
-  if (x == null) x = 0;
-  if (y == null) y = 0;
-
   function force(alpha) {
     for (var i = 0, n = nodes.length; i < n; ++i) {
       var node = nodes[i];

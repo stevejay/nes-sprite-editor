@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import { Node, Link } from "./NetworkGraph";
+import { CommunicationsNode, Link } from "./NetworkGraph";
 import { random } from "lodash";
 import boundsForce from "./bounds-force";
 import forceEllipsis from "./force-ellipsis";
@@ -14,7 +14,7 @@ export default function networkGraphForceSimulation() {
     width: number,
     height: number,
     dimensionsChanged: boolean,
-    nodes: Array<Node>,
+    nodes: Array<CommunicationsNode>,
     links: Array<Link>,
     ticked: any
   ) {
@@ -30,12 +30,12 @@ export default function networkGraphForceSimulation() {
         nodes.forEach((node, index) => {
           node.x =
             currentNodes && currentNodes[index]
-              ? (currentNodes[index] as Node).x
+              ? (currentNodes[index] as CommunicationsNode).x
               : width * 0.5 + random(-10, 10);
           node.vx = NaN;
           node.y =
             currentNodes && currentNodes[index]
-              ? (currentNodes[index] as Node).y
+              ? (currentNodes[index] as CommunicationsNode).y
               : height * 0.5 + random(-10, 10);
           node.vy = NaN;
         });
@@ -43,7 +43,10 @@ export default function networkGraphForceSimulation() {
 
       simulation
         .nodes(nodes)
-        .force("link", d3.forceLink<Node, Link>(links).id((d: any) => d.id))
+        .force(
+          "link",
+          d3.forceLink<CommunicationsNode, Link>(links).id((d: any) => d.id)
+        )
         .force(
           "radial degree 1",
           d3

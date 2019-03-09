@@ -4,10 +4,10 @@ import Measure from "react-measure";
 import NetworkGraphSVGExperiment from "./NetworkGraphSVGExperiment";
 import ModelessDialog from "../HeatMap/ModelessDialog";
 import Tooltip from "../HeatMap/Tooltip";
-import { Link, Node } from "./NetworkGraph";
+import { Link, CommunicationsNode } from "./NetworkGraph";
 
 type Props = {
-  nodes: Array<Node>;
+  nodes: Array<CommunicationsNode>;
   links: Array<Link>;
   selectedIds: Array<number>;
   onNodeClick: (index: number) => void;
@@ -16,7 +16,7 @@ type Props = {
 type State = {
   showTooltip: boolean;
   originRect?: ClientRect;
-  tooltipData: Node | null;
+  tooltipData: CommunicationsNode | null;
 };
 
 // Desired height could be passed in as a prop or a style
@@ -27,7 +27,7 @@ class NetworkGraphExperiment extends React.Component<Props, State> {
     this.state = { showTooltip: false, tooltipData: null };
   }
 
-  handleShowTooltip = (value: Node, originRect: ClientRect) => {
+  handleShowTooltip = (value: CommunicationsNode, originRect: ClientRect) => {
     this.setState({
       showTooltip: true,
       originRect: originRect,
@@ -39,7 +39,7 @@ class NetworkGraphExperiment extends React.Component<Props, State> {
     this.setState({ showTooltip: false });
   };
 
-  handleToggleNode = (value: Node) => {
+  handleToggleNode = (value: CommunicationsNode) => {
     this.props.onNodeClick(value.id);
   };
 
