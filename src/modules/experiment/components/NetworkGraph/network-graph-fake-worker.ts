@@ -1,6 +1,8 @@
 import * as d3 from "d3";
 import boundsForce from "./bounds-force";
+import forceEllipsis from "./force-ellipsis";
 import { forceManyBodyReuse } from "d3-force-reuse";
+import { forceContainer } from "d3-force-container";
 import { random } from "lodash";
 import {
   D3NodeEntity,
@@ -40,20 +42,42 @@ export default function(event: SimulationWorkerEvent): SimulationWorkerResult {
       "link",
       d3.forceLink<D3NodeEntity, D3LinkEntity>(links).id(d => d.id)
     )
+    // .force(
+    //   "inner radial degree",
+    //   d3
+    //     .forceRadial<D3NodeEntity>(height * 0.2, width * 0.5, height * 0.5)
+    //     .strength(d => (d.degree === 1 ? 0.5 : 0))
+    // )
+    // .force(
+    //   "outer radial degree",
+    //   d3
+    //     .forceRadial<D3NodeEntity>(width * 0.33, width * 0.5, height * 0.5)
+    //     .strength(d => ((d.degree || 0) >= 2 ? 0.5 : 0))
+    // )
     .force(
-      "inner radial degree",
+      "radial depth 1",
       d3
         .forceRadial<D3NodeEntity>(height * 0.2, width * 0.5, height * 0.5)
-        .strength(d => (d.degree === 1 ? 0.5 : 0))
+        .strength(d => (d.depth === 1 ? 0.5 : 0))
     )
     .force(
-      "outer radial degree",
-      d3
-        .forceRadial<D3NodeEntity>(width * 0.33, width * 0.5, height * 0.5)
-        .strength(d => ((d.degree || 0) >= 2 ? 0.5 : 0))
+      "ellipsis depth 2+",
+      forceEllipsis<D3NodeEntity>(
+        width * 0.5,
+        height * 0.5,
+        width * 0.45,
+        height * 0.45
+      ).strength(d => ((d.depth || 0) >= 2 ? 0.25 + (d.depth || 0) * 0.1 : 0))
     )
     .force("center", d3.forceCenter(width * 0.5, height * 0.5))
     .force("bounds", boundsForce(width, height, maxRadius))
+    .force(
+      "container",
+      forceContainer([
+        [maxRadius, maxRadius],
+        [width - maxRadius, height - maxRadius]
+      ])
+    )
     .force("collision", d3.forceCollide().radius(() => maxRadius + 10))
     .force("charge", forceManyBodyReuse())
     .stop();

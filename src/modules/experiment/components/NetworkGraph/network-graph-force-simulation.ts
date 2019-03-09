@@ -2,6 +2,7 @@ import * as d3 from "d3";
 import { random } from "lodash";
 import boundsForce from "./bounds-force";
 import forceEllipsis from "./force-ellipsis";
+import { forceContainer } from "d3-force-container";
 import { forceManyBodyReuse } from "d3-force-reuse";
 import { D3NodeEntity, D3LinkEntity, GetOrSet } from "./types";
 
@@ -69,7 +70,7 @@ export default function networkGraphForceSimulation(): IForceSimulation {
           "radial depth 1",
           d3
             .forceRadial<D3NodeEntity>(height * 0.2, width * 0.5, height * 0.5)
-            .strength(d => (d.degree === 1 ? 0.5 : 0))
+            .strength(d => (d.depth === 1 ? 0.5 : 0))
         )
         .force(
           "ellipsis depth 2+",
@@ -79,11 +80,18 @@ export default function networkGraphForceSimulation(): IForceSimulation {
             width * 0.45,
             height * 0.45
           ).strength(d =>
-            (d.degree || 0) >= 2 ? 0.25 + (d.degree || 0) * 0.1 : 0
+            (d.depth || 0) >= 2 ? 0.25 + (d.depth || 0) * 0.1 : 0
           )
         )
         .force("center", d3.forceCenter(width * 0.5, height * 0.5))
         .force("bounds", boundsForce(width, height, maxRadius))
+        .force(
+          "container",
+          forceContainer([
+            [maxRadius, maxRadius],
+            [width - maxRadius, height - maxRadius]
+          ])
+        )
         .force("collision", d3.forceCollide().radius(() => maxRadius + 10))
         .force("charge", forceManyBodyReuse())
         .on("tick", ticked)

@@ -131,7 +131,7 @@ export default function networkGraph(): INetworkGraph {
       .call(forceDrag(simulation.handle()));
     // add a text for each entering node that is a major node:
     nodeElementsEnter
-      .filter(d => d.degree === 1 || !!d.isRoot)
+      .filter(d => d.depth === 1 || !!d.isRoot)
       .append("text")
       .attr("dx", 0)
       .attr("dy", 3)
@@ -156,7 +156,7 @@ export default function networkGraph(): INetworkGraph {
     nodeElements
       .select("circle")
       .attr("r", (d: NodeEntity) =>
-        d.isRoot || d.degree === 1 ? maxRadius : minRadius
+        d.isRoot || d.depth === 1 ? maxRadius : minRadius
       );
     // update the text attributes:
     nodeElements.select("text").text(labelAccessor);
@@ -204,7 +204,7 @@ export default function networkGraph(): INetworkGraph {
     }
 
     function handleClick(d: NodeEntity) {
-      if (d.degree !== 1) {
+      if (d.depth !== 1) {
         // TODO something like d.selectable?
         return;
       }

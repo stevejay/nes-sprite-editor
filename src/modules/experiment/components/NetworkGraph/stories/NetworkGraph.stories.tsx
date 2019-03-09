@@ -19,42 +19,42 @@ const storyHost = host({
 
 const NODES: Array<CommunicationsNode> = [
   { id: "0", initials: "JS", type: "account", isRoot: true },
-  { id: "1", initials: "ZB", type: "account", degree: 1 },
-  { id: "2", initials: "DC", type: "account", degree: 1 },
-  { id: "3", initials: "TD", type: "account", degree: 1 },
-  { id: "4", initials: "SS", type: "market", degree: 1 },
-  { id: "5", initials: "MS", type: "market", degree: 1 },
+  { id: "1", initials: "ZB", type: "account", depth: 1 },
+  { id: "2", initials: "DC", type: "account", depth: 1 },
+  { id: "3", initials: "TD", type: "account", depth: 1 },
+  { id: "4", initials: "SS", type: "market", depth: 1 },
+  { id: "5", initials: "MS", type: "market", depth: 1 },
 
-  { id: "6", initials: "AA", type: "account", degree: 2 },
-  { id: "7", initials: "BB", type: "account", degree: 2 },
-  { id: "8", initials: "BC", type: "account", degree: 3 },
-  { id: "9", initials: "BD", type: "account", degree: 3 },
-  { id: "10", initials: "BE", type: "account", degree: 3 },
+  { id: "6", initials: "AA", type: "account", depth: 2 },
+  { id: "7", initials: "BB", type: "account", depth: 2 },
+  { id: "8", initials: "BC", type: "account", depth: 3 },
+  { id: "9", initials: "BD", type: "account", depth: 3 },
+  { id: "10", initials: "BE", type: "account", depth: 3 },
 
-  { id: "11", initials: "CA", type: "market", degree: 2 },
-  { id: "12", initials: "CB", type: "market", degree: 2 },
-  { id: "13", initials: "CC", type: "account", degree: 2 },
-  { id: "14", initials: "CD", type: "account", degree: 3 },
-  { id: "15", initials: "CE", type: "account", degree: 3 },
-  { id: "16", initials: "CF", type: "account", degree: 3 },
-  { id: "17", initials: "CG", type: "market", degree: 4 },
-  { id: "18", initials: "CH", type: "market", degree: 4 },
-  { id: "19", initials: "CI", type: "market", degree: 4 },
+  { id: "11", initials: "CA", type: "market", depth: 2 },
+  { id: "12", initials: "CB", type: "market", depth: 2 },
+  { id: "13", initials: "CC", type: "account", depth: 2 },
+  { id: "14", initials: "CD", type: "account", depth: 3 },
+  { id: "15", initials: "CE", type: "account", depth: 3 },
+  { id: "16", initials: "CF", type: "account", depth: 3 },
+  { id: "17", initials: "CG", type: "market", depth: 4 },
+  { id: "18", initials: "CH", type: "market", depth: 4 },
+  { id: "19", initials: "CI", type: "market", depth: 4 },
 
-  { id: "20", initials: "DA", type: "account", degree: 2 },
-  { id: "21", initials: "DB", type: "account", degree: 2 },
-  { id: "22", initials: "DC", type: "account", degree: 2 },
+  { id: "20", initials: "DA", type: "account", depth: 2 },
+  { id: "21", initials: "DB", type: "account", depth: 2 },
+  { id: "22", initials: "DC", type: "account", depth: 2 },
 
-  { id: "23", initials: "EA", type: "account", degree: 2 },
-  { id: "24", initials: "EB", type: "account", degree: 2 },
-  { id: "25", initials: "EC", type: "account", degree: 2 },
+  { id: "23", initials: "EA", type: "account", depth: 2 },
+  { id: "24", initials: "EB", type: "account", depth: 2 },
+  { id: "25", initials: "EC", type: "account", depth: 2 },
 
-  { id: "26", initials: "FA", type: "market", degree: 2 },
-  { id: "27", initials: "FB", type: "market", degree: 2 },
-  { id: "28", initials: "FC", type: "market", degree: 2 },
-  { id: "29", initials: "FD", type: "account", degree: 3 },
-  { id: "30", initials: "FE", type: "account", degree: 3 },
-  { id: "31", initials: "FF", type: "account", degree: 3 }
+  { id: "26", initials: "FA", type: "market", depth: 2 },
+  { id: "27", initials: "FB", type: "market", depth: 2 },
+  { id: "28", initials: "FC", type: "market", depth: 2 },
+  { id: "29", initials: "FD", type: "account", depth: 3 },
+  { id: "30", initials: "FE", type: "account", depth: 3 },
+  { id: "31", initials: "FF", type: "account", depth: 3 }
 ];
 
 const LINKS: Array<CommunicationsLink> = [
@@ -106,10 +106,10 @@ const LINKS: Array<CommunicationsLink> = [
 
 const NODES_2: Array<CommunicationsNode> = [
   { id: "0", initials: "JS", type: "account", isRoot: true },
-  { id: "1", initials: "ZB", type: "account", degree: 1 },
-  { id: "2", initials: "DC", type: "account", degree: 1 },
-  { id: "3", initials: "TD", type: "account", degree: 1 },
-  { id: "5", initials: "MS", type: "market", degree: 1 }
+  { id: "1", initials: "ZB", type: "account", depth: 1 },
+  { id: "2", initials: "DC", type: "account", depth: 1 },
+  { id: "3", initials: "TD", type: "account", depth: 1 },
+  { id: "5", initials: "MS", type: "market", depth: 1 }
 ];
 
 const LINKS_2: Array<CommunicationsLink> = [

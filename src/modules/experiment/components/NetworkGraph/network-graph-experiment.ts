@@ -171,7 +171,7 @@ export default function networkGraph(): INetworkGraph {
       .attr("cy", d => d.y || 0);
     // add a text element for each entering node group for a major node:
     nodeElementsEnter
-      .filter(d => d.degree === 1 || !!d.isRoot)
+      .filter(d => d.depth === 1 || !!d.isRoot)
       .append("text")
       .attr("x", d => d.x || 0)
       .attr("y", d => d.y || 0)
@@ -191,7 +191,7 @@ export default function networkGraph(): INetworkGraph {
     enterAndUpdateNodeElements
       .select("circle")
       .transition()
-      .attr("r", d => (d.isRoot || d.degree === 1 ? maxRadius : minRadius))
+      .attr("r", d => (d.isRoot || d.depth === 1 ? maxRadius : minRadius))
       .attr("cx", d => d.x || 0)
       .attr("cy", d => d.y || 0);
     // update the text attributes:
@@ -219,7 +219,7 @@ export default function networkGraph(): INetworkGraph {
     }
 
     function handleClick(d: NodeEntity) {
-      if (d.degree !== 1) {
+      if (d.depth !== 1) {
         return;
       }
       onToggleNode && onToggleNode(d);
