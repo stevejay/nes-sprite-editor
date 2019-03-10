@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./NetworkGraphSVG.module.scss";
+import styles from "./ReactNetworkGraphSVG.module.scss";
 import { NodeEntity, LinkEntity, D3NodeEntity, D3LinkEntity } from "./types";
 import { cloneDeep, isNil, includes } from "lodash";
 import { Transition, animated } from "react-spring/renderprops";
@@ -9,32 +9,47 @@ import { CommunicationsNode } from "./NetworkGraph";
 
 const MIN_RADIUS = 8;
 const MAX_RADIUS = 13;
+const MAIN_CONFIG = { duration: 250 };
+const LEAVE_CONFIG = { duration: MAIN_CONFIG.duration + 50 };
+const CONFIG = (_item: any, state: any) =>
+  state === "leave" ? LEAVE_CONFIG : MAIN_CONFIG;
+const LINK_KEYS = (item: D3LinkEntity) =>
+  `${(item.source as D3NodeEntity).id}--${(item.target as D3NodeEntity).id}`;
+const NODE_KEYS = (item: D3NodeEntity) => item.id;
 
-const HIDDEN_LINE = item => ({
-  // opacity: 0,
+const HIDDEN_LINE = (item: D3LinkEntity) => ({
+  opacity: 0,
   x1: (item.source as D3NodeEntity).x,
   y1: (item.source as D3NodeEntity).y,
   x2: (item.target as D3NodeEntity).x,
   y2: (item.target as D3NodeEntity).y
 });
 
-const VISIBLE_LINE = item => ({
-  // opacity: 1,
+const VISIBLE_LINE = (item: D3LinkEntity) => ({
+  opacity: 1,
   x1: (item.source as D3NodeEntity).x,
   y1: (item.source as D3NodeEntity).y,
   x2: (item.target as D3NodeEntity).x,
   y2: (item.target as D3NodeEntity).y
 });
 
-const HIDDEN_NODE = item => ({
-  x: (item as D3NodeEntity).x,
-  y: (item as D3NodeEntity).y
+const REMOVED_LINE = { opacity: 0 };
+
+const HIDDEN_NODE = (item: D3NodeEntity) => ({
+  x: item.x,
+  y: item.y,
+  r: 0,
+  opacity: 0
 });
 
-const VISIBLE_NODE = item => ({
-  x: (item as D3NodeEntity).x,
-  y: (item as D3NodeEntity).y
+const VISIBLE_NODE = (item: D3NodeEntity) => ({
+  x: item.x,
+  y: item.y,
+  r: item.depth > 1 ? MIN_RADIUS : MAX_RADIUS,
+  opacity: 1
 });
+
+const REMOVED_NODE = { r: 0, opacity: 0 };
 
 type Props = {
   nodes: Array<NodeEntity>;
@@ -131,30 +146,24 @@ class ReactNetworkGraphSVG extends React.PureComponent<Props, State> {
           {!isNil(d3Links) && (
             <Transition
               native
-              config={{ duration: 300 }}
+              config={CONFIG}
               items={d3Links}
-              keys={item => `${item.source.id}--${item.target.id}`}
-              initial={HIDDEN_LINE}
-              // from={HIDDEN_LINE}
+              keys={LINK_KEYS}
+              from={HIDDEN_LINE}
               enter={VISIBLE_LINE}
               update={VISIBLE_LINE}
-              leave={HIDDEN_LINE}
+              leave={REMOVED_LINE}
             >
-              {d3Link => transProps => {
-                const source = d3Link.source as D3NodeEntity;
-                const target = d3Link.target as D3NodeEntity;
-                return (
-                  <animated.line
-                    // key={`${source.id}--${target.id}`}
-                    strokeWidth={`${(+target.id % 4) + 1}px`}
-                    x1={transProps.x1}
-                    y1={transProps.y1}
-                    x2={transProps.x2}
-                    y2={transProps.y2}
-                    style={{ opacity: transProps.opacity }}
-                  />
-                );
-              }}
+              {d3Link => styles => (
+                <animated.line
+                  strokeWidth={(+(d3Link.target as D3NodeEntity).id % 4) + 1}
+                  x1={styles.x1}
+                  y1={styles.y1}
+                  x2={styles.x2}
+                  y2={styles.y2}
+                  style={{ opacity: styles.opacity }}
+                />
+              )}
             </Transition>
           )}
         </g>
@@ -162,17 +171,15 @@ class ReactNetworkGraphSVG extends React.PureComponent<Props, State> {
           {!isNil(d3Nodes) && (
             <Transition
               native
-              // unique
-              config={{ duration: 300 }}
+              config={CONFIG}
               items={d3Nodes}
-              keys={item => item.id}
-              initial={HIDDEN_NODE}
-              // from={HIDDEN_NODE}
+              keys={NODE_KEYS}
+              from={HIDDEN_NODE}
               enter={VISIBLE_NODE}
               update={VISIBLE_NODE}
-              leave={HIDDEN_NODE}
+              leave={REMOVED_NODE}
             >
-              {d3Node => transProps => {
+              {d3Node => styles => {
                 const commsNode = d3Node as CommunicationsNode;
                 const className = classNames("node", {
                   root: d3Node.depth === 0,
@@ -181,14 +188,12 @@ class ReactNetworkGraphSVG extends React.PureComponent<Props, State> {
                   selected: includes(selectedIds, d3Node.id)
                 });
                 return (
-                  <animated.g
-                    // key={d3Node.id}
-                    className={className}
-                  >
+                  <animated.g className={className}>
                     <animated.circle
-                      cx={transProps.x}
-                      cy={transProps.y}
-                      r={d3Node.depth > 1 ? MIN_RADIUS : MAX_RADIUS}
+                      cx={styles.x}
+                      cy={styles.y}
+                      r={styles.r}
+                      style={{ opacity: styles.opacity }}
                       onClick={
                         d3Node.depth === 1
                           ? event => this.handleClick(event, d3Node)
@@ -205,10 +210,11 @@ class ReactNetworkGraphSVG extends React.PureComponent<Props, State> {
                     />
                     {d3Node.depth <= 1 && (
                       <animated.text
-                        x={transProps.x}
-                        y={transProps.y}
+                        x={styles.x}
+                        y={styles.y}
                         dx={0}
                         dy={3}
+                        style={{ opacity: styles.opacity }}
                       >
                         {commsNode.initials}
                       </animated.text>
@@ -223,57 +229,5 @@ class ReactNetworkGraphSVG extends React.PureComponent<Props, State> {
     );
   }
 }
-
-// d3Links.map((d3Link, index) => {
-//   const source = d3Link.source as D3NodeEntity;
-//   const target = d3Link.target as D3NodeEntity;
-//   return (
-//     <line
-//       key={`${source.id}--${target.id}`}
-//       strokeWidth={`${(index % 4) + 1}px`}
-//       x1={source.x}
-//       y1={source.y}
-//       x2={target.x}
-//       y2={target.y}
-//     />
-//   );
-// })}
-
-// d3Nodes.map(d3Node => {
-//   const commsNode = d3Node as CommunicationsNode;
-//   const className = classNames("node", {
-//     root: d3Node.depth === 0,
-//     account: d3Node.depth > 0 && commsNode.type === "account",
-//     market: d3Node.depth > 0 && commsNode.type === "market",
-//     selected: includes(selectedIds, d3Node.id)
-//   });
-//   return (
-//     <g key={d3Node.id} className={className}>
-//       <circle
-//         cx={d3Node.x}
-//         cy={d3Node.y}
-//         r={d3Node.depth > 1 ? MIN_RADIUS : MAX_RADIUS}
-//         onClick={
-//           d3Node.depth === 1
-//             ? event => this.handleClick(event, d3Node)
-//             : undefined
-//         }
-//         onMouseOver={
-//           d3Node.depth > 0
-//             ? event => this.handleMouseOver(event, d3Node)
-//             : undefined
-//         }
-//         onMouseOut={
-//           d3Node.depth > 0 ? this.handleMouseOut : undefined
-//         }
-//       />
-//       {d3Node.depth <= 1 && (
-//         <text x={d3Node.x} y={d3Node.y} dx={0} dy={3}>
-//           {commsNode.initials}
-//         </text>
-//       )}
-//     </g>
-//   );
-// })}
 
 export default ReactNetworkGraphSVG;
