@@ -15,17 +15,14 @@ export default async function(
   event: SimulationWorkerEvent
 ): Promise<SimulationWorkerResult> {
   const { width, height, maxRadius, version } = event.data;
-  const nodes = event.data.nodes; // as Array<NodeT & d3.SimulationNodeDatum>;
+  const nodes = event.data.nodes;
   const links = event.data.links;
-  //  as Array<
-  //   LinkT & d3.SimulationLinkDatum<d3.SimulationNodeDatum>
-  // >;
 
   // fix the position of the root node to the center of the graph:
   nodes[0].fx = width * 0.5;
   nodes[0].fy = height * 0.5;
 
-  // position the remaining nodes around the root node:
+  // position the remaining nodes randomly around the root node:
   nodes.forEach((node: d3.SimulationNodeDatum) => {
     node.x = width * 0.5 + random(-10, 10);
     node.vx = NaN;
@@ -33,10 +30,7 @@ export default async function(
     node.vy = NaN;
   });
 
-  // TRY THIS:
-  // .force("container", forceContainer([[10, 10],[890, 490]]))
-  // instead of boundsForce
-
+  // create the simulation with its various forces:
   const simulation = d3
     .forceSimulation()
     .nodes(nodes)
@@ -44,18 +38,6 @@ export default async function(
       "link",
       d3.forceLink<D3NodeEntity, D3LinkEntity>(links).id(d => d.id)
     )
-    // .force(
-    //   "inner radial degree",
-    //   d3
-    //     .forceRadial<D3NodeEntity>(height * 0.2, width * 0.5, height * 0.5)
-    //     .strength(d => (d.degree === 1 ? 0.5 : 0))
-    // )
-    // .force(
-    //   "outer radial degree",
-    //   d3
-    //     .forceRadial<D3NodeEntity>(width * 0.33, width * 0.5, height * 0.5)
-    //     .strength(d => ((d.degree || 0) >= 2 ? 0.5 : 0))
-    // )
     .force(
       "radial depth 1",
       d3
@@ -84,14 +66,17 @@ export default async function(
     .force("charge", forceManyBodyReuse())
     .stop();
 
-  const n = Math.ceil(
+  // calculate how many iterations of the simulation to perform:
+  const totalTicks = Math.ceil(
     Math.log(simulation.alphaMin()) / Math.log(1 - simulation.alphaDecay())
   );
 
-  for (let i = 0; i < n; ++i) {
+  // run the simulation:
+  for (let i = 0; i < totalTicks; ++i) {
     // postMessage({ type: "tick", progress: i / n });
     simulation.tick();
   }
 
+  // return the result:
   return { type: "end", nodes, links, version };
 }
