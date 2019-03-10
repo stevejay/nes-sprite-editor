@@ -137,8 +137,8 @@ class ReactNetworkGraphSVG extends React.PureComponent<Props, State> {
               initial={HIDDEN_LINE}
               // from={HIDDEN_LINE}
               enter={VISIBLE_LINE}
-              leave={HIDDEN_LINE}
               update={VISIBLE_LINE}
+              leave={HIDDEN_LINE}
             >
               {d3Link => transProps => {
                 const source = d3Link.source as D3NodeEntity;
@@ -161,7 +161,7 @@ class ReactNetworkGraphSVG extends React.PureComponent<Props, State> {
         <g className="nodes-group">
           {!isNil(d3Nodes) && (
             <Transition
-              // native
+              native
               // unique
               config={{ duration: 300 }}
               items={d3Nodes}
@@ -169,8 +169,8 @@ class ReactNetworkGraphSVG extends React.PureComponent<Props, State> {
               initial={HIDDEN_NODE}
               // from={HIDDEN_NODE}
               enter={VISIBLE_NODE}
-              leave={HIDDEN_NODE}
               update={VISIBLE_NODE}
+              leave={HIDDEN_NODE}
             >
               {d3Node => transProps => {
                 const commsNode = d3Node as CommunicationsNode;
@@ -181,34 +181,39 @@ class ReactNetworkGraphSVG extends React.PureComponent<Props, State> {
                   selected: includes(selectedIds, d3Node.id)
                 });
                 return (
-                  <g
+                  <animated.g
                     // key={d3Node.id}
                     className={className}
                   >
-                    <circle
+                    <animated.circle
                       cx={transProps.x}
                       cy={transProps.y}
                       r={d3Node.depth > 1 ? MIN_RADIUS : MAX_RADIUS}
-                      // onClick={
-                      //   d3Node.depth === 1
-                      //     ? event => this.handleClick(event, d3Node)
-                      //     : undefined
-                      // }
-                      // onMouseOver={
-                      //   d3Node.depth > 0
-                      //     ? event => this.handleMouseOver(event, d3Node)
-                      //     : undefined
-                      // }
-                      // onMouseOut={
-                      //   d3Node.depth > 0 ? this.handleMouseOut : undefined
-                      // }
+                      onClick={
+                        d3Node.depth === 1
+                          ? event => this.handleClick(event, d3Node)
+                          : undefined
+                      }
+                      onMouseOver={
+                        d3Node.depth > 0
+                          ? event => this.handleMouseOver(event, d3Node)
+                          : undefined
+                      }
+                      onMouseOut={
+                        d3Node.depth > 0 ? this.handleMouseOut : undefined
+                      }
                     />
                     {d3Node.depth <= 1 && (
-                      <text x={transProps.x} y={transProps.y} dx={0} dy={3}>
+                      <animated.text
+                        x={transProps.x}
+                        y={transProps.y}
+                        dx={0}
+                        dy={3}
+                      >
                         {commsNode.initials}
-                      </text>
+                      </animated.text>
                     )}
-                  </g>
+                  </animated.g>
                 );
               }}
             </Transition>
