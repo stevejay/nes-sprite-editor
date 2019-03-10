@@ -240,11 +240,12 @@ export default function networkGraph(): INetworkGraph {
       .data(_nodes as Array<D3NodeEntity>, d => d.id);
     const nodeElementsExit = nodeElements.exit();
     // remove the exiting node groups:
-    nodeElementsExit.remove();
+    nodeElementsExit.transition().remove();
     // remove the circle in each exiting node group:
     nodeElementsExit
       .select("circle")
       .transition()
+      .style("opacity", 0)
       .attr("r", 0)
       .remove();
     // remove the text element in each exiting node group:
