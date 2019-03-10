@@ -1,11 +1,11 @@
 import React from "react";
 import styles from "./NetworkGraph.module.scss";
 import Measure from "react-measure";
-import NetworkGraphSVGExperiment from "./NetworkGraphSVGExperiment";
 import ModelessDialog from "../HeatMap/ModelessDialog";
 import Tooltip from "../HeatMap/Tooltip";
 import { CommunicationsLink, CommunicationsNode } from "./NetworkGraph";
 import { NodeEntity } from "./types";
+import ReactNetworkGraphSVG from "./ReactNetworkGraphSVG";
 
 type Props = {
   nodes: Array<CommunicationsNode>;
@@ -22,7 +22,7 @@ type State = {
 
 // Desired height could be passed in as a prop or a style
 
-class NetworkGraphExperiment extends React.Component<Props, State> {
+class ReactNetworkGraph extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = { showTooltip: false, tooltipData: null };
@@ -44,20 +44,6 @@ class NetworkGraphExperiment extends React.Component<Props, State> {
     this.props.onNodeClick(value.id);
   };
 
-  /*
-  nodes
-  links
-  selectedIds
-  width
-  height
-  nodeGroupRenderer
-  labelRenderer
-  nodeRenderer
-  onShowTooltip
-  onHideTooltip
-  onToggleNodeSelection
-  */
-
   render() {
     const { nodes, links, selectedIds } = this.props;
     const { showTooltip, originRect, tooltipData } = this.state;
@@ -65,13 +51,12 @@ class NetworkGraphExperiment extends React.Component<Props, State> {
       <Measure bounds>
         {({ measureRef, contentRect }) => (
           <div ref={measureRef} className={styles.graphContainer}>
-            <NetworkGraphSVGExperiment
+            <ReactNetworkGraphSVG
               nodes={nodes}
               links={links}
               selectedIds={selectedIds}
               width={contentRect.bounds ? contentRect.bounds.width : 0}
               height={contentRect.bounds ? contentRect.bounds.height : 0}
-              labelAccessor={d => (d as CommunicationsNode).initials}
               onShowTooltip={this.handleShowTooltip}
               onHideTooltip={this.handleHideTooltip}
               onToggleNode={this.handleToggleNode}
@@ -94,4 +79,4 @@ class NetworkGraphExperiment extends React.Component<Props, State> {
   }
 }
 
-export default NetworkGraphExperiment;
+export default ReactNetworkGraph;

@@ -15,7 +15,7 @@ const storyHost = host({
 });
 
 const NODES: Array<CommunicationsNode> = [
-  { id: "0", initials: "JS", type: "account", isRoot: true },
+  { id: "0", initials: "JS", type: "account", depth: 0 },
   { id: "1", initials: "ZB", type: "account", depth: 1 },
   { id: "2", initials: "DC", type: "account", depth: 1 },
   { id: "3", initials: "TD", type: "account", depth: 1 },
@@ -102,7 +102,7 @@ const LINKS: Array<CommunicationsLink> = [
 ];
 
 const NODES_2: Array<CommunicationsNode> = [
-  { id: "0", initials: "JS", type: "account", isRoot: true },
+  { id: "0", initials: "JS", type: "account", depth: 0 },
   { id: "1", initials: "ZB", type: "account", depth: 1 },
   { id: "2", initials: "DC", type: "account", depth: 1 },
   { id: "3", initials: "TD", type: "account", depth: 1 },

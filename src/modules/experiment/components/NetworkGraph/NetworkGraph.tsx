@@ -7,17 +7,11 @@ import Tooltip from "../HeatMap/Tooltip";
 import { NodeEntity, LinkEntity } from "./types";
 
 export type CommunicationsNode = NodeEntity & {
-  // id: string;
   initials: string;
   type: string; // should be account or market
-  // degree?: number; // TODO change
-  // isRoot?: boolean; // TODO change
 };
 
-export type CommunicationsLink = LinkEntity & {
-  // source: string;
-  // target: string;
-};
+export type CommunicationsLink = LinkEntity;
 
 type Props = {
   nodes: Array<CommunicationsNode>;
@@ -76,9 +70,13 @@ class NetworkGraph extends React.Component<Props, State> {
             />
             <ModelessDialog isShowing={showTooltip}>
               <Tooltip originRect={originRect}>
-                <p>{tooltipData ? tooltipData.initials : ""}</p>
-                <p>Some info</p>
-                <p>Some more info 2</p>
+                {tooltipData && (
+                  <>
+                    <p>{tooltipData.initials}</p>
+                    <p>Some info</p>
+                    <p>Some more info 2</p>
+                  </>
+                )}
               </Tooltip>
             </ModelessDialog>
           </div>

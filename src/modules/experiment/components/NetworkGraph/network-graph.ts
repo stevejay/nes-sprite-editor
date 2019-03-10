@@ -118,9 +118,9 @@ export default function networkGraph(): INetworkGraph {
       .enter()
       .append("g")
       .classed("node", true)
-      .classed("root", d => !!d.isRoot)
-      .classed("account", d => !d.isRoot && d.type === "account")
-      .classed("market", d => !d.isRoot && d.type === "market");
+      .classed("root", d => d.depth === 0)
+      .classed("account", d => d.depth > 0 && d.type === "account")
+      .classed("market", d => d.depth > 0 && d.type === "market");
     // add a circle for each entering node:
     nodeElementsEnter
       .append("circle")
@@ -131,7 +131,7 @@ export default function networkGraph(): INetworkGraph {
       .call(forceDrag(simulation.handle()));
     // add a text for each entering node that is a major node:
     nodeElementsEnter
-      .filter(d => d.depth === 1 || !!d.isRoot)
+      .filter(d => d.depth <= 1)
       .append("text")
       .attr("dx", 0)
       .attr("dy", 3)
@@ -155,9 +155,7 @@ export default function networkGraph(): INetworkGraph {
     // update the circle attributes:
     nodeElements
       .select("circle")
-      .attr("r", (d: NodeEntity) =>
-        d.isRoot || d.depth === 1 ? maxRadius : minRadius
-      );
+      .attr("r", (d: NodeEntity) => (d.depth <= 1 ? maxRadius : minRadius));
     // update the text attributes:
     nodeElements.select("text").text(labelAccessor);
 
@@ -188,7 +186,7 @@ export default function networkGraph(): INetworkGraph {
     }
 
     function handleMouseOver(d: NodeEntity) {
-      if (!!d.isRoot) {
+      if (d.depth === 0) {
         return;
       }
       // @ts-ignore
@@ -197,7 +195,7 @@ export default function networkGraph(): INetworkGraph {
     }
 
     function handleMouseOut(d: NodeEntity) {
-      if (!!d.isRoot) {
+      if (d.depth === 0) {
         return;
       }
       onHideTooltip && onHideTooltip();

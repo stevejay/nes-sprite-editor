@@ -13,8 +13,7 @@ export type ValueFunction<ValueT, NodeT extends d3.SimulationNodeDatum> = (
 
 export type NodeEntity = {
   id: string;
-  depth?: number; // TODO change , maybe rename to depth
-  isRoot?: boolean; // TODO change
+  depth: number;
 };
 
 export type LinkEntity = {

@@ -1,5 +1,4 @@
 import React from "react";
-import * as d3 from "d3";
 import { cloneDeep } from "lodash";
 import styles from "./NetworkGraphSVG.module.scss";
 import { default as networkGraph, INetworkGraph } from "./network-graph";

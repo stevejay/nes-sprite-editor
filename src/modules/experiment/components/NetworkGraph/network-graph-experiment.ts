@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import { includes, cloneDeep } from "lodash";
+import { includes, cloneDeep, isNil } from "lodash";
 import networkGraphFakeWorker from "./network-graph-fake-worker";
 import {
   NodeEntity,
@@ -8,6 +8,90 @@ import {
   D3LinkEntity,
   GetOrSet
 } from "./types";
+
+function group() {
+  let className = "";
+  let data: Array<any> | null = null;
+
+  function renderer(parentSelection: any) {
+    let group = isNil(data)
+      ? parentSelection.select("." + className)
+      : parentSelection.selectAll("." + className).data(data);
+
+    const enter = group
+      .enter()
+      .append("g")
+      .classed(className, true);
+
+    return {
+      enter,
+      exit: group.exit(),
+      update: enter.merge(group)
+    };
+  }
+
+  renderer.className = (value?: string) => {
+    if (typeof value !== "undefined") {
+      className = value || "";
+      return renderer;
+    }
+    return className;
+  };
+
+  return renderer;
+}
+
+function svg() {
+  let svgElement: SVGSVGElement | null = null;
+  let width = 0;
+  let height = 0;
+
+  function renderer() {
+    const svg = d3.select(svgElement);
+    svg.attr("width", width);
+    svg.attr("height", height);
+    return svg;
+  }
+
+  renderer.svgElement = function(element: SVGSVGElement) {
+    svgElement = element;
+    return renderer;
+  };
+
+  renderer.width = (value?: number) => {
+    if (typeof value !== "undefined") {
+      width = value || 0;
+      return renderer;
+    }
+    return width;
+  };
+
+  renderer.height = (value?: number) => {
+    if (typeof value !== "undefined") {
+      height = value || 0;
+      return renderer;
+    }
+    return height;
+  };
+
+  // renderer.width = ((value?: number): number | INetworkGraph => {
+  //   if (typeof value !== "undefined") {
+  //     width = value || 0;
+  //     return renderer;
+  //   }
+  //   return width;
+  // }) as GetOrSet<number, INetworkGraph>;
+
+  // renderer.height = ((value?: number): number | INetworkGraph => {
+  //   if (typeof value !== "undefined") {
+  //     height = value || 0;
+  //     return renderer;
+  //   }
+  //   return height;
+  // }) as GetOrSet<number, INetworkGraph>;
+
+  return renderer;
+}
 
 export interface INetworkGraph {
   (
@@ -155,9 +239,9 @@ export default function networkGraph(): INetworkGraph {
       .enter()
       .append("g")
       .classed("node", true)
-      .classed("root", d => !!d.isRoot)
-      .classed("account", d => !d.isRoot && d.type === "account")
-      .classed("market", d => !d.isRoot && d.type === "market");
+      .classed("root", d => d.depth === 0)
+      .classed("account", d => d.depth > 0 && d.type === "account")
+      .classed("market", d => d.depth > 0 && d.type === "market");
     // add a circle within each entering node group:
     nodeElementsEnter
       .append("circle")
@@ -171,7 +255,7 @@ export default function networkGraph(): INetworkGraph {
       .attr("cy", d => d.y || 0);
     // add a text element for each entering node group for a major node:
     nodeElementsEnter
-      .filter(d => d.depth === 1 || !!d.isRoot)
+      .filter(d => d.depth <= 1)
       .append("text")
       .attr("x", d => d.x || 0)
       .attr("y", d => d.y || 0)
@@ -191,7 +275,7 @@ export default function networkGraph(): INetworkGraph {
     enterAndUpdateNodeElements
       .select("circle")
       .transition()
-      .attr("r", d => (d.isRoot || d.depth === 1 ? maxRadius : minRadius))
+      .attr("r", d => (d.depth <= 1 ? maxRadius : minRadius))
       .attr("cx", d => d.x || 0)
       .attr("cy", d => d.y || 0);
     // update the text attributes:
@@ -203,7 +287,7 @@ export default function networkGraph(): INetworkGraph {
       .attr("y", d => d.y || 0);
 
     function handleMouseOver(d: NodeEntity) {
-      if (!!d.isRoot) {
+      if (d.depth === 0) {
         return;
       }
       // @ts-ignore
@@ -212,7 +296,7 @@ export default function networkGraph(): INetworkGraph {
     }
 
     function handleMouseOut(d: NodeEntity) {
-      if (!!d.isRoot) {
+      if (d.depth === 0) {
         return;
       }
       onHideTooltip && onHideTooltip();
