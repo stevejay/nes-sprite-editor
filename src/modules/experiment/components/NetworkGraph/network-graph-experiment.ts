@@ -1,6 +1,7 @@
 import * as d3 from "d3";
 import { includes, cloneDeep, isNil } from "lodash";
 import networkGraphFakeWorker from "./network-graph-fake-worker";
+// import drag from "./drag";
 import {
   NodeEntity,
   LinkEntity,
@@ -47,10 +48,10 @@ function svg() {
   let height = 0;
 
   function renderer() {
-    const svg = d3.select(svgElement);
-    svg.attr("width", width);
-    svg.attr("height", height);
-    return svg;
+    const svgSelection = d3.select(svgElement);
+    svgSelection.attr("width", width);
+    svgSelection.attr("height", height);
+    return svgSelection;
   }
 
   renderer.svgElement = function(element: SVGSVGElement) {
@@ -163,6 +164,16 @@ export default function networkGraph(): INetworkGraph {
       _links = result.links as Array<D3LinkEntity>;
     }
 
+    /*
+    const svgSelection = svg.width(width).height(height)(svgElement);
+    const linkGroupGUP = linkGroup(svgSelection);
+    const nodeGroupGUP = nodeGroup(svgSelection);
+    link.data(_links)(linkGroupGUP);
+    const nodeGUP = node.data(_nodes)(nodeGroupGUP);
+    circle(nodeGUP)
+    text(nodeGUP)
+    */
+
     // create and size the container svg element:
     const svg = d3.select(svgElement);
     svg.attr("width", width);
@@ -185,7 +196,12 @@ export default function networkGraph(): INetworkGraph {
         (d: any) => `${d.source.id}--${d.target.id}`
       );
     // exit:
-    linkElements.exit().remove();
+    linkElements
+      .exit()
+      .transition()
+      .duration(100)
+      .style("opacity", 0)
+      .remove();
     // enter:
     // linkElements = linkElements
     linkElements
@@ -224,7 +240,7 @@ export default function networkGraph(): INetworkGraph {
       .data(_nodes as Array<D3NodeEntity>, d => d.id);
     const nodeElementsExit = nodeElements.exit();
     // remove the exiting node groups:
-    nodeElementsExit.transition().remove();
+    nodeElementsExit.remove();
     // remove the circle in each exiting node group:
     nodeElementsExit
       .select("circle")
@@ -245,14 +261,14 @@ export default function networkGraph(): INetworkGraph {
     // add a circle within each entering node group:
     nodeElementsEnter
       .append("circle")
-      .on("mouseover", handleMouseOver)
-      .on("mouseout", handleMouseOut)
-      .on("click", handleClick)
-      // @ts-ignore
-      // .call(forceDrag(simulation.handle()))
       .attr("r", 0)
       .attr("cx", d => d.x || 0)
-      .attr("cy", d => d.y || 0);
+      .attr("cy", d => d.y || 0)
+      .on("mouseover", handleMouseOver)
+      .on("mouseout", handleMouseOut)
+      .on("click", handleClick);
+    // @ts-ignore
+    // .call(drag());
     // add a text element for each entering node group for a major node:
     nodeElementsEnter
       .filter(d => d.depth <= 1)

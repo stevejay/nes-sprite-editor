@@ -11,7 +11,7 @@ const MIN_RADIUS = 8;
 const MAX_RADIUS = 13;
 
 const HIDDEN_LINE = item => ({
-  opacity: 0,
+  // opacity: 0,
   x1: (item.source as D3NodeEntity).x,
   y1: (item.source as D3NodeEntity).y,
   x2: (item.target as D3NodeEntity).x,
@@ -19,7 +19,7 @@ const HIDDEN_LINE = item => ({
 });
 
 const VISIBLE_LINE = item => ({
-  opacity: 1,
+  // opacity: 1,
   x1: (item.source as D3NodeEntity).x,
   y1: (item.source as D3NodeEntity).y,
   x2: (item.target as D3NodeEntity).x,
@@ -124,18 +124,18 @@ class ReactNetworkGraphSVG extends React.PureComponent<Props, State> {
   render() {
     const { width, height, selectedIds } = this.props;
     const { d3Nodes, d3Links } = this.state;
+
     return (
       <svg className={styles.svg} style={{ width, height }}>
         <g className="links-group">
           {!isNil(d3Links) && (
             <Transition
-              // unique
               native
               config={{ duration: 300 }}
               items={d3Links}
               keys={item => `${item.source.id}--${item.target.id}`}
               initial={HIDDEN_LINE}
-              from={HIDDEN_LINE}
+              // from={HIDDEN_LINE}
               enter={VISIBLE_LINE}
               leave={HIDDEN_LINE}
               update={VISIBLE_LINE}
@@ -167,7 +167,7 @@ class ReactNetworkGraphSVG extends React.PureComponent<Props, State> {
               items={d3Nodes}
               keys={item => item.id}
               initial={HIDDEN_NODE}
-              from={HIDDEN_NODE}
+              // from={HIDDEN_NODE}
               enter={VISIBLE_NODE}
               leave={HIDDEN_NODE}
               update={VISIBLE_NODE}
@@ -189,19 +189,19 @@ class ReactNetworkGraphSVG extends React.PureComponent<Props, State> {
                       cx={transProps.x}
                       cy={transProps.y}
                       r={d3Node.depth > 1 ? MIN_RADIUS : MAX_RADIUS}
-                      onClick={
-                        d3Node.depth === 1
-                          ? event => this.handleClick(event, d3Node)
-                          : undefined
-                      }
-                      onMouseOver={
-                        d3Node.depth > 0
-                          ? event => this.handleMouseOver(event, d3Node)
-                          : undefined
-                      }
-                      onMouseOut={
-                        d3Node.depth > 0 ? this.handleMouseOut : undefined
-                      }
+                      // onClick={
+                      //   d3Node.depth === 1
+                      //     ? event => this.handleClick(event, d3Node)
+                      //     : undefined
+                      // }
+                      // onMouseOver={
+                      //   d3Node.depth > 0
+                      //     ? event => this.handleMouseOver(event, d3Node)
+                      //     : undefined
+                      // }
+                      // onMouseOut={
+                      //   d3Node.depth > 0 ? this.handleMouseOut : undefined
+                      // }
                     />
                     {d3Node.depth <= 1 && (
                       <text x={transProps.x} y={transProps.y} dx={0} dy={3}>
