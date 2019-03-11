@@ -212,7 +212,7 @@ export default function networkGraph(): INetworkGraph {
       .attr("y1", d => (d.source as D3NodeEntity).y || 0)
       .attr("x2", d => (d.target as D3NodeEntity).x || 0)
       .attr("y2", d => (d.target as D3NodeEntity).y || 0)
-      .attr("stroke-width", (_d, index) => `${(index % 4) + 1}px`)
+      .attr("stroke-width", (_d, index) => `${Math.log(_d.count) + 1}px`)
       .transition()
       .delay(150)
       .style("opacity", 1);
@@ -223,7 +223,7 @@ export default function networkGraph(): INetworkGraph {
       .attr("y1", d => (d.source as D3NodeEntity).y || 0)
       .attr("x2", d => (d.target as D3NodeEntity).x || 0)
       .attr("y2", d => (d.target as D3NodeEntity).y || 0)
-      .attr("stroke-width", (_d, index) => `${(index % 4) + 1}px`);
+      .attr("stroke-width", (_d, index) => `${Math.log(_d.count) + 1}px`);
 
     // create a group to contain all the nodes:
     let nodesGroup = svg.selectAll(".nodes-group").data([null]);

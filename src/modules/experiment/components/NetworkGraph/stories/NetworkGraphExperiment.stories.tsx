@@ -171,10 +171,15 @@ function parseServerResponse(
         }
       }
     };
+    const [source, target] =
+      parentNode.id < childNode.id
+        ? [parentNode, childNode]
+        : [childNode, parentNode];
     const link: CommunicationsLink = {
-      id: `${parentNode.id}--${childNode.id}`,
-      source: parentNode.id,
-      target: childNode.id
+      id: `${source.id}--${target.id}`,
+      count: networkEntry.doc_count,
+      source: source.id,
+      target: target.id
     };
     result.nodes.push(childNode);
     result.links.push(link);
@@ -201,6 +206,10 @@ function getChildDataForNode(
   );
   parentNode.totalComms = parentTotalComms;
   nodes.forEach(node => {
+    parentNode.commsDetail[node.id] = {
+      name: node.name,
+      count: node.commsDetail[parentNode.id].count
+    };
     const existingNode = existingNodesLookup[node.id];
     if (existingNode) {
       existingNode.commsDetail[parentNode.id] = node.commsDetail[parentNode.id];
@@ -291,21 +300,12 @@ async function getData(
   callback({ nodes: [...result.nodes], links: [...result.links] });
 }
 
-// function generateData(
-//   callback: (data: {
-//     nodes: Array<CommunicationsNode>;
-//     links: Array<CommunicationsLink>;
-//   }) => void
-// ) {
-//   return getData("111111", "Steve Jay", "account", callback);
-// }
-
 const store = new Store<{
   data: any;
   selectedIds: Array<string>;
 }>({
-  data: [], //generateData(),
-  selectedIds: [] // sampleSize(range(0, 24 * 7), 3)
+  data: [],
+  selectedIds: []
 });
 
 storiesOf("SteelEye/NetworkGraphExperiment", module)
@@ -319,7 +319,6 @@ storiesOf("SteelEye/NetworkGraphExperiment", module)
             store.set({ data })
           );
         }}
-        // store.set({ data: generateData() })}
         style={{ marginBottom: 30, maxWidth: 100 }}
       >
         New Data

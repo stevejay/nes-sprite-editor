@@ -19,7 +19,9 @@ export type CommunicationsNode = NodeEntity & {
   };
 };
 
-export type CommunicationsLink = LinkEntity;
+export type CommunicationsLink = LinkEntity & {
+  count: number;
+};
 
 type Props = {
   nodes: Array<CommunicationsNode>;

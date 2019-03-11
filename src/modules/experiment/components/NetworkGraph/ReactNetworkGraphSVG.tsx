@@ -9,8 +9,8 @@ import { CommunicationsNode } from "./NetworkGraph";
 
 const MIN_RADIUS = 8;
 const MAX_RADIUS = 13;
-const MAIN_CONFIG = { duration: 250 };
-const LEAVE_CONFIG = { duration: MAIN_CONFIG.duration + 50 };
+const MAIN_CONFIG = { clamp: true }; // { duration: 250 };
+const LEAVE_CONFIG = { clamp: true }; // { duration: MAIN_CONFIG.duration + 50 };
 const CONFIG = (_item: any, state: any) =>
   state === "leave" ? LEAVE_CONFIG : MAIN_CONFIG;
 const LINK_KEYS = (item: D3LinkEntity) =>
