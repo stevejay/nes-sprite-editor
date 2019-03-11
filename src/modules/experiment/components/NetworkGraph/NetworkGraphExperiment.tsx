@@ -80,9 +80,18 @@ class NetworkGraphExperiment extends React.Component<Props, State> {
               <Tooltip originRect={originRect}>
                 {tooltipData && (
                   <>
-                    <p>{tooltipData.initials}</p>
-                    <p>Some info</p>
-                    <p>Some more info 2</p>
+                    <p>{tooltipData.name}</p>
+                    {Object.keys(tooltipData.commsDetail).map(key => {
+                      const commsDetail = tooltipData.commsDetail[key];
+                      return (
+                        <p>
+                          {commsDetail.count} with {commsDetail.name}
+                        </p>
+                      );
+                    })}
+                    {!!tooltipData.totalComms && (
+                      <p>Total Comms: {tooltipData.totalComms}</p>
+                    )}
                   </>
                 )}
               </Tooltip>

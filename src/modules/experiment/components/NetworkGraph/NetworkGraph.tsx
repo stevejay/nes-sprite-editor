@@ -7,8 +7,16 @@ import Tooltip from "../HeatMap/Tooltip";
 import { NodeEntity, LinkEntity } from "./types";
 
 export type CommunicationsNode = NodeEntity & {
+  name: string;
   initials: string;
-  type: string; // should be account or market
+  type: "account" | "market";
+  totalComms: number;
+  commsDetail: {
+    [key: string]: {
+      name: string;
+      count: number;
+    };
+  };
 };
 
 export type CommunicationsLink = LinkEntity;

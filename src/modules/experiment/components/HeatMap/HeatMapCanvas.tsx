@@ -7,7 +7,7 @@ import { HeatMapEntry } from "./HeatMap";
 
 const MARGIN_PX = 1;
 const ANIMATION_DURATION_FRAMES = 15;
-const MISSING_VALUE = -0.25;
+export const MISSING_VALUE = -0.25;
 
 type Props = {
   width: number;

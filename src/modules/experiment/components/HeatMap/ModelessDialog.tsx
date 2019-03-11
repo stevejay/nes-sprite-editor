@@ -12,7 +12,7 @@ class ModelessDialog extends React.Component<Props> {
     const { children, isShowing } = this.props;
     return (
       <Transition
-        config={{ duration: 150 }}
+        config={{ duration: 50 }}
         items={isShowing}
         from={{ opacity: 0 }}
         enter={{ opacity: 1 }}

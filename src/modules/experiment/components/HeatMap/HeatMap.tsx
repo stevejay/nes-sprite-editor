@@ -2,7 +2,7 @@ import React from "react";
 import Measure from "react-measure";
 import styles from "./HeatMap.module.scss";
 import { clamp, isNil } from "lodash";
-import HeatMapCanvas from "./HeatMapCanvas";
+import HeatMapCanvas, { MISSING_VALUE } from "./HeatMapCanvas";
 import HeatMapInteractionTracker, {
   TooltipData
 } from "./HeatMapInteractionTracker";
@@ -14,11 +14,13 @@ import ModelessDialog from "./ModelessDialog";
 //     ? `#343644`
 //     : `rgba(0,150,203,${clamp(0.2 + value * 1.0, 0, 1)})`;
 
-// value range is -0.25 to 1
+const MIN_OPACITY = 0.075;
+
 const COLOR_INTERPOLATOR = (value: HeatMapEntry["value"]) => {
-  const inputRange = 1 - -0.25;
-  const outputRange = 1 - 0.075;
-  const output = ((value - -0.25) * outputRange) / inputRange + 0.075;
+  const inputRange = 1 - MISSING_VALUE;
+  const outputRange = 1 - MIN_OPACITY;
+  const output =
+    ((value - MISSING_VALUE) * outputRange) / inputRange + MIN_OPACITY;
   return `rgba(0,150,203,${clamp(output, 0, 1)})`;
 };
 

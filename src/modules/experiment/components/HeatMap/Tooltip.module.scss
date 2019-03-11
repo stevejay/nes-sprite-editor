@@ -6,7 +6,7 @@ $arrow-dimension: 8px;
   position: fixed;
   pointer-events: none;
   will-change: top, left;
-  transition: top 0.2s, left 0.2s;
+  // transition: top 0.2s, left 0.2s;
 }
 
 .tooltip {
@@ -20,7 +20,7 @@ $arrow-dimension: 8px;
   will-change: opacity;
   border: 1px solid $foreground-color;
   font-size: 12px;
-  // width: 101%;
+  overflow: visible;
 }
 
 .tooltip p {

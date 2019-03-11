@@ -2,6 +2,7 @@ import React from "react";
 import styles from "./Tooltip.module.scss";
 import { TooltipData } from "./HeatMapInteractionTracker";
 import getTooltipPosition from "./get-tooltip-position";
+import { floor } from "lodash";
 
 type Props = {
   opacity?: number;
@@ -55,8 +56,12 @@ class Tooltip extends React.Component<Props> {
       10
     );
 
-    this._tooltipContainer.current.style.top = tooltipPosition.top + "px";
-    this._tooltipContainer.current.style.left = tooltipPosition.left + "px";
+    // these are rounded down as Chrome has occasional rendering
+    // glitches with fixed positioning by non-integer values:
+    this._tooltipContainer.current.style.top =
+      floor(tooltipPosition.top) + "px";
+    this._tooltipContainer.current.style.left =
+      floor(tooltipPosition.left) + "px";
 
     this._tooltipContainer.current.classList.remove(
       "left",
