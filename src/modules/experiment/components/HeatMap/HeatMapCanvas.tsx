@@ -1,26 +1,28 @@
 import React from "react";
 import styles from "./HeatMapCanvas.module.scss";
 import { interpolateNumber } from "d3-interpolate";
-import { clamp, includes } from "lodash";
+import { clamp, includes, isNil } from "lodash";
 import drawRoundedRect from "./draw-rounded-rect";
+import { HeatMapEntry } from "./HeatMap";
 
 const MARGIN_PX = 1;
 const ANIMATION_DURATION_FRAMES = 15;
+const MISSING_VALUE = -0.25;
 
 type Props = {
   width: number;
-  data: Array<number>; // values in range [0, 1]
+  data: Array<HeatMapEntry | null>; // values in range [0, 1]
   columnCount: number;
   selectedIndexes: Array<number>;
-  colorInterpolator: (datum: number) => string;
+  colorInterpolator: (value: number) => string;
 };
 
 type State = {
-  data: Array<number>;
+  data: Array<HeatMapEntry | null>;
 };
 
 class HeatMapCanvas extends React.Component<Props, State> {
-  _animatingFromValues: Array<number>;
+  _animatingFromValues: Array<HeatMapEntry["value"]>;
   _canvasRef: React.RefObject<HTMLCanvasElement>;
   _rafHandle: number | null;
   _t: number; // range is [0, 1]
@@ -28,10 +30,12 @@ class HeatMapCanvas extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this._canvasRef = React.createRef();
-    this._animatingFromValues = new Array(props.data.length).fill(0);
+    this._animatingFromValues = new Array(props.data.length).fill(
+      MISSING_VALUE
+    );
     this._t = 0; // zero causes animation to kick off on mount
     this._rafHandle = null; // handle to any pending raf callback
-    this.state = HeatMapCanvas.calculateState(props, this._animatingFromValues);
+    this.state = HeatMapCanvas.calculateState(props, []);
   }
 
   componentDidMount() {
@@ -85,7 +89,10 @@ class HeatMapCanvas extends React.Component<Props, State> {
       // calculate where we've got to and use that as the starting values:
       this._animatingFromValues = this._animatingFromValues.map(
         (value, index) =>
-          interpolateNumber(value, prevState.data[index])(this._t)
+          interpolateNumber(
+            value,
+            isNil(prevState.data[index]) ? 0 : prevState.data[index]!.value
+          )(this._t)
       );
       // reset to start of animation:
       this._t = 0;
@@ -99,7 +106,9 @@ class HeatMapCanvas extends React.Component<Props, State> {
     // we need to set the animatingFromValues manually:
     if (data !== prevState.data && this._t >= 1) {
       // restart animation to get the new data showing:
-      this._animatingFromValues = prevState.data.slice();
+      this._animatingFromValues = prevState.data.map(datum =>
+        isNil(datum) ? MISSING_VALUE : datum.value
+      );
       this._t = 0;
     }
 
@@ -120,7 +129,7 @@ class HeatMapCanvas extends React.Component<Props, State> {
   }
 
   private renderTiles(
-    data: Props["data"],
+    data: State["data"],
     startingValues: Array<number>,
     selectedIndexes: Array<number>,
     width: number,
@@ -143,7 +152,10 @@ class HeatMapCanvas extends React.Component<Props, State> {
         ctx.fillStyle = "#00cb8e";
       } else {
         ctx.fillStyle = colorInterpolator(
-          interpolateNumber(startingValues[i], data[i])(this._t)
+          interpolateNumber(
+            startingValues[i],
+            isNil(data[i]) ? MISSING_VALUE : data[i]!.value || 0
+          )(this._t)
         );
       }
 
@@ -153,7 +165,7 @@ class HeatMapCanvas extends React.Component<Props, State> {
         y + MARGIN_PX,
         dimension - MARGIN_PX * 2,
         dimension - MARGIN_PX * 2,
-        MARGIN_PX * 2
+        MARGIN_PX * 4
       );
     }
 
@@ -193,13 +205,13 @@ class HeatMapCanvas extends React.Component<Props, State> {
     ctx.scale(deviceScale, deviceScale);
   }
 
-  static calculateState({ data }: Props, currentData: State["data"]): State {
-    return { data: data !== currentData ? data : currentData };
-  }
-
   static getDerivedStateFromProps(props: Props, state: State): State {
     const newState = HeatMapCanvas.calculateState(props, state.data);
     return newState.data === state.data ? state : newState;
+  }
+
+  static calculateState({ data }: Props, currentData: State["data"]): State {
+    return { data: data !== currentData ? data : currentData };
   }
 
   static calculateDimension(width: number, columnCount: number) {
