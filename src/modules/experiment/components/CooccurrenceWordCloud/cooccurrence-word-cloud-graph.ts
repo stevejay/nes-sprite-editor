@@ -1,12 +1,24 @@
 import * as d3 from "d3";
 import d3Cloud from "d3-cloud";
-import { includes, cloneDeep, clamp } from "lodash";
+import {
+  includes,
+  cloneDeep,
+  clamp,
+  findIndex,
+  concat,
+  isNil,
+  minBy,
+  maxBy
+} from "lodash";
 import { WordCloudNode } from "../WordCloud/types";
 import { GetOrSet } from "../NetworkGraph/types";
 import { range } from "d3";
 
 const EXPANDER_WIDTH = 45;
 const EXPANDER_MARGIN_VERTICAL = 25;
+const MIN_FONT_SIZE = 10;
+const MAX_FONT_SIZE = 32;
+const SHRUNK_WORD_CLOUD_WIDTH = 300;
 
 function generateExpanderData(visible: boolean, width: number, height: number) {
   if (!visible) {
@@ -15,9 +27,9 @@ function generateExpanderData(visible: boolean, width: number, height: number) {
   return range(0, 5).map(index => {
     return {
       key: index,
-      source: { x: width * 0.5 - EXPANDER_WIDTH, y: height * 0.5 },
+      source: { x: SHRUNK_WORD_CLOUD_WIDTH, y: height * 0.5 },
       target: {
-        x: width * 0.5,
+        x: SHRUNK_WORD_CLOUD_WIDTH + EXPANDER_WIDTH,
         y:
           EXPANDER_MARGIN_VERTICAL +
           ((height - EXPANDER_MARGIN_VERTICAL * 2) / 4) * index
@@ -77,9 +89,22 @@ export default function cooccurrenceWordCloudGraph(): ICooccurrenceWordCloudGrap
     withNodeIds: Array<WordCloudNode["id"]>,
     recalculateNodes: boolean
   ) {
-    if (recalculateNodes && !selectedIds.length) {
+    if (recalculateNodes) {
       // console.log("RECALCULATING NODES", width, height);
       _version = Date.now();
+
+      let words = cloneDeep(nodes);
+      if (!isNil(sourceNodeId)) {
+        const matchIndex = findIndex(words, word => word.id === sourceNodeId);
+        if (matchIndex > -1) {
+          const wordMatch = words[matchIndex];
+          words = concat(
+            [wordMatch],
+            words.filter((_word, index) => index !== matchIndex)
+          );
+          // console.log("words", words);
+        }
+      }
 
       const result = await new Promise<{
         version: number;
@@ -88,24 +113,27 @@ export default function cooccurrenceWordCloudGraph(): ICooccurrenceWordCloudGrap
       }>(resolve => {
         const version = _version;
 
-        const fontSize = d3.scaleLog().range([10, 32]);
+        const fontSize = d3.scaleLog().range([MIN_FONT_SIZE, MAX_FONT_SIZE]);
         if (nodes.length) {
           fontSize.domain([+nodes[nodes.length - 1].value, +nodes[0].value]);
         }
 
         d3Cloud()
           .stop()
-          .size([width, height])
-          .words(cloneDeep(nodes))
+          .size([isNil(sourceNodeId) ? width : SHRUNK_WORD_CLOUD_WIDTH, height])
+          .words(words)
           .padding(2.5)
           .rotate(0)
           .spiral("rectangular")
           .font("sans-serif")
-          .fontSize(d => fontSize(d.value))
+          // .fontSize(d => fontSize(d.value))
+          .fontSize(d =>
+            d.id === sourceNodeId ? MAX_FONT_SIZE : fontSize(d.value)
+          )
           .on("end", (items, bounds) => {
             resolve({ version, items, bounds });
           })
-          .timeInterval(10)
+          // .timeInterval(10)
           .start();
       });
 
@@ -113,11 +141,14 @@ export default function cooccurrenceWordCloudGraph(): ICooccurrenceWordCloudGrap
         return;
       }
 
+      console.log("RAN ALOG");
+
       _nodes = result.items as Array<WordCloudNode>;
       _bounds = result.bounds;
-    } else if (selectedIds.length) {
-      _selectedNodes = _nodes.filter(node => includes(selectedIds, node.id));
     }
+    //  else if (selectedIds.length) {
+    //   _selectedNodes = _nodes.filter(node => includes(selectedIds, node.id));
+    // }
 
     const container = d3.select(containerElement);
     container.attr("width", width);
@@ -134,7 +165,12 @@ export default function cooccurrenceWordCloudGraph(): ICooccurrenceWordCloudGrap
 
     const opacity = d3.scaleLog().range([0.5, 1.0]);
     if (_nodes.length) {
-      opacity.domain([+_nodes[_nodes.length - 1].value, +_nodes[0].value]);
+      const minNode = minBy(_nodes, node => node.value);
+      const maxNode = maxBy(_nodes, node => node.value);
+      opacity.domain([
+        minNode ? minNode.value : 0,
+        maxNode ? maxNode.value : 0
+      ]);
     }
 
     // create a group to contain all the text elements
@@ -156,17 +192,21 @@ export default function cooccurrenceWordCloudGraph(): ICooccurrenceWordCloudGrap
     wordsGroup
       .transition()
       .duration(500)
-      .attr(
-        "transform",
-        d =>
-          // selectedIds.length > 0
-          // ? "translate(" + [width * 0, height * 0.5] + ") scale(" + scale + ")"
-          "translate(" + [width * 0.5, height * 0.5] + ") scale(" + scale + ")"
+      .attr("transform", d =>
+        !isNil(sourceNodeId)
+          ? "translate(" +
+            [SHRUNK_WORD_CLOUD_WIDTH * 0.5, height * 0.5] +
+            ") scale(" +
+            scale +
+            ")"
+          : "translate(" +
+            [width * 0.5, height * 0.5] +
+            ") scale(" +
+            scale +
+            ")"
       );
 
-    let words = wordsGroup
-      .selectAll("text")
-      .data(selectedIds.length ? _selectedNodes : _nodes, node => node.id);
+    let words = wordsGroup.selectAll("text").data(_nodes, node => node.id);
     words
       .exit()
       .transition()
@@ -189,27 +229,19 @@ export default function cooccurrenceWordCloudGraph(): ICooccurrenceWordCloudGrap
       .on("click", handleClick)
       .merge(words);
     words
-      .classed("selected", d => includes(selectedIds, d.id))
+      .classed("selected", d => d.id === sourceNodeId)
       .transition()
       .duration(500)
-      .style("opacity", d =>
-        includes(selectedIds, d.id) ? 1 : opacity(+d.value)
-      )
-      .style("font-size", d =>
-        includes(selectedIds, d.id) ? 24 + "px" : d.size + "px"
-      )
+      .style("opacity", d => (d.id === sourceNodeId ? 1 : opacity(+d.value)))
+      .style("font-size", d => d.size + "px")
       .style("font-family", d => d.font)
       // .attr("transform", d => "translate(" + [d.x, d.y] + ")");
-      .attr("transform", d =>
-        includes(selectedIds, d.id)
-          ? "translate(" + [-width * 0.5 - d.x0, 0] + ")"
-          : "translate(" + [d.x, d.y] + ")"
-      );
+      .attr("transform", d => "translate(" + [d.x, d.y] + ")");
 
     const expander = container
       .selectAll("path")
       .data(
-        generateExpanderData(!!selectedIds.length, width, height),
+        generateExpanderData(!isNil(sourceNodeId), width, height),
         d => d.key
       );
 

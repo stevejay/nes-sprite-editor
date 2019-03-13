@@ -74,7 +74,7 @@ export default function wordCloudGraph(): IWordCloudGraph {
           .on("end", (items, bounds) => {
             resolve({ version, items, bounds });
           })
-          .timeInterval(10)
+          // .timeInterval(10)
           .start();
       });
 
