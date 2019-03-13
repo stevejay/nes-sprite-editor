@@ -200,14 +200,14 @@ export default function networkGraph(): INetworkGraph {
       .exit()
       .transition()
       .duration(100)
-      .style("opacity", 0)
+      .style("opacity", 1e-6)
       .remove();
     // enter:
     // linkElements = linkElements
     linkElements
       .enter()
       .append("line")
-      .style("opacity", 0)
+      .style("opacity", 1e-6)
       .attr("x1", d => (d.source as D3NodeEntity).x || 0)
       .attr("y1", d => (d.source as D3NodeEntity).y || 0)
       .attr("x2", d => (d.target as D3NodeEntity).x || 0)
@@ -245,7 +245,7 @@ export default function networkGraph(): INetworkGraph {
     nodeElementsExit
       .select("circle")
       .transition()
-      .style("opacity", 0)
+      .style("opacity", 1e-6)
       .attr("r", 0)
       .remove();
     // remove the text element in each exiting node group:

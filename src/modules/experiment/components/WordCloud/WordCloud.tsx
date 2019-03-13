@@ -1,38 +1,36 @@
 import React from "react";
-import styles from "./NetworkGraph.module.scss";
+import styles from "./WordCloud.module.scss";
 import Measure from "react-measure";
 import ModelessDialog from "../HeatMap/ModelessDialog";
 import Tooltip from "../HeatMap/Tooltip";
-import { CommunicationsLink, CommunicationsNode } from "./NetworkGraph";
-import { NodeEntity } from "./types";
-import ReactNetworkGraphSVG from "./ReactNetworkGraphSVG";
+import { WordCloudNode } from "./types";
+import WordCloudHtml from "./WordCloudHtml";
 
 type Props = {
-  nodes: Array<CommunicationsNode>;
-  links: Array<CommunicationsLink>;
-  selectedIds: Array<CommunicationsNode["id"]>;
-  onNodeClick: (id: CommunicationsNode["id"]) => void;
+  nodes: Array<WordCloudNode>;
+  selectedIds: Array<WordCloudNode["id"]>;
+  onNodeClick: (id: WordCloudNode["id"]) => void;
 };
 
 type State = {
   showTooltip: boolean;
   originRect?: ClientRect;
-  tooltipData: CommunicationsNode | null;
+  tooltipData: WordCloudNode | null;
 };
 
 // Desired height could be passed in as a prop or a style
 
-class ReactNetworkGraph extends React.Component<Props, State> {
+class WordCloud extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = { showTooltip: false, tooltipData: null };
   }
 
-  handleShowTooltip = (value: NodeEntity, originRect: ClientRect) => {
+  handleShowTooltip = (value: WordCloudNode, originRect: ClientRect) => {
     this.setState({
       showTooltip: true,
       originRect: originRect,
-      tooltipData: value as CommunicationsNode
+      tooltipData: value as WordCloudNode
     });
   };
 
@@ -40,20 +38,19 @@ class ReactNetworkGraph extends React.Component<Props, State> {
     this.setState({ showTooltip: false });
   };
 
-  handleToggleNode = (value: NodeEntity) => {
+  handleToggleNode = (value: WordCloudNode) => {
     this.props.onNodeClick(value.id);
   };
 
   render() {
-    const { nodes, links, selectedIds } = this.props;
+    const { nodes, selectedIds } = this.props;
     const { showTooltip, originRect, tooltipData } = this.state;
     return (
       <Measure bounds>
         {({ measureRef, contentRect }) => (
           <div ref={measureRef} className={styles.container}>
-            <ReactNetworkGraphSVG
+            <WordCloudHtml
               nodes={nodes}
-              links={links}
               selectedIds={selectedIds}
               width={contentRect.bounds ? contentRect.bounds.width : 0}
               height={contentRect.bounds ? contentRect.bounds.height : 0}
@@ -65,9 +62,10 @@ class ReactNetworkGraph extends React.Component<Props, State> {
               <Tooltip originRect={originRect}>
                 {tooltipData && (
                   <>
-                    <p>{tooltipData.initials}</p>
-                    <p>Some info</p>
-                    <p>Some more info 2</p>
+                    <p>
+                      {tooltipData.value}{" "}
+                      {tooltipData.value === 0 ? "occurrence" : "occurrences"}
+                    </p>
                   </>
                 )}
               </Tooltip>
@@ -79,4 +77,4 @@ class ReactNetworkGraph extends React.Component<Props, State> {
   }
 }
 
-export default ReactNetworkGraph;
+export default WordCloud;

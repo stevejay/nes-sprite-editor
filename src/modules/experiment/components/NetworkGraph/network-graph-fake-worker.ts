@@ -13,11 +13,8 @@ import {
 
 export default function(event: SimulationWorkerEvent): SimulationWorkerResult {
   const { width, height, maxRadius, version } = event.data;
-  const nodes = event.data.nodes; // as Array<NodeT & d3.SimulationNodeDatum>;
+  const nodes = event.data.nodes;
   const links = event.data.links;
-  //  as Array<
-  //   LinkT & d3.SimulationLinkDatum<d3.SimulationNodeDatum>
-  // >;
 
   // fix the position of the root node to the center of the graph:
   nodes[0].fx = width * 0.5;
@@ -31,10 +28,6 @@ export default function(event: SimulationWorkerEvent): SimulationWorkerResult {
     node.vy = NaN;
   });
 
-  // TRY THIS:
-  // .force("container", forceContainer([[10, 10],[890, 490]]))
-  // instead of boundsForce
-
   const simulation = d3
     .forceSimulation()
     .nodes(nodes)
@@ -42,18 +35,6 @@ export default function(event: SimulationWorkerEvent): SimulationWorkerResult {
       "link",
       d3.forceLink<D3NodeEntity, D3LinkEntity>(links).id(d => d.id)
     )
-    // .force(
-    //   "inner radial degree",
-    //   d3
-    //     .forceRadial<D3NodeEntity>(height * 0.2, width * 0.5, height * 0.5)
-    //     .strength(d => (d.degree === 1 ? 0.5 : 0))
-    // )
-    // .force(
-    //   "outer radial degree",
-    //   d3
-    //     .forceRadial<D3NodeEntity>(width * 0.33, width * 0.5, height * 0.5)
-    //     .strength(d => ((d.degree || 0) >= 2 ? 0.5 : 0))
-    // )
     .force(
       "radial depth 1",
       d3

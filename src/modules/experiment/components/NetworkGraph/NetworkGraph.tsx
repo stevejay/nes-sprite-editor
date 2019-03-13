@@ -66,7 +66,7 @@ class NetworkGraph extends React.Component<Props, State> {
     return (
       <Measure bounds>
         {({ measureRef, contentRect }) => (
-          <div ref={measureRef} className={styles.graphContainer}>
+          <div ref={measureRef} className={styles.container}>
             <NetworkGraphSVG
               nodes={nodes}
               links={links}

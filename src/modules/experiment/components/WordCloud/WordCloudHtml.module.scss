@@ -1,0 +1,9 @@
+.container :global(.word) {
+  fill: rgb(0, 150, 203);
+  cursor: pointer;
+  user-select: none;
+}
+
+.container :global(.word.selected) {
+  fill: #00cb8e;
+}

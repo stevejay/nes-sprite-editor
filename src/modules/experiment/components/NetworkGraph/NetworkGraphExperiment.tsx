@@ -44,27 +44,13 @@ class NetworkGraphExperiment extends React.Component<Props, State> {
     this.props.onNodeClick(value.id);
   };
 
-  /*
-  nodes
-  links
-  selectedIds
-  width
-  height
-  nodeGroupRenderer
-  labelRenderer
-  nodeRenderer
-  onShowTooltip
-  onHideTooltip
-  onToggleNodeSelection
-  */
-
   render() {
     const { nodes, links, selectedIds } = this.props;
     const { showTooltip, originRect, tooltipData } = this.state;
     return (
       <Measure bounds>
         {({ measureRef, contentRect }) => (
-          <div ref={measureRef} className={styles.graphContainer}>
+          <div ref={measureRef} className={styles.container}>
             <NetworkGraphSVGExperiment
               nodes={nodes}
               links={links}
@@ -81,10 +67,10 @@ class NetworkGraphExperiment extends React.Component<Props, State> {
                 {tooltipData && (
                   <>
                     <p>{tooltipData.name}</p>
-                    {Object.keys(tooltipData.commsDetail).map(key => {
+                    {Object.keys(tooltipData.commsDetail).map((key, index) => {
                       const commsDetail = tooltipData.commsDetail[key];
                       return (
-                        <p>
+                        <p key={index}>
                           {commsDetail.count} with {commsDetail.name}
                         </p>
                       );
