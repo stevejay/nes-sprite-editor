@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "../WordCloud/WordCloudHtml.module.scss";
-import { cloneDeep } from "lodash";
+import { cloneDeep, isNil } from "lodash";
 import { WordCloudNode } from "../WordCloud/types";
 import cooccurrenceWordCloudGraph, {
   ICooccurrenceWordCloudGraph
@@ -40,20 +40,25 @@ class CooccurrenceWordCloudHtml extends React.PureComponent<Props, State> {
   }
 
   componentDidMount() {
-    this.renderGraph(true);
+    this.renderGraph(true, true);
   }
 
   componentDidUpdate(prevProps: Props) {
     this.renderGraph(
       this.props.nodes !== prevProps.nodes ||
-        this.props.withNodes !== prevProps.withNodes ||
         this.props.width !== prevProps.width ||
-        this.props.height !== prevProps.height
+        this.props.height !== prevProps.height ||
+        (!isNil(this.props.sourceNodeId) && isNil(prevProps.sourceNodeId)) ||
+        (isNil(this.props.sourceNodeId) && !isNil(prevProps.sourceNodeId)),
+      this.props.withNodes !== prevProps.withNodes ||
+        this.props.width !== prevProps.width ||
+        this.props.height !== prevProps.height ||
+        this.props.sourceNodeId !== prevProps.sourceNodeId
     );
   }
 
   static getDerivedStateFromProps(props: Props, state: State) {
-    return props.nodes !== state.nodes
+    return props.nodes !== state.nodes || props.withNodes !== state.withNodes
       ? CooccurrenceWordCloudHtml.createState(props)
       : state;
   }
@@ -84,7 +89,10 @@ class CooccurrenceWordCloudHtml extends React.PureComponent<Props, State> {
     this.props.onToggleWithNode(value);
   };
 
-  private renderGraph(recalculateNodes: boolean) {
+  private renderGraph(
+    recalculateNodes: boolean,
+    recalculateWithNodes: boolean
+  ) {
     const {
       nodes,
       withNodes,
@@ -105,7 +113,8 @@ class CooccurrenceWordCloudHtml extends React.PureComponent<Props, State> {
       withNodes,
       sourceNodeId,
       withNodeIds,
-      recalculateNodes
+      recalculateNodes,
+      recalculateWithNodes
     );
   }
 

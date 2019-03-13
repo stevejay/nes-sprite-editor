@@ -18,7 +18,7 @@ const EXPANDER_WIDTH = 45;
 const EXPANDER_MARGIN_VERTICAL = 25;
 const MIN_FONT_SIZE = 10;
 const MAX_FONT_SIZE = 32;
-const SHRUNK_WORD_CLOUD_WIDTH = 300;
+const SHRUNK_WORD_CLOUD_WIDTH = 275;
 
 function generateExpanderData(visible: boolean, width: number, height: number) {
   if (!visible) {
@@ -44,7 +44,8 @@ export interface ICooccurrenceWordCloudGraph {
     withNodes: Array<WordCloudNode>,
     sourceNodeId: WordCloudNode["id"] | null,
     withNodeIds: Array<WordCloudNode["id"]>,
-    recalculateNodes: boolean
+    recalculateNodes: boolean,
+    recalculateWithNodes: boolean
   ): void;
 
   containerElement(element: SVGSVGElement): this;
@@ -74,9 +75,11 @@ export default function cooccurrenceWordCloudGraph(): ICooccurrenceWordCloudGrap
   let onToggleSourceNode: ((data: WordCloudNode) => void) | null = null;
   let onToggleWithNode: ((data: WordCloudNode) => void) | null = null;
   let _version = 0;
+  let _withVersion = 0;
   let _nodes: Array<WordCloudNode> = [];
-  let _selectedNodes: Array<WordCloudNode> = [];
+  let _withNodes: Array<WordCloudNode> = [];
   let _bounds: any = null;
+  let _withBounds: any = null;
   const _linkHorizontal = d3
     .linkHorizontal()
     .x(d => d.x)
@@ -87,10 +90,10 @@ export default function cooccurrenceWordCloudGraph(): ICooccurrenceWordCloudGrap
     withNodes: Array<WordCloudNode>,
     sourceNodeId: WordCloudNode["id"] | null,
     withNodeIds: Array<WordCloudNode["id"]>,
-    recalculateNodes: boolean
+    recalculateNodes: boolean,
+    recalculateWithNodes: boolean
   ) {
     if (recalculateNodes) {
-      // console.log("RECALCULATING NODES", width, height);
       _version = Date.now();
 
       let words = cloneDeep(nodes);
@@ -102,7 +105,6 @@ export default function cooccurrenceWordCloudGraph(): ICooccurrenceWordCloudGrap
             [wordMatch],
             words.filter((_word, index) => index !== matchIndex)
           );
-          // console.log("words", words);
         }
       }
 
@@ -126,29 +128,59 @@ export default function cooccurrenceWordCloudGraph(): ICooccurrenceWordCloudGrap
           .rotate(0)
           .spiral("rectangular")
           .font("sans-serif")
-          // .fontSize(d => fontSize(d.value))
           .fontSize(d =>
             d.id === sourceNodeId ? MAX_FONT_SIZE : fontSize(d.value)
           )
           .on("end", (items, bounds) => {
             resolve({ version, items, bounds });
           })
-          // .timeInterval(10)
           .start();
       });
 
-      if (result.version !== _version) {
-        return;
+      if (result.version === _version) {
+        _nodes = result.items as Array<WordCloudNode>;
+        _bounds = result.bounds;
       }
-
-      console.log("RAN ALOG");
-
-      _nodes = result.items as Array<WordCloudNode>;
-      _bounds = result.bounds;
     }
-    //  else if (selectedIds.length) {
-    //   _selectedNodes = _nodes.filter(node => includes(selectedIds, node.id));
-    // }
+
+    if (recalculateWithNodes) {
+      _withVersion = Date.now();
+      let withWords = cloneDeep(withNodes);
+
+      const result = await new Promise<{
+        version: number;
+        items: any;
+        bounds: any;
+      }>(resolve => {
+        const version = _withVersion;
+        const fontSize = d3.scaleLog().range([MIN_FONT_SIZE, MAX_FONT_SIZE]);
+        if (withWords.length) {
+          fontSize.domain([
+            +withWords[withWords.length - 1].value,
+            +withWords[0].value
+          ]);
+        }
+
+        d3Cloud()
+          .stop()
+          .size([SHRUNK_WORD_CLOUD_WIDTH, height])
+          .words(withWords)
+          .padding(2.5)
+          .rotate(0)
+          .spiral("rectangular")
+          .font("sans-serif")
+          .fontSize(d => fontSize(d.value))
+          .on("end", (items, bounds) => {
+            resolve({ version, items, bounds });
+          })
+          .start();
+      });
+
+      if (result.version === _withVersion) {
+        _withNodes = result.items as Array<WordCloudNode>;
+        _withBounds = result.bounds;
+      }
+    }
 
     const container = d3.select(containerElement);
     container.attr("width", width);
@@ -185,10 +217,6 @@ export default function cooccurrenceWordCloudGraph(): ICooccurrenceWordCloudGrap
       )
       // @ts-ignore
       .merge(wordsGroup);
-    // wordsGroup.attr(
-    //   "transform",
-    //   "translate(" + [width * 0.5, height * 0.5] + ") scale(" + scale + ")"
-    // );
     wordsGroup
       .transition()
       .duration(500)
@@ -226,7 +254,7 @@ export default function cooccurrenceWordCloudGraph(): ICooccurrenceWordCloudGrap
       .attr("transform", d => "translate(" + [0, 0] + ")")
       .on("mouseover", handleMouseOver)
       .on("mouseout", handleMouseOut)
-      .on("click", handleClick)
+      .on("click", handleSourceNodeClick)
       .merge(words);
     words
       .classed("selected", d => d.id === sourceNodeId)
@@ -235,7 +263,6 @@ export default function cooccurrenceWordCloudGraph(): ICooccurrenceWordCloudGrap
       .style("opacity", d => (d.id === sourceNodeId ? 1 : opacity(+d.value)))
       .style("font-size", d => d.size + "px")
       .style("font-family", d => d.font)
-      // .attr("transform", d => "translate(" + [d.x, d.y] + ")");
       .attr("transform", d => "translate(" + [d.x, d.y] + ")");
 
     const expander = container
@@ -244,26 +271,102 @@ export default function cooccurrenceWordCloudGraph(): ICooccurrenceWordCloudGrap
         generateExpanderData(!isNil(sourceNodeId), width, height),
         d => d.key
       );
-
     expander
       .exit()
       .transition()
       .duration(500)
       .style("opacity", 1e-6)
       .remove();
-
     expander
       .enter()
       .append("path")
       .attr("fill", "none")
-      .attr("stroke", "#777")
+      .attr("stroke", "#aaa")
       .attr("d", _linkHorizontal)
       .style("opacity", 1e-6)
       .transition()
       .duration(500)
       .style("opacity", 1);
-
     expander.attr("d", _linkHorizontal);
+
+    // +++++++++++++++++++++++++++++++++++++++++++++++
+
+    const withOpacity = d3.scaleLog().range([0.5, 1.0]);
+    if (_withNodes.length) {
+      const minNode = minBy(_withNodes, node => node.value);
+      const maxNode = maxBy(_withNodes, node => node.value);
+      withOpacity.domain([
+        minNode ? minNode.value : 0,
+        maxNode ? maxNode.value : 0
+      ]);
+    }
+
+    // create a group to contain all the text elements
+    let withGroup = container.selectAll(".with-group").data([null]);
+    withGroup = withGroup
+      .enter()
+      .append("g")
+      .classed("with-group", true)
+      .attr(
+        "transform",
+        "translate(" + [width, height * 0.5] + ")" // scale(" + scale + ")"
+      )
+      // @ts-ignore
+      .merge(withGroup);
+    withGroup
+      .transition()
+      .duration(500)
+      .attr(
+        "transform",
+        d =>
+          !isNil(sourceNodeId)
+            ? "translate(" +
+              [
+                SHRUNK_WORD_CLOUD_WIDTH +
+                  EXPANDER_WIDTH +
+                  SHRUNK_WORD_CLOUD_WIDTH * 0.5,
+                height * 0.5
+              ] +
+              ")" // scale(" + scale + ")"
+            : "translate(" + [width, height * 0.5] + ")" // scale(" + scale + ")"
+      );
+
+    let withWords = withGroup
+      .selectAll("text")
+      .data(_withNodes, node => node.id);
+    withWords
+      .exit()
+      .transition()
+      .duration(500)
+      .attr("transform", d => "translate(" + [0, 0] + ")")
+      .style("opacity", 1e-6)
+      .remove();
+    withWords = withWords
+      .enter()
+      .append("text")
+      .text(d => d.text)
+      .attr("text-anchor", "middle")
+      .classed("word", true)
+      .style("opacity", 1e-6)
+      .style("font-size", d => d.size + "px")
+      .style("font-family", d => d.font)
+      .attr("transform", d => "translate(" + [0, 0] + ")")
+      .on("mouseover", handleMouseOver)
+      .on("mouseout", handleMouseOut)
+      .on("click", handleWithNodeClick)
+      .merge(withWords);
+    withWords
+      // .classed("selected", d => d.id === sourceNodeId)
+      .transition()
+      .duration(500)
+      .style("opacity", d =>
+        d.id === sourceNodeId ? 1 : withOpacity(+d.value)
+      )
+      .style("font-size", d => d.size + "px")
+      .style("font-family", d => d.font)
+      .attr("transform", d => "translate(" + [d.x, d.y] + ")");
+
+    // +++++++++++++++++++++++++++++++++++++++++++++++
 
     function handleMouseOver(d: WordCloudNode) {
       // @ts-ignore
@@ -275,8 +378,12 @@ export default function cooccurrenceWordCloudGraph(): ICooccurrenceWordCloudGrap
       onHideTooltip && onHideTooltip();
     }
 
-    function handleClick(d: WordCloudNode) {
+    function handleSourceNodeClick(d: WordCloudNode) {
       onToggleSourceNode && onToggleSourceNode(d);
+    }
+
+    function handleWithNodeClick(d: WordCloudNode) {
+      onToggleWithNode && onToggleWithNode(d);
     }
   }
 

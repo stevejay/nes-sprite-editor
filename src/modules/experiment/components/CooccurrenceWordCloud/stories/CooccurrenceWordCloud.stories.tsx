@@ -377,7 +377,9 @@ storiesOf("SteelEye/CooccurrenceWordCloud", module)
             data: {
               nodes: generateData(),
               withNodes: []
-            }
+            },
+            sourceNodeId: null,
+            withNodeIds: []
           })
         }
         style={{ marginBottom: 30, maxWidth: 100 }}
@@ -398,12 +400,11 @@ storiesOf("SteelEye/CooccurrenceWordCloud", module)
                   value === existingSourceNodeId ? null : value;
                 store.set({ sourceNodeId: newSourceNodeId });
                 if (isNil(existingSourceNodeId) && !isNil(newSourceNodeId)) {
-                  store.set({
-                    data: {
-                      nodes: state.data.nodes,
-                      withNodes: generateData()
-                    }
-                  });
+                  const newData = {
+                    nodes: state.data.nodes,
+                    withNodes: generateData()
+                  };
+                  store.set({ data: newData });
                 } else if (
                   !isNil(existingSourceNodeId) &&
                   isNil(newSourceNodeId)
