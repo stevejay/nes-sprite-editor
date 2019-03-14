@@ -20,7 +20,7 @@ const store = new Store<{
   selectedNodeIds: Array<string>;
 }>({
   data: generateWordCloudNodes(100),
-  selectedNodeIds: ["engagement", "clearance"]
+  selectedNodeIds: []
 });
 
 storiesOf("SteelEye/CanvasWordCloud", module)

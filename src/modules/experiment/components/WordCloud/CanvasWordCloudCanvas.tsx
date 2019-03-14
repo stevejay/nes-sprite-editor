@@ -5,6 +5,7 @@ import { WordCloudNode, D3WordCloudNode } from "./types";
 import calculateWordCloudData from "./calculate-word-cloud-data";
 import { element } from "prop-types";
 import { clamp, includes } from "lodash";
+import generateColor from "./generate-color";
 
 const DURATION_MS = 500;
 
@@ -26,22 +27,27 @@ type State = {
 
 class CanvasWordCloudCanvas extends React.Component<Props, State> {
   _canvasRef: React.RefObject<HTMLCanvasElement>;
+  _hitCanvasRef: React.RefObject<HTMLCanvasElement>;
   _mounted: boolean;
   _customBase: HTMLElement;
   _timer: d3.Timer | null;
+  _colorToNodeMap: { [key: string]: D3WordCloudNode };
 
   constructor(props: Props) {
     super(props);
     this._canvasRef = React.createRef();
+    this._hitCanvasRef = React.createRef();
     this._mounted = true;
     this.state = { d3Nodes: [], bounds: [], dataVersion: 0 };
     this._customBase = document.createElement("custom");
     this._timer = null;
+    this._colorToNodeMap = {};
   }
 
   componentDidMount() {
     const { width, height } = this.props;
-    this.resizeCanvas(width, height);
+    this.resizeCanvas(this._canvasRef.current!, width, height);
+    this.resizeCanvas(this._hitCanvasRef.current!, width, height);
     if (!(width > 0) || !(height > 0)) {
       return;
     }
@@ -58,7 +64,8 @@ class CanvasWordCloudCanvas extends React.Component<Props, State> {
     const d3NodesChanged = d3Nodes !== prevState.d3Nodes;
 
     if (dimensionsChanged) {
-      this.resizeCanvas(width, height);
+      this.resizeCanvas(this._canvasRef.current!, width, height);
+      this.resizeCanvas(this._hitCanvasRef.current!, width, height);
     }
     if (dimensionsChanged || nodesChanged) {
       this.calculateAsync();
@@ -67,6 +74,7 @@ class CanvasWordCloudCanvas extends React.Component<Props, State> {
       this.renderWordCloud();
     } else if (dimensionsChanged) {
       this.draw();
+      // this.drawHit();
     }
   }
 
@@ -103,14 +111,18 @@ class CanvasWordCloudCanvas extends React.Component<Props, State> {
 
     this._timer = d3.timer((elapsed: number) => {
       this.draw();
-      if (elapsed > DURATION_MS && this._timer) {
-        this._timer.stop();
+      if (elapsed > DURATION_MS) {
+        if (this._timer) {
+          this._timer.stop();
+        }
+        // this.drawHit();
       }
     });
   }
 
   private dataBind() {
     const custom = d3.select(this._customBase);
+    const colorToNodeMap = this._colorToNodeMap;
 
     const join = custom
       .selectAll("custom.word")
@@ -118,6 +130,11 @@ class CanvasWordCloudCanvas extends React.Component<Props, State> {
 
     join
       .exit()
+      .each(function() {
+        // !!! MUST BE A FUNCTION NOT A LAMBDA !!!
+        const key = d3.select(this).attr("hitColor");
+        delete colorToNodeMap[key];
+      })
       .transition()
       .duration(DURATION_MS)
       .attr("opacity", 1e-6)
@@ -133,7 +150,13 @@ class CanvasWordCloudCanvas extends React.Component<Props, State> {
       .attr("y", d => d.y)
       .attr("width", d => d.width)
       .attr("height", d => d.height)
-      .attr("fontSize", d => d.size);
+      .attr("fontSize", d => d.size)
+      .attr("hitColor", d => {
+        const hitColor = generateColor();
+        this._colorToNodeMap[hitColor] = d;
+        return hitColor;
+      });
+    // .property('fooo', 1234)
     // .attr("fontSize", 10);
 
     join
@@ -145,7 +168,7 @@ class CanvasWordCloudCanvas extends React.Component<Props, State> {
       .attr("x", d => d.x)
       .attr("y", d => d.y)
       .attr("width", d => d.width)
-      .attr("height", d => d.height);
+      .attr("height", d => d.size); // d.height);
     // .attr("fontSize", d => d.size);
   }
 
@@ -169,13 +192,75 @@ class CanvasWordCloudCanvas extends React.Component<Props, State> {
         ? `rgba(0, 203, 142, ${clamp(+node.attr("opacity"), 0, 1)})`
         : `rgba(0, 150, 203, ${clamp(+node.attr("opacity"), 0, 1)})`;
       ctx.fillText(d.text, +node.attr("x"), +node.attr("y"));
+
+      // if (index === 0) {
+      //   ctx.strokeStyle = "red";
+      //   ctx.beginPath();
+      //   ctx.strokeRect(
+      //     +node.attr("x") + d.x0 + 20,
+      //     +node.attr("y") + d.y0 + 4,
+      //     +node.attr("width") - 40,
+      //     +node.attr("height") - 8
+      //   );
+      // }
     });
 
     ctx.restore();
   }
 
-  private resizeCanvas(width: number, height: number) {
-    const canvas = this._canvasRef.current!;
+  private drawHit() {
+    // const { selectedNodeIds } = this.props;
+    const canvas = this._hitCanvasRef.current!;
+    const ctx = canvas.getContext("2d")!;
+    ctx.save();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.translate(this.props.width * 0.5, this.props.height * 0.5); // TODO fix
+
+    const custom = d3.select(this._customBase);
+    const elements = custom.selectAll("custom.word");
+    // ctx.textAlign = "center";
+
+    // console.log("hitmap size", Object.keys(this._colorToNodeMap).length);
+
+    elements.each(function(d: D3WordCloudNode, index: number) {
+      const node = d3.select(this);
+      // console.log("d", d);
+      ctx.beginPath();
+      ctx.fillStyle = node.attr("hitColor");
+      // console.log(
+      //   "rect",
+      //   +node.attr("x"),
+      //   +node.attr("y"),
+      //   +node.attr("width"),
+      //   +node.attr("height")
+      // );
+      const x = +node.attr("x");
+      const y = +node.attr("y");
+      const width = +node.attr("width");
+      const height = +node.attr("height");
+      ctx.rect(
+        x + d.x0 + Math.floor(width * 0.15),
+        y + d.y0 + Math.floor(height * 0.1),
+        width - Math.floor(width * 0.3),
+        height - Math.floor(height * 0.2)
+      );
+      ctx.fill();
+      // const selected = includes(selectedNodeIds, d.id);
+      // ctx.font = `${node.attr("fontSize")}px sans-serif`;
+      // ctx.fillStyle = selected
+      //   ? `rgba(0, 203, 142, ${clamp(+node.attr("opacity"), 0, 1)})`
+      //   : `rgba(0, 150, 203, ${clamp(+node.attr("opacity"), 0, 1)})`;
+      // ctx.fillText(d.text, +node.attr("x"), +node.attr("y"));
+    });
+
+    ctx.restore();
+  }
+
+  private resizeCanvas(
+    canvas: HTMLCanvasElement,
+    width: number,
+    height: number
+  ) {
     canvas.style.width = width + "px";
     canvas.style.height = height + "px";
 
@@ -187,9 +272,53 @@ class CanvasWordCloudCanvas extends React.Component<Props, State> {
     ctx.scale(deviceScale, deviceScale);
   }
 
+  handleHitCanvasClick = (
+    event: React.MouseEvent<HTMLCanvasElement, MouseEvent>
+  ) => {
+    // console.log("event", event.nativeEvent.offsetX, event.nativeEvent.offsetY);
+    this.drawHit();
+
+    const canvas = this._hitCanvasRef.current!;
+    const ctx = canvas.getContext("2d")!;
+    const color = ctx.getImageData(
+      event.nativeEvent.offsetX * 2,
+      event.nativeEvent.offsetY * 2,
+      1,
+      1
+    ).data;
+    const key = "rgb(" + color[0] + "," + color[1] + "," + color[2] + ")";
+    const node = this._colorToNodeMap[key];
+    if (node) {
+      // console.log("clicked on", node.text);
+      this.props.onToggleNode(node);
+    }
+
+    // console.log(
+    //   "ooh",
+    //   ctx.getImageData(
+    //     event.nativeEvent.offsetX * 2,
+    //     event.nativeEvent.offsetY * 2,
+    //     1,
+    //     1
+    //   ).data
+    // );
+  };
+
   render() {
     return (
-      <canvas ref={this._canvasRef} className={styles.canvas} role="img" />
+      <>
+        <canvas
+          ref={this._canvasRef}
+          className={styles.canvas}
+          role="img"
+          onClick={this.handleHitCanvasClick}
+        />
+        <canvas
+          ref={this._hitCanvasRef}
+          className={styles.canvas}
+          style={{ display: "none" }}
+        />
+      </>
     );
   }
 }
