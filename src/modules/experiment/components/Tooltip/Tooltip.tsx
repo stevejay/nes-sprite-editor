@@ -54,7 +54,7 @@ class ModelessDialog extends React.Component<Props> {
           show &&
           (({ opacity }) => (
             <Portal>
-              <TooltipInner opacity={opacity} originRect={target}>
+              <TooltipInner opacity={opacity} target={target}>
                 {children(data)}
               </TooltipInner>
             </Portal>

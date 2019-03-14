@@ -1,10 +1,12 @@
 import React from "react";
 import styles from "./WordCloud.module.scss";
 import Measure from "react-measure";
-import ModelessDialog from "../HeatMap/ModelessDialog";
-import Tooltip from "../HeatMap/Tooltip";
+// import ModelessDialog from "../HeatMap/ModelessDialog";
+// import Tooltip from "../HeatMap/Tooltip";
+import Tooltip from "../Tooltip/Tooltip";
 import { WordCloudNode } from "./types";
 import CanvasWordCloudCanvas from "./CanvasWordCloudCanvas";
+import { TooltipData } from "../Tooltip/types";
 
 type Props = {
   nodes: Array<WordCloudNode>;
@@ -14,7 +16,7 @@ type Props = {
 
 type State = {
   showTooltip: boolean;
-  originRect?: ClientRect;
+  originRect: TooltipData["originRect"] | null;
   tooltipData: WordCloudNode | null;
 };
 
@@ -23,10 +25,16 @@ type State = {
 class CanvasWordCloud extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = { showTooltip: false, tooltipData: null };
+    this.state = { showTooltip: false, tooltipData: null, originRect: null };
   }
 
-  handleShowTooltip = (node: WordCloudNode, originRect: ClientRect) => {
+  handleShowTooltip = (
+    node: WordCloudNode,
+    originRect: TooltipData["originRect"]
+  ) => {
+    if (this.state.showTooltip && this.state.tooltipData === node) {
+      return;
+    }
     this.setState({
       showTooltip: true,
       originRect: originRect,
@@ -62,6 +70,14 @@ class CanvasWordCloud extends React.Component<Props, State> {
             </div>
           )}
         </Measure>
+        <Tooltip show={showTooltip} target={originRect} data={tooltipData}>
+          {(data: WordCloudNode) => (
+            <p>
+              {data.value} {data.value === 0 ? "occurrence" : "occurrences"}
+            </p>
+          )}
+        </Tooltip>
+        {/* 
         <ModelessDialog isShowing={showTooltip}>
           <Tooltip originRect={originRect}>
             {tooltipData && (
@@ -71,7 +87,7 @@ class CanvasWordCloud extends React.Component<Props, State> {
               </p>
             )}
           </Tooltip>
-        </ModelessDialog>
+        </ModelessDialog> */}
       </>
     );
   }

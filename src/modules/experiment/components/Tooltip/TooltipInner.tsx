@@ -14,7 +14,7 @@ import { TooltipData } from "./types";
 
 type Props = {
   opacity?: number;
-  originRect?: TooltipData["originRect"] | null; // relative to the viewport
+  target: TooltipData["originRect"] | null; // relative to the viewport
   children: React.ReactNode;
 };
 
@@ -35,8 +35,8 @@ class TooltipInner extends React.Component<Props> {
   }
 
   private positionTooltip() {
-    const { originRect } = this.props;
-    if (!originRect || !this._tooltipContainer.current) {
+    const { target } = this.props;
+    if (!target || !this._tooltipContainer.current) {
       return;
     }
 
@@ -53,10 +53,10 @@ class TooltipInner extends React.Component<Props> {
     const tooltipBoundingRect = this._tooltipContainer.current!.getBoundingClientRect();
 
     const tooltipPosition = getTooltipPosition(
-      originRect.top,
-      originRect.left,
-      originRect.width,
-      originRect.height,
+      target.top,
+      target.left,
+      target.width,
+      target.height,
       clientWidth,
       clientHeight,
       tooltipBoundingRect.width,

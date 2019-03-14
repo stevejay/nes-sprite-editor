@@ -6,6 +6,7 @@ import calculateWordCloudData from "./calculate-word-cloud-data";
 import { element } from "prop-types";
 import { clamp, includes } from "lodash";
 import generateColor from "./generate-color";
+import { TooltipData } from "../Tooltip/types";
 
 const DURATION_MS = 500;
 
@@ -14,7 +15,10 @@ type Props = {
   height: number;
   nodes: Array<WordCloudNode>;
   selectedNodeIds: Array<WordCloudNode["id"]>;
-  onShowTooltip: (value: WordCloudNode, originRect: ClientRect) => void;
+  onShowTooltip: (
+    value: WordCloudNode,
+    originRect: TooltipData["originRect"]
+  ) => void;
   onHideTooltip: () => void;
   onToggleNode: (value: WordCloudNode) => void;
 };
@@ -74,7 +78,7 @@ class CanvasWordCloudCanvas extends React.Component<Props, State> {
       this.renderWordCloud();
     } else if (dimensionsChanged) {
       this.draw();
-      // this.drawHit();
+      this.drawHit();
     }
   }
 
@@ -115,7 +119,7 @@ class CanvasWordCloudCanvas extends React.Component<Props, State> {
         if (this._timer) {
           this._timer.stop();
         }
-        // this.drawHit();
+        this.drawHit();
       }
     });
   }
@@ -272,12 +276,8 @@ class CanvasWordCloudCanvas extends React.Component<Props, State> {
     ctx.scale(deviceScale, deviceScale);
   }
 
-  handleHitCanvasClick = (
-    event: React.MouseEvent<HTMLCanvasElement, MouseEvent>
-  ) => {
-    // console.log("event", event.nativeEvent.offsetX, event.nativeEvent.offsetY);
-    this.drawHit();
-
+  private getNode(event: React.MouseEvent<HTMLCanvasElement, MouseEvent>) {
+    // this.drawHit();
     const canvas = this._hitCanvasRef.current!;
     const ctx = canvas.getContext("2d")!;
     const color = ctx.getImageData(
@@ -288,20 +288,35 @@ class CanvasWordCloudCanvas extends React.Component<Props, State> {
     ).data;
     const key = "rgb(" + color[0] + "," + color[1] + "," + color[2] + ")";
     const node = this._colorToNodeMap[key];
+    return node;
+  }
+
+  handleClick = (event: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
+    const node = this.getNode(event);
     if (node) {
       // console.log("clicked on", node.text);
       this.props.onToggleNode(node);
     }
+  };
 
-    // console.log(
-    //   "ooh",
-    //   ctx.getImageData(
-    //     event.nativeEvent.offsetX * 2,
-    //     event.nativeEvent.offsetY * 2,
-    //     1,
-    //     1
-    //   ).data
-    // );
+  handleMouseMove = (
+    event: React.MouseEvent<HTMLCanvasElement, MouseEvent>
+  ) => {
+    const node = this.getNode(event);
+    if (node) {
+      this.props.onShowTooltip(node, {
+        top: 300,
+        left: 300,
+        width: 20,
+        height: 20
+      });
+    } else {
+      this.props.onHideTooltip();
+    }
+  };
+
+  handleMouseOut = () => {
+    this.props.onHideTooltip();
   };
 
   render() {
@@ -311,7 +326,9 @@ class CanvasWordCloudCanvas extends React.Component<Props, State> {
           ref={this._canvasRef}
           className={styles.canvas}
           role="img"
-          onClick={this.handleHitCanvasClick}
+          onClick={this.handleClick}
+          onMouseMove={this.handleMouseMove}
+          onMouseOut={this.handleMouseOut}
         />
         <canvas
           ref={this._hitCanvasRef}
