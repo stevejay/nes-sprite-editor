@@ -46,31 +46,33 @@ class CanvasWordCloud extends React.Component<Props, State> {
     const { nodes, selectedNodeIds } = this.props;
     const { showTooltip, originRect, tooltipData } = this.state;
     return (
-      <Measure bounds>
-        {({ measureRef, contentRect }) => (
-          <div ref={measureRef} className={styles.container}>
-            <CanvasWordCloudCanvas
-              nodes={nodes}
-              selectedNodeIds={selectedNodeIds}
-              width={contentRect.bounds ? contentRect.bounds.width : 0}
-              height={contentRect.bounds ? contentRect.bounds.height : 0}
-              onShowTooltip={this.handleShowTooltip}
-              onHideTooltip={this.handleHideTooltip}
-              onToggleNode={this.handleToggleNode}
-            />
-            <ModelessDialog isShowing={showTooltip}>
-              <Tooltip originRect={originRect}>
-                {tooltipData && (
-                  <p>
-                    {tooltipData.value}{" "}
-                    {tooltipData.value === 0 ? "occurrence" : "occurrences"}
-                  </p>
-                )}
-              </Tooltip>
-            </ModelessDialog>
-          </div>
-        )}
-      </Measure>
+      <>
+        <Measure bounds>
+          {({ measureRef, contentRect }) => (
+            <div ref={measureRef} className={styles.container}>
+              <CanvasWordCloudCanvas
+                nodes={nodes}
+                selectedNodeIds={selectedNodeIds}
+                width={contentRect.bounds ? contentRect.bounds.width : 0}
+                height={contentRect.bounds ? contentRect.bounds.height : 0}
+                onShowTooltip={this.handleShowTooltip}
+                onHideTooltip={this.handleHideTooltip}
+                onToggleNode={this.handleToggleNode}
+              />
+            </div>
+          )}
+        </Measure>
+        <ModelessDialog isShowing={showTooltip}>
+          <Tooltip originRect={originRect}>
+            {tooltipData && (
+              <p>
+                {tooltipData.value}{" "}
+                {tooltipData.value === 0 ? "occurrence" : "occurrences"}
+              </p>
+            )}
+          </Tooltip>
+        </ModelessDialog>
+      </>
     );
   }
 }

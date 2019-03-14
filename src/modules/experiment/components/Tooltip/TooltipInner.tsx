@@ -1,8 +1,8 @@
 import React from "react";
-import styles from "./Tooltip.module.scss";
-import getTooltipPosition from "../Tooltip/get-tooltip-position";
+import styles from "../HeatMap/Tooltip.module.scss";
 import { floor } from "lodash";
-import { TooltipData } from "../Tooltip/types";
+import getTooltipPosition from "./get-tooltip-position";
+import { TooltipData } from "./types";
 
 /* <Tooltip show={showTooltip} data={tooltipData} target={originRect}>
   {(data: WordCloudNode) => (
@@ -14,11 +14,11 @@ import { TooltipData } from "../Tooltip/types";
 
 type Props = {
   opacity?: number;
-  originRect?: TooltipData["originRect"]; // relative to the viewport
+  originRect?: TooltipData["originRect"] | null; // relative to the viewport
   children: React.ReactNode;
 };
 
-class Tooltip extends React.Component<Props> {
+class TooltipInner extends React.Component<Props> {
   _tooltipContainer: React.RefObject<HTMLDivElement>;
 
   constructor(props: Props) {
@@ -99,4 +99,4 @@ class Tooltip extends React.Component<Props> {
   }
 }
 
-export default Tooltip;
+export default TooltipInner;

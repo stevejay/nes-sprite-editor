@@ -13,11 +13,7 @@ type Props = {
   onToggleNode: (value: WordCloudNode) => void;
 };
 
-type State = {
-  nodes: Array<WordCloudNode> | null;
-};
-
-class WordCloudHtml extends React.PureComponent<Props, State> {
+class WordCloudHtml extends React.PureComponent<Props> {
   _container: React.RefObject<SVGSVGElement>;
   _renderer: IWordCloudGraph;
 
@@ -28,7 +24,6 @@ class WordCloudHtml extends React.PureComponent<Props, State> {
       .showTooltipCallback(this.handleShowTooltip)
       .hideTooltipCallback(this.handleHideTooltip)
       .toggleNodeCallback(this.handleToggleNode);
-    this.state = WordCloudHtml.createState(props);
   }
 
   componentDidMount() {
@@ -41,18 +36,6 @@ class WordCloudHtml extends React.PureComponent<Props, State> {
         this.props.width !== prevProps.width ||
         this.props.height !== prevProps.height
     );
-  }
-
-  static getDerivedStateFromProps(props: Props, state: State) {
-    return props.nodes !== state.nodes
-      ? WordCloudHtml.createState(props)
-      : state;
-  }
-
-  static createState(props: Props) {
-    return {
-      nodes: props.nodes
-    };
   }
 
   private handleShowTooltip = (

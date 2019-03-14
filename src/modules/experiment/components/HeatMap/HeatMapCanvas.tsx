@@ -1,17 +1,16 @@
 import React from "react";
 import * as d3 from "d3";
 import styles from "./HeatMapCanvas.module.scss";
-import { clamp, includes, isNil, range } from "lodash";
+import { clamp, includes, range } from "lodash";
 import drawRoundedRect from "./draw-rounded-rect";
-import { HeatMapEntry } from "./HeatMap";
+import { HeatMapNode } from "./types";
 
 const MARGIN_PX = 1;
 const NO_VALUE_OPACITY = 0.075;
 const MIN_OPACITY = 0.2;
 const MAX_OPACITY = 1;
 const DURATION = 250;
-const EASE = d3.easeLinear; // d3.easeCubic;
-export const MISSING_VALUE = -0.25;
+const EASE = d3.easeLinear;
 
 type D3HeatMapEntry = {
   opacity: number;
@@ -26,7 +25,7 @@ type D3HeatMapEntry = {
 
 type Props = {
   width: number;
-  data: Array<HeatMapEntry | null>; // values in range [0, 1]
+  data: Array<HeatMapNode>; // values in range [0, 1]
   rows: number;
   columns: number;
   selectedIds: Array<number>;
@@ -98,12 +97,13 @@ class HeatMapCanvas extends React.PureComponent<Props> {
       datum.w = dimension - MARGIN_PX * 2;
       datum.h = dimension - MARGIN_PX * 2;
       datum.selected = selected;
-      datum.sOpacity = datum.opacity;
-      datum.tOpacity = isNil(newDatum)
-        ? NO_VALUE_OPACITY
-        : selected
-        ? datum.sOpacity
-        : this._opacity(newDatum.normalisedCount);
+      datum.sOpacity = selected ? 1 : datum.opacity;
+      datum.tOpacity =
+        newDatum.count === 0
+          ? NO_VALUE_OPACITY
+          : selected
+          ? datum.sOpacity
+          : this._opacity(newDatum.normalisedCount);
 
       if (datum.tOpacity !== datum.sOpacity) {
         animate = true;

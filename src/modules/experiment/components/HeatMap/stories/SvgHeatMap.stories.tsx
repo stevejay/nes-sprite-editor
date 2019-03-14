@@ -5,7 +5,7 @@ import { includes, random, range, sumBy, clamp } from "lodash";
 import * as React from "react";
 import { host } from "storybook-host";
 import "../../../../../index.scss";
-import HeatMap from "../HeatMap";
+import SvgHeatMap from "../SvgHeatMap";
 import { HeatMapNode } from "../types";
 
 const storyHost = host({
@@ -990,7 +990,7 @@ let count = 0;
 function generateData() {
   const result = responseParser(RESPONSE);
   result.forEach(datum => {
-    if (datum) {
+    if (datum.count > 0) {
       datum.normalisedCount = random(0, 1, true);
     }
   });
@@ -1009,10 +1009,10 @@ function generateData() {
 }
 
 const store = new Store<{
-  data: Array<HeatMapNode>;
+  nodes: Array<HeatMapNode>;
   selectedIds: Array<number>;
 }>({
-  data: createEmptyData(),
+  nodes: createEmptyData(),
   selectedIds: []
 });
 
@@ -1045,13 +1045,13 @@ const X_LABELS = [
 
 const Y_LABELS = ["M", "T", "W", "T", "F", "S", "S"];
 
-storiesOf("SteelEye/HeatMap", module)
+storiesOf("SteelEye/SvgHeatMap", module)
   .addDecorator(storyHost)
   .addDecorator(withKnobs)
   .add("Basic", () => (
     <div style={{ display: "flex", flexDirection: "column" }}>
       <button
-        onClick={() => store.set({ data: generateData() })}
+        onClick={() => store.set({ nodes: generateData() })}
         style={{ marginBottom: 30, maxWidth: 100 }}
       >
         New Data
@@ -1059,17 +1059,17 @@ storiesOf("SteelEye/HeatMap", module)
       <div>
         <State store={store}>
           {state => (
-            <HeatMap
-              data={state.data}
+            <SvgHeatMap
+              nodes={state.nodes}
               xLabels={X_LABELS}
               yLabels={Y_LABELS}
               selectedIds={state.selectedIds}
-              onTileClick={index => {
+              onToggleNode={node => {
                 let newSelectedIds = state.selectedIds.slice();
-                if (includes(newSelectedIds, index)) {
-                  newSelectedIds = newSelectedIds.filter(x => x !== index);
+                if (includes(newSelectedIds, node.id)) {
+                  newSelectedIds = newSelectedIds.filter(x => x !== node.id);
                 } else {
-                  newSelectedIds.push(index);
+                  newSelectedIds.push(node.id);
                 }
                 store.set({ selectedIds: newSelectedIds });
               }}

@@ -1,7 +1,12 @@
 import React from "react";
+import * as d3 from "d3";
 import styles from "./CanvasWordCloudCanvas.module.scss";
 import { WordCloudNode, D3WordCloudNode } from "./types";
 import calculateWordCloudData from "./calculate-word-cloud-data";
+import { element } from "prop-types";
+import { clamp, includes } from "lodash";
+
+const DURATION_MS = 500;
 
 type Props = {
   width: number;
@@ -22,12 +27,16 @@ type State = {
 class CanvasWordCloudCanvas extends React.Component<Props, State> {
   _canvasRef: React.RefObject<HTMLCanvasElement>;
   _mounted: boolean;
+  _customBase: HTMLElement;
+  _timer: d3.Timer | null;
 
   constructor(props: Props) {
     super(props);
     this._canvasRef = React.createRef();
     this._mounted = true;
     this.state = { d3Nodes: [], bounds: [], dataVersion: 0 };
+    this._customBase = document.createElement("custom");
+    this._timer = null;
   }
 
   componentDidMount() {
@@ -56,6 +65,8 @@ class CanvasWordCloudCanvas extends React.Component<Props, State> {
     }
     if (d3NodesChanged || selectedNodesChanged) {
       this.renderWordCloud();
+    } else if (dimensionsChanged) {
+      this.draw();
     }
   }
 
@@ -84,7 +95,83 @@ class CanvasWordCloudCanvas extends React.Component<Props, State> {
   }
 
   private renderWordCloud() {
-    console.log("rendering");
+    this.dataBind();
+
+    if (this._timer) {
+      this._timer.stop();
+    }
+
+    this._timer = d3.timer((elapsed: number) => {
+      this.draw();
+      if (elapsed > DURATION_MS && this._timer) {
+        this._timer.stop();
+      }
+    });
+  }
+
+  private dataBind() {
+    const custom = d3.select(this._customBase);
+
+    const join = custom
+      .selectAll("custom.word")
+      .data(this.state.d3Nodes, d => d.id);
+
+    join
+      .exit()
+      .transition()
+      .duration(DURATION_MS)
+      .attr("opacity", 1e-6)
+      // .attr("fontSize", 10)
+      .remove();
+
+    const enterSelection = join
+      .enter()
+      .append("custom")
+      .attr("class", "word")
+      .attr("opacity", 1e-6)
+      .attr("x", d => d.x)
+      .attr("y", d => d.y)
+      .attr("width", d => d.width)
+      .attr("height", d => d.height)
+      .attr("fontSize", d => d.size);
+    // .attr("fontSize", 10);
+
+    join
+      .merge(enterSelection)
+      .attr("fontSize", d => d.size)
+      .transition()
+      .duration(DURATION_MS)
+      .attr("opacity", 1)
+      .attr("x", d => d.x)
+      .attr("y", d => d.y)
+      .attr("width", d => d.width)
+      .attr("height", d => d.height);
+    // .attr("fontSize", d => d.size);
+  }
+
+  private draw() {
+    const { selectedNodeIds } = this.props;
+    const canvas = this._canvasRef.current!;
+    const ctx = canvas.getContext("2d")!;
+    ctx.save();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.translate(this.props.width * 0.5, this.props.height * 0.5); // TODO fix
+
+    const custom = d3.select(this._customBase);
+    const elements = custom.selectAll("custom.word");
+    ctx.textAlign = "center";
+
+    elements.each(function(d: D3WordCloudNode, index: number) {
+      const node = d3.select(this);
+      const selected = includes(selectedNodeIds, d.id);
+      ctx.font = `${node.attr("fontSize")}px sans-serif`;
+      ctx.fillStyle = selected
+        ? `rgba(0, 203, 142, ${clamp(+node.attr("opacity"), 0, 1)})`
+        : `rgba(0, 150, 203, ${clamp(+node.attr("opacity"), 0, 1)})`;
+      ctx.fillText(d.text, +node.attr("x"), +node.attr("y"));
+    });
+
+    ctx.restore();
   }
 
   private resizeCanvas(width: number, height: number) {

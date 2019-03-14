@@ -1,15 +1,6 @@
 import React from "react";
 import styles from "./HeatMapInteractionTracker.module.scss";
-
-export type TooltipData = {
-  index: number;
-  originRect: {
-    top: number;
-    left: number;
-    width: number;
-    height: number;
-  };
-};
+import { TooltipData } from "../Tooltip/types";
 
 type Props = {
   columns: number;

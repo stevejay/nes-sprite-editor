@@ -19,7 +19,7 @@ export default async function calculateWordCloudData(
     return { d3Nodes: [], bounds: [] };
   }
 
-  console.log("calculating...", nodes.length, width, height);
+  // console.log("calculating...", nodes.length, width, height);
 
   return await new Promise<Result>(resolve => {
     const minNode = minBy(nodes, node => node.value);

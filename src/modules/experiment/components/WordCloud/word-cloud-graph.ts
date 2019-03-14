@@ -128,7 +128,7 @@ export default function wordCloudGraph(): IWordCloudGraph {
       .exit()
       .transition()
       .duration(500)
-      .attr("transform", d => "translate(" + [0, 0] + ")")
+      // .style("font-size", "10px")
       .style("opacity", 1e-6)
       .remove();
     words = words
@@ -138,26 +138,24 @@ export default function wordCloudGraph(): IWordCloudGraph {
       .attr("text-anchor", "middle")
       .classed("word", true)
       .style("opacity", 1e-6)
+      // .style("font-size", "10px")
       .style("font-size", d => d.size + "px")
       .style("font-family", d => d.font)
-      // .attr("x", d => d.x)
-      // .attr("y", d => d.y)
-      .attr("transform", d => "translate(" + [0, 0] + ")")
+      .attr("transform", d => "translate(" + [d.x, d.y] + ")")
       .on("mouseover", handleMouseOver)
       .on("mouseout", handleMouseOut)
       .on("click", handleClick)
       .merge(words);
     words
       .classed("selected", d => !!includes(selectedIds, d.id))
+      .style("font-size", d => d.size + "px")
       .transition()
       .duration(500)
       .style("opacity", d =>
         !!includes(selectedIds, d.id) ? 1 : opacity(+d.value)
       )
-      .style("font-size", d => d.size + "px")
+      // .style("font-size", d => d.size + "px")
       .style("font-family", d => d.font)
-      // .attr("x", d => d.x)
-      // .attr("y", d => d.y);
       .attr("transform", d => "translate(" + [d.x, d.y] + ")");
 
     function handleMouseOver(d: WordCloudNode) {

@@ -58,13 +58,6 @@ class WordCloud extends React.Component<Props, State> {
               onHideTooltip={this.handleHideTooltip}
               onToggleNode={this.handleToggleNode}
             />
-            {/* <Tooltip show={showTooltip} data={tooltipData} target={originRect}>
-              {(data: WordCloudNode) => (
-                <p>
-                  {data.value} {data.value === 0 ? "occurrence" : "occurrences"}
-                </p>
-              )}
-            </Tooltip> */}
             <ModelessDialog isShowing={showTooltip}>
               <Tooltip originRect={originRect}>
                 {tooltipData && (

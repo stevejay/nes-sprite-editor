@@ -3,20 +3,21 @@ import Measure from "react-measure";
 import styles from "./HeatMap.module.scss";
 import { isNil } from "lodash";
 import HeatMapCanvas from "./HeatMapCanvas";
-import HeatMapInteractionTracker, {
-  TooltipData
-} from "./HeatMapInteractionTracker";
-import Tooltip from "./Tooltip";
-import ModelessDialog from "./ModelessDialog";
+import HeatMapInteractionTracker from "./HeatMapInteractionTracker";
+// import Tooltip from "./Tooltip";
+// import ModelessDialog from "./ModelessDialog";
+import Tooltip from "../Tooltip/Tooltip";
+import { TooltipData } from "../Tooltip/types";
+import { HeatMapNode } from "./types";
 
-// const COLOR_INTERPOLATOR = (value: HeatMapEntry["value"] | null) =>
+// const COLOR_INTERPOLATOR = (value: HeatMapNode["value"] | null) =>
 //   isNil(value)
 //     ? `#343644`
 //     : `rgba(0,150,203,${clamp(0.2 + value * 1.0, 0, 1)})`;
 
 // const MIN_OPACITY = 0.075;
 
-// const COLOR_INTERPOLATOR = (value: HeatMapEntry["value"]) => {
+// const COLOR_INTERPOLATOR = (value: HeatMapNode["value"]) => {
 //   const inputRange = 1 - MISSING_VALUE;
 //   const outputRange = 1 - MIN_OPACITY;
 //   const output =
@@ -24,15 +25,8 @@ import ModelessDialog from "./ModelessDialog";
 //   return `rgba(0,150,203,${clamp(output, 0, 1)})`;
 // };
 
-export type HeatMapEntry = {
-  id: number;
-  count: number;
-  normalisedCount: number; //  in range [0, 1]
-  details: Array<{ id: string; count: number }>;
-};
-
 type Props = {
-  data: Array<HeatMapEntry | null>;
+  data: Array<HeatMapNode>;
   selectedIds: Array<number>;
   xLabels: Array<string>;
   yLabels: Array<string>;
@@ -41,27 +35,27 @@ type Props = {
 
 type State = {
   showTooltip: boolean;
-  originRect?: TooltipData["originRect"];
-  tooltipData: HeatMapEntry["details"];
+  originRect: TooltipData["originRect"] | null;
+  tooltipData: HeatMapNode | null;
 };
 
 class HeatMap extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = { showTooltip: false, tooltipData: [] };
+    this.state = { showTooltip: false, tooltipData: null, originRect: null };
   }
 
   handleShowTooltip = (data: TooltipData) => {
     const datum = this.props.data[data.index];
     if (isNil(datum)) {
       this.handleHideTooltip();
-      return;
+    } else {
+      this.setState({
+        showTooltip: true,
+        originRect: data.originRect,
+        tooltipData: datum
+      });
     }
-    this.setState({
-      showTooltip: true,
-      originRect: data.originRect,
-      tooltipData: datum.details
-    });
   };
 
   handleHideTooltip = () => {
@@ -110,15 +104,25 @@ class HeatMap extends React.Component<Props, State> {
                   onShowTooltip={this.handleShowTooltip}
                   onHideTooltip={this.handleHideTooltip}
                 />
-                <ModelessDialog isShowing={showTooltip}>
-                  <Tooltip originRect={originRect}>
-                    {tooltipData.map(datum => (
-                      <p key={datum.id}>
-                        {datum.id}: {datum.count}
+                <Tooltip
+                  show={showTooltip}
+                  target={originRect}
+                  data={tooltipData}
+                >
+                  {(data: HeatMapNode) => (
+                    <>
+                      <p>
+                        {data.day} {data.hour}
                       </p>
-                    ))}
-                  </Tooltip>
-                </ModelessDialog>
+                      {data.details &&
+                        data.details.map(datum => (
+                          <p key={datum.id}>
+                            {datum.id}: {datum.count}
+                          </p>
+                        ))}
+                    </>
+                  )}
+                </Tooltip>
               </div>
             )}
           </Measure>
