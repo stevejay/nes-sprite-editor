@@ -4,7 +4,7 @@ import Measure from "react-measure";
 import ModelessDialog from "../HeatMap/ModelessDialog";
 import Tooltip from "../HeatMap/Tooltip";
 import { WordCloudNode } from "./types";
-import WordCloudHtml from "./WordCloudHtml";
+import CanvasWordCloudCanvas from "./CanvasWordCloudCanvas";
 
 type Props = {
   nodes: Array<WordCloudNode>;
@@ -20,7 +20,7 @@ type State = {
 
 // Desired height could be passed in as a prop or a style
 
-class WordCloud extends React.Component<Props, State> {
+class CanvasWordCloud extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = { showTooltip: false, tooltipData: null };
@@ -49,7 +49,7 @@ class WordCloud extends React.Component<Props, State> {
       <Measure bounds>
         {({ measureRef, contentRect }) => (
           <div ref={measureRef} className={styles.container}>
-            <WordCloudHtml
+            <CanvasWordCloudCanvas
               nodes={nodes}
               selectedNodeIds={selectedNodeIds}
               width={contentRect.bounds ? contentRect.bounds.width : 0}
@@ -58,13 +58,6 @@ class WordCloud extends React.Component<Props, State> {
               onHideTooltip={this.handleHideTooltip}
               onToggleNode={this.handleToggleNode}
             />
-            {/* <Tooltip show={showTooltip} data={tooltipData} target={originRect}>
-              {(data: WordCloudNode) => (
-                <p>
-                  {data.value} {data.value === 0 ? "occurrence" : "occurrences"}
-                </p>
-              )}
-            </Tooltip> */}
             <ModelessDialog isShowing={showTooltip}>
               <Tooltip originRect={originRect}>
                 {tooltipData && (
@@ -82,4 +75,4 @@ class WordCloud extends React.Component<Props, State> {
   }
 }
 
-export default WordCloud;
+export default CanvasWordCloud;

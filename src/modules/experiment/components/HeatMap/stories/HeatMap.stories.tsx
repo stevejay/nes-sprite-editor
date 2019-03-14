@@ -928,10 +928,11 @@ const RESPONSE = {
 const HOURS_IN_DAY = 24;
 const DAYS_IN_WEEK = 7;
 
-function responseParser(response: any) {
-  const result: Array<any> = range(0, HOURS_IN_DAY * DAYS_IN_WEEK).map(
-    () => null
-  );
+function responseParser(response: any): Array<HeatMapEntry | null> {
+  const result: Array<HeatMapEntry | null> = range(
+    0,
+    HOURS_IN_DAY * DAYS_IN_WEEK
+  ).map(() => null);
   let maxTotal = 0;
 
   const hoursOfDay = response.aggregations.hour_of_day.buckets || [];
@@ -950,8 +951,9 @@ function responseParser(response: any) {
       const resultIndex = (+dayOfWeek.key - 1) * HOURS_IN_DAY + +hourOfDay.key;
 
       const item = {
-        total: totalDocCount,
-        value: 0.1,
+        id: `${dayOfWeek.key}-${hourOfDay.key}`,
+        count: totalDocCount,
+        normalisedCount: 0.1,
         details: sources.map((source: any) => ({
           id: source.key,
           count: source.doc_count
@@ -973,7 +975,7 @@ function responseParser(response: any) {
     if (!element) {
       return;
     }
-    element.value = clamp(element.total / maxTotal, 0, 1);
+    element.normalisedCount = clamp(element.count / maxTotal, 0, 1);
   });
 
   return result;
@@ -985,12 +987,14 @@ function generateData() {
   const result = responseParser(RESPONSE);
   result.forEach(datum => {
     if (datum) {
-      datum.value = random(0, 1, true);
+      datum.normalisedCount = random(0, 1, true);
     }
   });
   if (count % 2 === 1) {
     result[0] = {
-      value: 0.8,
+      id: "0-0",
+      count: 44,
+      normalisedCount: 0.8,
       details: []
     };
   }
@@ -999,11 +1003,11 @@ function generateData() {
 }
 
 const store = new Store<{
-  data: Array<HeatMapEntry>;
-  selectedIndexes: Array<number>;
+  data: Array<HeatMapEntry | null>;
+  selectedIds: Array<HeatMapEntry["id"]>;
 }>({
-  data: generateData(),
-  selectedIndexes: []
+  data: [],
+  selectedIds: []
 });
 
 const X_LABELS = [
@@ -1053,19 +1057,15 @@ storiesOf("SteelEye/HeatMap", module)
               data={state.data}
               xLabels={X_LABELS}
               yLabels={Y_LABELS}
-              selectedIndexes={state.selectedIndexes}
-              onTileClick={value => {
-                let newSelectedIndexes = state.selectedIndexes.slice();
-                if (includes(newSelectedIndexes, value)) {
-                  newSelectedIndexes = newSelectedIndexes.filter(
-                    x => x !== value
-                  );
+              selectedIds={state.selectedIds}
+              onTileClick={tile => {
+                let newSelectedIds = state.selectedIds.slice();
+                if (includes(newSelectedIds, tile.id)) {
+                  newSelectedIds = newSelectedIds.filter(x => x !== tile.id);
                 } else {
-                  newSelectedIndexes.push(value);
+                  newSelectedIds.push(tile.id);
                 }
-                store.set({
-                  selectedIndexes: newSelectedIndexes
-                });
+                store.set({ selectedIds: newSelectedIds });
               }}
             />
           )}

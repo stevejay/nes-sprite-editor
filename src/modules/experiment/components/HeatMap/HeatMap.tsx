@@ -1,8 +1,8 @@
 import React from "react";
 import Measure from "react-measure";
 import styles from "./HeatMap.module.scss";
-import { clamp, isNil } from "lodash";
-import HeatMapCanvas, { MISSING_VALUE } from "./HeatMapCanvas";
+import { isNil } from "lodash";
+import HeatMapCanvas from "./HeatMapCanvas";
 import HeatMapInteractionTracker, {
   TooltipData
 } from "./HeatMapInteractionTracker";
@@ -14,30 +14,29 @@ import ModelessDialog from "./ModelessDialog";
 //     ? `#343644`
 //     : `rgba(0,150,203,${clamp(0.2 + value * 1.0, 0, 1)})`;
 
-const MIN_OPACITY = 0.075;
+// const MIN_OPACITY = 0.075;
 
-const COLOR_INTERPOLATOR = (value: HeatMapEntry["value"]) => {
-  const inputRange = 1 - MISSING_VALUE;
-  const outputRange = 1 - MIN_OPACITY;
-  const output =
-    ((value - MISSING_VALUE) * outputRange) / inputRange + MIN_OPACITY;
-  return `rgba(0,150,203,${clamp(output, 0, 1)})`;
-};
-
-// TODO selectedIndexes should be selectedIds
+// const COLOR_INTERPOLATOR = (value: HeatMapEntry["value"]) => {
+//   const inputRange = 1 - MISSING_VALUE;
+//   const outputRange = 1 - MIN_OPACITY;
+//   const output =
+//     ((value - MISSING_VALUE) * outputRange) / inputRange + MIN_OPACITY;
+//   return `rgba(0,150,203,${clamp(output, 0, 1)})`;
+// };
 
 export type HeatMapEntry = {
-  value: number; //  in range [0, 1]
+  id: string;
+  count: number;
+  normalisedCount: number; //  in range [0, 1]
   details: Array<{ id: string; count: number }>;
 };
 
 type Props = {
   data: Array<HeatMapEntry | null>;
+  selectedIds: Array<HeatMapEntry["id"]>;
   xLabels: Array<string>;
   yLabels: Array<string>;
-  selectedIndexes: Array<number>;
-  colorInterpolator?: (value: number | null) => string;
-  onTileClick: (index: number) => void;
+  onTileClick: (tile: HeatMapEntry) => void;
 };
 
 type State = {
@@ -49,12 +48,6 @@ type State = {
 class HeatMap extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    if (props.data.length !== props.xLabels.length * props.yLabels.length) {
-      throw new Error(
-        "Labels need to be given for all columns and rows; " +
-          "use an empty string for no label"
-      );
-    }
     this.state = { showTooltip: false, tooltipData: [] };
   }
 
@@ -75,15 +68,15 @@ class HeatMap extends React.Component<Props, State> {
     this.setState({ showTooltip: false });
   };
 
+  handleTileClick = (index: number) => {
+    const datum = this.props.data[index];
+    if (!isNil(datum)) {
+      this.props.onTileClick(datum);
+    }
+  };
+
   render() {
-    const {
-      data,
-      xLabels,
-      yLabels,
-      selectedIndexes,
-      colorInterpolator = COLOR_INTERPOLATOR,
-      onTileClick
-    } = this.props;
+    const { data, xLabels, yLabels, selectedIds, onTileClick } = this.props;
     const { showTooltip, originRect, tooltipData } = this.state;
     return (
       <div className={styles.container}>
@@ -110,13 +103,13 @@ class HeatMap extends React.Component<Props, State> {
                 <HeatMapCanvas
                   width={contentRect.bounds ? contentRect.bounds.width || 0 : 0}
                   data={data}
-                  selectedIndexes={selectedIndexes}
-                  columnCount={xLabels.length}
-                  colorInterpolator={colorInterpolator}
+                  selectedIds={selectedIds}
+                  rows={yLabels.length}
+                  columns={xLabels.length}
                 />
                 <HeatMapInteractionTracker
-                  columnCount={xLabels.length}
-                  onTileClick={onTileClick}
+                  columns={xLabels.length}
+                  onTileClick={this.handleTileClick}
                   onShowTooltip={this.handleShowTooltip}
                   onHideTooltip={this.handleHideTooltip}
                 />

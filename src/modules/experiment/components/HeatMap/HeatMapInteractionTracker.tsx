@@ -12,7 +12,7 @@ export type TooltipData = {
 };
 
 type Props = {
-  columnCount: number;
+  columns: number;
   onTileClick: (index: number) => void;
   onShowTooltip: (data: TooltipData) => void;
   onHideTooltip: () => void;
@@ -50,14 +50,14 @@ class HeatMapInteractionTracker extends React.Component<Props, State> {
   };
 
   getInteractionData(clientX: number, clientY: number): TooltipData {
-    const { columnCount } = this.props;
+    const { columns } = this.props;
     const boundingRect = this._containerRef!.current!.getBoundingClientRect();
     const yInContainer = clientY - boundingRect.top;
     const xInContainer = clientX - boundingRect.left;
-    const dimension = boundingRect.width / columnCount;
+    const dimension = boundingRect.width / columns;
     const column = Math.floor(xInContainer / dimension);
     const row = Math.floor(yInContainer / dimension);
-    const index = row * columnCount + column;
+    const index = row * columns + column;
     const left = column * dimension + boundingRect.left;
     const top = row * dimension + boundingRect.top;
     return {

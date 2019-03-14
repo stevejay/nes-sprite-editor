@@ -24,7 +24,6 @@ export interface IWordCloudGraph {
   ): this;
   hideTooltipCallback(value: () => void): this;
   toggleNodeCallback(value: (value: WordCloudNode) => void): this;
-  textAccessor(value: (value: WordCloudNode) => string): this;
 }
 
 export default function wordCloudGraph(): IWordCloudGraph {
@@ -36,7 +35,6 @@ export default function wordCloudGraph(): IWordCloudGraph {
     | null = null;
   let onHideTooltip: (() => void) | null = null;
   let onToggleNode: ((data: WordCloudNode) => void) | null = null;
-  let textAccessor: (data: WordCloudNode) => string = d => d.text;
   let _version = 0;
   let _nodes: Array<WordCloudNode> = [];
   let _bounds: any = null;
@@ -116,10 +114,6 @@ export default function wordCloudGraph(): IWordCloudGraph {
       )
       // @ts-ignore
       .merge(wordsGroup);
-    // wordsGroup.attr(
-    //   "transform",
-    //   "translate(" + [width * 0.5, height * 0.5] + ") scale(" + scale + ")"
-    // );
     wordsGroup
       .transition()
       .duration(500)
@@ -216,11 +210,6 @@ export default function wordCloudGraph(): IWordCloudGraph {
 
   renderer.toggleNodeCallback = function(value: (data: WordCloudNode) => void) {
     onToggleNode = value;
-    return renderer;
-  };
-
-  renderer.textAccessor = function(value: (value: WordCloudNode) => string) {
-    textAccessor = value;
     return renderer;
   };
 

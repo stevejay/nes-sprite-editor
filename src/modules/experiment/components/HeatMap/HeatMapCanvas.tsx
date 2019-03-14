@@ -1,195 +1,154 @@
 import React from "react";
+import * as d3 from "d3";
 import styles from "./HeatMapCanvas.module.scss";
-import { interpolateNumber } from "d3-interpolate";
-import { clamp, includes, isNil } from "lodash";
+import { clamp, includes, isNil, range } from "lodash";
 import drawRoundedRect from "./draw-rounded-rect";
 import { HeatMapEntry } from "./HeatMap";
 
 const MARGIN_PX = 1;
-const ANIMATION_DURATION_FRAMES = 15;
+const NO_VALUE_OPACITY = 0.075;
+const MIN_OPACITY = 0.2;
+const MAX_OPACITY = 1;
+const DURATION = 250;
+const EASE = d3.easeLinear; // d3.easeCubic;
 export const MISSING_VALUE = -0.25;
+
+type D3HeatMapEntry = {
+  opacity: number;
+  sOpacity: number;
+  tOpacity: number;
+  selected: boolean;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+};
 
 type Props = {
   width: number;
   data: Array<HeatMapEntry | null>; // values in range [0, 1]
-  columnCount: number;
-  selectedIndexes: Array<number>;
-  colorInterpolator: (value: number) => string;
+  rows: number;
+  columns: number;
+  selectedIds: Array<HeatMapEntry["id"]>;
 };
 
-type State = {
-  data: Array<HeatMapEntry | null>;
-};
-
-class HeatMapCanvas extends React.Component<Props, State> {
-  _animatingFromValues: Array<HeatMapEntry["value"]>;
+class HeatMapCanvas extends React.PureComponent<Props> {
   _canvasRef: React.RefObject<HTMLCanvasElement>;
-  _rafHandle: number | null;
-  _t: number; // range is [0, 1]
+  _timer: d3.Timer | null;
+  _data: Array<D3HeatMapEntry>;
+  _opacity: d3.ScaleLinear<number, number>;
 
   constructor(props: Props) {
     super(props);
     this._canvasRef = React.createRef();
-    this._animatingFromValues = new Array(props.data.length).fill(
-      MISSING_VALUE
-    );
-    this._t = 0; // zero causes animation to kick off on mount
-    this._rafHandle = null; // handle to any pending raf callback
-    this.state = HeatMapCanvas.calculateState(props, []);
+    this._timer = null;
+    this._data = this.initialize();
+    this._opacity = d3
+      .scaleLinear()
+      .range([MIN_OPACITY, MAX_OPACITY])
+      .domain([0, 1]);
   }
 
   componentDidMount() {
-    const {
-      width,
-      data,
-      columnCount,
-      colorInterpolator,
-      selectedIndexes
-    } = this.props;
-    const height = HeatMapCanvas.calculateHeight(
-      width,
-      columnCount,
-      data.length
-    );
+    const { width, rows, columns } = this.props;
+    const height = HeatMapCanvas.calculateHeight(width, rows, columns);
     this.resizeCanvas(width, height);
     if (width === 0) {
       return;
     }
-    this.renderTiles(
-      data,
-      this._animatingFromValues,
-      selectedIndexes,
-      width,
-      columnCount,
-      colorInterpolator
-    );
+    this.update();
   }
 
-  componentDidUpdate(prevProps: Props, prevState: State) {
-    const {
-      width,
-      columnCount,
-      colorInterpolator,
-      selectedIndexes
-    } = this.props;
-    const { data } = this.state;
-    const height = HeatMapCanvas.calculateHeight(
-      width,
-      columnCount,
-      data.length
-    );
-
-    // there is an active animation:
-    if (this._t < 1) {
-      // cancel any pending raf invocation:
-      if (this._rafHandle) {
-        cancelAnimationFrame(this._rafHandle);
-        this._rafHandle = null;
-      }
-      // calculate where we've got to and use that as the starting values:
-      this._animatingFromValues = this._animatingFromValues.map(
-        (value, index) =>
-          interpolateNumber(
-            value,
-            isNil(prevState.data[index]) ? 0 : prevState.data[index]!.value
-          )(this._t)
-      );
-      // reset to start of animation:
-      this._t = 0;
-    }
-
+  componentDidUpdate(prevProps: Props) {
+    const { width, rows, columns } = this.props;
+    const height = HeatMapCanvas.calculateHeight(width, rows, columns);
     if (width !== prevProps.width) {
       this.resizeCanvas(width, height);
     }
+    this.update();
+  }
 
-    // data is changing and there was no in-progress animation.
-    // we need to set the animatingFromValues manually:
-    if (data !== prevState.data && this._t >= 1) {
-      // restart animation to get the new data showing:
-      this._animatingFromValues = prevState.data.map(datum =>
-        isNil(datum) ? MISSING_VALUE : datum.value
-      );
-      this._t = 0;
-    }
+  private initialize(): Array<D3HeatMapEntry> {
+    const { rows, columns } = this.props;
+    return range(0, rows * columns).map(() => ({
+      opacity: NO_VALUE_OPACITY,
+      sOpacity: NO_VALUE_OPACITY,
+      tOpacity: NO_VALUE_OPACITY,
+      selected: false,
+      x: 0,
+      y: 0,
+      w: 0,
+      h: 0
+    }));
+  }
 
-    if (
-      this._t < 1 ||
-      width !== prevProps.width ||
-      selectedIndexes !== prevProps.selectedIndexes
-    ) {
-      this.renderTiles(
-        data,
-        this._animatingFromValues,
-        selectedIndexes,
-        width,
-        columnCount,
-        colorInterpolator
-      );
+  private update() {
+    const { data, selectedIds, width, columns } = this.props;
+    const dimension = HeatMapCanvas.calculateDimension(width, columns);
+    let animate = false;
+
+    this._data.forEach((datum, index) => {
+      const newDatum = data[index];
+      const column = index % columns;
+      const row = Math.floor(index / columns);
+      const selected = !!newDatum && includes(selectedIds, newDatum.id);
+
+      datum.x = dimension * column + MARGIN_PX;
+      datum.y = dimension * row + MARGIN_PX;
+      datum.w = dimension - MARGIN_PX * 2;
+      datum.h = dimension - MARGIN_PX * 2;
+      datum.selected = selected;
+      datum.sOpacity = datum.opacity;
+      datum.tOpacity = isNil(newDatum)
+        ? NO_VALUE_OPACITY
+        : selected
+        ? datum.sOpacity
+        : this._opacity(newDatum.normalisedCount);
+
+      if (datum.tOpacity !== datum.sOpacity) {
+        animate = true;
+      }
+    });
+
+    if (animate) {
+      if (this._timer) {
+        this._timer.restart(this.timerCallback);
+      } else {
+        this._timer = d3.timer(this.timerCallback);
+      }
+    } else {
+      this.draw();
     }
   }
 
-  private renderTiles(
-    data: State["data"],
-    startingValues: Array<number>,
-    selectedIndexes: Array<number>,
-    width: number,
-    columnCount: Props["columnCount"],
-    colorInterpolator: Props["colorInterpolator"],
-    framesCount: number = 0
-  ) {
-    const dimension = HeatMapCanvas.calculateDimension(width, columnCount);
+  private timerCallback = (elapsed: number) => {
+    // compute how far through the animation we are (0 to 1)
+    const t = Math.min(1, EASE(elapsed / DURATION));
+    this._data.forEach(d => {
+      d.opacity = d.sOpacity * (1 - t) + d.tOpacity * t;
+    });
+    this.draw();
+    if (t === 1 && this._timer) {
+      this._timer.stop();
+      this._timer = null;
+    }
+  };
+
+  private draw() {
     const canvas = this._canvasRef.current!;
     const ctx = canvas.getContext("2d")!;
+    ctx.save();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    for (let i = 0; i < data.length; ++i) {
-      const column = i % columnCount;
-      const row = Math.floor(i / columnCount);
-      const x = dimension * column;
-      const y = dimension * row;
-
-      if (includes(selectedIndexes, i)) {
-        ctx.fillStyle = "#00cb8e";
-      } else {
-        ctx.fillStyle = colorInterpolator(
-          interpolateNumber(
-            startingValues[i],
-            isNil(data[i]) ? MISSING_VALUE : data[i]!.value || 0
-          )(this._t)
-        );
-      }
-
-      drawRoundedRect(
-        ctx,
-        x + MARGIN_PX,
-        y + MARGIN_PX,
-        dimension - MARGIN_PX * 2,
-        dimension - MARGIN_PX * 2,
-        MARGIN_PX * 4
-      );
+    for (let i = 0; i < this._data.length; ++i) {
+      const d = this._data[i];
+      ctx.fillStyle = d.selected
+        ? "#00cb8e"
+        : `rgba(0,150,203,${clamp(d.opacity, 0, 1)})`;
+      drawRoundedRect(ctx, d.x, d.y, d.w, d.h, MARGIN_PX * 4);
     }
 
-    if (this._t >= 1) {
-      // completed the animation
-      if (this._rafHandle) {
-        cancelAnimationFrame(this._rafHandle);
-        this._rafHandle = null;
-      }
-      return;
-    }
-
-    this._rafHandle = requestAnimationFrame(() => {
-      this._t = clamp(framesCount / ANIMATION_DURATION_FRAMES, 0, 1);
-      this.renderTiles(
-        data,
-        startingValues,
-        selectedIndexes,
-        width,
-        columnCount,
-        colorInterpolator,
-        framesCount + 1
-      );
-    });
+    ctx.restore();
   }
 
   private resizeCanvas(width: number, height: number) {
@@ -205,26 +164,12 @@ class HeatMapCanvas extends React.Component<Props, State> {
     ctx.scale(deviceScale, deviceScale);
   }
 
-  static getDerivedStateFromProps(props: Props, state: State): State {
-    const newState = HeatMapCanvas.calculateState(props, state.data);
-    return newState.data === state.data ? state : newState;
+  static calculateDimension(width: number, columns: number) {
+    return width / columns;
   }
 
-  static calculateState({ data }: Props, currentData: State["data"]): State {
-    return { data: data !== currentData ? data : currentData };
-  }
-
-  static calculateDimension(width: number, columnCount: number) {
-    return width / columnCount;
-  }
-
-  static calculateHeight(
-    width: number,
-    columnCount: number,
-    totalCells: number
-  ) {
-    const dimension = HeatMapCanvas.calculateDimension(width, columnCount);
-    const rows = Math.ceil(totalCells / columnCount);
+  static calculateHeight(width: number, rows: number, columns: number) {
+    const dimension = HeatMapCanvas.calculateDimension(width, columns);
     return dimension * rows;
   }
 

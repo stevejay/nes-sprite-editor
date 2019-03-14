@@ -5,7 +5,7 @@ import { IWordCloudGraph, default as wordCloudGraph } from "./word-cloud-graph";
 
 type Props = {
   nodes: Array<WordCloudNode>;
-  selectedIds: Array<WordCloudNode["id"]>;
+  selectedNodeIds: Array<WordCloudNode["id"]>;
   width: number;
   height: number;
   onShowTooltip: (value: WordCloudNode, originRect: ClientRect) => void;
@@ -28,7 +28,6 @@ class WordCloudHtml extends React.PureComponent<Props, State> {
       .showTooltipCallback(this.handleShowTooltip)
       .hideTooltipCallback(this.handleHideTooltip)
       .toggleNodeCallback(this.handleToggleNode);
-    // .textAccessor(props.textAccessor);
     this.state = WordCloudHtml.createState(props);
   }
 
@@ -72,7 +71,7 @@ class WordCloudHtml extends React.PureComponent<Props, State> {
   };
 
   private renderGraph(recalculateNodes: boolean) {
-    const { nodes, width, height, selectedIds } = this.props;
+    const { nodes, width, height, selectedNodeIds } = this.props;
     if (!(width > 0) || !(height > 0) || !nodes) {
       return;
     }
@@ -80,7 +79,7 @@ class WordCloudHtml extends React.PureComponent<Props, State> {
       .containerElement(this._container.current!)
       .width(width)
       .height(height);
-    this._renderer(nodes, selectedIds, recalculateNodes);
+    this._renderer(nodes, selectedNodeIds, recalculateNodes);
   }
 
   render() {
