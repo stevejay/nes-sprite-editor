@@ -29,7 +29,7 @@ type Props = {
   data: Array<HeatMapEntry | null>; // values in range [0, 1]
   rows: number;
   columns: number;
-  selectedIds: Array<HeatMapEntry["id"]>;
+  selectedIds: Array<number>;
 };
 
 class HeatMapCanvas extends React.PureComponent<Props> {
@@ -91,7 +91,7 @@ class HeatMapCanvas extends React.PureComponent<Props> {
       const newDatum = data[index];
       const column = index % columns;
       const row = Math.floor(index / columns);
-      const selected = !!newDatum && includes(selectedIds, newDatum.id);
+      const selected = includes(selectedIds, index);
 
       datum.x = dimension * column + MARGIN_PX;
       datum.y = dimension * row + MARGIN_PX;

@@ -25,7 +25,7 @@ import ModelessDialog from "./ModelessDialog";
 // };
 
 export type HeatMapEntry = {
-  id: string;
+  id: number;
   count: number;
   normalisedCount: number; //  in range [0, 1]
   details: Array<{ id: string; count: number }>;
@@ -33,10 +33,10 @@ export type HeatMapEntry = {
 
 type Props = {
   data: Array<HeatMapEntry | null>;
-  selectedIds: Array<HeatMapEntry["id"]>;
+  selectedIds: Array<number>;
   xLabels: Array<string>;
   yLabels: Array<string>;
-  onTileClick: (tile: HeatMapEntry) => void;
+  onTileClick: (index: number) => void;
 };
 
 type State = {
@@ -69,14 +69,11 @@ class HeatMap extends React.Component<Props, State> {
   };
 
   handleTileClick = (index: number) => {
-    const datum = this.props.data[index];
-    if (!isNil(datum)) {
-      this.props.onTileClick(datum);
-    }
+    this.props.onTileClick(index);
   };
 
   render() {
-    const { data, xLabels, yLabels, selectedIds, onTileClick } = this.props;
+    const { data, xLabels, yLabels, selectedIds } = this.props;
     const { showTooltip, originRect, tooltipData } = this.state;
     return (
       <div className={styles.container}>

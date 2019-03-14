@@ -951,7 +951,7 @@ function responseParser(response: any): Array<HeatMapEntry | null> {
       const resultIndex = (+dayOfWeek.key - 1) * HOURS_IN_DAY + +hourOfDay.key;
 
       const item = {
-        id: `${dayOfWeek.key}-${hourOfDay.key}`,
+        id: resultIndex,
         count: totalDocCount,
         normalisedCount: 0.1,
         details: sources.map((source: any) => ({
@@ -992,7 +992,7 @@ function generateData() {
   });
   if (count % 2 === 1) {
     result[0] = {
-      id: "0-0",
+      id: 0,
       count: 44,
       normalisedCount: 0.8,
       details: []
@@ -1004,7 +1004,7 @@ function generateData() {
 
 const store = new Store<{
   data: Array<HeatMapEntry | null>;
-  selectedIds: Array<HeatMapEntry["id"]>;
+  selectedIds: Array<number>;
 }>({
   data: [],
   selectedIds: []
@@ -1058,12 +1058,12 @@ storiesOf("SteelEye/HeatMap", module)
               xLabels={X_LABELS}
               yLabels={Y_LABELS}
               selectedIds={state.selectedIds}
-              onTileClick={tile => {
+              onTileClick={index => {
                 let newSelectedIds = state.selectedIds.slice();
-                if (includes(newSelectedIds, tile.id)) {
-                  newSelectedIds = newSelectedIds.filter(x => x !== tile.id);
+                if (includes(newSelectedIds, index)) {
+                  newSelectedIds = newSelectedIds.filter(x => x !== index);
                 } else {
-                  newSelectedIds.push(tile.id);
+                  newSelectedIds.push(index);
                 }
                 store.set({ selectedIds: newSelectedIds });
               }}
