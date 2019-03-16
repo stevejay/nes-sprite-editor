@@ -15,7 +15,7 @@ type Props = {
   onHideTooltip: () => void;
 };
 
-class SvgHeatMapSvg extends React.Component<Props> {
+class HeatMapChart extends React.Component<Props> {
   _container: React.RefObject<SVGSVGElement>;
   _renderer: ID3HeatMap;
 
@@ -112,4 +112,4 @@ class SvgHeatMapSvg extends React.Component<Props> {
   }
 }
 
-export default SvgHeatMapSvg;
+export default HeatMapChart;

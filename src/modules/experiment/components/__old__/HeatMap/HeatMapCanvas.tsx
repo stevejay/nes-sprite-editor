@@ -2,7 +2,7 @@ import React from "react";
 import * as d3 from "d3";
 import styles from "./HeatMapCanvas.module.scss";
 import { clamp, includes, range } from "lodash";
-import drawRoundedRect from "./draw-rounded-rect";
+import drawRoundedRect from "../../HeatMapCanvas/draw-rounded-rect";
 import { HeatMapNode } from "./types";
 
 const MARGIN_PX = 1;

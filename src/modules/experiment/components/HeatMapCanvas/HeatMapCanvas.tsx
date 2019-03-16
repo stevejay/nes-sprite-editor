@@ -1,9 +1,9 @@
 import React from "react";
 import Measure from "react-measure";
-import styles from "./HeatMap.module.scss";
+import styles from "./HeatMapCanvas.module.scss";
 import Tooltip from "../Tooltip/Tooltip";
 import { TooltipData } from "../Tooltip/types";
-import HeatMapChart from "./HeatMapChart";
+import HeatMapCanvasChart from "./HeatMapCanvasChart";
 import { HeatMapNode } from "./types";
 
 type Props = {
@@ -21,7 +21,7 @@ type State = {
   tooltipData: HeatMapNode | null;
 };
 
-class HeatMap extends React.Component<Props, State> {
+class HeatMapCanvas extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = { showTooltip: false, tooltipData: null, target: null };
@@ -73,7 +73,7 @@ class HeatMap extends React.Component<Props, State> {
           <Measure bounds>
             {({ measureRef, contentRect }) => (
               <div ref={measureRef} className={styles.chartContainer}>
-                <HeatMapChart
+                <HeatMapCanvasChart
                   width={contentRect.bounds ? contentRect.bounds.width || 0 : 0}
                   nodes={nodes}
                   selectedIds={selectedIds}
@@ -108,4 +108,4 @@ class HeatMap extends React.Component<Props, State> {
   }
 }
 
-export default HeatMap;
+export default HeatMapCanvas;

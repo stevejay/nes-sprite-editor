@@ -1,7 +1,7 @@
 import * as d3 from "d3";
 import { GetOrSet } from "../NetworkGraph/types";
 import { HeatMapNode } from "./types";
-import { includes, clamp } from "lodash";
+import { includes } from "lodash";
 import heatMapColoring from "./heat-map-coloring";
 
 const MARGIN_PX = 1;
@@ -58,7 +58,8 @@ export default function d3HeatMap(): ID3HeatMap {
       .attr("height", dimension - MARGIN_PX * 2)
       .attr("rx", MARGIN_PX * 4)
       .attr("ry", MARGIN_PX * 4)
-      .attr("fill", d => `rgba(0,150,203,${clamp(d.normalisedCount, 0, 1)})`)
+      .attr("fill", d => coloring(d, includes(selectedIds, d.id)))
+      // .attr("fill", d => `rgba(0,150,203,${clamp(d.normalisedCount, 0, 1)})`)
       .on("mouseover", handleMouseOver)
       .on("mouseout", handleMouseOut)
       .on("click", handleClick)
