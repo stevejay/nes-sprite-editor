@@ -1,10 +1,10 @@
 import React from "react";
-import styles from "../HeatMap/Tooltip.module.scss";
+import styles from "./TooltipInner.module.scss";
 import { floor } from "lodash";
 import getTooltipPosition from "./get-tooltip-position";
 import { TooltipData } from "./types";
 
-/* <Tooltip show={showTooltip} data={tooltipData} target={originRect}>
+/* <Tooltip show={showTooltip} data={tooltipData} target={target}>
   {(data: WordCloudNode) => (
     <p>
       {data.value} {data.value === 0 ? "occurrence" : "occurrences"}
@@ -14,7 +14,7 @@ import { TooltipData } from "./types";
 
 type Props = {
   opacity?: number;
-  target: TooltipData["originRect"] | null; // relative to the viewport
+  target: TooltipData["target"] | null; // relative to the viewport
   children: React.ReactNode;
 };
 

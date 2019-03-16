@@ -16,7 +16,7 @@ type Props = {
 
 type State = {
   showTooltip: boolean;
-  originRect: TooltipData["originRect"] | null;
+  target: TooltipData["target"] | null;
   tooltipData: WordCloudNode | null;
 };
 
@@ -25,19 +25,19 @@ type State = {
 class CanvasWordCloud extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = { showTooltip: false, tooltipData: null, originRect: null };
+    this.state = { showTooltip: false, tooltipData: null, target: null };
   }
 
   handleShowTooltip = (
     node: WordCloudNode,
-    originRect: TooltipData["originRect"]
+    target: TooltipData["target"]
   ) => {
     if (this.state.showTooltip && this.state.tooltipData === node) {
       return;
     }
     this.setState({
       showTooltip: true,
-      originRect: originRect,
+      target: target,
       tooltipData: node
     });
   };
@@ -52,7 +52,7 @@ class CanvasWordCloud extends React.Component<Props, State> {
 
   render() {
     const { nodes, selectedNodeIds } = this.props;
-    const { showTooltip, originRect, tooltipData } = this.state;
+    const { showTooltip, target, tooltipData } = this.state;
     return (
       <>
         <Measure bounds>
@@ -70,7 +70,7 @@ class CanvasWordCloud extends React.Component<Props, State> {
             </div>
           )}
         </Measure>
-        <Tooltip show={showTooltip} target={originRect} data={tooltipData}>
+        <Tooltip show={showTooltip} target={target} data={tooltipData}>
           {(data: WordCloudNode) => (
             <p>
               {data.value} {data.value === 0 ? "occurrence" : "occurrences"}
@@ -79,7 +79,7 @@ class CanvasWordCloud extends React.Component<Props, State> {
         </Tooltip>
         {/* 
         <ModelessDialog isShowing={showTooltip}>
-          <Tooltip originRect={originRect}>
+          <Tooltip target={target}>
             {tooltipData && (
               <p>
                 {tooltipData.value}{" "}

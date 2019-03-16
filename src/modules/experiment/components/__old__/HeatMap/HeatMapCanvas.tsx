@@ -32,17 +32,17 @@ type Props = {
 };
 
 class HeatMapCanvas extends React.PureComponent<Props> {
-  _canvasRef: React.RefObject<HTMLCanvasElement>;
+  _container: React.RefObject<HTMLCanvasElement>;
   _timer: d3.Timer | null;
-  _data: Array<D3HeatMapEntry>;
-  _opacity: d3.ScaleLinear<number, number>;
+  _d3Data: Array<D3HeatMapEntry>;
+  _opacityScale: d3.ScaleLinear<number, number>;
 
   constructor(props: Props) {
     super(props);
-    this._canvasRef = React.createRef();
+    this._container = React.createRef();
     this._timer = null;
-    this._data = this.initialize();
-    this._opacity = d3
+    this._d3Data = this.initialize();
+    this._opacityScale = d3
       .scaleLinear()
       .range([MIN_OPACITY, MAX_OPACITY])
       .domain([0, 1]);
@@ -86,7 +86,7 @@ class HeatMapCanvas extends React.PureComponent<Props> {
     const dimension = HeatMapCanvas.calculateDimension(width, columns);
     let animate = false;
 
-    this._data.forEach((datum, index) => {
+    this._d3Data.forEach((datum, index) => {
       const newDatum = data[index];
       const column = index % columns;
       const row = Math.floor(index / columns);
@@ -103,7 +103,7 @@ class HeatMapCanvas extends React.PureComponent<Props> {
           ? NO_VALUE_OPACITY
           : selected
           ? datum.sOpacity
-          : this._opacity(newDatum.normalisedCount);
+          : this._opacityScale(newDatum.normalisedCount);
 
       if (datum.tOpacity !== datum.sOpacity) {
         animate = true;
@@ -124,7 +124,7 @@ class HeatMapCanvas extends React.PureComponent<Props> {
   private timerCallback = (elapsed: number) => {
     // compute how far through the animation we are (0 to 1)
     const t = Math.min(1, EASE(elapsed / DURATION));
-    this._data.forEach(d => {
+    this._d3Data.forEach(d => {
       d.opacity = d.sOpacity * (1 - t) + d.tOpacity * t;
     });
     this.draw();
@@ -135,13 +135,13 @@ class HeatMapCanvas extends React.PureComponent<Props> {
   };
 
   private draw() {
-    const canvas = this._canvasRef.current!;
+    const canvas = this._container.current!;
     const ctx = canvas.getContext("2d")!;
     ctx.save();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    for (let i = 0; i < this._data.length; ++i) {
-      const d = this._data[i];
+    for (let i = 0; i < this._d3Data.length; ++i) {
+      const d = this._d3Data[i];
       ctx.fillStyle = d.selected
         ? "#00cb8e"
         : `rgba(0,150,203,${clamp(d.opacity, 0, 1)})`;
@@ -152,7 +152,7 @@ class HeatMapCanvas extends React.PureComponent<Props> {
   }
 
   private resizeCanvas(width: number, height: number) {
-    const canvas = this._canvasRef.current!;
+    const canvas = this._container.current!;
     canvas.style.width = width + "px";
     canvas.style.height = height + "px";
 
@@ -175,7 +175,7 @@ class HeatMapCanvas extends React.PureComponent<Props> {
 
   render() {
     return (
-      <canvas ref={this._canvasRef} className={styles.canvas} role="img" />
+      <canvas ref={this._container} className={styles.canvas} role="img" />
     );
   }
 }

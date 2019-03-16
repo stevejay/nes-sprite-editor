@@ -1,27 +1,11 @@
 import React from "react";
-import styles from "./NetworkGraph.module.scss";
+import styles from "./CommsNetworkGraph.module.scss";
 import Measure from "react-measure";
-import NetworkGraphSVG from "./NetworkGraphSVG";
-import ModelessDialog from "../HeatMap/ModelessDialog";
-import Tooltip from "../HeatMap/Tooltip";
-import { NodeEntity, LinkEntity } from "./types";
-
-export type CommunicationsNode = NodeEntity & {
-  name: string;
-  initials: string;
-  type: "account" | "market";
-  totalComms: number;
-  commsDetail: {
-    [key: string]: {
-      name: string;
-      count: number;
-    };
-  };
-};
-
-export type CommunicationsLink = LinkEntity & {
-  count: number;
-};
+import { NodeEntity } from "../NetworkGraph/types";
+import Tooltip from "../Tooltip/Tooltip";
+import { TooltipData } from "../Tooltip/types";
+import { CommunicationsNode, CommunicationsLink } from "./types";
+import CommsNetworkGraphChart from "./CommsNetworkGraphChart";
 
 type Props = {
   nodes: Array<CommunicationsNode>;
@@ -32,22 +16,22 @@ type Props = {
 
 type State = {
   showTooltip: boolean;
-  originRect?: ClientRect;
+  target: TooltipData["target"] | null;
   tooltipData: CommunicationsNode | null;
 };
 
 // Desired height could be passed in as a prop or a style
 
-class NetworkGraph extends React.Component<Props, State> {
+class CommsNetworkGraph extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = { showTooltip: false, tooltipData: null };
+    this.state = { showTooltip: false, tooltipData: null, target: null };
   }
 
-  handleShowTooltip = (value: NodeEntity, originRect: ClientRect) => {
+  handleShowTooltip = (value: NodeEntity, target: ClientRect) => {
     this.setState({
       showTooltip: true,
-      originRect: originRect,
+      target: target,
       tooltipData: value as CommunicationsNode
     });
   };
@@ -62,33 +46,37 @@ class NetworkGraph extends React.Component<Props, State> {
 
   render() {
     const { nodes, links, selectedIds } = this.props;
-    const { showTooltip, originRect, tooltipData } = this.state;
+    const { showTooltip, target, tooltipData } = this.state;
     return (
       <Measure bounds>
         {({ measureRef, contentRect }) => (
           <div ref={measureRef} className={styles.container}>
-            <NetworkGraphSVG
+            <CommsNetworkGraphChart
               nodes={nodes}
               links={links}
               selectedIds={selectedIds}
               width={contentRect.bounds ? contentRect.bounds.width : 0}
               height={contentRect.bounds ? contentRect.bounds.height : 0}
-              labelAccessor={d => (d as CommunicationsNode).initials}
               onShowTooltip={this.handleShowTooltip}
               onHideTooltip={this.handleHideTooltip}
               onToggleNode={this.handleToggleNode}
             />
-            <ModelessDialog isShowing={showTooltip}>
-              <Tooltip originRect={originRect}>
-                {tooltipData && (
-                  <>
-                    <p>{tooltipData.initials}</p>
-                    <p>Some info</p>
-                    <p>Some more info 2</p>
-                  </>
-                )}
-              </Tooltip>
-            </ModelessDialog>
+            <Tooltip show={showTooltip} target={target} data={tooltipData}>
+              {(data: CommunicationsNode) => (
+                <>
+                  <p>{data.name}</p>
+                  {Object.keys(data.commsDetail).map((key, index) => {
+                    const commsDetail = data.commsDetail[key];
+                    return (
+                      <p key={index}>
+                        {commsDetail.count} with {commsDetail.name}
+                      </p>
+                    );
+                  })}
+                  {!!data.totalComms && <p>Total Comms: {data.totalComms}</p>}
+                </>
+              )}
+            </Tooltip>
           </div>
         )}
       </Measure>
@@ -96,4 +84,4 @@ class NetworkGraph extends React.Component<Props, State> {
   }
 }
 
-export default NetworkGraph;
+export default CommsNetworkGraph;

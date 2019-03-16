@@ -57,7 +57,7 @@ export interface ICooccurrenceWordCloudGraph {
   height(value: number): this;
 
   showTooltipCallback(
-    value: (value: WordCloudNode, originRect: ClientRect) => void
+    value: (value: WordCloudNode, target: ClientRect) => void
   ): this;
   hideTooltipCallback(value: () => void): this;
   toggleSourceNodeCallback(value: (value: WordCloudNode) => void): this;
@@ -69,7 +69,7 @@ export default function cooccurrenceWordCloudGraph(): ICooccurrenceWordCloudGrap
   let width = 0;
   let height = 0;
   let onShowTooltip:
-    | ((data: WordCloudNode, originRect: ClientRect) => void)
+    | ((data: WordCloudNode, target: ClientRect) => void)
     | null = null;
   let onHideTooltip: (() => void) | null = null;
   let onToggleSourceNode: ((data: WordCloudNode) => void) | null = null;
@@ -409,7 +409,7 @@ export default function cooccurrenceWordCloudGraph(): ICooccurrenceWordCloudGrap
   }) as GetOrSet<number, ICooccurrenceWordCloudGraph>;
 
   renderer.showTooltipCallback = function(
-    value: (data: WordCloudNode, originRect: ClientRect) => void
+    value: (data: WordCloudNode, target: ClientRect) => void
   ) {
     onShowTooltip = value;
     return renderer;

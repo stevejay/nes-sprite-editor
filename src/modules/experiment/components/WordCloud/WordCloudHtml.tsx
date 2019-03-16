@@ -8,7 +8,7 @@ type Props = {
   selectedNodeIds: Array<WordCloudNode["id"]>;
   width: number;
   height: number;
-  onShowTooltip: (value: WordCloudNode, originRect: ClientRect) => void;
+  onShowTooltip: (value: WordCloudNode, target: ClientRect) => void;
   onHideTooltip: () => void;
   onToggleNode: (value: WordCloudNode) => void;
 };
@@ -40,9 +40,9 @@ class WordCloudHtml extends React.PureComponent<Props> {
 
   private handleShowTooltip = (
     value: WordCloudNode,
-    originRect: ClientRect
+    target: ClientRect
   ) => {
-    this.props.onShowTooltip(value, originRect);
+    this.props.onShowTooltip(value, target);
   };
 
   private handleHideTooltip = () => {

@@ -1,10 +1,10 @@
 import React from "react";
-import styles from "./Tooltip.module.scss";
-import getTooltipPosition from "../Tooltip/get-tooltip-position";
+import styles from "../../Tooltip/TooltipInner.module.scss";
+import getTooltipPosition from "../../Tooltip/get-tooltip-position";
 import { floor } from "lodash";
-import { TooltipData } from "../Tooltip/types";
+import { TooltipData } from "../../Tooltip/types";
 
-/* <Tooltip show={showTooltip} data={tooltipData} target={originRect}>
+/* <Tooltip show={showTooltip} data={tooltipData} target={target}>
   {(data: WordCloudNode) => (
     <p>
       {data.value} {data.value === 0 ? "occurrence" : "occurrences"}
@@ -14,7 +14,7 @@ import { TooltipData } from "../Tooltip/types";
 
 type Props = {
   opacity?: number;
-  originRect?: TooltipData["originRect"]; // relative to the viewport
+  target?: TooltipData["target"]; // relative to the viewport
   children: React.ReactNode;
 };
 
@@ -35,8 +35,8 @@ class Tooltip extends React.Component<Props> {
   }
 
   private positionTooltip() {
-    const { originRect } = this.props;
-    if (!originRect || !this._tooltipContainer.current) {
+    const { target } = this.props;
+    if (!target || !this._tooltipContainer.current) {
       return;
     }
 
@@ -53,10 +53,10 @@ class Tooltip extends React.Component<Props> {
     const tooltipBoundingRect = this._tooltipContainer.current!.getBoundingClientRect();
 
     const tooltipPosition = getTooltipPosition(
-      originRect.top,
-      originRect.left,
-      originRect.width,
-      originRect.height,
+      target.top,
+      target.left,
+      target.width,
+      target.height,
       clientWidth,
       clientHeight,
       tooltipBoundingRect.width,

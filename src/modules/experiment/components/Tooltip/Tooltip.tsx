@@ -12,7 +12,7 @@ import { TooltipData } from "./types";
 type Props = {
   show: boolean;
   data: any;
-  target: TooltipData["originRect"] | null;
+  target: TooltipData["target"] | null;
   children: (data: any) => React.ReactNode;
 };
 

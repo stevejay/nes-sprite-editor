@@ -1,8 +1,8 @@
 import React from "react";
 import styles from "./WordCloud.module.scss";
 import Measure from "react-measure";
-import ModelessDialog from "../HeatMap/ModelessDialog";
-import Tooltip from "../HeatMap/Tooltip";
+import ModelessDialog from "../__old__/HeatMap/ModelessDialog";
+import Tooltip from "../__old__/HeatMap/Tooltip";
 import { WordCloudNode } from "./types";
 import WordCloudHtml from "./WordCloudHtml";
 
@@ -14,7 +14,7 @@ type Props = {
 
 type State = {
   showTooltip: boolean;
-  originRect?: ClientRect;
+  target?: ClientRect;
   tooltipData: WordCloudNode | null;
 };
 
@@ -26,10 +26,10 @@ class WordCloud extends React.Component<Props, State> {
     this.state = { showTooltip: false, tooltipData: null };
   }
 
-  handleShowTooltip = (node: WordCloudNode, originRect: ClientRect) => {
+  handleShowTooltip = (node: WordCloudNode, target: ClientRect) => {
     this.setState({
       showTooltip: true,
-      originRect: originRect,
+      target: target,
       tooltipData: node
     });
   };
@@ -44,7 +44,7 @@ class WordCloud extends React.Component<Props, State> {
 
   render() {
     const { nodes, selectedNodeIds } = this.props;
-    const { showTooltip, originRect, tooltipData } = this.state;
+    const { showTooltip, target, tooltipData } = this.state;
     return (
       <Measure bounds>
         {({ measureRef, contentRect }) => (
@@ -59,7 +59,7 @@ class WordCloud extends React.Component<Props, State> {
               onToggleNode={this.handleToggleNode}
             />
             <ModelessDialog isShowing={showTooltip}>
-              <Tooltip originRect={originRect}>
+              <Tooltip target={target}>
                 {tooltipData && (
                   <p>
                     {tooltipData.value}{" "}

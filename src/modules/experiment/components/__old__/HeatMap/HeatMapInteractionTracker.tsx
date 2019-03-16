@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./HeatMapInteractionTracker.module.scss";
-import { TooltipData } from "../Tooltip/types";
+import { TooltipData } from "../../Tooltip/types";
 
 type Props = {
   columns: number;
@@ -53,7 +53,7 @@ class HeatMapInteractionTracker extends React.Component<Props, State> {
     const top = row * dimension + boundingRect.top;
     return {
       index,
-      originRect: { top, left, width: dimension, height: dimension }
+      target: { top, left, width: dimension, height: dimension }
     };
   }
 

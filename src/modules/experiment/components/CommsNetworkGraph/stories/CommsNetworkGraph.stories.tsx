@@ -1,13 +1,13 @@
 import { State, Store } from "@sambego/storybook-state";
 import { withKnobs } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/react";
-import { cloneDeep, includes, range } from "lodash";
+import { includes } from "lodash";
 import * as React from "react";
 import delay from "delay";
 import { host } from "storybook-host";
 import "../../../../../index.scss";
-import { CommunicationsNode, CommunicationsLink } from "../NetworkGraph";
-import { default as NetworkGraphExperiment } from "../NetworkGraphExperiment";
+import CommsNetworkGraph from "../CommsNetworkGraph";
+import { CommunicationsLink, CommunicationsNode } from "../types";
 
 const storyHost = host({
   align: "center middle",
@@ -160,6 +160,7 @@ function parseServerResponse(
     const childNode: CommunicationsNode = {
       id: match[1],
       depth,
+      normalisedWeight: depth <= 1 ? 1 : 0,
       name: match[2],
       initials: getInitialsFromName(match[2]),
       type: getPersonType(match[3]),
@@ -177,7 +178,8 @@ function parseServerResponse(
         : [childNode, parentNode];
     const link: CommunicationsLink = {
       id: `${source.id}--${target.id}`,
-      count: networkEntry.doc_count,
+      comms: networkEntry.doc_count,
+      normalisedWeight: 0.1,
       source: source.id,
       target: target.id
     };
@@ -245,6 +247,7 @@ async function getData(
   const rootNode: CommunicationsNode = {
     id: rootParticipantId,
     depth: 0,
+    normalisedWeight: 0,
     name: rootParticipantName,
     initials: getInitialsFromName(rootParticipantName),
     type: rootParticipantType,
@@ -273,7 +276,7 @@ async function getData(
     result.links.push(link);
   });
 
-  await delay(400);
+  await delay(200);
   // callback({ nodes: [...result.nodes], links: [...result.links] });
 
   // TODO get second-level data from server
@@ -294,9 +297,16 @@ async function getData(
     });
   });
 
+  // Now that we have all the links, set the correct normalisedWeight on them:
+  const maxLinkComms = links.reduce(
+    (accum, link) => (link.comms > accum ? link.comms : accum),
+    0
+  );
+  links.forEach(link => (link.normalisedWeight = link.comms / maxLinkComms));
+
   // console.log("nodes", result.nodes);
 
-  await delay(800);
+  await delay(400);
   callback({ nodes: [...result.nodes], links: [...result.links] });
 }
 
@@ -308,7 +318,7 @@ const store = new Store<{
   selectedIds: []
 });
 
-storiesOf("SteelEye/NetworkGraphExperiment", module)
+storiesOf("SteelEye/CommsNetworkGraph", module)
   .addDecorator(storyHost)
   .addDecorator(withKnobs)
   .add("Basic", () => (
@@ -326,7 +336,7 @@ storiesOf("SteelEye/NetworkGraphExperiment", module)
       <div>
         <State store={store}>
           {state => (
-            <NetworkGraphExperiment
+            <CommsNetworkGraph
               nodes={state.data.nodes}
               links={state.data.links}
               selectedIds={state.selectedIds}

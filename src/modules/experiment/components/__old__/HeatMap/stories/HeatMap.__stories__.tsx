@@ -5,8 +5,8 @@ import { includes, random, range, sumBy, clamp } from "lodash";
 import * as React from "react";
 import { host } from "storybook-host";
 import "../../../../../index.scss";
-import SvgHeatMap from "../SvgHeatMap";
-import { HeatMapNode } from "../types";
+import HeatMap from "../HeatMap";
+import { HeatMapNode } from "../../HeatMap/types";
 
 const storyHost = host({
   align: "center middle",
@@ -960,13 +960,13 @@ function responseParser(response: any): Array<HeatMapNode> {
 
       result[resultIndex].count = totalDocCount;
       const details = sources.map((source: any) => ({
-        id: source.key,
+        channel: source.key,
         count: source.doc_count
       }));
 
       if (totalDocCount > totalSourcesCount) {
         details.push({
-          id: "Other",
+          channel: "Other",
           count: totalDocCount - totalSourcesCount
         });
       }
@@ -990,7 +990,7 @@ let count = 0;
 function generateData() {
   const result = responseParser(RESPONSE);
   result.forEach(datum => {
-    if (datum.count > 0) {
+    if (datum) {
       datum.normalisedCount = random(0, 1, true);
     }
   });
@@ -1009,10 +1009,10 @@ function generateData() {
 }
 
 const store = new Store<{
-  nodes: Array<HeatMapNode>;
+  data: Array<HeatMapNode>;
   selectedIds: Array<number>;
 }>({
-  nodes: createEmptyData(),
+  data: createEmptyData(),
   selectedIds: []
 });
 
@@ -1045,13 +1045,13 @@ const X_LABELS = [
 
 const Y_LABELS = ["M", "T", "W", "T", "F", "S", "S"];
 
-storiesOf("SteelEye/SvgHeatMap", module)
+storiesOf("SteelEye/HeatMap", module)
   .addDecorator(storyHost)
   .addDecorator(withKnobs)
   .add("Basic", () => (
     <div style={{ display: "flex", flexDirection: "column" }}>
       <button
-        onClick={() => store.set({ nodes: generateData() })}
+        onClick={() => store.set({ data: generateData() })}
         style={{ marginBottom: 30, maxWidth: 100 }}
       >
         New Data
@@ -1059,17 +1059,17 @@ storiesOf("SteelEye/SvgHeatMap", module)
       <div>
         <State store={store}>
           {state => (
-            <SvgHeatMap
-              nodes={state.nodes}
+            <HeatMap
+              data={state.data}
               xLabels={X_LABELS}
               yLabels={Y_LABELS}
               selectedIds={state.selectedIds}
-              onToggleNode={node => {
+              onTileClick={index => {
                 let newSelectedIds = state.selectedIds.slice();
-                if (includes(newSelectedIds, node.id)) {
-                  newSelectedIds = newSelectedIds.filter(x => x !== node.id);
+                if (includes(newSelectedIds, index)) {
+                  newSelectedIds = newSelectedIds.filter(x => x !== index);
                 } else {
-                  newSelectedIds.push(node.id);
+                  newSelectedIds.push(index);
                 }
                 store.set({ selectedIds: newSelectedIds });
               }}

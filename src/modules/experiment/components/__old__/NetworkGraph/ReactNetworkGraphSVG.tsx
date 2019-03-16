@@ -57,7 +57,7 @@ type Props = {
   selectedIds: Array<NodeEntity["id"]>;
   width: number;
   height: number;
-  onShowTooltip: (value: NodeEntity, originRect: ClientRect) => void;
+  onShowTooltip: (value: NodeEntity, target: ClientRect) => void;
   onHideTooltip: () => void;
   onToggleNode: (value: NodeEntity) => void;
 };

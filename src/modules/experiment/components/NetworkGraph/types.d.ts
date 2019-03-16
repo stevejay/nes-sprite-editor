@@ -14,12 +14,14 @@ export type ValueFunction<ValueT, NodeT extends d3.SimulationNodeDatum> = (
 export type NodeEntity = {
   id: string;
   depth: number;
+  normalisedWeight: number;
 };
 
 export type LinkEntity = {
   id: string;
   source: string;
   target: string;
+  normalisedWeight: number;
 };
 
 export type D3NodeEntity = NodeEntity & d3.SimulationNodeDatum;

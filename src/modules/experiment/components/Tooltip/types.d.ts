@@ -1,6 +1,6 @@
 export type TooltipData = {
   index: number;
-  originRect: {
+  target: {
     top: number;
     left: number;
     width: number;

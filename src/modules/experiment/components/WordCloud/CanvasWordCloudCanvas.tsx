@@ -17,7 +17,7 @@ type Props = {
   selectedNodeIds: Array<WordCloudNode["id"]>;
   onShowTooltip: (
     value: WordCloudNode,
-    originRect: TooltipData["originRect"]
+    target: TooltipData["target"]
   ) => void;
   onHideTooltip: () => void;
   onToggleNode: (value: WordCloudNode) => void;
@@ -28,6 +28,8 @@ type State = {
   d3Nodes: Array<D3WordCloudNode>;
   bounds: Array<{ x: number; y: number }>;
 };
+
+// var c = document.createElement("canvas"); ???
 
 class CanvasWordCloudCanvas extends React.Component<Props, State> {
   _canvasRef: React.RefObject<HTMLCanvasElement>;

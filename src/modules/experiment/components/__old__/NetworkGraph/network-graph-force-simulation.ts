@@ -1,10 +1,10 @@
 import * as d3 from "d3";
 import { random } from "lodash";
-import boundsForce from "./bounds-force";
-import forceEllipsis from "./force-ellipsis";
+import boundsForce from "../../NetworkGraph/bounds-force";
+import forceEllipsis from "../../NetworkGraph/force-ellipsis";
 import { forceContainer } from "d3-force-container";
 import { forceManyBodyReuse } from "d3-force-reuse";
-import { D3NodeEntity, D3LinkEntity, GetOrSet } from "./types";
+import { D3NodeEntity, D3LinkEntity, GetOrSet } from "../../NetworkGraph/types";
 
 interface IForceSimulation {
   (

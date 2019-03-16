@@ -44,7 +44,7 @@ export default function<NodeT extends d3.SimulationNodeDatum>(
           (Math.pow(Math.sin(angle) / radiusX, 2) +
             Math.pow(Math.cos(angle) / radiusY, 2))
       );
-      const k = /*radiuses[i]*/ ((l - r) * strengths[i] * alpha) / r;
+      const k = ((l - r) * strengths[i] * alpha) / r;
       node.vx = (node.vx || 0) + dx * k;
       node.vy = (node.vy || 0) + dy * k;
     }

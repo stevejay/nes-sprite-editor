@@ -1,8 +1,8 @@
 import React from "react";
 import styles from "../WordCloud/WordCloud.module.scss";
 import Measure from "react-measure";
-import ModelessDialog from "../HeatMap/ModelessDialog";
-import Tooltip from "../HeatMap/Tooltip";
+import ModelessDialog from "../__old__/HeatMap/ModelessDialog";
+import Tooltip from "../__old__/HeatMap/Tooltip";
 import { WordCloudNode } from "../WordCloud/types";
 import CooccurrenceWordCloudHtml from "./CooccurrenceWordCloudHtml";
 
@@ -17,7 +17,7 @@ type Props = {
 
 type State = {
   showTooltip: boolean;
-  originRect?: ClientRect;
+  target?: ClientRect;
   tooltipData: WordCloudNode | null;
 };
 
@@ -29,10 +29,10 @@ class CooccurrenceWordCloud extends React.Component<Props, State> {
     this.state = { showTooltip: false, tooltipData: null };
   }
 
-  handleShowTooltip = (value: WordCloudNode, originRect: ClientRect) => {
+  handleShowTooltip = (value: WordCloudNode, target: ClientRect) => {
     this.setState({
       showTooltip: true,
-      originRect: originRect,
+      target: target,
       tooltipData: value as WordCloudNode
     });
   };
@@ -51,7 +51,7 @@ class CooccurrenceWordCloud extends React.Component<Props, State> {
 
   render() {
     const { nodes, withNodes, sourceNodeId, withNodeIds } = this.props;
-    const { showTooltip, originRect, tooltipData } = this.state;
+    const { showTooltip, target, tooltipData } = this.state;
     return (
       <Measure bounds>
         {({ measureRef, contentRect }) => (
@@ -69,7 +69,7 @@ class CooccurrenceWordCloud extends React.Component<Props, State> {
               onToggleWithNode={this.handleToggleWithNode}
             />
             <ModelessDialog isShowing={showTooltip}>
-              <Tooltip originRect={originRect}>
+              <Tooltip target={target}>
                 {tooltipData && (
                   <>
                     <p>

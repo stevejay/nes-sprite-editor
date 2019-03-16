@@ -1,7 +1,7 @@
 import * as d3 from "d3";
 import { includes } from "lodash";
-import forceDrag from "./force-drag";
-import networkGraphForceSimulation from "./network-graph-force-simulation";
+import forceDrag from "./___force-drag";
+import networkGraphForceSimulation from "../__old__/NetworkGraph/network-graph-force-simulation";
 import {
   GetOrSet,
   NodeEntity,
@@ -32,7 +32,7 @@ export interface INetworkGraph {
   maxRadius(value: number): this;
 
   showTooltipCallback(
-    value: (value: NodeEntity, originRect: ClientRect) => void
+    value: (value: NodeEntity, target: ClientRect) => void
   ): this;
   hideTooltipCallback(value: () => void): this;
   toggleNodeCallback(value: (value: NodeEntity) => void): this;
@@ -46,7 +46,7 @@ export default function networkGraph(): INetworkGraph {
   let minRadius = 8;
   let maxRadius = 13;
   let onShowTooltip:
-    | ((data: NodeEntity, originRect: ClientRect) => void)
+    | ((data: NodeEntity, target: ClientRect) => void)
     | null = null;
   let onHideTooltip: (() => void) | null = null;
   let onToggleNode: ((data: NodeEntity) => void) | null = null;
@@ -248,7 +248,7 @@ export default function networkGraph(): INetworkGraph {
   }) as GetOrSet<number, INetworkGraph>;
 
   renderer.showTooltipCallback = function(
-    value: (data: NodeEntity, originRect: ClientRect) => void
+    value: (data: NodeEntity, target: ClientRect) => void
   ) {
     onShowTooltip = value;
     return renderer;

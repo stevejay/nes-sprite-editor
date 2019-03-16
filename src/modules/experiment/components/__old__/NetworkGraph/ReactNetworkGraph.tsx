@@ -4,7 +4,7 @@ import Measure from "react-measure";
 import ModelessDialog from "../HeatMap/ModelessDialog";
 import Tooltip from "../HeatMap/Tooltip";
 import { CommunicationsLink, CommunicationsNode } from "./NetworkGraph";
-import { NodeEntity } from "./types";
+import { NodeEntity } from "../../NetworkGraph/types";
 import ReactNetworkGraphSVG from "./ReactNetworkGraphSVG";
 
 type Props = {
@@ -16,7 +16,7 @@ type Props = {
 
 type State = {
   showTooltip: boolean;
-  originRect?: ClientRect;
+  target?: ClientRect;
   tooltipData: CommunicationsNode | null;
 };
 
@@ -28,10 +28,10 @@ class ReactNetworkGraph extends React.Component<Props, State> {
     this.state = { showTooltip: false, tooltipData: null };
   }
 
-  handleShowTooltip = (value: NodeEntity, originRect: ClientRect) => {
+  handleShowTooltip = (value: NodeEntity, target: ClientRect) => {
     this.setState({
       showTooltip: true,
-      originRect: originRect,
+      target: target,
       tooltipData: value as CommunicationsNode
     });
   };
@@ -46,7 +46,7 @@ class ReactNetworkGraph extends React.Component<Props, State> {
 
   render() {
     const { nodes, links, selectedIds } = this.props;
-    const { showTooltip, originRect, tooltipData } = this.state;
+    const { showTooltip, target, tooltipData } = this.state;
     return (
       <Measure bounds>
         {({ measureRef, contentRect }) => (
@@ -62,7 +62,7 @@ class ReactNetworkGraph extends React.Component<Props, State> {
               onToggleNode={this.handleToggleNode}
             />
             <ModelessDialog isShowing={showTooltip}>
-              <Tooltip originRect={originRect}>
+              <Tooltip target={target}>
                 {tooltipData && (
                   <>
                     <p>{tooltipData.initials}</p>

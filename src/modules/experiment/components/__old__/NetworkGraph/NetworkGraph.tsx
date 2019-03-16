@@ -1,11 +1,14 @@
 import React from "react";
 import styles from "./NetworkGraph.module.scss";
 import Measure from "react-measure";
-import NetworkGraphSVGExperiment from "./NetworkGraphSVGExperiment";
+import NetworkGraphSVG from "./NetworkGraphSVG";
 import ModelessDialog from "../HeatMap/ModelessDialog";
 import Tooltip from "../HeatMap/Tooltip";
-import { CommunicationsLink, CommunicationsNode } from "./NetworkGraph";
-import { NodeEntity } from "./types";
+import { NodeEntity } from "../../NetworkGraph/types";
+import {
+  CommunicationsNode,
+  CommunicationsLink
+} from "../../CommsNetworkGraph";
 
 type Props = {
   nodes: Array<CommunicationsNode>;
@@ -16,22 +19,22 @@ type Props = {
 
 type State = {
   showTooltip: boolean;
-  originRect?: ClientRect;
+  target?: ClientRect;
   tooltipData: CommunicationsNode | null;
 };
 
 // Desired height could be passed in as a prop or a style
 
-class NetworkGraphExperiment extends React.Component<Props, State> {
+class NetworkGraph extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = { showTooltip: false, tooltipData: null };
   }
 
-  handleShowTooltip = (value: NodeEntity, originRect: ClientRect) => {
+  handleShowTooltip = (value: NodeEntity, target: ClientRect) => {
     this.setState({
       showTooltip: true,
-      originRect: originRect,
+      target: target,
       tooltipData: value as CommunicationsNode
     });
   };
@@ -46,12 +49,12 @@ class NetworkGraphExperiment extends React.Component<Props, State> {
 
   render() {
     const { nodes, links, selectedIds } = this.props;
-    const { showTooltip, originRect, tooltipData } = this.state;
+    const { showTooltip, target, tooltipData } = this.state;
     return (
       <Measure bounds>
         {({ measureRef, contentRect }) => (
           <div ref={measureRef} className={styles.container}>
-            <NetworkGraphSVGExperiment
+            <NetworkGraphSVG
               nodes={nodes}
               links={links}
               selectedIds={selectedIds}
@@ -63,21 +66,12 @@ class NetworkGraphExperiment extends React.Component<Props, State> {
               onToggleNode={this.handleToggleNode}
             />
             <ModelessDialog isShowing={showTooltip}>
-              <Tooltip originRect={originRect}>
+              <Tooltip target={target}>
                 {tooltipData && (
                   <>
-                    <p>{tooltipData.name}</p>
-                    {Object.keys(tooltipData.commsDetail).map((key, index) => {
-                      const commsDetail = tooltipData.commsDetail[key];
-                      return (
-                        <p key={index}>
-                          {commsDetail.count} with {commsDetail.name}
-                        </p>
-                      );
-                    })}
-                    {!!tooltipData.totalComms && (
-                      <p>Total Comms: {tooltipData.totalComms}</p>
-                    )}
+                    <p>{tooltipData.initials}</p>
+                    <p>Some info</p>
+                    <p>Some more info 2</p>
                   </>
                 )}
               </Tooltip>
@@ -89,4 +83,4 @@ class NetworkGraphExperiment extends React.Component<Props, State> {
   }
 }
 
-export default NetworkGraphExperiment;
+export default NetworkGraph;

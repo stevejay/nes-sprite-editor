@@ -2,16 +2,15 @@ import * as d3 from "d3";
 import { GetOrSet } from "../NetworkGraph/types";
 import { HeatMapNode } from "./types";
 import { includes, clamp } from "lodash";
+import heatMapColoring from "./heat-map-coloring";
 
 const MARGIN_PX = 1;
-const NO_VALUE_OPACITY = 0.075;
-const MIN_OPACITY = 0.2;
-const MAX_OPACITY = 1;
 
-export interface IHeatMap {
+export interface ID3HeatMap {
   (nodes: Array<HeatMapNode>, selectedIds: Array<number>): void;
 
-  containerElement(element: SVGSVGElement): this;
+  container(value: SVGSVGElement): this;
+  coloring(value: (node: HeatMapNode, selected: boolean) => string): this;
 
   width(): number;
   width(value: number): this;
@@ -21,28 +20,22 @@ export interface IHeatMap {
 
   columns(): number;
   columns(value: number): this;
-
-  showTooltipCallback(
-    value: (value: HeatMapNode, originRect: ClientRect) => void
-  ): this;
-  hideTooltipCallback(value: () => void): this;
-  toggleNodeCallback(value: (value: HeatMapNode) => void): this;
 }
 
-export default function heatMap(): IHeatMap {
-  let containerElement: SVGSVGElement | null = null;
+export default function d3HeatMap(): ID3HeatMap {
+  let container: SVGSVGElement | null = null;
+  let coloring: (
+    node: HeatMapNode,
+    selected: boolean
+  ) => string = heatMapColoring;
   let width = 0;
   let rows = 0;
   let columns = 0;
   let onShowTooltip:
-    | ((data: HeatMapNode, originRect: ClientRect) => void)
+    | ((data: HeatMapNode, target: ClientRect) => void)
     | null = null;
   let onHideTooltip: (() => void) | null = null;
   let onToggleNode: ((data: HeatMapNode) => void) | null = null;
-  const opacity = d3
-    .scaleLinear()
-    .range([MIN_OPACITY, MAX_OPACITY])
-    .domain([0, 1]);
 
   async function renderer(
     nodes: Array<HeatMapNode>,
@@ -51,11 +44,11 @@ export default function heatMap(): IHeatMap {
     const dimension = width / columns;
     const height = dimension * rows;
 
-    const container = d3.select(containerElement);
-    container.attr("width", width);
-    container.attr("height", height);
+    const svg = d3.select(container);
+    svg.attr("width", width);
+    svg.attr("height", height);
 
-    let tiles = container.selectAll("rect").data(nodes, d => d.id);
+    let tiles = svg.selectAll("rect").data(nodes, (d: any) => d.id);
     tiles = tiles
       .enter()
       .append("rect")
@@ -74,19 +67,19 @@ export default function heatMap(): IHeatMap {
 
     tiles
       .transition()
-      .attr("fill", d =>
-        includes(selectedIds, d.id)
-          ? "#00cb8e"
-          : `rgba(0,150,203,${
-              d.count === 0 ? NO_VALUE_OPACITY : opacity(d.normalisedCount)
-            })`
-      );
+      .attr("x", d => (d.id % columns) * dimension + MARGIN_PX)
+      .attr("y", d => Math.floor(d.id / columns) * dimension + MARGIN_PX)
+      .attr("width", dimension - MARGIN_PX * 2)
+      .attr("height", dimension - MARGIN_PX * 2)
+      .attr("fill", d => coloring(d, includes(selectedIds, d.id)));
 
     function handleMouseOver(d: HeatMapNode) {
       if (d.count === 0) {
         return;
       }
-      const boundingRect = this.getBoundingClientRect();
+      // @ts-ignore
+      const self = this;
+      const boundingRect = self.getBoundingClientRect();
       onShowTooltip && onShowTooltip(d, boundingRect);
     }
 
@@ -99,51 +92,41 @@ export default function heatMap(): IHeatMap {
     }
   }
 
-  renderer.containerElement = function(element: SVGSVGElement) {
-    containerElement = element;
+  renderer.container = function(value: SVGSVGElement) {
+    container = value;
     return renderer;
   };
 
-  renderer.width = ((value?: number): number | IHeatMap => {
+  renderer.coloring = function(
+    value: (node: HeatMapNode, selected: boolean) => string
+  ) {
+    coloring = value;
+    return renderer;
+  };
+
+  renderer.width = ((value?: number): number | ID3HeatMap => {
     if (typeof value !== "undefined") {
       width = value || 0;
       return renderer;
     }
     return width;
-  }) as GetOrSet<number, IHeatMap>;
+  }) as GetOrSet<number, ID3HeatMap>;
 
-  renderer.rows = ((value?: number): number | IHeatMap => {
+  renderer.rows = ((value?: number): number | ID3HeatMap => {
     if (typeof value !== "undefined") {
       rows = value || 0;
       return renderer;
     }
     return rows;
-  }) as GetOrSet<number, IHeatMap>;
+  }) as GetOrSet<number, ID3HeatMap>;
 
-  renderer.columns = ((value?: number): number | IHeatMap => {
+  renderer.columns = ((value?: number): number | ID3HeatMap => {
     if (typeof value !== "undefined") {
       columns = value || 0;
       return renderer;
     }
     return columns;
-  }) as GetOrSet<number, IHeatMap>;
-
-  renderer.showTooltipCallback = function(
-    value: (data: HeatMapNode, originRect: ClientRect) => void
-  ) {
-    onShowTooltip = value;
-    return renderer;
-  };
-
-  renderer.hideTooltipCallback = function(value: () => void) {
-    onHideTooltip = value;
-    return renderer;
-  };
-
-  renderer.toggleNodeCallback = function(value: (data: HeatMapNode) => void) {
-    onToggleNode = value;
-    return renderer;
-  };
+  }) as GetOrSet<number, ID3HeatMap>;
 
   return renderer;
 }

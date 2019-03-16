@@ -1,8 +1,16 @@
 import React from "react";
 import { cloneDeep } from "lodash";
 import styles from "./NetworkGraphSVG.module.scss";
-import { default as networkGraph, INetworkGraph } from "./network-graph";
-import { NodeEntity, LinkEntity, D3NodeEntity, D3LinkEntity } from "./types";
+import {
+  default as networkGraph,
+  INetworkGraph
+} from "../../NetworkGraph/network-graph";
+import {
+  NodeEntity,
+  LinkEntity,
+  D3NodeEntity,
+  D3LinkEntity
+} from "../../NetworkGraph/types";
 
 type Props = {
   nodes: Array<NodeEntity>;
@@ -11,7 +19,7 @@ type Props = {
   width: number;
   height: number;
   labelAccessor: (value: NodeEntity) => string;
-  onShowTooltip: (value: NodeEntity, originRect: ClientRect) => void;
+  onShowTooltip: (value: NodeEntity, target: ClientRect) => void;
   onHideTooltip: () => void;
   onToggleNode: (value: NodeEntity) => void;
 };
@@ -61,8 +69,8 @@ class NetworkGraphSVG extends React.PureComponent<Props, State> {
     };
   }
 
-  private handleShowTooltip = (value: NodeEntity, originRect: ClientRect) => {
-    this.props.onShowTooltip(value, originRect);
+  private handleShowTooltip = (value: NodeEntity, target: ClientRect) => {
+    this.props.onShowTooltip(value, target);
   };
 
   private handleHideTooltip = () => {

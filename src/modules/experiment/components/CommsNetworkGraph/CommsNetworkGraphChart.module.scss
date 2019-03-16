@@ -14,7 +14,7 @@
   fill: white;
 }
 
-.svg :global(.root) circle {
+.svg :global(.root.root) circle {
   stroke: #00cb8e;
   fill: #00cb8e;
 }
@@ -26,7 +26,7 @@
   text-anchor: middle;
 }
 
-.svg :global(.root) text {
+.svg :global(.root.root) text {
   fill: white;
 }
 
