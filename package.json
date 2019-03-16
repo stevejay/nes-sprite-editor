@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@babel/polyfill": "^7.2.5",
     "@ef-carbon/deep-freeze": "^1.0.1",
     "@sambego/storybook-state": "^1.3.3",
     "@storybook/addon-actions": "^4.1.12",

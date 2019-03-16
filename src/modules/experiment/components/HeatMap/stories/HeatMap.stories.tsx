@@ -1,7 +1,7 @@
 import { State, Store } from "@sambego/storybook-state";
 import { withKnobs } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/react";
-import { clamp, includes, random, range, sumBy } from "lodash";
+import { clamp, includes, random, range, sumBy, reverse, sortBy } from "lodash";
 import * as React from "react";
 import { host } from "storybook-host";
 import "../../../../../index.scss";
@@ -971,7 +971,9 @@ function responseParser(response: any): Array<HeatMapNode> {
         });
       }
 
-      result[resultIndex].details = details;
+      result[resultIndex].details = reverse(
+        sortBy(details, detail => detail.count)
+      );
     });
   });
 
@@ -1045,7 +1047,7 @@ const X_LABELS = [
 
 const Y_LABELS = ["M", "T", "W", "T", "F", "S", "S"];
 
-storiesOf("SteelEye/HeatMap", module)
+storiesOf("SE/HeatMap", module)
   .addDecorator(storyHost)
   .addDecorator(withKnobs)
   .add("Basic", () => (

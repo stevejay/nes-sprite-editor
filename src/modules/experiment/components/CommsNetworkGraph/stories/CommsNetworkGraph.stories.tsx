@@ -318,7 +318,7 @@ const store = new Store<{
   selectedIds: []
 });
 
-storiesOf("SteelEye/CommsNetworkGraph", module)
+storiesOf("SE/CommsNetworkGraph", module)
   .addDecorator(storyHost)
   .addDecorator(withKnobs)
   .add("Basic", () => (

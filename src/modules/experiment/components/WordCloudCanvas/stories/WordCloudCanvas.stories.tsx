@@ -5,8 +5,8 @@ import { includes } from "lodash";
 import * as React from "react";
 import { host } from "storybook-host";
 import "../../../../../index.scss";
-import { WordCloudNode } from "../types";
-import WordCloud from "../WordCloud";
+import { WordCloudNode } from "../../WordCloudCanvasChart";
+import WordCloudCanvas from "../WordCloudCanvas";
 import generateWordCloudNodes from "./words";
 
 const storyHost = host({
@@ -23,7 +23,7 @@ const store = new Store<{
   selectedNodeIds: []
 });
 
-storiesOf("SteelEye/WordCloud", module)
+storiesOf("SE/WordCloudCanvas", module)
   .addDecorator(storyHost)
   .addDecorator(withKnobs)
   .add("Basic", () => (
@@ -37,7 +37,7 @@ storiesOf("SteelEye/WordCloud", module)
       <div>
         <State store={store}>
           {state => (
-            <WordCloud
+            <WordCloudCanvas
               nodes={state.data}
               selectedNodeIds={state.selectedNodeIds}
               onNodeClick={value => {

@@ -1,18 +1,5 @@
-import { State, Store } from "@sambego/storybook-state";
-import { withKnobs } from "@storybook/addon-knobs";
-import { storiesOf } from "@storybook/react";
-import { random, sortBy, reverse, sampleSize, includes, isNil } from "lodash";
-import * as React from "react";
-import { host } from "storybook-host";
-import "../../../../../index.scss";
-import { WordCloudNode } from "../../WordCloud/types";
-import CooccurrenceWordCloud from "../CooccurrenceWordCloud";
-
-const storyHost = host({
-  align: "center middle",
-  backdrop: "#272936",
-  width: "100%"
-});
+import { random, sampleSize, reverse, sortBy } from "lodash";
+import { WordCloudNode } from "../../WordCloudCanvasChart";
 
 const WORDS = [
   "rich",
@@ -334,10 +321,10 @@ function getRandomValue() {
   }
 }
 
-function generateData() {
+export default function generateWordCloudNodes(count: number) {
   let words = sampleSize(
     WORDS.filter((v, i, a) => a.indexOf(v) === i),
-    100
+    count
   ).map(
     text =>
       ({
@@ -349,88 +336,3 @@ function generateData() {
   words = reverse(sortBy(words, word => word.value));
   return words;
 }
-
-const store = new Store<{
-  data: {
-    nodes: Array<WordCloudNode>;
-    withNodes: Array<WordCloudNode>;
-  };
-  sourceNodeId: string | null;
-  withNodeIds: Array<string>;
-}>({
-  data: {
-    nodes: generateData(),
-    withNodes: []
-  },
-  sourceNodeId: null,
-  withNodeIds: []
-});
-
-storiesOf("SteelEye/CooccurrenceWordCloud", module)
-  .addDecorator(storyHost)
-  .addDecorator(withKnobs)
-  .add("Basic", () => (
-    <div style={{ display: "flex", flexDirection: "column" }}>
-      <button
-        onClick={() =>
-          store.set({
-            data: {
-              nodes: generateData(),
-              withNodes: []
-            },
-            sourceNodeId: null,
-            withNodeIds: []
-          })
-        }
-        style={{ marginBottom: 30, maxWidth: 100 }}
-      >
-        New Data
-      </button>
-      <div>
-        <State store={store}>
-          {state => (
-            <CooccurrenceWordCloud
-              nodes={state.data.nodes}
-              withNodes={state.data.withNodes}
-              sourceNodeId={state.sourceNodeId}
-              withNodeIds={state.withNodeIds}
-              onSourceNodeClick={value => {
-                const existingSourceNodeId = state.sourceNodeId;
-                const newSourceNodeId =
-                  value === existingSourceNodeId ? null : value;
-                store.set({ sourceNodeId: newSourceNodeId });
-                if (isNil(existingSourceNodeId) && !isNil(newSourceNodeId)) {
-                  const newData = {
-                    nodes: state.data.nodes,
-                    withNodes: generateData()
-                  };
-                  store.set({ data: newData });
-                } else if (
-                  !isNil(existingSourceNodeId) &&
-                  isNil(newSourceNodeId)
-                ) {
-                  store.set({
-                    data: {
-                      nodes: state.data.nodes,
-                      withNodes: []
-                    }
-                  });
-                }
-              }}
-              onWithNodeClick={value => {
-                let newWithNodeIds = state.withNodeIds.slice();
-                if (includes(newWithNodeIds, value)) {
-                  newWithNodeIds = newWithNodeIds.filter(x => x !== value);
-                } else {
-                  newWithNodeIds.push(value);
-                }
-                store.set({
-                  withNodeIds: newWithNodeIds
-                });
-              }}
-            />
-          )}
-        </State>
-      </div>
-    </div>
-  ));

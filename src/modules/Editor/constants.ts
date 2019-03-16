@@ -1,5 +1,5 @@
 import { range } from "lodash";
-import deepFreeze from "@ef-carbon/deep-freeze";
+// import deepFreeze from "@ef-carbon/deep-freeze";
 import { SystemPalette, PatternTile, PatternTable } from "./store";
 
 // TODO alternative system palette color values here:
@@ -322,9 +322,9 @@ const PALETTE_2C02_PPU: SystemPalette = {
 
 const SYSTEM_PALETTE_OPTIONS: Array<SystemPalette> = [PALETTE_2C02_PPU];
 
-if (process.env.NODE_ENV === "development") {
-  deepFreeze(SYSTEM_PALETTE_OPTIONS);
-}
+// if (process.env.NODE_ENV === "development") {
+//   deepFreeze(SYSTEM_PALETTE_OPTIONS);
+// }
 
 export { SYSTEM_PALETTE_OPTIONS };
 
@@ -432,9 +432,9 @@ const BACKGROUND_PATTERN_TABLE_OPTIONS: Array<PatternTable> = [
   }
 ];
 
-if (process.env.NODE_ENV === "development") {
-  deepFreeze(BACKGROUND_PATTERN_TABLE_OPTIONS);
-}
+// if (process.env.NODE_ENV === "development") {
+//   deepFreeze(BACKGROUND_PATTERN_TABLE_OPTIONS);
+// }
 
 export { BACKGROUND_PATTERN_TABLE_OPTIONS };
 

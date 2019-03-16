@@ -5,6 +5,7 @@ import Tooltip from "../Tooltip/Tooltip";
 import { TooltipData } from "../Tooltip/types";
 import HeatMapChart from "./HeatMapChart";
 import { HeatMapNode } from "./types";
+import { take } from "lodash";
 
 type Props = {
   nodes: Array<HeatMapNode>;
@@ -94,7 +95,7 @@ class HeatMap extends React.Component<Props, State> {
                   {data.day} {data.hour}
                 </p>
                 {data.details &&
-                  data.details.map(datum => (
+                  take(data.details, 10).map(datum => (
                     <p key={datum.channel}>
                       {datum.channel}: {datum.count}
                     </p>

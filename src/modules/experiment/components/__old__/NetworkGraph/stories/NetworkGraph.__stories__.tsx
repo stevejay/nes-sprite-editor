@@ -141,7 +141,7 @@ const store = new Store<{
   selectedIds: [] // sampleSize(range(0, 24 * 7), 3)
 });
 
-storiesOf("SteelEye/NetworkGraph", module)
+storiesOf("SE/NetworkGraph", module)
   .addDecorator(storyHost)
   .addDecorator(withKnobs)
   .add("Basic", () => (

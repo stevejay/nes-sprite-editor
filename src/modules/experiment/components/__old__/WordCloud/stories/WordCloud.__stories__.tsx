@@ -6,7 +6,7 @@ import * as React from "react";
 import { host } from "storybook-host";
 import "../../../../../index.scss";
 import { WordCloudNode } from "../types";
-import CanvasWordCloud from "../CanvasWordCloud";
+import WordCloud from "../WordCloud";
 import generateWordCloudNodes from "./words";
 
 const storyHost = host({
@@ -23,7 +23,7 @@ const store = new Store<{
   selectedNodeIds: []
 });
 
-storiesOf("SteelEye/CanvasWordCloud", module)
+storiesOf("SE/WordCloud", module)
   .addDecorator(storyHost)
   .addDecorator(withKnobs)
   .add("Basic", () => (
@@ -37,7 +37,7 @@ storiesOf("SteelEye/CanvasWordCloud", module)
       <div>
         <State store={store}>
           {state => (
-            <CanvasWordCloud
+            <WordCloud
               nodes={state.data}
               selectedNodeIds={state.selectedNodeIds}
               onNodeClick={value => {

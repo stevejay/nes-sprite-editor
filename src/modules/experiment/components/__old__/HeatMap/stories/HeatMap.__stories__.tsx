@@ -1045,7 +1045,7 @@ const X_LABELS = [
 
 const Y_LABELS = ["M", "T", "W", "T", "F", "S", "S"];
 
-storiesOf("SteelEye/HeatMap", module)
+storiesOf("SE/HeatMap", module)
   .addDecorator(storyHost)
   .addDecorator(withKnobs)
   .add("Basic", () => (
