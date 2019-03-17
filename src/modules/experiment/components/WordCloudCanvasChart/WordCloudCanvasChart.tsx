@@ -21,6 +21,7 @@ type Props = {
   onShowTooltip: (value: WordCloudNode, target: TooltipData["target"]) => void;
   onHideTooltip: () => void;
   onToggleNode: (value: WordCloudNode) => void;
+  onCalculationCompleted?: () => void;
 };
 
 type State = {
@@ -41,13 +42,6 @@ class WordCloudCanvas extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    console.log(
-      "props",
-      props.originXOffset,
-      props.cloudWidth,
-      props.width,
-      props.height
-    );
     this._canvas = React.createRef();
     this._hitCanvas = React.createRef();
     this._mounted = true;
@@ -108,7 +102,8 @@ class WordCloudCanvas extends React.Component<Props, State> {
       nodes,
       originXOffset,
       cloudWidth,
-      selectedNodeIds
+      selectedNodeIds,
+      onCalculationCompleted
     } = this.props;
     const dataVersion = Date.now();
     this.setState({ dataVersion });
@@ -120,6 +115,9 @@ class WordCloudCanvas extends React.Component<Props, State> {
       10,
       32
     );
+    if (onCalculationCompleted) {
+      onCalculationCompleted();
+    }
     if (originXOffset !== 0) {
       d3Nodes.forEach(node => {
         node.x = (node.x || 0) + originXOffset;

@@ -8,19 +8,21 @@ import ExpanderGraphic from "./ExpanderGraphic";
 import ReactResizeDetector from "react-resize-detector";
 
 const CO_OCCURRENCE_DIVIDER_WIDTH_PX = 40;
-const EMPTY_ARRAY: Array<WordCloudNode> = [];
-const EMPTY_STR_ARRAY: Array<string> = [];
 
 type Props = {
   nodes: Array<WordCloudNode>;
   selectedNodeIds: Array<WordCloudNode["id"]>;
+  withNodes: Array<WordCloudNode>;
+  selectedWithNodeIds: Array<WordCloudNode["id"]>;
   onNodeClick: (node: WordCloudNode) => void;
+  onWithNodeClick: (node: WordCloudNode) => void;
 };
 
 type State = {
   showTooltip: boolean;
   target: TooltipData["target"] | null;
   tooltipData: WordCloudNode | null;
+  showExpander: boolean;
 };
 
 // Desired height could be passed in as a prop or a style
@@ -28,7 +30,12 @@ type State = {
 class WordCoOccurrenceCloudCanvas extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = { showTooltip: false, tooltipData: null, target: null };
+    this.state = {
+      showTooltip: false,
+      tooltipData: null,
+      target: null,
+      showExpander: false
+    };
   }
 
   handleShowTooltip = (node: WordCloudNode, target: TooltipData["target"]) => {
@@ -52,9 +59,30 @@ class WordCoOccurrenceCloudCanvas extends React.Component<Props, State> {
     this.props.onNodeClick(node);
   };
 
+  handleToggleWithNode = (node: WordCloudNode) => {
+    this.props.onWithNodeClick(node);
+  };
+
+  handleCalculationCompleted = () => {
+    if (!this.props.selectedNodeIds.length && this.state.showExpander) {
+      this.setState({ showExpander: false });
+    }
+  };
+
+  handleWithWordsCalculationCompleted = () => {
+    if (!!this.props.selectedNodeIds.length && !this.state.showExpander) {
+      this.setState({ showExpander: true });
+    }
+  };
+
   render() {
-    const { nodes, selectedNodeIds } = this.props;
-    const { showTooltip, target, tooltipData } = this.state;
+    const {
+      nodes,
+      selectedNodeIds,
+      withNodes,
+      selectedWithNodeIds
+    } = this.props;
+    const { showTooltip, target, tooltipData, showExpander } = this.state;
     // console.log("render coocc");
     return (
       <>
@@ -67,7 +95,7 @@ class WordCoOccurrenceCloudCanvas extends React.Component<Props, State> {
           {({ width, height }: { width: number; height: number }) => (
             <div className={styles.container}>
               <ExpanderGraphic
-                show={!!selectedNodeIds.length}
+                show={showExpander}
                 width={width}
                 height={height}
               />
@@ -89,6 +117,7 @@ class WordCoOccurrenceCloudCanvas extends React.Component<Props, State> {
                 onShowTooltip={this.handleShowTooltip}
                 onHideTooltip={this.handleHideTooltip}
                 onToggleNode={this.handleToggleNode}
+                onCalculationCompleted={this.handleCalculationCompleted}
               />
               <WordCloudCanvasChart
                 className={
@@ -102,11 +131,14 @@ class WordCoOccurrenceCloudCanvas extends React.Component<Props, State> {
                 cloudWidth={
                   (width || 0) * 0.5 - CO_OCCURRENCE_DIVIDER_WIDTH_PX * 0.5
                 }
-                nodes={selectedNodeIds.length ? nodes : EMPTY_ARRAY}
-                selectedNodeIds={EMPTY_STR_ARRAY}
+                nodes={withNodes}
+                selectedNodeIds={selectedWithNodeIds}
                 onShowTooltip={this.handleShowTooltip}
                 onHideTooltip={this.handleHideTooltip}
-                onToggleNode={this.handleToggleNode}
+                onToggleNode={this.handleToggleWithNode}
+                onCalculationCompleted={
+                  this.handleWithWordsCalculationCompleted
+                }
               />
             </div>
           )}
