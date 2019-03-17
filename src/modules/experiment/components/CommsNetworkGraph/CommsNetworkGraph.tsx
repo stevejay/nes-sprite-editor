@@ -1,11 +1,11 @@
 import React from "react";
 import styles from "./CommsNetworkGraph.module.scss";
-import Measure from "react-measure";
 import { NodeEntity } from "../NetworkGraph/types";
 import Tooltip from "../Tooltip/Tooltip";
 import { TooltipData } from "../Tooltip/types";
 import { CommunicationsNode, CommunicationsLink } from "./types";
 import CommsNetworkGraphChart from "./CommsNetworkGraphChart";
+import ReactResizeDetector from "react-resize-detector";
 
 type Props = {
   nodes: Array<CommunicationsNode>;
@@ -48,38 +48,45 @@ class CommsNetworkGraph extends React.Component<Props, State> {
     const { nodes, links, selectedIds } = this.props;
     const { showTooltip, target, tooltipData } = this.state;
     return (
-      <Measure bounds>
-        {({ measureRef, contentRect }) => (
-          <div ref={measureRef} className={styles.container}>
-            <CommsNetworkGraphChart
-              nodes={nodes}
-              links={links}
-              selectedIds={selectedIds}
-              width={contentRect.bounds ? contentRect.bounds.width : 0}
-              height={contentRect.bounds ? contentRect.bounds.height : 0}
-              onShowTooltip={this.handleShowTooltip}
-              onHideTooltip={this.handleHideTooltip}
-              onToggleNode={this.handleToggleNode}
-            />
-            <Tooltip show={showTooltip} target={target} data={tooltipData}>
-              {(data: CommunicationsNode) => (
-                <>
-                  <p>{data.name}</p>
-                  {Object.keys(data.commsDetail).map((key, index) => {
-                    const commsDetail = data.commsDetail[key];
-                    return (
-                      <p key={index}>
-                        {commsDetail.count} with {commsDetail.name}
-                      </p>
-                    );
-                  })}
-                  {!!data.totalComms && <p>Total Comms: {data.totalComms}</p>}
-                </>
-              )}
-            </Tooltip>
-          </div>
-        )}
-      </Measure>
+      <>
+        <ReactResizeDetector
+          handleWidth
+          handleHeight
+          refreshMode="debounce"
+          refreshRate={500}
+        >
+          {({ width, height }: { width: number; height: number }) => (
+            <div className={styles.container}>
+              <CommsNetworkGraphChart
+                nodes={nodes}
+                links={links}
+                selectedIds={selectedIds}
+                width={width}
+                height={height}
+                onShowTooltip={this.handleShowTooltip}
+                onHideTooltip={this.handleHideTooltip}
+                onToggleNode={this.handleToggleNode}
+              />
+            </div>
+          )}
+        </ReactResizeDetector>
+        <Tooltip show={showTooltip} target={target} data={tooltipData}>
+          {(data: CommunicationsNode) => (
+            <>
+              <p>{data.name}</p>
+              {Object.keys(data.commsDetail).map((key, index) => {
+                const commsDetail = data.commsDetail[key];
+                return (
+                  <p key={index}>
+                    {commsDetail.count} with {commsDetail.name}
+                  </p>
+                );
+              })}
+              {!!data.totalComms && <p>Total Comms: {data.totalComms}</p>}
+            </>
+          )}
+        </Tooltip>
+      </>
     );
   }
 }

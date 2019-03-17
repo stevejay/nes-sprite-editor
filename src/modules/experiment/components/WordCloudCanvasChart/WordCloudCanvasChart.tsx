@@ -41,6 +41,13 @@ class WordCloudCanvas extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
+    console.log(
+      "props",
+      props.originXOffset,
+      props.cloudWidth,
+      props.width,
+      props.height
+    );
     this._canvas = React.createRef();
     this._hitCanvas = React.createRef();
     this._mounted = true;
@@ -96,11 +103,18 @@ class WordCloudCanvas extends React.Component<Props, State> {
   }
 
   private async calculateAsync() {
-    const { height, nodes, originXOffset, cloudWidth } = this.props;
+    const {
+      height,
+      nodes,
+      originXOffset,
+      cloudWidth,
+      selectedNodeIds
+    } = this.props;
     const dataVersion = Date.now();
     this.setState({ dataVersion });
     const { d3Nodes, bounds } = await calculateWordCloudData(
       nodes,
+      selectedNodeIds,
       cloudWidth,
       height,
       10,
@@ -240,12 +254,12 @@ class WordCloudCanvas extends React.Component<Props, State> {
       const x = +node.attr("x");
       const y = +node.attr("y");
       const width = +node.attr("width");
-      const height = +node.attr("height");
+      const fontSize = +node.attr("fontSize");
       ctx.rect(
         x + (d.x0 || 0) + Math.floor(width * 0.15),
-        y + (d.y0 || 0) + Math.floor(height * 0.1),
+        y - Math.floor(fontSize * 0.8),
         width - Math.floor(width * 0.3),
-        Math.max(height - Math.floor(height * 0.2), 15)
+        Math.floor(fontSize)
       );
       ctx.fill();
     });
@@ -327,11 +341,7 @@ class WordCloudCanvas extends React.Component<Props, State> {
           onMouseMove={this.handleMouseMove}
           onMouseOut={this.handleMouseOut}
         />
-        <canvas
-          ref={this._hitCanvas}
-          className={className}
-          style={{ display: "none" }}
-        />
+        <canvas ref={this._hitCanvas} className={styles.hidden} />
       </>
     );
   }

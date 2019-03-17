@@ -1,6 +1,6 @@
 import React from "react";
 import * as d3 from "d3";
-import heatMapColoring from "./heat-map-coloring";
+import heatMapFill from "./heat-map-fill";
 import styles from "./HeatMapCanvasChart.module.scss";
 import { HeatMapNode } from "./types";
 import { TooltipData } from "../Tooltip/types";
@@ -11,12 +11,12 @@ const MARGIN_PX = 1;
 const DURATION_MS = 250;
 
 type Props = {
-  width: number;
   nodes: Array<HeatMapNode>;
+  selectedIds: Array<number>;
+  width: number;
   rows: number;
   columns: number;
-  selectedIds: Array<number>;
-  coloring?: (node: HeatMapNode, selected: boolean) => string;
+  fill?: (node: HeatMapNode, selected: boolean) => string;
   onToggleNode: (node: HeatMapNode) => void;
   onShowTooltip: (node: HeatMapNode, target: TooltipData["target"]) => void;
   onHideTooltip: () => void;
@@ -26,14 +26,14 @@ class HeatMapCanvasChart extends React.Component<Props> {
   _container: React.RefObject<HTMLCanvasElement>;
   _customBase: HTMLElement;
   _timer: d3.Timer | null;
-  _coloring: (node: HeatMapNode, selected: boolean) => string;
+  _fill: (node: HeatMapNode, selected: boolean) => string;
 
   constructor(props: Props) {
     super(props);
     this._container = React.createRef();
     this._customBase = document.createElement("custom");
     this._timer = null;
-    this._coloring = props.coloring || heatMapColoring;
+    this._fill = props.fill || heatMapFill;
   }
 
   componentDidMount() {
@@ -147,11 +147,11 @@ class HeatMapCanvasChart extends React.Component<Props> {
       .enter()
       .append("custom")
       .attr("class", "tile")
-      .attr("fill", d => this._coloring(d, includes(selectedIds, d.id)));
+      .attr("fill", d => this._fill(d, includes(selectedIds, d.id)));
 
     join
       .transition()
-      .attr("fill", d => this._coloring(d, includes(selectedIds, d.id)));
+      .attr("fill", d => this._fill(d, includes(selectedIds, d.id)));
   }
 
   private draw() {

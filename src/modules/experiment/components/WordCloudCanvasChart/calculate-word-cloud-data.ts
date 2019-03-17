@@ -1,7 +1,7 @@
 import * as d3 from "d3";
 import d3Cloud from "d3-cloud";
 import { WordCloudNode, D3WordCloudNode } from "./types";
-import { minBy, maxBy, cloneDeep } from "lodash";
+import { minBy, maxBy, cloneDeep, includes, sortBy } from "lodash";
 
 type Result = {
   d3Nodes: Array<D3WordCloudNode>;
@@ -10,6 +10,7 @@ type Result = {
 
 export default async function calculateWordCloudData(
   nodes: Array<WordCloudNode>,
+  selectedNodeIds: Array<WordCloudNode["id"]>,
   width: number,
   height: number,
   minFontSize: number,
@@ -21,6 +22,7 @@ export default async function calculateWordCloudData(
 
   // sortBy is a stable sort, so ordering is preserved:
   // nodes = sortBy(nodes, node => (includes(selectedNodeIds, node.id) ? 0 : 1));
+
   // nodes.forEach(node => {
   //   if (includes(selectedNodeIds, node.id)) {
   //     node.value = 500;

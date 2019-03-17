@@ -1,7 +1,16 @@
 import { State, Store } from "@sambego/storybook-state";
 import { withKnobs } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/react";
-import { clamp, includes, random, range, sumBy, sortBy, reverse } from "lodash";
+import {
+  clamp,
+  includes,
+  random,
+  range,
+  sumBy,
+  sortBy,
+  reverse,
+  noop
+} from "lodash";
 import * as React from "react";
 import { host } from "storybook-host";
 import "../../../../../index.scss";
@@ -1075,6 +1084,23 @@ storiesOf("SE/HeatMapCanvas", module)
                 }
                 store.set({ selectedIds: newSelectedIds });
               }}
+            />
+          )}
+        </State>
+      </div>
+    </div>
+  ))
+  .add("Empty", () => (
+    <div style={{ display: "flex", flexDirection: "column" }}>
+      <div>
+        <State store={store}>
+          {state => (
+            <HeatMapCanvas
+              nodes={[]}
+              xLabels={X_LABELS}
+              yLabels={Y_LABELS}
+              selectedIds={[]}
+              onToggleNode={noop}
             />
           )}
         </State>

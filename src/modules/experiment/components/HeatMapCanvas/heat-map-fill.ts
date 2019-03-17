@@ -10,7 +10,7 @@ const opacity = d3
   .range([MIN_OPACITY, MAX_OPACITY])
   .domain([0, 1]);
 
-export default function heatMapColoring(d: HeatMapNode, selected: boolean) {
+export default function heatMapFill(d: HeatMapNode, selected: boolean) {
   return selected
     ? "rgba(0,203,142,1)"
     : `rgba(0,150,203,${

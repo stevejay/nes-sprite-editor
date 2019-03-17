@@ -30,7 +30,7 @@ export default function d3ExpanderGraphic(): IExpanderGraphic {
   let containerElement: SVGSVGElement | null = null;
   let width = 0;
   let height = 0;
-  const _linkHorizontal = d3
+  const expandedLink = d3
     .linkHorizontal()
     .x(d => d.x)
     .y(d => d.y);
@@ -50,6 +50,13 @@ export default function d3ExpanderGraphic(): IExpanderGraphic {
       .exit()
       .transition()
       .duration(500)
+      .attr(
+        "d",
+        d3
+          .linkHorizontal()
+          .x(d => d.x)
+          .y(() => height * 0.5)
+      )
       .style("opacity", 1e-6)
       .remove();
 
@@ -58,14 +65,21 @@ export default function d3ExpanderGraphic(): IExpanderGraphic {
       .append("path")
       .attr("fill", "none")
       .attr("stroke", "#aaa")
-      .attr("d", _linkHorizontal)
+      .attr(
+        "d",
+        d3
+          .linkHorizontal()
+          .x(d => d.x)
+          .y(() => height * 0.5)
+      )
       .style("opacity", 1e-6)
       .transition()
       .delay(400)
       .duration(500)
+      .attr("d", expandedLink)
       .style("opacity", 1);
 
-    expander.attr("d", _linkHorizontal);
+    expander.attr("d", expandedLink);
   }
 
   renderer.containerElement = function(element: SVGSVGElement) {

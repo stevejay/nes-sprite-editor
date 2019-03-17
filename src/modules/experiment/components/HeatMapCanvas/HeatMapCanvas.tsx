@@ -1,16 +1,18 @@
+import { padStart, take, isEmpty } from "lodash";
 import React from "react";
-import Measure from "react-measure";
-import styles from "./HeatMapCanvas.module.scss";
+import ReactResizeDetector from "react-resize-detector";
 import Tooltip from "../Tooltip/Tooltip";
 import { TooltipData } from "../Tooltip/types";
+import styles from "./HeatMapCanvas.module.scss";
 import HeatMapCanvasChart from "./HeatMapCanvasChart";
 import { HeatMapNode } from "./types";
-import { take, padStart } from "lodash";
 
+// TODO own file:
 function displayHour(hour: number) {
   return `${padStart(hour.toString(), 2, "0")}:00`;
 }
 
+// TODO own file:
 function displayDay(day: number) {
   switch (day) {
     case 1:
@@ -35,7 +37,7 @@ type Props = {
   selectedIds: Array<number>;
   xLabels: Array<string>;
   yLabels: Array<string>;
-  coloring?: (node: HeatMapNode, selected: boolean) => string;
+  fill?: (node: HeatMapNode, selected: boolean) => string;
   onToggleNode: (node: HeatMapNode) => void;
 };
 
@@ -52,20 +54,23 @@ class HeatMapCanvas extends React.Component<Props, State> {
   }
 
   handleShowTooltip = (node: HeatMapNode, target: TooltipData["target"]) => {
+    const { showTooltip, tooltipData } = this.state;
     const datum = this.props.nodes[node.id];
     if (!datum || !datum.count) {
       this.handleHideTooltip();
-      return;
+    } else if (!showTooltip || tooltipData !== datum) {
+      this.setState({
+        showTooltip: true,
+        target,
+        tooltipData: datum
+      });
     }
-    this.setState({
-      showTooltip: true,
-      target,
-      tooltipData: datum
-    });
   };
 
   handleHideTooltip = () => {
-    this.setState({ showTooltip: false });
+    if (this.state.showTooltip) {
+      this.setState({ showTooltip: false });
+    }
   };
 
   handleToggleNode = (node: HeatMapNode) => {
@@ -73,8 +78,11 @@ class HeatMapCanvas extends React.Component<Props, State> {
   };
 
   render() {
-    const { nodes, xLabels, yLabels, selectedIds, coloring } = this.props;
+    const { nodes, xLabels, yLabels, selectedIds, fill } = this.props;
     const { showTooltip, target, tooltipData } = this.state;
+    if (isEmpty(nodes)) {
+      return <div className={styles.container}>-</div>;
+    }
     return (
       <div className={styles.container}>
         <div className={styles.column}>
@@ -94,23 +102,27 @@ class HeatMapCanvas extends React.Component<Props, State> {
               </div>
             ))}
           </div>
-          <Measure bounds>
-            {({ measureRef, contentRect }) => (
-              <div ref={measureRef} className={styles.chartContainer}>
+          <ReactResizeDetector
+            handleWidth
+            refreshMode="debounce"
+            refreshRate={500}
+          >
+            {({ width }: { width: number }) => (
+              <div className={styles.chartContainer}>
                 <HeatMapCanvasChart
-                  width={contentRect.bounds ? contentRect.bounds.width || 0 : 0}
+                  width={width}
                   nodes={nodes}
                   selectedIds={selectedIds}
                   rows={yLabels.length}
                   columns={xLabels.length}
-                  coloring={coloring}
+                  fill={fill}
                   onToggleNode={this.handleToggleNode}
                   onShowTooltip={this.handleShowTooltip}
                   onHideTooltip={this.handleHideTooltip}
                 />
               </div>
             )}
-          </Measure>
+          </ReactResizeDetector>
           <Tooltip show={showTooltip} target={target} data={tooltipData}>
             {(data: HeatMapNode) => (
               <>

@@ -1,10 +1,10 @@
 import React from "react";
 import styles from "./WordCloudCanvas.module.scss";
-import Measure from "react-measure";
 import Tooltip from "../Tooltip/Tooltip";
 import { WordCloudNode } from "../WordCloudCanvasChart";
 import WordCloudCanvasChart from "../WordCloudCanvasChart";
 import { TooltipData } from "../Tooltip/types";
+import ReactResizeDetector from "react-resize-detector";
 
 type Props = {
   nodes: Array<WordCloudNode>;
@@ -38,7 +38,9 @@ class WordCloudCanvas extends React.Component<Props, State> {
   };
 
   handleHideTooltip = () => {
+    // if (this.state.showTooltip) {
     this.setState({ showTooltip: false });
+    // }
   };
 
   handleToggleNode = (node: WordCloudNode) => {
@@ -50,27 +52,28 @@ class WordCloudCanvas extends React.Component<Props, State> {
     const { showTooltip, target, tooltipData } = this.state;
     return (
       <>
-        <Measure bounds>
-          {({ measureRef, contentRect }) => {
-            const width = contentRect.bounds ? contentRect.bounds.width : 0;
-            const height = contentRect.bounds ? contentRect.bounds.height : 0;
-            return (
-              <div ref={measureRef} className={styles.container}>
-                <WordCloudCanvasChart
-                  width={width}
-                  height={height}
-                  originXOffset={0}
-                  cloudWidth={width}
-                  nodes={nodes}
-                  selectedNodeIds={selectedNodeIds}
-                  onShowTooltip={this.handleShowTooltip}
-                  onHideTooltip={this.handleHideTooltip}
-                  onToggleNode={this.handleToggleNode}
-                />
-              </div>
-            );
-          }}
-        </Measure>
+        <ReactResizeDetector
+          handleWidth
+          handleHeight
+          refreshMode="debounce"
+          refreshRate={500}
+        >
+          {({ width, height }: { width: number; height: number }) => (
+            <div className={styles.container}>
+              <WordCloudCanvasChart
+                width={width}
+                height={height}
+                originXOffset={0}
+                cloudWidth={width}
+                nodes={nodes}
+                selectedNodeIds={selectedNodeIds}
+                onShowTooltip={this.handleShowTooltip}
+                onHideTooltip={this.handleHideTooltip}
+                onToggleNode={this.handleToggleNode}
+              />
+            </div>
+          )}
+        </ReactResizeDetector>
         <Tooltip show={showTooltip} target={target} data={tooltipData}>
           {(data: WordCloudNode) => (
             <p>

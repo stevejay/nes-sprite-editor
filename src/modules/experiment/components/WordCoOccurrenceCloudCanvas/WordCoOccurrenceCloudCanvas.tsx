@@ -1,11 +1,11 @@
 import React from "react";
 import styles from "./WordCoOccurrenceCloudCanvas.module.scss";
-import Measure from "react-measure";
 import Tooltip from "../Tooltip/Tooltip";
 import { WordCloudNode } from "../WordCloudCanvasChart";
 import WordCloudCanvasChart from "../WordCloudCanvasChart";
 import { TooltipData } from "../Tooltip/types";
 import ExpanderGraphic from "./ExpanderGraphic";
+import ReactResizeDetector from "react-resize-detector";
 
 const CO_OCCURRENCE_DIVIDER_WIDTH_PX = 40;
 const EMPTY_ARRAY: Array<WordCloudNode> = [];
@@ -43,7 +43,9 @@ class WordCoOccurrenceCloudCanvas extends React.Component<Props, State> {
   };
 
   handleHideTooltip = () => {
-    this.setState({ showTooltip: false });
+    if (this.state.showTooltip) {
+      this.setState({ showTooltip: false });
+    }
   };
 
   handleToggleNode = (node: WordCloudNode) => {
@@ -53,75 +55,62 @@ class WordCoOccurrenceCloudCanvas extends React.Component<Props, State> {
   render() {
     const { nodes, selectedNodeIds } = this.props;
     const { showTooltip, target, tooltipData } = this.state;
+    // console.log("render coocc");
     return (
       <>
-        <Measure bounds>
-          {({ measureRef, contentRect }) => {
-            const width = contentRect.bounds ? contentRect.bounds.width : 0;
-            const height = contentRect.bounds ? contentRect.bounds.height : 0;
-
-            // console.log(
-            //   "divider/width/originXOffset/cloudWidth",
-            //   CO_OCCURRENCE_DIVIDER_WIDTH_PX,
-            //   width,
-            //   selectedNodeIds.length
-            //     ? -(width * 0.25 + CO_OCCURRENCE_DIVIDER_WIDTH_PX * 0.25)
-            //     : 0,
-            //   selectedNodeIds.length
-            //     ? width * 0.5 - CO_OCCURRENCE_DIVIDER_WIDTH_PX * 0.5
-            //     : width
-            // );
-
-            // divider/width/originXOffset/cloudWidth 40 578 -154.5 309
-
-            return (
-              <div ref={measureRef} className={styles.container}>
-                <ExpanderGraphic
-                  show={!!selectedNodeIds.length}
-                  width={width}
-                  height={height}
-                />
-                <WordCloudCanvasChart
-                  width={width}
-                  height={height}
-                  originXOffset={
-                    selectedNodeIds.length
-                      ? -(width * 0.25 + CO_OCCURRENCE_DIVIDER_WIDTH_PX * 0.25)
-                      : 0
-                  }
-                  cloudWidth={
-                    selectedNodeIds.length
-                      ? width * 0.5 - CO_OCCURRENCE_DIVIDER_WIDTH_PX * 0.5
-                      : width
-                  }
-                  nodes={nodes}
-                  selectedNodeIds={selectedNodeIds}
-                  onShowTooltip={this.handleShowTooltip}
-                  onHideTooltip={this.handleHideTooltip}
-                  onToggleNode={this.handleToggleNode}
-                />
-                <WordCloudCanvasChart
-                  className={
-                    selectedNodeIds.length
-                      ? styles.withWordsChart
-                      : styles.withWordsChartInactive
-                  }
-                  width={width * 0.5}
-                  height={height}
-                  originXOffset={CO_OCCURRENCE_DIVIDER_WIDTH_PX * 0.25}
-                  cloudWidth={
-                    width * 0.5 - CO_OCCURRENCE_DIVIDER_WIDTH_PX * 0.5
-                  }
-                  nodes={selectedNodeIds.length ? nodes : EMPTY_ARRAY}
-                  selectedNodeIds={EMPTY_STR_ARRAY}
-                  onShowTooltip={this.handleShowTooltip}
-                  onHideTooltip={this.handleHideTooltip}
-                  onToggleNode={this.handleToggleNode}
-                />
-              </div>
-            );
-          }}
-        </Measure>
+        <ReactResizeDetector
+          handleWidth
+          handleHeight
+          refreshMode="debounce"
+          refreshRate={500}
+        >
+          {({ width, height }: { width: number; height: number }) => (
+            <div className={styles.container}>
+              <ExpanderGraphic
+                show={!!selectedNodeIds.length}
+                width={width}
+                height={height}
+              />
+              <WordCloudCanvasChart
+                width={width}
+                height={height}
+                originXOffset={
+                  selectedNodeIds.length
+                    ? -(width * 0.25 + CO_OCCURRENCE_DIVIDER_WIDTH_PX * 0.25)
+                    : 0
+                }
+                cloudWidth={
+                  selectedNodeIds.length
+                    ? width * 0.5 - CO_OCCURRENCE_DIVIDER_WIDTH_PX * 0.5
+                    : width
+                }
+                nodes={nodes}
+                selectedNodeIds={selectedNodeIds}
+                onShowTooltip={this.handleShowTooltip}
+                onHideTooltip={this.handleHideTooltip}
+                onToggleNode={this.handleToggleNode}
+              />
+              <WordCloudCanvasChart
+                className={
+                  selectedNodeIds.length
+                    ? styles.withWordsChart
+                    : styles.withWordsChartInactive
+                }
+                width={(width || 0) * 0.5}
+                height={height || 0}
+                originXOffset={CO_OCCURRENCE_DIVIDER_WIDTH_PX * 0.25}
+                cloudWidth={
+                  (width || 0) * 0.5 - CO_OCCURRENCE_DIVIDER_WIDTH_PX * 0.5
+                }
+                nodes={selectedNodeIds.length ? nodes : EMPTY_ARRAY}
+                selectedNodeIds={EMPTY_STR_ARRAY}
+                onShowTooltip={this.handleShowTooltip}
+                onHideTooltip={this.handleHideTooltip}
+                onToggleNode={this.handleToggleNode}
+              />
+            </div>
+          )}
+        </ReactResizeDetector>
         <Tooltip show={showTooltip} target={target} data={tooltipData}>
           {(data: WordCloudNode) => (
             <p>

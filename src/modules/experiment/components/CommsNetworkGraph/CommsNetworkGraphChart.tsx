@@ -1,19 +1,19 @@
-import React from "react";
 import * as d3 from "d3";
-import styles from "./CommsNetworkGraphChart.module.scss";
+import { cloneDeep } from "lodash";
+import React from "react";
+import {
+  D3LinkEntity,
+  D3NodeEntity,
+  LinkEntity,
+  NodeEntity
+} from "../NetworkGraph";
 import {
   default as networkGraphExperiment,
   INetworkGraph
 } from "../NetworkGraph/d3-network-graph";
-import {
-  NodeEntity,
-  LinkEntity,
-  D3NodeEntity,
-  D3LinkEntity
-} from "../NetworkGraph";
-import { CommunicationsNode } from "./types";
-import { cloneDeep } from "lodash";
 import commsNetworkGraphWorker from "./comms-network-graph-worker";
+import styles from "./CommsNetworkGraphChart.module.scss";
+import { CommunicationsNode } from "./types";
 
 const MIN_RADIUS = 8;
 const MAX_RADIUS = 13;
@@ -33,7 +33,7 @@ type Props = {
   onToggleNode: (value: NodeEntity) => void;
 };
 
-class CommsNetworkGraphChart extends React.PureComponent<Props> {
+class CommsNetworkGraphChart extends React.Component<Props> {
   _svg: React.RefObject<SVGSVGElement>;
   _renderer: INetworkGraph | null;
   _nodes: Array<D3NodeEntity>;
@@ -88,6 +88,16 @@ class CommsNetworkGraphChart extends React.PureComponent<Props> {
     this.renderGraph(true);
   }
 
+  shouldComponentUpdate(nextProps: Props) {
+    return (
+      nextProps.nodes !== this.props.nodes ||
+      nextProps.links !== this.props.links ||
+      nextProps.selectedIds !== this.props.selectedIds ||
+      nextProps.width !== this.props.width ||
+      nextProps.height !== this.props.height
+    );
+  }
+
   componentDidUpdate(prevProps: Props) {
     this.renderGraph(
       this.props.nodes !== prevProps.nodes ||
@@ -133,7 +143,6 @@ class CommsNetworkGraphChart extends React.PureComponent<Props> {
 
   private recalculate() {
     const { nodes, links, width, height } = this.props;
-
     this._version = Date.now();
     const event = {
       data: {
