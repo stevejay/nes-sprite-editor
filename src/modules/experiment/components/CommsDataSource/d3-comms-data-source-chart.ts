@@ -1,7 +1,7 @@
 import * as d3 from "d3";
 import { CommsSourceNode } from "./types";
 import { GetOrSet } from "../NetworkGraph";
-import { max, flatten, includes, uniqBy, sortBy } from "lodash";
+import { max, includes, uniqBy, sortBy } from "lodash";
 import measureText from "./measure-text";
 
 const MIN_CIRCLE_RADIUS_PX = 5;
