@@ -1,7 +1,7 @@
 import { State, Store } from "@sambego/storybook-state";
 import { withKnobs } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/react";
-import { sampleSize, sortBy } from "lodash";
+import { sampleSize, sortBy, includes } from "lodash";
 import * as React from "react";
 import { host } from "storybook-host";
 import "../../../../../index.scss";
@@ -63,20 +63,18 @@ storiesOf("SE/CommsDataSource", module)
           {state => (
             <CommsDataSource
               sources={state.sources}
-              // nodes={state.data.nodes}
-              // links={state.data.links}
-              // selectedIds={state.selectedIds}
-              // onNodeClick={value => {
-              //   let newSelectedIds = state.selectedIds.slice();
-              //   if (includes(newSelectedIds, value)) {
-              //     newSelectedIds = newSelectedIds.filter(x => x !== value);
-              //   } else {
-              //     newSelectedIds.push(value);
-              //   }
-              //   store.set({
-              //     selectedIds: newSelectedIds
-              //   });
-              // }}
+              selectedIds={state.selectedIds}
+              onNodeClick={value => {
+                let newSelectedIds = state.selectedIds.slice();
+                if (includes(newSelectedIds, value)) {
+                  newSelectedIds = newSelectedIds.filter(x => x !== value);
+                } else {
+                  newSelectedIds.push(value);
+                }
+                store.set({
+                  selectedIds: newSelectedIds
+                });
+              }}
             />
           )}
         </State>

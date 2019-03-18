@@ -29,3 +29,11 @@
     stroke: darken(#d0d3db, 25);
   }
 }
+
+.svg :global(.graph) circle {
+  fill: rgba(0, 150, 203, 0.5);
+}
+
+.svg :global(.graph) circle:global(.selected) {
+  fill: #00cb8e;
+}

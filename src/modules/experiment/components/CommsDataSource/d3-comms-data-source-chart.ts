@@ -1,7 +1,7 @@
 import * as d3 from "d3";
 import { CommsSource, CommsSourceNode } from "./types";
 import { GetOrSet } from "../NetworkGraph";
-import { max, flatten } from "lodash";
+import { max, flatten, includes } from "lodash";
 import measureText from "./measure-text";
 
 const MIN_CIRCLE_RADIUS_PX = 5;
@@ -206,7 +206,7 @@ export default function d3CommsDataSourceChart(
     circleForEnteringGraph
       .enter()
       .append("circle")
-      .attr("fill", "rgba(0,150,203,0.5)")
+      .classed("selected", d => includes(selectedIds, d.id))
       .attr("r", 0)
       .attr("cx", d => x(d.value))
       .attr("cy", 0)
@@ -216,14 +216,6 @@ export default function d3CommsDataSourceChart(
       .merge(circleForEnteringGraph)
       .transition()
       .attr("r", d => circleRadius(d.value));
-    // .attr("cx", d => x(d.value))
-    // .attr("cy", 0);
-
-    // const circleForExitingGraph = graphExit
-    //   .selectAll("circle")
-    //   .transition()
-    //   // .attr("r", 0)
-    //   .remove();
 
     let circleForUpdatingGraph = graph
       .selectAll("circle")
@@ -236,27 +228,21 @@ export default function d3CommsDataSourceChart(
     circleForUpdatingGraph = circleForUpdatingGraph
       .enter()
       .append("circle")
-      .attr("fill", "rgba(0,150,203,0.5)")
       .attr("r", 0)
       .attr("cx", d => x(d.value))
       .attr("cy", 0)
+      .classed("selected", d => includes(selectedIds, d.id))
       .on("mouseover", handleMouseOver)
       .on("mouseout", handleMouseOut)
       .on("click", handleClick)
       .merge(circleForUpdatingGraph);
     circleForUpdatingGraph
+      .classed("selected", d => includes(selectedIds, d.id))
       .transition()
       .attr("r", d => circleRadius(d.value))
       .attr("cx", d => x(d.value))
       .attr("cy", 0);
-
-    // circleForUpdatingGraph = graph
   }
-
-  // .attr("x", d => x(d.name))
-  // .attr("y", d => y(d.value))
-  // .attr("height", d => y(0) - y(d.value))
-  // .attr("width", x.bandwidth());
 
   function handleMouseOver(d: CommsSourceNode) {
     // @ts-ignore

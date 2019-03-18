@@ -72,15 +72,6 @@ class CommsDataSource extends React.Component<Props, State> {
             <>
               <p>'{data.text}'</p>
               <p>{data.value} comms</p>
-              {/* {Object.keys(data.commsDetail).map((key, index) => {
-                const commsDetail = data.commsDetail[key];
-                return (
-                  <p key={index}>
-                    {commsDetail.count} with {commsDetail.name}
-                  </p>
-                );
-              })}
-              {!!data.totalComms && <p>Total Comms: {data.totalComms}</p>} */}
             </>
           )}
         </Tooltip>
