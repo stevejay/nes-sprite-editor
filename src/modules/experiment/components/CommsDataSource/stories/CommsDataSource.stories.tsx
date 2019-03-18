@@ -1,7 +1,7 @@
 import { State, Store } from "@sambego/storybook-state";
 import { withKnobs } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/react";
-import { sampleSize } from "lodash";
+import { sampleSize, sortBy } from "lodash";
 import * as React from "react";
 import { host } from "storybook-host";
 import "../../../../../index.scss";
@@ -20,12 +20,15 @@ const SOURCES = [
 ];
 
 function createSourcesData() {
-  return sampleSize(SOURCES, 4).map(source => {
-    return {
-      ...source,
-      nodes: generateWordCloudNodes(100)
-    } as CommsSource;
-  });
+  return sortBy(
+    sampleSize(SOURCES, 4).map(source => {
+      return {
+        ...source,
+        nodes: generateWordCloudNodes(50)
+      } as CommsSource;
+    }),
+    source => source.id
+  );
 }
 
 const storyHost = host({

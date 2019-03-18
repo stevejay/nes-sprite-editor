@@ -23,20 +23,23 @@ class CommsDataSource extends React.Component<Props, State> {
     this.state = { showTooltip: false, tooltipData: null, target: null };
   }
 
-  handleShowTooltip = (value: CommsSourceNode, target: ClientRect) => {
+  handleShowTooltip = (
+    node: CommsSourceNode,
+    target: TooltipData["target"]
+  ) => {
     this.setState({
       showTooltip: true,
       target: target,
-      tooltipData: value
+      tooltipData: node
     });
   };
 
-  handleHideTooltip = () => {
+  handleHideTooltip = (_node: CommsSourceNode) => {
     this.setState({ showTooltip: false });
   };
 
-  handleToggleNode = (value: CommsSourceNode) => {
-    this.props.onNodeClick(value.id);
+  handleToggleNode = (node: CommsSourceNode) => {
+    this.props.onNodeClick(node.id);
   };
 
   render() {
@@ -67,7 +70,8 @@ class CommsDataSource extends React.Component<Props, State> {
         <Tooltip show={showTooltip} target={target} data={tooltipData}>
           {(data: CommsSourceNode) => (
             <>
-              <p>{data.text}</p>
+              <p>'{data.text}'</p>
+              <p>{data.value} comms</p>
               {/* {Object.keys(data.commsDetail).map((key, index) => {
                 const commsDetail = data.commsDetail[key];
                 return (

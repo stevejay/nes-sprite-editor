@@ -1,0 +1,31 @@
+.svg :global(.domain) {
+  visibility: hidden;
+}
+
+.svg :global(.newDomain) {
+  stroke: darken(#d0d3db, 25);
+  fill: transparent;
+}
+
+.svg :global(.y-axis),
+.svg :global(.x-axis) {
+  text {
+    fill: #d0d3db;
+  }
+
+  :global(.tick) text {
+    font-size: 12px;
+  }
+}
+
+.svg :global(.y-axis) {
+  :global(.tick) line {
+    stroke: transparent;
+  }
+}
+
+.svg :global(.x-axis) {
+  :global(.tick) line {
+    stroke: darken(#d0d3db, 25);
+  }
+}

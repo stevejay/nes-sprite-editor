@@ -11,12 +11,9 @@ type Props = {
   height: number;
   sources: Array<CommsSource>;
   selectedIds: Array<CommsSourceNode["id"]>;
-  onShowTooltip: (
-    value: CommsSourceNode,
-    target: TooltipData["target"]
-  ) => void;
-  onHideTooltip: () => void;
-  onToggleNode: (value: CommsSourceNode) => void;
+  onShowTooltip: (node: CommsSourceNode, target: TooltipData["target"]) => void;
+  onHideTooltip: (node: CommsSourceNode) => void;
+  onToggleNode: (node: CommsSourceNode) => void;
 };
 
 class CommsDataSourceChart extends React.Component<Props> {
@@ -59,7 +56,7 @@ class CommsDataSourceChart extends React.Component<Props> {
   };
 
   private handleHideTooltip = (node: CommsSourceNode) => {
-    this.props.onHideTooltip();
+    this.props.onHideTooltip(node);
   };
 
   private handleToggleNode = (node: CommsSourceNode) => {
@@ -71,9 +68,6 @@ class CommsDataSourceChart extends React.Component<Props> {
     if (!(width > 0) || !(height > 0) || !sources) {
       return;
     }
-    // if (recalculateNodes) {
-    //   this.recalculate();
-    // }
     this._renderer!.width(width)
       .height(height)
       .sources(sources)(selectedIds);

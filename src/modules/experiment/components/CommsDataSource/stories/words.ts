@@ -333,6 +333,11 @@ export default function generateWordCloudNodes(count: number) {
         value: getRandomValue()
       } as CommsSourceNode)
   );
+  if (random(0, 1) === 0) {
+    words.forEach(word => {
+      word.value = Math.ceil(word.value * 0.5);
+    });
+  }
   words = reverse(sortBy(words, word => word.value));
   return words;
 }
