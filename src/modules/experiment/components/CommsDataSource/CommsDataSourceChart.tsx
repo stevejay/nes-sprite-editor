@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./CommsDataSourceChart.module.scss";
-import { CommsSourceNode, CommsSource } from "./types";
+import { CommsSourceNode } from "./types";
 import { TooltipData } from "../Tooltip";
 import d3CommsDataSourceChart, {
   ICommsDataSourceGraph
@@ -9,7 +9,7 @@ import d3CommsDataSourceChart, {
 type Props = {
   width: number;
   height: number;
-  sources: Array<CommsSource>;
+  nodes: Array<CommsSourceNode>;
   selectedIds: Array<CommsSourceNode["id"]>;
   onShowTooltip: (node: CommsSourceNode, target: TooltipData["target"]) => void;
   onHideTooltip: (node: CommsSourceNode) => void;
@@ -24,10 +24,6 @@ class CommsDataSourceChart extends React.Component<Props> {
     super(props);
     this._svg = React.createRef();
     this._renderer = null;
-    // this._renderer = null;
-    // this._nodes = [];
-    // this._links = [];
-    // this._version = 0;
   }
 
   componentDidMount() {
@@ -40,7 +36,7 @@ class CommsDataSourceChart extends React.Component<Props> {
 
   shouldComponentUpdate(nextProps: Props) {
     return (
-      nextProps.sources !== this.props.sources ||
+      nextProps.nodes !== this.props.nodes ||
       nextProps.selectedIds !== this.props.selectedIds ||
       nextProps.width !== this.props.width ||
       nextProps.height !== this.props.height
@@ -64,13 +60,13 @@ class CommsDataSourceChart extends React.Component<Props> {
   };
 
   private renderChart() {
-    const { sources, width, height, selectedIds } = this.props;
-    if (!(width > 0) || !(height > 0) || !sources) {
+    const { nodes, width, height, selectedIds } = this.props;
+    if (!(width > 0) || !(height > 0) || !nodes) {
       return;
     }
     this._renderer!.width(width)
       .height(height)
-      .sources(sources)(selectedIds);
+      .nodes(nodes)(selectedIds);
   }
 
   render() {

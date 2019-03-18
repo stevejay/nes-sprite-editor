@@ -1,13 +1,13 @@
 import { State, Store } from "@sambego/storybook-state";
 import { withKnobs } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/react";
-import { sampleSize, sortBy, includes } from "lodash";
+import { sampleSize, includes, flatten } from "lodash";
 import * as React from "react";
 import { host } from "storybook-host";
 import "../../../../../index.scss";
 import CommsDataSource from "../CommsDataSource";
 import generateWordCloudNodes from "./words";
-import { CommsSource } from "..";
+import { CommsSourceNode } from "..";
 
 const SOURCES = [
   { id: "bloomberg-chat", name: "Bloomberg Chat" },
@@ -19,15 +19,11 @@ const SOURCES = [
   { id: "bar", name: "Bar" }
 ];
 
-function createSourcesData() {
-  return sortBy(
-    sampleSize(SOURCES, 4).map(source => {
-      return {
-        ...source,
-        nodes: generateWordCloudNodes(50)
-      } as CommsSource;
-    }),
-    source => source.id
+function createNodeData(): Array<CommsSourceNode> {
+  return flatten(
+    sampleSize(SOURCES, 4).map(source =>
+      generateWordCloudNodes(source.id, source.name, 50)
+    )
   );
 }
 
@@ -38,10 +34,10 @@ const storyHost = host({
 });
 
 const store = new Store<{
-  sources: any;
+  nodes: Array<CommsSourceNode>;
   selectedIds: Array<string>;
 }>({
-  sources: createSourcesData(),
+  nodes: createNodeData(),
   selectedIds: []
 });
 
@@ -52,7 +48,7 @@ storiesOf("SE/CommsDataSource", module)
     <div style={{ display: "flex", flexDirection: "column" }}>
       <button
         onClick={() => {
-          store.set({ sources: createSourcesData() });
+          store.set({ nodes: createNodeData() });
         }}
         style={{ marginBottom: 30, maxWidth: 100 }}
       >
@@ -62,7 +58,7 @@ storiesOf("SE/CommsDataSource", module)
         <State store={store}>
           {state => (
             <CommsDataSource
-              sources={state.sources}
+              nodes={state.nodes}
               selectedIds={state.selectedIds}
               onNodeClick={value => {
                 let newSelectedIds = state.selectedIds.slice();

@@ -30,10 +30,10 @@
   }
 }
 
-.svg :global(.graph) circle {
+.svg :global(.chart) circle {
   fill: rgba(0, 150, 203, 0.5);
 }
 
-.svg :global(.graph) circle:global(.selected) {
+.svg :global(.chart) circle:global(.selected) {
   fill: #00cb8e;
 }

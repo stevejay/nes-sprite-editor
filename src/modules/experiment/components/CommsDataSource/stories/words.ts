@@ -321,18 +321,21 @@ function getRandomValue() {
   }
 }
 
-export default function generateWordCloudNodes(count: number) {
+export default function generateWordCloudNodes(
+  sourceId: string,
+  sourceName: string,
+  count: number
+): Array<CommsSourceNode> {
   let words = sampleSize(
     WORDS.filter((v, i, a) => a.indexOf(v) === i),
     count
-  ).map(
-    text =>
-      ({
-        id: text,
-        text,
-        value: getRandomValue()
-      } as CommsSourceNode)
-  );
+  ).map(text => ({
+    id: `${sourceId}-${text}`,
+    sourceId,
+    sourceName,
+    text,
+    value: getRandomValue()
+  }));
   if (random(0, 1) === 0) {
     words.forEach(word => {
       word.value = Math.ceil(word.value * 0.5);

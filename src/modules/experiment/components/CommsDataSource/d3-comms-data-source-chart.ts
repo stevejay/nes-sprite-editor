@@ -1,7 +1,7 @@
 import * as d3 from "d3";
-import { CommsSource, CommsSourceNode } from "./types";
+import { CommsSourceNode } from "./types";
 import { GetOrSet } from "../NetworkGraph";
-import { max, flatten, includes } from "lodash";
+import { max, flatten, includes, uniqBy, sortBy } from "lodash";
 import measureText from "./measure-text";
 
 const MIN_CIRCLE_RADIUS_PX = 5;
@@ -12,8 +12,8 @@ const Y_AXIS_PADDING_PX = 10;
 export interface ICommsDataSourceGraph {
   (selectedIds: Array<CommsSourceNode["id"]>): void;
 
-  sources(): Array<CommsSource>;
-  sources(value: Array<CommsSource>): this;
+  nodes(): Array<CommsSourceNode>;
+  nodes(value: Array<CommsSourceNode>): this;
 
   width(): number;
   width(value: number): this;
@@ -38,10 +38,13 @@ export default function d3CommsDataSourceChart(
     | null = null;
   let onHideTooltip: ((node: CommsSourceNode) => void) | null = null;
   let onToggleNode: ((node: CommsSourceNode) => void) | null = null;
-  let sources: Array<CommsSource> = [];
+  let nodes: Array<CommsSourceNode> = [];
 
   function renderer(selectedIds: Array<CommsSourceNode["id"]>) {
-    // update the container size:
+    const uniqueSources = sortBy(
+      uniqBy(nodes, source => source.sourceId),
+      node => node.sourceName
+    );
 
     const svg = d3
       .select<SVGElement, null>(svgElement)
@@ -50,13 +53,12 @@ export default function d3CommsDataSourceChart(
 
     const yAxisLabelWidth =
       max(
-        sources.map(d => measureText(d.name, "sans-serif", FONT_SIZE_PX).width)
+        uniqueSources.map(
+          d => measureText(d.sourceName, "sans-serif", FONT_SIZE_PX).width
+        )
       ) || 0;
 
-    const maxXValue =
-      max(
-        flatten(sources.map(source => source.nodes)).map(node => node.value)
-      ) || 1;
+    const maxXValue = max(nodes.map(node => node.value)) || 1;
 
     const circleRadius = d3
       .scaleLinear()
@@ -79,10 +81,12 @@ export default function d3CommsDataSourceChart(
 
     const y = d3
       .scaleBand()
-      .domain(sources.map(d => d.name))
+      .domain(uniqueSources.map(d => d.sourceName))
       .range([margin.top, height - margin.bottom]);
 
-    const yAxis = g =>
+    const yAxis = (
+      g: d3.Selection<any, any, any, any> | d3.Transition<any, any, any, any>
+    ) =>
       g.call(
         d3
           .axisLeft(y)
@@ -104,8 +108,6 @@ export default function d3CommsDataSourceChart(
       .style("opacity", 1)
       .attr("transform", `translate(${margin.left},0)`);
 
-    // console.log("maxXValue", maxXValue);
-
     const x = d3
       .scaleLinear()
       .domain([0, maxXValue])
@@ -119,18 +121,20 @@ export default function d3CommsDataSourceChart(
           MAX_CIRCLE_RADIUS_PX
       ]);
 
-    const xAxis = g => g.call(d3.axisBottom(x));
+    const xAxis = (
+      g: d3.Selection<any, any, any, any> | d3.Transition<any, any, any, any>
+    ) => g.call(d3.axisBottom(x));
 
     let gXAxis = svg.selectAll("g.x-axis").data([null]);
     gXAxis
       .enter()
       .append("g")
+      .classed("x-axis", true)
       .attr(
         "transform",
         `translate(${margin.left + MIN_CIRCLE_RADIUS_PX},${height -
           margin.bottom})`
       )
-      .classed("x-axis", true)
       .style("opacity", 1e6)
       .call(xAxis);
     gXAxis
@@ -148,17 +152,25 @@ export default function d3CommsDataSourceChart(
       .enter()
       .append("g")
       .classed("chart", true)
-      .attr("transform", `translate(${margin.left + MIN_CIRCLE_RADIUS_PX},0)`)
+      .attr(
+        "transform",
+        `translate(${margin.left + MIN_CIRCLE_RADIUS_PX},${margin.top})`
+      )
+      // @ts-ignore
       .merge(chartGroup);
     chartGroup
       .transition()
-      .attr("transform", `translate(${margin.left + MIN_CIRCLE_RADIUS_PX},0)`);
+      .attr(
+        "transform",
+        `translate(${margin.left + MIN_CIRCLE_RADIUS_PX},${margin.top})`
+      );
 
     let domain = chartGroup.selectAll("polyline.newDomain").data([null]);
     domain = domain
       .enter()
       .append("polyline")
       .classed("newDomain", true)
+      // @ts-ignore
       .merge(domain);
     domain
       .transition()
@@ -175,73 +187,38 @@ export default function d3CommsDataSourceChart(
           margin.bottom}`
       );
 
-    let graph = chartGroup.selectAll("g.graph").data(sources, d => d.id);
-    const graphExit = graph
+    let circle = chartGroup
+      .selectAll("circle")
+      .data(nodes, d => (d as CommsSourceNode).id);
+
+    circle
       .exit()
       .transition()
       .style("opacity", 1e6)
+      .attr("r", 0)
       .remove();
-    const graphEnter = graph
+
+    circle = circle
       .enter()
-      .append("g")
-      .classed("graph", true)
+      .append("circle")
+      .classed("selected", d => includes(selectedIds, d.id))
       .style("opacity", 1e6)
-      .attr(
-        "transform",
-        d => `translate(0,${y(d.name) + y.bandwidth() * 0.5})`
-      );
-    graph = graphEnter.merge(graph);
-    graph
+      .attr("r", 0)
+      .attr("cx", d => x(d.value))
+      .attr("cy", d => (y(d.sourceName) || 0) + y.bandwidth() * 0.5)
+      .on("mouseover", handleMouseOver)
+      .on("mouseout", handleMouseOut)
+      .on("click", handleClick)
+      // @ts-ignore
+      .merge(circle);
+
+    circle
+      .classed("selected", d => includes(selectedIds, d.id))
       .transition()
       .style("opacity", 1)
-      .attr(
-        "transform",
-        d => `translate(0,${y(d.name) + y.bandwidth() * 0.5})`
-      );
-
-    // An entering graph is new and so has only entering circles
-    const circleForEnteringGraph = graphEnter
-      .selectAll("circle")
-      .data(d => d.nodes, d => d.id);
-    circleForEnteringGraph
-      .enter()
-      .append("circle")
-      .classed("selected", d => includes(selectedIds, d.id))
-      .attr("r", 0)
-      .attr("cx", d => x(d.value))
-      .attr("cy", 0)
-      .on("mouseover", handleMouseOver)
-      .on("mouseout", handleMouseOut)
-      .on("click", handleClick)
-      .merge(circleForEnteringGraph)
-      .transition()
-      .attr("r", d => circleRadius(d.value));
-
-    let circleForUpdatingGraph = graph
-      .selectAll("circle")
-      .data(d => d.nodes, d => d.id);
-    circleForUpdatingGraph
-      .exit()
-      .transition()
-      .attr("r", 0)
-      .remove();
-    circleForUpdatingGraph = circleForUpdatingGraph
-      .enter()
-      .append("circle")
-      .attr("r", 0)
-      .attr("cx", d => x(d.value))
-      .attr("cy", 0)
-      .classed("selected", d => includes(selectedIds, d.id))
-      .on("mouseover", handleMouseOver)
-      .on("mouseout", handleMouseOut)
-      .on("click", handleClick)
-      .merge(circleForUpdatingGraph);
-    circleForUpdatingGraph
-      .classed("selected", d => includes(selectedIds, d.id))
-      .transition()
       .attr("r", d => circleRadius(d.value))
       .attr("cx", d => x(d.value))
-      .attr("cy", 0);
+      .attr("cy", d => (y(d.sourceName) || 0) + y.bandwidth() * 0.5);
   }
 
   function handleMouseOver(d: CommsSourceNode) {
@@ -258,15 +235,15 @@ export default function d3CommsDataSourceChart(
     onToggleNode && onToggleNode(d);
   }
 
-  renderer.sources = ((
-    value?: Array<CommsSource>
-  ): Array<CommsSource> | ICommsDataSourceGraph => {
+  renderer.nodes = ((
+    value?: Array<CommsSourceNode>
+  ): Array<CommsSourceNode> | ICommsDataSourceGraph => {
     if (typeof value !== "undefined") {
-      sources = value;
+      nodes = value;
       return renderer;
     }
-    return sources;
-  }) as GetOrSet<Array<CommsSource>, ICommsDataSourceGraph>;
+    return nodes;
+  }) as GetOrSet<Array<CommsSourceNode>, ICommsDataSourceGraph>;
 
   renderer.width = ((value?: number): number | ICommsDataSourceGraph => {
     if (typeof value !== "undefined") {

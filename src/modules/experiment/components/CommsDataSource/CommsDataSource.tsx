@@ -1,12 +1,12 @@
 import React from "react";
 import styles from "./CommsDataSource.module.scss";
-import { CommsSource, CommsSourceNode } from "./types";
+import { CommsSourceNode } from "./types";
 import { default as Tooltip, TooltipData } from "../Tooltip";
 import ReactResizeDetector from "react-resize-detector";
 import CommsDataSourceChart from "./CommsDataSourceChart";
 
 type Props = {
-  sources: Array<CommsSource>;
+  nodes: Array<CommsSourceNode>;
   selectedIds: Array<CommsSourceNode["id"]>;
   onNodeClick: (id: CommsSourceNode["id"]) => void;
 };
@@ -43,7 +43,7 @@ class CommsDataSource extends React.Component<Props, State> {
   };
 
   render() {
-    const { sources, selectedIds } = this.props;
+    const { nodes, selectedIds } = this.props;
     const { showTooltip, target, tooltipData } = this.state;
     return (
       <>
@@ -56,7 +56,7 @@ class CommsDataSource extends React.Component<Props, State> {
           {({ width, height }: { width: number; height: number }) => (
             <div className={styles.container}>
               <CommsDataSourceChart
-                sources={sources}
+                nodes={nodes}
                 selectedIds={selectedIds}
                 width={width}
                 height={height}
