@@ -38,9 +38,7 @@ class WordCloudCanvas extends React.Component<Props, State> {
   };
 
   handleHideTooltip = () => {
-    // if (this.state.showTooltip) {
     this.setState({ showTooltip: false });
-    // }
   };
 
   handleToggleNode = (node: WordCloudNode) => {

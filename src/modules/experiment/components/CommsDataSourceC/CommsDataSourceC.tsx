@@ -1,9 +1,10 @@
 import React from "react";
-import styles from "./CommsDataSource.module.scss";
-import { CommsSourceNode } from "./types";
+import styles from "./CommsDataSourceC.module.scss";
+import { CommsSourceNode, Margin } from "./types";
 import { default as Tooltip, TooltipData } from "../Tooltip";
 import ReactResizeDetector from "react-resize-detector";
 import CommsDataSourceChart from "./CommsDataSourceChart";
+import CommsDataSourceCanvas from "./CommsDataSourceCanvas";
 
 type Props = {
   nodes: Array<CommsSourceNode>;
@@ -15,6 +16,7 @@ type State = {
   showTooltip: boolean;
   target: TooltipData["target"] | null;
   tooltipData: CommsSourceNode | null;
+  margin: Margin | null;
 };
 
 class CommsDataSource extends React.Component<Props, State> {
@@ -23,7 +25,8 @@ class CommsDataSource extends React.Component<Props, State> {
     this.state = {
       showTooltip: false,
       tooltipData: null,
-      target: null
+      target: null,
+      margin: null
     };
   }
 
@@ -38,7 +41,7 @@ class CommsDataSource extends React.Component<Props, State> {
     });
   };
 
-  handleHideTooltip = (_node: CommsSourceNode) => {
+  handleHideTooltip = () => {
     this.setState({ showTooltip: false });
   };
 
@@ -46,9 +49,13 @@ class CommsDataSource extends React.Component<Props, State> {
     this.props.onNodeClick(node.id);
   };
 
+  handleMarginChanged = (margin: Margin) => {
+    this.setState({ margin });
+  };
+
   render() {
     const { nodes, selectedNodeIds } = this.props;
-    const { showTooltip, target, tooltipData } = this.state;
+    const { showTooltip, target, tooltipData, margin } = this.state;
     return (
       <>
         <ReactResizeDetector
@@ -61,9 +68,16 @@ class CommsDataSource extends React.Component<Props, State> {
             <div className={styles.container}>
               <CommsDataSourceChart
                 nodes={nodes}
+                width={width}
+                height={height}
+                onMarginChanged={this.handleMarginChanged}
+              />
+              <CommsDataSourceCanvas
+                nodes={nodes}
                 selectedNodeIds={selectedNodeIds}
                 width={width}
                 height={height}
+                margin={margin}
                 onShowTooltip={this.handleShowTooltip}
                 onHideTooltip={this.handleHideTooltip}
                 onToggleNode={this.handleToggleNode}

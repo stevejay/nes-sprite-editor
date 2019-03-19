@@ -81,7 +81,7 @@ class WordCloudCanvas extends React.Component<Props, State> {
     }
 
     if (d3NodesChanged || selectedNodesChanged) {
-      this.renderWordCloud();
+      this.drawWithAnimation();
     } else if (dimensionsChanged) {
       this.draw();
       this.drawHit();
@@ -132,7 +132,7 @@ class WordCloudCanvas extends React.Component<Props, State> {
     }
   }
 
-  private renderWordCloud() {
+  private drawWithAnimation() {
     this.dataBind();
 
     if (this._timer) {

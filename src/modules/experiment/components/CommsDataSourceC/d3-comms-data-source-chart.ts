@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import { CommsSourceNode } from "./types";
+import { CommsSourceNode, Margin } from "./types";
 import { GetOrSet } from "../NetworkGraph";
 import { max, includes, uniqBy, sortBy } from "lodash";
 import measureText from "./measure-text";
@@ -10,7 +10,7 @@ const FONT_SIZE_PX = 12;
 const Y_AXIS_PADDING_PX = 10;
 
 export interface ICommsDataSourceGraph {
-  (selectedNodeIds: Array<CommsSourceNode["id"]>): void;
+  (): Margin;
 
   nodes(): Array<CommsSourceNode>;
   nodes(value: Array<CommsSourceNode>): this;
@@ -20,12 +20,6 @@ export interface ICommsDataSourceGraph {
 
   height(): number;
   height(value: number): this;
-
-  showTooltipCallback(
-    value: (node: CommsSourceNode, target: ClientRect) => void
-  ): this;
-  hideTooltipCallback(value: (node: CommsSourceNode) => void): this;
-  toggleNodeCallback(value: (node: CommsSourceNode) => void): this;
 }
 
 export default function d3CommsDataSourceChart(
@@ -33,14 +27,9 @@ export default function d3CommsDataSourceChart(
 ): ICommsDataSourceGraph {
   let width = 0;
   let height = 0;
-  let onShowTooltip:
-    | ((node: CommsSourceNode, target: ClientRect) => void)
-    | null = null;
-  let onHideTooltip: ((node: CommsSourceNode) => void) | null = null;
-  let onToggleNode: ((node: CommsSourceNode) => void) | null = null;
   let nodes: Array<CommsSourceNode> = [];
 
-  function renderer(selectedNodeIds: Array<CommsSourceNode["id"]>) {
+  function renderer(): Margin {
     const uniqueSources = sortBy(
       uniqBy(nodes, source => source.sourceId),
       node => node.sourceName
@@ -59,11 +48,6 @@ export default function d3CommsDataSourceChart(
       ) || 0;
 
     const maxXValue = max(nodes.map(node => node.value)) || 1;
-
-    const circleRadius = d3
-      .scaleLinear()
-      .domain([0, maxXValue])
-      .range([MIN_CIRCLE_RADIUS_PX, MAX_CIRCLE_RADIUS_PX]);
 
     const xAxisLabelMetrics = measureText(
       maxXValue.toString(),
@@ -187,52 +171,7 @@ export default function d3CommsDataSourceChart(
           margin.bottom}`
       );
 
-    let circle = chartGroup
-      .selectAll("circle")
-      .data(nodes, d => (d as CommsSourceNode).id);
-
-    circle
-      .exit()
-      // .transition()
-      // .style("opacity", 1e6)
-      // .attr("r", 0)
-      .remove();
-
-    circle = circle
-      .enter()
-      .append("circle")
-      .classed("selected", d => includes(selectedNodeIds, d.id))
-      .style("opacity", 1e6)
-      .attr("r", 0)
-      .attr("cx", d => x(d.value))
-      .attr("cy", d => (y(d.sourceName) || 0) + y.bandwidth() * 0.5)
-      .on("mouseover", handleMouseOver)
-      .on("mouseout", handleMouseOut)
-      .on("click", handleClick)
-      // @ts-ignore
-      .merge(circle);
-
-    circle
-      .classed("selected", d => includes(selectedNodeIds, d.id))
-      .transition()
-      .style("opacity", 1)
-      .attr("r", d => circleRadius(d.value))
-      .attr("cx", d => x(d.value))
-      .attr("cy", d => (y(d.sourceName) || 0) + y.bandwidth() * 0.5);
-  }
-
-  function handleMouseOver(d: CommsSourceNode) {
-    // @ts-ignore
-    const boundingRect = this.getBoundingClientRect();
-    onShowTooltip && onShowTooltip(d, boundingRect);
-  }
-
-  function handleMouseOut(d: CommsSourceNode) {
-    onHideTooltip && onHideTooltip(d);
-  }
-
-  function handleClick(d: CommsSourceNode) {
-    onToggleNode && onToggleNode(d);
+    return margin;
   }
 
   renderer.nodes = ((
@@ -260,27 +199,6 @@ export default function d3CommsDataSourceChart(
     }
     return height;
   }) as GetOrSet<number, ICommsDataSourceGraph>;
-
-  renderer.showTooltipCallback = function(
-    value: (node: CommsSourceNode, target: ClientRect) => void
-  ) {
-    onShowTooltip = value;
-    return renderer;
-  };
-
-  renderer.hideTooltipCallback = function(
-    value: (node: CommsSourceNode) => void
-  ) {
-    onHideTooltip = value;
-    return renderer;
-  };
-
-  renderer.toggleNodeCallback = function(
-    value: (node: CommsSourceNode) => void
-  ) {
-    onToggleNode = value;
-    return renderer;
-  };
 
   return renderer;
 }

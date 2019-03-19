@@ -5,7 +5,7 @@ import { sampleSize, includes, flatten, sortBy, reverse } from "lodash";
 import * as React from "react";
 import { host } from "storybook-host";
 import "../../../../../index.scss";
-import CommsDataSource from "../CommsDataSource";
+import CommsDataSource from "../CommsDataSourceC";
 import generateWordCloudNodes from "./words";
 import { CommsSourceNode } from "..";
 
@@ -26,7 +26,7 @@ function createNodeData(): Array<CommsSourceNode> {
     )
   );
 
-  result = sortBy(result, node => node.value);
+  result = reverse(sortBy(result, node => node.value));
 
   return result;
 }
@@ -45,7 +45,7 @@ const store = new Store<{
   selectedNodeIds: []
 });
 
-storiesOf("SE/CommsDataSource", module)
+storiesOf("SE/CommsDataSourceCanvas", module)
   .addDecorator(storyHost)
   .addDecorator(withKnobs)
   .add("Basic", () => (
