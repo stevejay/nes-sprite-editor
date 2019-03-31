@@ -191,7 +191,6 @@ function parseServerResponse(
 }
 
 function getChildDataForNode(
-  rootNode: CommunicationsNode,
   parentNode: CommunicationsNode,
   existingNodesLookup: { [key: string]: CommunicationsNode },
   existingLinksLookup: { [key: string]: CommunicationsLink },
@@ -264,7 +263,6 @@ async function getData(
 
   const { nodes, links } = getChildDataForNode(
     rootNode,
-    rootNode,
     nodesById,
     linksById,
     RESPONSE_0
@@ -283,7 +281,6 @@ async function getData(
 
   [RESPONSE_1_0, RESPONSE_1_1].forEach((response, index) => {
     const { nodes: resultNodes, links } = getChildDataForNode(
-      rootNode,
       nodes[index],
       nodesById,
       linksById,

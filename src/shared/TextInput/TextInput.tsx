@@ -8,7 +8,7 @@ export type Props = {
   id?: string;
   name?: string;
   autosOff?: boolean;
-  onChange: (value: string) => void;
+  onChange: (event: React.ChangeEvent<any>) => void;
 };
 
 const TextInput = ({
@@ -27,7 +27,7 @@ const TextInput = ({
     type={type}
     value={value}
     disabled={disabled}
-    onChange={event => onChange(event.target.value)}
+    onChange={onChange}
     autoCapitalize={autosOff ? "off" : undefined}
     autoComplete={autosOff ? "off" : undefined}
     autoCorrect={autosOff ? "off" : undefined}

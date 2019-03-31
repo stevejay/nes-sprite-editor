@@ -1,12 +1,21 @@
 import { State, Store } from "@sambego/storybook-state";
 import { withKnobs } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/react";
-import { includes, random, range, sumBy, clamp } from "lodash";
+import {
+  clamp,
+  includes,
+  random,
+  range,
+  sumBy,
+  sortBy,
+  reverse,
+  noop
+} from "lodash";
 import * as React from "react";
 import { host } from "storybook-host";
 import "../../../../../index.scss";
-import HeatMap from "../HeatMap";
-import { HeatMapNode } from "../../HeatMap/types";
+import HeatMapReactHtml from "..";
+import { HeatMapNode, DetailEntry } from "../types";
 
 const storyHost = host({
   align: "center middle",
@@ -959,7 +968,7 @@ function responseParser(response: any): Array<HeatMapNode> {
       const resultIndex = (+dayOfWeek.key - 1) * HOURS_IN_DAY + +hourOfDay.key;
 
       result[resultIndex].count = totalDocCount;
-      const details = sources.map((source: any) => ({
+      const details: Array<DetailEntry> = sources.map((source: any) => ({
         channel: source.key,
         count: source.doc_count
       }));
@@ -971,7 +980,9 @@ function responseParser(response: any): Array<HeatMapNode> {
         });
       }
 
-      result[resultIndex].details = details;
+      result[resultIndex].details = reverse(
+        sortBy(details, detail => detail.count)
+      );
     });
   });
 
@@ -990,7 +1001,7 @@ let count = 0;
 function generateData() {
   const result = responseParser(RESPONSE);
   result.forEach(datum => {
-    if (datum) {
+    if (datum.count > 0) {
       datum.normalisedCount = random(0, 1, true);
     }
   });
@@ -1009,10 +1020,10 @@ function generateData() {
 }
 
 const store = new Store<{
-  data: Array<HeatMapNode>;
+  nodes: Array<HeatMapNode>;
   selectedIds: Array<number>;
 }>({
-  data: createEmptyData(),
+  nodes: createEmptyData(),
   selectedIds: []
 });
 
@@ -1045,13 +1056,13 @@ const X_LABELS = [
 
 const Y_LABELS = ["M", "T", "W", "T", "F", "S", "S"];
 
-storiesOf("SE/HeatMap", module)
+storiesOf("SE/HeatMapReactHtml", module)
   .addDecorator(storyHost)
   .addDecorator(withKnobs)
   .add("Basic", () => (
     <div style={{ display: "flex", flexDirection: "column" }}>
       <button
-        onClick={() => store.set({ data: generateData() })}
+        onClick={() => store.set({ nodes: generateData() })}
         style={{ marginBottom: 30, maxWidth: 100 }}
       >
         New Data
@@ -1059,20 +1070,37 @@ storiesOf("SE/HeatMap", module)
       <div>
         <State store={store}>
           {state => (
-            <HeatMap
-              data={state.data}
+            <HeatMapReactHtml
+              nodes={state.nodes}
               xLabels={X_LABELS}
               yLabels={Y_LABELS}
               selectedIds={state.selectedIds}
-              onTileClick={index => {
+              onToggleNode={node => {
                 let newSelectedIds = state.selectedIds.slice();
-                if (includes(newSelectedIds, index)) {
-                  newSelectedIds = newSelectedIds.filter(x => x !== index);
+                if (includes(newSelectedIds, node.id)) {
+                  newSelectedIds = newSelectedIds.filter(x => x !== node.id);
                 } else {
-                  newSelectedIds.push(index);
+                  newSelectedIds.push(node.id);
                 }
                 store.set({ selectedIds: newSelectedIds });
               }}
+            />
+          )}
+        </State>
+      </div>
+    </div>
+  ))
+  .add("Empty", () => (
+    <div style={{ display: "flex", flexDirection: "column" }}>
+      <div>
+        <State store={store}>
+          {state => (
+            <HeatMapReactHtml
+              nodes={[]}
+              xLabels={X_LABELS}
+              yLabels={Y_LABELS}
+              selectedIds={[]}
+              onToggleNode={noop}
             />
           )}
         </State>

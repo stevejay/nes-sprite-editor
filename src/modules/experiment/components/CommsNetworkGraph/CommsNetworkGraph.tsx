@@ -1,11 +1,11 @@
 import React from "react";
+import ReactResizeDetector from "react-resize-detector";
+
 import styles from "./CommsNetworkGraph.module.scss";
 import { NodeEntity } from "../NetworkGraph/types";
-import Tooltip from "../Tooltip/Tooltip";
-import { TooltipData } from "../Tooltip/types";
+import Tooltip, { TooltipData } from "../Tooltip";
 import { CommunicationsNode, CommunicationsLink } from "./types";
 import CommsNetworkGraphChart from "./CommsNetworkGraphChart";
-import ReactResizeDetector from "react-resize-detector";
 
 type Props = {
   nodes: Array<CommunicationsNode>;

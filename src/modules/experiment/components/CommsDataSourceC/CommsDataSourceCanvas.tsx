@@ -22,13 +22,15 @@ type Props = {
   onToggleNode: (node: CommsSourceNode) => void;
 };
 
+type ColorNode = HTMLElement & { __data__: CommsSourceNode };
+
 class CommsDataSourceCanvas extends React.Component<Props> {
   _canvas: React.RefObject<HTMLCanvasElement>;
   _hitCanvas: React.RefObject<HTMLCanvasElement>;
   _mounted: boolean;
   _customBase: HTMLElement;
   _timer: d3.Timer | null;
-  _colorToNodeMap: { [key: string]: HTMLElement };
+  _colorToNodeMap: { [key: string]: ColorNode };
 
   constructor(props: Props) {
     super(props);
@@ -174,7 +176,7 @@ class CommsDataSourceCanvas extends React.Component<Props> {
       )
       .attr("hitColor", (_d, i, nodes) => {
         const hitColor = generateColor();
-        this._colorToNodeMap[hitColor] = nodes[i];
+        this._colorToNodeMap[hitColor] = nodes[i] as ColorNode;
         return hitColor;
       });
 
@@ -185,7 +187,7 @@ class CommsDataSourceCanvas extends React.Component<Props> {
       .each((_d, i, nodes) => {
         const node = d3.select(nodes[i]);
         const hitColor = node.attr("hitColor");
-        this._colorToNodeMap[hitColor] = nodes[i];
+        this._colorToNodeMap[hitColor] = nodes[i] as ColorNode;
       })
       .transition()
       .duration(DURATION_MS)

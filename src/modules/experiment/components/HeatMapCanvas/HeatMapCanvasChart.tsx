@@ -4,11 +4,11 @@ import heatMapFill from "./heat-map-fill";
 import styles from "./HeatMapCanvasChart.module.scss";
 import { HeatMapNode } from "./types";
 import { TooltipData } from "../Tooltip/types";
-import { includes } from "lodash";
+import { includes, noop, isNil } from "lodash";
 import drawRoundedRect from "./draw-rounded-rect";
 
 const MARGIN_PX = 1;
-const DURATION_MS = 250;
+const DURATION_MS = 500;
 
 type Props = {
   nodes: Array<HeatMapNode>;
@@ -37,7 +37,7 @@ class HeatMapCanvasChart extends React.Component<Props> {
   }
 
   componentDidMount() {
-    this.renderHeatMap(true);
+    this.renderHeatMap(true, true);
   }
 
   shouldComponentUpdate(nextProps: Props) {
@@ -49,7 +49,11 @@ class HeatMapCanvasChart extends React.Component<Props> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    this.renderHeatMap(this.props.width !== prevProps.width);
+    this.renderHeatMap(
+      this.props.width !== prevProps.width,
+      this.props.nodes !== prevProps.nodes ||
+        (!prevProps.width && !!this.props.width)
+    );
   }
 
   componentWillUnmount() {
@@ -104,7 +108,7 @@ class HeatMapCanvasChart extends React.Component<Props> {
     };
   }
 
-  private renderHeatMap(resize: boolean) {
+  private renderHeatMap(resizing: boolean, dataChanging: boolean) {
     const { nodes, width, columns, rows } = this.props;
     if (!(width > 0) || !nodes) {
       return;
@@ -113,30 +117,19 @@ class HeatMapCanvasChart extends React.Component<Props> {
     const dimension = width / columns;
     const height = dimension * rows;
 
-    if (resize) {
+    if (resizing) {
       this.resize(width, height);
-      this.draw();
     }
 
-    this.dataBind();
-
-    if (this._timer) {
-      this._timer.stop();
+    if (dataChanging) {
+      this.dataBind();
     }
 
-    this._timer = d3.timer((elapsed: number) => {
-      this.draw();
-      if (elapsed > DURATION_MS) {
-        if (this._timer) {
-          this._timer.stop();
-        }
-        this.draw();
-      }
-    });
+    this.draw();
   }
 
   private dataBind() {
-    const { nodes, selectedIds } = this.props;
+    const { nodes } = this.props;
 
     const join = d3
       .select(this._customBase)
@@ -147,15 +140,30 @@ class HeatMapCanvasChart extends React.Component<Props> {
       .enter()
       .append("custom")
       .attr("class", "tile")
-      .attr("fill", d => this._fill(d, includes(selectedIds, d.id)));
+      .attr("fill", d => this._fill(d, false));
 
     join
       .transition()
-      .attr("fill", d => this._fill(d, includes(selectedIds, d.id)));
+      .duration(DURATION_MS)
+      .attr("fill", d => this._fill(d, false))
+      .on("start", (_d, i) => {
+        if (isNil(this._timer)) {
+          this._timer = d3.timer(() => this.draw());
+        }
+      })
+      // @ts-ignore
+      .end()
+      .then(() => {
+        if (this._timer) {
+          this._timer.stop();
+          this._timer = null;
+        }
+      })
+      .catch(noop);
   }
 
   private draw() {
-    const { width, columns } = this.props;
+    const { width, columns, selectedIds } = this.props;
     const dimension = width / columns;
     const canvas = this._container.current!;
     const ctx = canvas.getContext("2d")!;
@@ -170,7 +178,9 @@ class HeatMapCanvasChart extends React.Component<Props> {
         const y = Math.floor(d.id / columns) * dimension + MARGIN_PX;
         const width = dimension - MARGIN_PX * 2;
         const height = dimension - MARGIN_PX * 2;
-        ctx.fillStyle = node.attr("fill");
+        ctx.fillStyle = includes(selectedIds, d.id)
+          ? this._fill(d, true)
+          : node.attr("fill");
         drawRoundedRect(ctx, x, y, width, height, MARGIN_PX * 4);
       });
 

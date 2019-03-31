@@ -6,7 +6,7 @@ import { FieldContainer } from ".";
 
 type Props = {
   value: string;
-  onChange: (value: string) => void;
+  onChange: (event: React.ChangeEvent<any>) => void;
   label: string;
   type?: "text";
   disabled?: boolean;

@@ -1,10 +1,10 @@
 import * as d3 from "d3";
 import { includes, noop } from "lodash";
 import { NodeEntity, D3NodeEntity, D3LinkEntity, GetOrSet } from "./types";
-import d3BasicGroup from "./d3-basic-group";
+import drag from "./drag";
 
 export interface INetworkGraph {
-  (selectedIds: Array<NodeEntity["id"]>): void;
+  (selectedIds: Array<NodeEntity["id"]>, durationMs?: number): void;
 
   updateNodes(
     func: (selection: d3.Selection<SVGGElement, D3NodeEntity, any, any>) => void
@@ -92,7 +92,7 @@ export default function d3NetworkGraph(
   let nodes: Array<D3NodeEntity> = [];
   let links: Array<D3LinkEntity> = [];
 
-  function renderer(selectedIds: Array<NodeEntity["id"]>) {
+  function renderer(selectedIds: Array<NodeEntity["id"]>, durationMs = 250) {
     // update the container size:
     const svg = d3
       .select<SVGElement, null>(svgElement)
@@ -101,8 +101,15 @@ export default function d3NetworkGraph(
 
     // the links are line SVG elements that are contained in a group
 
-    let link = d3BasicGroup()
-      .class("links")(svg)
+    let linksGroup = svg.selectAll(".links").data([null]);
+    linksGroup = linksGroup
+      .enter()
+      .append("g")
+      .classed("links", true)
+      // @ts-ignore
+      .merge(linksGroup);
+
+    const link = linksGroup
       .selectAll<SVGLineElement, D3LinkEntity>("line")
       .data(links, (d: any) => `${d.source.id}--${d.target.id}`);
 
@@ -124,14 +131,22 @@ export default function d3NetworkGraph(
 
     link
       .transition()
+      .duration(durationMs)
       .style("opacity", 1)
       .call(updateLinks);
 
     // The nodes are each a group element that contains a circle and a text.
     // The nodes are contained in a group so they sit above the links.
 
-    let node = d3BasicGroup()
-      .class("nodes")(svg)
+    let nodesGroup = svg.selectAll(".nodes").data([null]);
+    nodesGroup = nodesGroup
+      .enter()
+      .append("g")
+      .classed("nodes", true)
+      // @ts-ignore
+      .merge(nodesGroup);
+
+    let node = nodesGroup
       .selectAll<SVGGElement, D3NodeEntity>(".node")
       .data(nodes as Array<D3NodeEntity>, d => d.id);
 
@@ -163,9 +178,21 @@ export default function d3NetworkGraph(
       .attr("cy", d => d.y || 0)
       .on("mouseover", handleMouseOver)
       .on("mouseout", handleMouseOut)
-      .on("click", handleClick);
-    // @ts-ignore
-    // .call(drag());
+      .on("click", handleClick)
+      // @ts-ignore
+      .call(
+        drag(() => {
+          renderer(selectedIds, 0);
+          // console.log(
+          //   "render",
+          //   nodesGroup.selectAll<SVGGElement, D3NodeEntity>(".node").size()
+          // );
+          // nodesGroup
+          //   .selectAll<SVGGElement, D3NodeEntity>(".node")
+          //   .attr("cx", d => d.x || 0)
+          //   .attr("cy", d => d.y || 0);
+        })
+      );
 
     // add a text element for each entering node group for a major node:
     nodeEnterSelection
@@ -188,6 +215,7 @@ export default function d3NetworkGraph(
     nodeUpdateSelection
       .select<SVGCircleElement>("circle")
       .transition()
+      .duration(durationMs)
       .call(updateNodeCircles)
       .attr("cx", d => d.x || 0)
       .attr("cy", d => d.y || 0);
@@ -197,6 +225,7 @@ export default function d3NetworkGraph(
       .select<SVGTextElement>("text")
       .call(updateNodeLabels)
       .transition()
+      .duration(durationMs)
       .attr("x", d => d.x || 0)
       .attr("y", d => d.y || 0);
   }

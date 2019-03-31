@@ -16,7 +16,8 @@ const SOURCES = [
   { id: "ice-chat", name: "ICE Chat" },
   { id: "symphony", name: "Symphony" },
   { id: "foo", name: "Foo" },
-  { id: "bar", name: "Bar" }
+  { id: "bar", name: "Bar" },
+  { id: "bat", name: "Bat" }
 ];
 
 function createNodeData(): Array<CommsSourceNode> {
