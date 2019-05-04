@@ -58,10 +58,10 @@ class CommsNetworkGraphChart extends React.Component<Props> {
       .toggleNodeCallback(this.handleToggleNode)
       .updateLinks(selection => {
         selection
-          .attr("x1", d => (d.source as D3NodeEntity).x || 0)
-          .attr("y1", d => (d.source as D3NodeEntity).y || 0)
-          .attr("x2", d => (d.target as D3NodeEntity).x || 0)
-          .attr("y2", d => (d.target as D3NodeEntity).y || 0)
+          // .attr("x1", d => (d.source as D3NodeEntity).x || 0)
+          // .attr("y1", d => (d.source as D3NodeEntity).y || 0)
+          // .attr("x2", d => (d.target as D3NodeEntity).x || 0)
+          // .attr("y2", d => (d.target as D3NodeEntity).y || 0)
           .attr("stroke-width", d => STROKE_WIDTH(d.normalisedWeight));
       })
       .updateNodes(selection => {

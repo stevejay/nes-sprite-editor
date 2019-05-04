@@ -115,6 +115,7 @@ class WordCloudCanvas extends React.Component<Props, State> {
       10,
       32
     );
+
     if (onCalculationCompleted) {
       onCalculationCompleted();
     }

@@ -2,8 +2,11 @@ import * as d3 from "d3";
 
 export default function drag(render: any) {
   function dragstarted(d: d3.SimulationNodeDatum) {
-    d.x = d3.event.x;
-    d.y = d3.event.y;
+    if (d.id === 0) {
+      return;
+    }
+    // d.x = d3.event.x;
+    // d.y = d3.event.y;
 
     // d3.select(this)
     //   .attr("cx", d3.event.x)

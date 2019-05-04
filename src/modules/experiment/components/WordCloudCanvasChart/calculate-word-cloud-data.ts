@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import d3Cloud from "d3-cloud";
+import d3Cloud from "./d3-cloud";
 import { WordCloudNode, D3WordCloudNode } from "./types";
 import { minBy, maxBy, cloneDeep, includes, sortBy } from "lodash";
 
@@ -36,7 +36,7 @@ export default async function calculateWordCloudData(
     const minNode = minBy(nodes, node => node.value);
     const maxNode = maxBy(nodes, node => node.value);
     const fontSize = d3
-      .scaleLog()
+      .scaleLinear()
       .range([minFontSize, maxFontSize])
       .domain([minNode ? minNode.value : 0, maxNode ? maxNode.value : 0]);
     d3Cloud<D3WordCloudNode>()

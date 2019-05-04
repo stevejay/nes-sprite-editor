@@ -287,7 +287,7 @@ class CommsDataSourceCanvas extends React.Component<Props> {
   handleMouseMove = (
     event: React.MouseEvent<HTMLCanvasElement, MouseEvent>
   ) => {
-    const { width, height, onShowTooltip, onHideTooltip } = this.props;
+    const { onShowTooltip, onHideTooltip } = this.props;
     const node = this.getNode(event);
     if (!!node) {
       console.log("node", node, node.__data__);

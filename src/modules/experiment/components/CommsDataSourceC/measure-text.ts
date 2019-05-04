@@ -1,5 +1,3 @@
-import { isFinite } from "lodash";
-
 // ideas for improving this:
 // https://github.com/kapetan/text-width/blob/master/index.js
 

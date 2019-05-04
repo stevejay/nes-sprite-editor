@@ -124,6 +124,10 @@ export default function d3NetworkGraph(
       .enter()
       .append("line")
       .style("opacity", 1e-6)
+      .attr("x1", d => (d.source as D3NodeEntity).x || 0)
+      .attr("y1", d => (d.source as D3NodeEntity).y || 0)
+      .attr("x2", d => (d.target as D3NodeEntity).x || 0)
+      .attr("y2", d => (d.target as D3NodeEntity).y || 0)
       .call(updateLinks)
       .transition()
       .delay(150)
@@ -133,6 +137,10 @@ export default function d3NetworkGraph(
       .transition()
       .duration(durationMs)
       .style("opacity", 1)
+      .attr("x1", d => (d.source as D3NodeEntity).x || 0)
+      .attr("y1", d => (d.source as D3NodeEntity).y || 0)
+      .attr("x2", d => (d.target as D3NodeEntity).x || 0)
+      .attr("y2", d => (d.target as D3NodeEntity).y || 0)
       .call(updateLinks);
 
     // The nodes are each a group element that contains a circle and a text.
@@ -181,16 +189,29 @@ export default function d3NetworkGraph(
       .on("click", handleClick)
       // @ts-ignore
       .call(
-        drag(() => {
-          renderer(selectedIds, 0);
+        drag(d => {
+          // renderer(selectedIds, 0);
           // console.log(
           //   "render",
           //   nodesGroup.selectAll<SVGGElement, D3NodeEntity>(".node").size()
           // );
-          // nodesGroup
-          //   .selectAll<SVGGElement, D3NodeEntity>(".node")
-          //   .attr("cx", d => d.x || 0)
-          //   .attr("cy", d => d.y || 0);
+          d3.select<SVGElement, null>(svgElement)
+            .selectAll<SVGGElement, D3NodeEntity>(".node circle")
+            .attr("cx", d => d.x || 0)
+            .attr("cy", d => d.y || 0);
+          d3.select<SVGElement, null>(svgElement)
+            .selectAll<SVGGElement, D3NodeEntity>(".node text")
+            .attr("x", d => d.x || 0)
+            .attr("y", d => d.y || 0);
+
+          d3.select<SVGElement, null>(svgElement)
+            .selectAll<SVGGElement, D3NodeEntity>(".links line")
+            .attr("x1", d => (d.source as D3NodeEntity).x || 0)
+            .attr("y1", d => (d.source as D3NodeEntity).y || 0)
+            .attr("x2", d => (d.target as D3NodeEntity).x || 0)
+            .attr("y2", d => (d.target as D3NodeEntity).y || 0);
+
+          handleMouseOut(d);
         })
       );
 
