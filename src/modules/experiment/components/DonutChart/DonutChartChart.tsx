@@ -1,6 +1,6 @@
 import React from "react";
 import * as d3 from "d3";
-import { includes } from "lodash";
+import { includes, findIndex, findLastIndex } from "lodash";
 // import { default as d3HeatMap, ID3HeatMap } from "./d3-heat-map";
 import { DonutChartDatum } from "./types";
 import { TooltipData } from "../Tooltip/types";
@@ -9,36 +9,181 @@ import { PieArcDatum } from "d3";
 // https://swizec.com/blog/silky-smooth-piechart-transitions-react-d3js/swizec/8258
 // https://bl.ocks.org/mbostock/5682158
 
-function findNeighborArc(i, data0, data1, key) {
-  var d;
-  return (d = findPreceding(i, data0, data1, key))
-    ? { startAngle: d.endAngle, endAngle: d.endAngle }
-    : (d = findFollowing(i, data0, data1, key))
-    ? { startAngle: d.startAngle, endAngle: d.startAngle }
-    : null;
+const DURATION_MS = 1500;
+
+// console.log("datum to exit", key(d), key(data0[i]));
+// const findNeighbour = findNeighborArc(i, data1, data0, key, true);
+
+function findExitingArc(i, data0, data1, key) {
+  const exitD = data0[i];
+  const exitDKey = key(exitD);
+
+  if (!data1.length) {
+    return { startAngle: 0, endAngle: 0 };
+  }
+
+  for (let i = 0; i < data1.length; ++i) {
+    if (key(data1[i]) > exitDKey) {
+      // REPLACE!!!
+      if (i === 0) {
+        return { startAngle: 0, endAngle: 0 };
+      } else {
+        const d = data1[i - 1];
+        return { startAngle: d.endAngle, endAngle: d.endAngle };
+      }
+    }
+  }
+
+  return { startAngle: Math.PI * 2, endAngle: Math.PI * 2 };
+}
+
+function findEnteringArc(i, data0, data1, key) {
+  const enterD = data1[i];
+  const enterDKey = key(enterD);
+
+  if (!data0.length) {
+    return { startAngle: 0, endAngle: 0 };
+  }
+
+  for (let i = 0; i < data0.length; ++i) {
+    if (key(data0[i]) > enterDKey) {
+      // REPLACE!!!
+      if (i === 0) {
+        return { startAngle: 0, endAngle: 0 };
+      } else {
+        const d = data0[i - 1];
+        return { startAngle: d.endAngle, endAngle: d.endAngle };
+      }
+    }
+  }
+
+  return { startAngle: Math.PI * 2, endAngle: Math.PI * 2 };
+}
+
+function findNeighborArc(i, data0, data1, key, exiting) {
+  console.log("FIND", i, data0, data1, key, exiting);
+  if (exiting) {
+    let result = null;
+    const d = findPreceding(i, data0, data1, key);
+    // console.log("d for exiting", d);
+    // console.log(
+    //   "data0 keys",
+    //   data0.map(x => key(x)),
+    //   "data1 keys",
+    //   data1.map(x => key(x))
+    // );
+
+    if (!d && data0 && data0.length) {
+      const firstOldKey = key(data0[0]);
+      let firstMatchingNewIndex = findIndex(data1, x => key(x) === firstOldKey);
+      if (firstMatchingNewIndex === -1) {
+        firstMatchingNewIndex = data1.length;
+      }
+
+      if (i < firstMatchingNewIndex) {
+        result = { startAngle: 0, endAngle: 0 };
+      }
+    }
+
+    if (!result) {
+      result = d ? { startAngle: d.endAngle, endAngle: d.endAngle } : null;
+    }
+
+    // console.log("d for exiting result", result);
+    return result;
+  } else {
+    let result = null;
+    const d = findFollowing(i, data0, data1, key);
+    // console.log("d for entering", d);
+
+    if (!d && data0 && data0.length > 0) {
+      // const lastOldKey = key(data0[data0.length - 1]);
+      // let lastMatchingNewIndex = findLastIndex(
+      //   data1,
+      //   x => key(x) === lastOldKey
+      // );
+      // if (lastMatchingNewIndex === -1) {
+      //   lastMatchingNewIndex = 0;
+      // }
+
+      // if (i > lastMatchingNewIndex) {
+      //   result = { startAngle: Math.PI * 2, endAngle: Math.PI * 2 };
+      // }
+
+      if (i === data1.length - 1) {
+        result = { startAngle: Math.PI * 2, endAngle: Math.PI * 2 };
+      }
+    }
+
+    if (!result) {
+      result = d ? { startAngle: d.startAngle, endAngle: d.startAngle } : null;
+    }
+
+    // console.log("d for entering result", result);
+    return result;
+  }
+  // var d;
+
+  // const result = (d = findPreceding(i, data0, data1, key))
+  //   ? { startAngle: d.endAngle, endAngle: d.endAngle }
+  //   : (d = findFollowing(i, data0, data1, key))
+  //   ? { startAngle: d.startAngle, endAngle: d.startAngle }
+  //   : null;
+
+  // console.log("for node", data1[i].data, result);
+
+  // if (key(data1[i]) === "internal-single-external-multiple" && result) {
+  //   console.log(
+  //     "changed here",
+  //     data1[i],
+  //     findPreceding(i, data0, data1, key), // <<<
+  //     findFollowing(i, data0, data1, key) // <<< undefined
+  //   );
+  //   return { startAngle: Math.PI * 2, endAngle: Math.PI * 2 };
+  // }
+
+  // return result;
 }
 
 // Find the element in data0 that joins the highest preceding element in data1.
 function findPreceding(i, data0, data1, key) {
-  var m = data0.length;
+  const m = data0.length;
+
+  // const node = data1[i];
+
   while (--i >= 0) {
-    var k = key(data1[i]);
-    for (var j = 0; j < m; ++j) {
-      if (key(data0[j]) === k) return data0[j];
+    const k = key(data1[i]);
+    for (let j = 0; j < m; ++j) {
+      if (key(data0[j]) === k) {
+        return data0[j];
+      }
     }
   }
+  // if (data0.length && key(node) !== key(data0[0])) {
+  //   console.log("returning new preceeding");
+  //   return data0[0];
+  // }
 }
 
 // Find the element in data0 that joins the lowest following element in data1.
 function findFollowing(i, data0, data1, key) {
-  var n = data1.length,
-    m = data0.length;
+  const n = data1.length;
+  const m = data0.length;
+
+  // const node = data1[i];
+
   while (++i < n) {
     var k = key(data1[i]);
-    for (var j = 0; j < m; ++j) {
-      if (key(data0[j]) === k) return data0[j];
+    for (let j = 0; j < m; ++j) {
+      if (key(data0[j]) === k) {
+        return data0[j];
+      }
     }
   }
+  // if (data0.length && key(node) !== key(data0[data0.length - 1])) {
+  //   console.log("returning new following");
+  //   return data0[data0.length - 1];
+  // }
 }
 
 type Props = {
@@ -166,16 +311,20 @@ class DonutChartChart extends React.Component<Props> {
 
     const data0 = path.data();
     const data1 = pie(data);
-    const key = d => d.data.key;
+    const key = d => d.data.key; // (d && d.data ? d.data.key : null);
+
     path = path.data(data1, key);
 
     path
       .exit()
-      .datum(function(d, i) {
-        return findNeighborArc(i, data1, data0, key) || d;
+      .datum(function(d, i, nodes) {
+        // console.log("datum to exit", key(d), key(data0[i]));
+        const findNeighbour = findExitingArc(i, data0, data1, key);
+        // const findNeighbour = findNeighborArc(i, data1, data0, key, true);
+        return { ...d, ...(findNeighbour || d) };
       })
       .transition()
-      .duration(500)
+      .duration(DURATION_MS)
       .attrTween("d", arcTween)
       .remove();
 
@@ -183,27 +332,22 @@ class DonutChartChart extends React.Component<Props> {
       .enter()
       .append("path")
       .classed("slice", true)
-      .each(function(d, i) {
-        this._current = findNeighborArc(i, data0, data1, key) || d;
+      // .classed("selected", d => includes(selectedIds, d.data.key))
+      .each(function(d, i, nodes) {
+        // console.log("datum to enter", key(d), key(data1[i]));
+        this._current = findEnteringArc(i, data0, data1, key) || d;
+        // this._current = findNeighborArc(i, data0, data1, key, false) || d;
       })
-      // .attr("d", arc)
       .attr("fill", d => color(d.data, false))
-      // .each(
-      //   (
-      //     d: PieArcDatum<DonutChartDatum>,
-      //     i: number,
-      //     nodes: ArrayLike<SVGPathElement>
-      //   ) => {
-      //     nodes[i]._current = d;
-      //   }
-      // )
+      // .transition()
+      // .duration(DURATION_MS)
+      // .attrTween("d", arcTween)
       // @ts-ignore
       .merge(path);
     path
       .classed("selected", d => includes(selectedIds, d.data.key))
       .transition()
-      .duration(500)
-      // .attr("d", arc)
+      .duration(DURATION_MS)
       .attrTween("d", arcTween);
     // .attr("fill", d => color(d.data, false));
   }
