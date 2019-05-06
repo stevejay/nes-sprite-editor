@@ -52,9 +52,6 @@ class DonutChart extends React.Component<Props, State> {
   render() {
     const { data, selectedIds, coloring } = this.props;
     const { showTooltip, target, tooltipData } = this.state;
-
-    // console.log("data", JSON.stringify(data));
-
     return (
       <div className={styles.container}>
         <Measure bounds>

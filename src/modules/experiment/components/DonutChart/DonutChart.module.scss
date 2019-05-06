@@ -11,3 +11,17 @@
   overflow: hidden;
   position: relative;
 }
+
+.chartContainer svg polyline {
+  // opacity: 0.3;
+  stroke: white; // black;
+  stroke-width: 1px;
+  fill: none;
+}
+
+.chartContainer svg text {
+  fill: white;
+  font-size: 12px;
+  font-family: sans-serif;
+  // line-height: 1.3;
+}

@@ -16,45 +16,62 @@ const storyHost = host({
 
 function generateData(): Array<DonutChartDatum> {
   const inputs = [
-    { key: "internal-external", labelMessage: "Internal & External" },
+    {
+      key: "internal-external",
+      order: 2,
+      labelMessage: "Internal & External"
+    },
     {
       key: "internal-multiple-external-multiple",
+      order: 4,
       labelMessage: "Internal (multiple people) & External (multiple people)"
     },
     {
       key: "internal-single-external-multiple",
+      order: 7,
       labelMessage: "Internal (single person) & External (multiple people)"
     },
     {
       key: "internal-multiple-external-single",
+      order: 5,
       labelMessage: "Internal (multiple people) & External (single person)"
     },
     {
       key: "internal-single-external-single",
+      order: 8,
       labelMessage: "Internal (single person) & External (single person)"
     },
-    { key: "internal-multiple", labelMessage: "Internal (multiple people)" },
-    { key: "internal-single", labelMessage: "Internal (single person)" },
-    { key: "external-multiple", labelMessage: "External (multiple people)" },
-    { key: "external-single", labelMessage: "External (single person)" }
+    {
+      key: "internal-multiple",
+      order: 3,
+      labelMessage: "Internal (multiple people)"
+    },
+    {
+      key: "internal-single",
+      order: 6,
+      labelMessage: "Internal (single person)"
+    },
+    {
+      key: "external-multiple",
+      order: 0,
+      labelMessage: "External (multiple people)"
+    },
+    {
+      key: "external-single",
+      order: 1,
+      labelMessage: "External (single person)"
+    }
   ];
 
-  let nodes = inputs.map(input => ({
+  const sampled = sampleSize(inputs, random(inputs.length - 2, inputs.length));
+  const sorted = sortBy(sampled, value => value.order);
+  return sorted.map(input => ({
     ...input,
     value: random(1, 300)
   }));
-
-  // let nodes = inputs.map(input => ({
-  //   ...input,
-  //   value: random(1, 5) === 1 ? 0 : random(1, 300)
-  // }));
-
-  nodes = sampleSize(nodes, random(nodes.length - 2, nodes.length));
-  // return sortBy(nodes, value => value.value);
-  return sortBy(nodes, value => value.key);
 }
 
-function coloring(node: DonutChartDatum, selected: boolean): string {
+function coloring(node: DonutChartDatum, _selected: boolean): string {
   switch (node.key) {
     case "external-multiple":
       return "#222";
@@ -79,75 +96,85 @@ function coloring(node: DonutChartDatum, selected: boolean): string {
   }
 }
 
-function dataOne() {
+function dataOne(): Array<DonutChartDatum> {
   return [
     {
       key: "internal-external",
+      order: 2,
       labelMessage: "Internal & External",
       value: 244
     },
     {
       key: "internal-multiple-external-multiple",
+      order: 4,
       labelMessage: "Internal (multiple people) & External (multiple people)",
       value: 92
     }
   ];
 }
 
-function dataTwo() {
+function dataTwo(): Array<DonutChartDatum> {
   return [
     {
       key: "internal-external",
+      order: 2,
       labelMessage: "Internal & External",
       value: 146
     },
     {
       key: "internal-single-external-multiple",
+      order: 7,
       labelMessage: "Internal (single person) & External (multiple people)",
       value: 164
     }
   ];
 }
 
-function dataThree() {
+function dataThree(): Array<DonutChartDatum> {
   return [
     {
       key: "internal-external",
+      order: 2,
       labelMessage: "Internal & External",
       value: 146
     },
     {
       key: "internal-multiple-external-multiple",
+      order: 4,
       labelMessage: "Internal (multiple people) & External (multiple people)",
       value: 92
     },
     {
       key: "internal-single-external-multiple",
+      order: 7,
       labelMessage: "Internal (single person) & External (multiple people)",
       value: 164
     }
   ];
 }
 
-function dataFour() {
+function dataFour(): Array<DonutChartDatum> {
   return [
     {
       key: "internal-external",
+      order: 2,
       labelMessage: "Internal & External",
       value: 171
     },
     {
       key: "internal-multiple-external-multiple",
+      order: 4,
       labelMessage: "Internal (multiple people) & External (multiple people)",
       value: 197
     }
   ];
 }
 
-function dataFive() {
+function dataFive(): Array<DonutChartDatum> {
   return [
     {
       key: "internal-single-external-multiple",
+      order: 7,
       labelMessage: "Internal (single person) & External (multiple people)",
       value: 280
     }

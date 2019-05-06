@@ -1,29 +1,37 @@
 import React from "react";
 import * as d3 from "d3";
-import { includes, findIndex, findLastIndex } from "lodash";
-// import { default as d3HeatMap, ID3HeatMap } from "./d3-heat-map";
+import { includes } from "lodash";
 import { DonutChartDatum } from "./types";
 import { TooltipData } from "../Tooltip/types";
 import { PieArcDatum } from "d3";
 
 // https://swizec.com/blog/silky-smooth-piechart-transitions-react-d3js/swizec/8258
 // https://bl.ocks.org/mbostock/5682158
+// http://bl.ocks.org/dbuezas/9306799
 
-const DURATION_MS = 1500;
+const DURATION_MS = 750;
+const MARGIN_PX = 10;
+const MIN_LABEL_WIDTH_PX = 120;
+const INNER_SLICE_RADIUS_PERCENT = 0.6;
+const OUTER_SLICE_RADIUS_PERCENT = 0.9;
+const LABEL_RADIUS_PERCENT = 1;
+const EXTRA_LINE_LENGTH_PX = 0;
+const TEXT_TO_LINE_PADDING_PX = 5;
 
-// console.log("datum to exit", key(d), key(data0[i]));
-// const findNeighbour = findNeighborArc(i, data1, data0, key, true);
+// var colourScale = d3.scaleOrdinal()
+//   .domain(['N/A', 'Disagree', 'Neither Agree nor Disagree', 'Agree'])
+//   .range(["#222", "hsla(0, 60%, 50%, 1)", "hsla(45, 70%, 60%, 1)", "hsla(90, 50%, 50%, 1)"]);
 
-function findExitingArc(i, data0, data1, key) {
-  const exitD = data0[i];
-  const exitDKey = key(exitD);
+function findArc(i: number, data0, data1, order) {
+  const d = data0[i];
+  const dOrder = order(d);
 
   if (!data1.length) {
     return { startAngle: 0, endAngle: 0 };
   }
 
   for (let i = 0; i < data1.length; ++i) {
-    if (key(data1[i]) > exitDKey) {
+    if (order(data1[i]) > dOrder) {
       // REPLACE!!!
       if (i === 0) {
         return { startAngle: 0, endAngle: 0 };
@@ -37,153 +45,179 @@ function findExitingArc(i, data0, data1, key) {
   return { startAngle: Math.PI * 2, endAngle: Math.PI * 2 };
 }
 
-function findEnteringArc(i, data0, data1, key) {
-  const enterD = data1[i];
-  const enterDKey = key(enterD);
+function findExitingArc(i: number, data0, data1, order) {
+  return findArc(i, data0, data1, order);
+  // const exitD = data0[i];
+  // const exitDKey = key(exitD);
 
-  if (!data0.length) {
-    return { startAngle: 0, endAngle: 0 };
-  }
-
-  for (let i = 0; i < data0.length; ++i) {
-    if (key(data0[i]) > enterDKey) {
-      // REPLACE!!!
-      if (i === 0) {
-        return { startAngle: 0, endAngle: 0 };
-      } else {
-        const d = data0[i - 1];
-        return { startAngle: d.endAngle, endAngle: d.endAngle };
-      }
-    }
-  }
-
-  return { startAngle: Math.PI * 2, endAngle: Math.PI * 2 };
-}
-
-function findNeighborArc(i, data0, data1, key, exiting) {
-  console.log("FIND", i, data0, data1, key, exiting);
-  if (exiting) {
-    let result = null;
-    const d = findPreceding(i, data0, data1, key);
-    // console.log("d for exiting", d);
-    // console.log(
-    //   "data0 keys",
-    //   data0.map(x => key(x)),
-    //   "data1 keys",
-    //   data1.map(x => key(x))
-    // );
-
-    if (!d && data0 && data0.length) {
-      const firstOldKey = key(data0[0]);
-      let firstMatchingNewIndex = findIndex(data1, x => key(x) === firstOldKey);
-      if (firstMatchingNewIndex === -1) {
-        firstMatchingNewIndex = data1.length;
-      }
-
-      if (i < firstMatchingNewIndex) {
-        result = { startAngle: 0, endAngle: 0 };
-      }
-    }
-
-    if (!result) {
-      result = d ? { startAngle: d.endAngle, endAngle: d.endAngle } : null;
-    }
-
-    // console.log("d for exiting result", result);
-    return result;
-  } else {
-    let result = null;
-    const d = findFollowing(i, data0, data1, key);
-    // console.log("d for entering", d);
-
-    if (!d && data0 && data0.length > 0) {
-      // const lastOldKey = key(data0[data0.length - 1]);
-      // let lastMatchingNewIndex = findLastIndex(
-      //   data1,
-      //   x => key(x) === lastOldKey
-      // );
-      // if (lastMatchingNewIndex === -1) {
-      //   lastMatchingNewIndex = 0;
-      // }
-
-      // if (i > lastMatchingNewIndex) {
-      //   result = { startAngle: Math.PI * 2, endAngle: Math.PI * 2 };
-      // }
-
-      if (i === data1.length - 1) {
-        result = { startAngle: Math.PI * 2, endAngle: Math.PI * 2 };
-      }
-    }
-
-    if (!result) {
-      result = d ? { startAngle: d.startAngle, endAngle: d.startAngle } : null;
-    }
-
-    // console.log("d for entering result", result);
-    return result;
-  }
-  // var d;
-
-  // const result = (d = findPreceding(i, data0, data1, key))
-  //   ? { startAngle: d.endAngle, endAngle: d.endAngle }
-  //   : (d = findFollowing(i, data0, data1, key))
-  //   ? { startAngle: d.startAngle, endAngle: d.startAngle }
-  //   : null;
-
-  // console.log("for node", data1[i].data, result);
-
-  // if (key(data1[i]) === "internal-single-external-multiple" && result) {
-  //   console.log(
-  //     "changed here",
-  //     data1[i],
-  //     findPreceding(i, data0, data1, key), // <<<
-  //     findFollowing(i, data0, data1, key) // <<< undefined
-  //   );
-  //   return { startAngle: Math.PI * 2, endAngle: Math.PI * 2 };
+  // if (!data1.length) {
+  //   return { startAngle: 0, endAngle: 0 };
   // }
 
-  // return result;
+  // for (let i = 0; i < data1.length; ++i) {
+  //   if (key(data1[i]) > exitDKey) {
+  //     // REPLACE!!!
+  //     if (i === 0) {
+  //       return { startAngle: 0, endAngle: 0 };
+  //     } else {
+  //       const d = data1[i - 1];
+  //       return { startAngle: d.endAngle, endAngle: d.endAngle };
+  //     }
+  //   }
+  // }
+
+  // return { startAngle: Math.PI * 2, endAngle: Math.PI * 2 };
 }
 
-// Find the element in data0 that joins the highest preceding element in data1.
-function findPreceding(i, data0, data1, key) {
-  const m = data0.length;
+function findEnteringArc(i: number, data0, data1, order) {
+  return findArc(i, data1, data0, order);
+  // const enterD = data1[i];
+  // const enterDKey = key(enterD);
 
-  // const node = data1[i];
-
-  while (--i >= 0) {
-    const k = key(data1[i]);
-    for (let j = 0; j < m; ++j) {
-      if (key(data0[j]) === k) {
-        return data0[j];
-      }
-    }
-  }
-  // if (data0.length && key(node) !== key(data0[0])) {
-  //   console.log("returning new preceeding");
-  //   return data0[0];
+  // if (!data0.length) {
+  //   return { startAngle: 0, endAngle: 0 };
   // }
+
+  // for (let i = 0; i < data0.length; ++i) {
+  //   if (key(data0[i]) > enterDKey) {
+  //     // REPLACE!!!
+  //     if (i === 0) {
+  //       return { startAngle: 0, endAngle: 0 };
+  //     } else {
+  //       const d = data0[i - 1];
+  //       return { startAngle: d.endAngle, endAngle: d.endAngle };
+  //     }
+  //   }
+  // }
+
+  // return { startAngle: Math.PI * 2, endAngle: Math.PI * 2 };
 }
 
-// Find the element in data0 that joins the lowest following element in data1.
-function findFollowing(i, data0, data1, key) {
-  const n = data1.length;
-  const m = data0.length;
+function createGroup(parent: any, className: string) {
+  const group = parent.selectAll(`g.${className}`).data([null]);
+  return group
+    .enter()
+    .append("g")
+    .classed(className, true)
+    .merge(group);
+}
 
-  // const node = data1[i];
+function midAngle(d) {
+  return d.startAngle + (d.endAngle - d.startAngle) / 2;
+}
 
-  while (++i < n) {
-    var k = key(data1[i]);
-    for (let j = 0; j < m; ++j) {
-      if (key(data0[j]) === k) {
-        return data0[j];
+function wrap(text, getTextData, width) {
+  text.each(function(d) {
+    // console.log('text.text()', text.text());
+    var text = d3.select(this),
+      words = getTextData(d)
+        .split(/\s+/)
+        .reverse(),
+      word,
+      line = [],
+      lineNumber = 0,
+      lineHeight = 1.05, // ems
+      y = text.attr("y"),
+      dy = parseFloat(text.attr("dy")),
+      tspan = text
+        .text(null)
+        .append("tspan")
+        .attr("x", 0)
+        .attr("y", y)
+        .attr("dy", dy + "em");
+
+    while ((word = words.pop())) {
+      line.push(word);
+      tspan.text(line.join(" "));
+      const node = tspan.node();
+      if (node && node.getComputedTextLength() > width) {
+        line.pop();
+        tspan.text(line.join(" "));
+        line = [word];
+        tspan = text
+          .append("tspan")
+          .attr("x", 0)
+          .attr("y", y)
+          // .attr("dy", ++lineNumber * lineHeight + dy + "em")
+          .attr("dy", lineHeight + dy + "em")
+          .text(word);
       }
     }
+  });
+}
+
+function arrangeLabelsTry(selection, labelClass) {
+  // selection.selectAll(label_class)
+}
+
+function arrangeLabels(selection, label_class) {
+  var move = 1;
+  while (move > 0) {
+    move = 0;
+    selection.selectAll(label_class).each(function() {
+      var that = this;
+      var a = this.getBoundingClientRect();
+      selection.selectAll(label_class).each(function() {
+        if (this != that) {
+          var b = this.getBoundingClientRect();
+          if (
+            Math.abs(a.left - b.left) * 2 < a.width + b.width &&
+            Math.abs(a.top - b.top) * 2 < a.height + b.height
+          ) {
+            var dx =
+              (Math.max(0, a.right - b.left) + Math.min(0, a.left - b.right)) *
+              0.01;
+            var dy =
+              (Math.max(0, a.bottom - b.top) + Math.min(0, a.top - b.bottom)) *
+              0.02;
+            var tt = getTransformation(d3.select(this).attr("transform"));
+            var to = getTransformation(d3.select(that).attr("transform"));
+            move += Math.abs(dx) + Math.abs(dy);
+
+            to.translate = [to.translateX + dx, to.translateY + dy];
+            tt.translate = [tt.translateX - dx, tt.translateY - dy];
+            d3.select(this).attr(
+              "transform",
+              "translate(" + tt.translate + ")"
+            );
+            d3.select(that).attr(
+              "transform",
+              "translate(" + to.translate + ")"
+            );
+            a = this.getBoundingClientRect();
+          }
+        }
+      });
+    });
   }
-  // if (data0.length && key(node) !== key(data0[data0.length - 1])) {
-  //   console.log("returning new following");
-  //   return data0[data0.length - 1];
-  // }
+}
+
+function getTransformation(transform) {
+  /*
+   * This code comes from a StackOverflow answer to a question looking
+   * to replace the d3.transform() functionality from v3.
+   * http://stackoverflow.com/questions/38224875/replacing-d3-transform-in-d3-v4
+   */
+  var g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+
+  g.setAttributeNS(null, "transform", transform);
+  var matrix = g.transform.baseVal.consolidate().matrix;
+
+  var { a, b, c, d, e, f } = matrix;
+  var scaleX, scaleY, skewX;
+  if ((scaleX = Math.sqrt(a * a + b * b))) (a /= scaleX), (b /= scaleX);
+  if ((skewX = a * c + b * d)) (c -= a * skewX), (d -= b * skewX);
+  if ((scaleY = Math.sqrt(c * c + d * d)))
+    (c /= scaleY), (d /= scaleY), (skewX /= scaleY);
+  if (a * d < b * c) (a = -a), (b = -b), (skewX = -skewX), (scaleX = -scaleX);
+  return {
+    translateX: e,
+    translateY: f,
+    rotate: (Math.atan2(b, a) * Math.PI) / 180,
+    skewX: (Math.atan(skewX) * Math.PI) / 180,
+    scaleX: scaleX,
+    scaleY: scaleY
+  };
 }
 
 type Props = {
@@ -265,30 +299,45 @@ class DonutChartChart extends React.Component<Props> {
     const { width, height, data, coloring, selectedIds } = this.props;
     const color = coloring || d3.scaleOrdinal(d3.schemeCategory10);
 
-    console.log("data", JSON.stringify(data));
-
     const svg = d3.select(this._container.current);
     svg.attr("width", width);
     svg.attr("height", height);
 
-    let group = svg.selectAll<SVGGElement, object>("g.donut").data([null]);
-    group = group
-      .enter()
-      .append("g")
-      .classed("donut", true)
-      // @ts-ignore
-      .merge(group);
-    group.attr("transform", `translate(${width * 0.5},${height * 0.5})`);
+    const offsetGroup = createGroup(svg, "offsetParent");
+    offsetGroup.attr("transform", `translate(${width * 0.5},${height * 0.5})`);
 
-    const outerRadius = Math.min(width, height) * 0.5 - 10; // 10 is margin
+    const slicesGroup = createGroup(offsetGroup, "slices");
+    const labelsGroup = createGroup(offsetGroup, "labels");
+    const linesGroup = createGroup(offsetGroup, "lines");
 
-    // const color = d3.scaleOrdinal(d3.schemeCategory10);
+    const radius =
+      Math.min(
+        width -
+          (MIN_LABEL_WIDTH_PX +
+            TEXT_TO_LINE_PADDING_PX +
+            EXTRA_LINE_LENGTH_PX) *
+            2,
+        height
+      ) *
+        0.5 -
+      MARGIN_PX * 2;
+    let labelWidth =
+      width * 0.5 -
+      radius * LABEL_RADIUS_PERCENT -
+      TEXT_TO_LINE_PADDING_PX -
+      EXTRA_LINE_LENGTH_PX;
+    labelWidth = Math.max(MIN_LABEL_WIDTH_PX, labelWidth);
 
-    const arc = d3
+    const sliceArc = d3
       .arc()
-      .innerRadius(outerRadius * 0.6) // Proportion
-      .outerRadius(outerRadius)
+      .innerRadius(radius * INNER_SLICE_RADIUS_PERCENT)
+      .outerRadius(radius * OUTER_SLICE_RADIUS_PERCENT)
       .cornerRadius(2);
+
+    const labelArc = d3
+      .arc()
+      .outerRadius(radius * LABEL_RADIUS_PERCENT)
+      .innerRadius(radius * LABEL_RADIUS_PERCENT);
 
     const pie = d3
       .pie<DonutChartDatum>()
@@ -304,23 +353,23 @@ class DonutChartChart extends React.Component<Props> {
       const node = nodes[i];
       const iFunc = d3.interpolate(node._current, d);
       node._current = iFunc(0);
-      return (t: number) => arc(iFunc(t));
+      return (t: number) => sliceArc(iFunc(t));
     }
 
-    let path = group.selectAll<SVGPathElement, any>("path.slice");
+    let path = slicesGroup.selectAll<SVGPathElement, any>("path.slice");
 
     const data0 = path.data();
     const data1 = pie(data);
-    const key = d => d.data.key; // (d && d.data ? d.data.key : null);
+    const key = d => d.data.key;
+    const order = d => d.data.order;
+    const labelText = d => `${d.data.labelMessage}: ${d.data.value}`;
 
     path = path.data(data1, key);
 
     path
       .exit()
       .datum(function(d, i, nodes) {
-        // console.log("datum to exit", key(d), key(data0[i]));
-        const findNeighbour = findExitingArc(i, data0, data1, key);
-        // const findNeighbour = findNeighborArc(i, data1, data0, key, true);
+        const findNeighbour = findExitingArc(i, data0, data1, order);
         return { ...d, ...(findNeighbour || d) };
       })
       .transition()
@@ -332,24 +381,108 @@ class DonutChartChart extends React.Component<Props> {
       .enter()
       .append("path")
       .classed("slice", true)
-      // .classed("selected", d => includes(selectedIds, d.data.key))
+      // .classed("selected", d => includes(selectedIds, key(d)))
       .each(function(d, i, nodes) {
-        // console.log("datum to enter", key(d), key(data1[i]));
-        this._current = findEnteringArc(i, data0, data1, key) || d;
-        // this._current = findNeighborArc(i, data0, data1, key, false) || d;
+        this._current = findEnteringArc(i, data0, data1, order) || d;
       })
       .attr("fill", d => color(d.data, false))
       // .transition()
       // .duration(DURATION_MS)
       // .attrTween("d", arcTween)
-      // @ts-ignore
       .merge(path);
     path
-      .classed("selected", d => includes(selectedIds, d.data.key))
+      .classed("selected", d => includes(selectedIds, key(d)))
       .transition()
       .duration(DURATION_MS)
       .attrTween("d", arcTween);
-    // .attr("fill", d => color(d.data, false));
+
+    // LABELS:
+
+    let label = labelsGroup.selectAll("text").data(data1, key);
+
+    label.exit().remove();
+    label = label
+      .enter()
+      .append("text")
+      .attr("dy", ".35em")
+      // .attr("dy", 0)
+      // .text(labelText)
+      .merge(label);
+    label
+      .text(labelText)
+      .each(d => (d.direction = midAngle(d) < Math.PI ? 1 : -1))
+      // .attr("custom-direction", d => (midAngle(d) < Math.PI ? 1 : -1))
+      .call(wrap, labelText, labelWidth)
+      .attr("transform", function(d, i, nodes) {
+        const direction = d.direction;
+        const pos = labelArc.centroid(d);
+        // const direction = midAngle(d) < Math.PI ? 1 : -1;
+        pos[0] =
+          (TEXT_TO_LINE_PADDING_PX + EXTRA_LINE_LENGTH_PX + radius) * direction;
+        return "translate(" + pos + ")";
+      })
+      .style("text-anchor", function(d) {
+        return d.direction > 0 ? "start" : "end";
+      })
+      .each((d, i, nodes) => {
+        const node = nodes[i];
+        console.log("bounding", key(d), node.getBoundingClientRect());
+        // x, y, width, height
+      });
+    // .transition()
+    // .duration(DURATION_MS)
+    // .attrTween("transform", function(d) {
+    //   this._current = this._current || d;
+    //   const interpolate = d3.interpolate(this._current, d);
+    //   this._current = interpolate(0);
+    //   return function(t) {
+    //     const d2 = interpolate(t);
+    //     const pos = labelArc.centroid(d2);
+    //     const direction = midAngle(d2) < Math.PI ? 1 : -1;
+    //     pos[0] =
+    //       (TEXT_TO_LINE_PADDING_PX + EXTRA_LINE_LENGTH_PX + radius) *
+    //       direction;
+    //     return "translate(" + pos + ")";
+    //   };
+    // })
+    // .styleTween("text-anchor", function(d) {
+    //   this._current = this._current || d;
+    //   const interpolate = d3.interpolate(this._current, d);
+    //   this._current = interpolate(0);
+    //   return function(t) {
+    //     const d2 = interpolate(t);
+    //     return midAngle(d2) < Math.PI ? "start" : "end";
+    //   };
+    // });
+
+    // arrangeLabelsTry(svg, "text");
+
+    // SLICE-TO-LABEL LINES:
+
+    let polyline = linesGroup.selectAll("polyline").data(data1, key);
+    polyline.exit().remove();
+    polyline = polyline
+      .enter()
+      .append("polyline")
+      .merge(polyline);
+
+    polyline
+      .transition()
+      .duration(DURATION_MS)
+      .attrTween("points", function(d) {
+        this._current = this._current || d;
+        const interpolate = d3.interpolate(this._current, d);
+        this._current = interpolate(0);
+        return function(t) {
+          const d2 = interpolate(t);
+          const pos = labelArc.centroid(d2);
+          const direction = midAngle(d2) < Math.PI ? 1 : -1;
+          pos[0] =
+            (EXTRA_LINE_LENGTH_PX + radius * LABEL_RADIUS_PERCENT) * direction;
+          // pos[1] = pos[1] + 10;
+          return [sliceArc.centroid(d2), labelArc.centroid(d2), pos];
+        };
+      });
   }
 
   render() {
