@@ -10,6 +10,11 @@
   flex-grow: 1;
   overflow: hidden;
   position: relative;
+  background-color: #444;
+}
+
+.chartContainer svg {
+  position: relative;
 }
 
 .chartContainer svg polyline {
