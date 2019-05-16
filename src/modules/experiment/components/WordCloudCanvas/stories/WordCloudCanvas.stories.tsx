@@ -19,7 +19,7 @@ const store = new Store<{
   data: Array<WordCloudNode>;
   selectedNodeIds: Array<string>;
 }>({
-  data: generateWordCloudNodes(100),
+  data: generateWordCloudNodes(65),
   selectedNodeIds: []
 });
 
@@ -29,7 +29,7 @@ storiesOf("SE/WordCloudCanvas", module)
   .add("Basic", () => (
     <div style={{ display: "flex", flexDirection: "column" }}>
       <button
-        onClick={() => store.set({ data: generateWordCloudNodes(100) })}
+        onClick={() => store.set({ data: generateWordCloudNodes(65) })}
         style={{ marginBottom: 30, maxWidth: 100 }}
       >
         New Data

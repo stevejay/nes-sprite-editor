@@ -1,9 +1,9 @@
 import * as d3 from "d3";
-import { clamp, includes } from "lodash";
+import { clamp, includes, debounce } from "lodash";
 import React from "react";
+import Flatbush from "flatbush";
 import { TooltipData } from "../Tooltip/types";
 import calculateWordCloudData from "./calculate-word-cloud-data";
-import generateColor from "./generate-color";
 import { D3WordCloudNode, WordCloudNode } from "./types";
 import styles from "./WordCloudCanvasChart.module.scss";
 import classNames from "classnames";
@@ -30,31 +30,26 @@ type State = {
   bounds: Array<{ x: number; y: number }>;
 };
 
-// var c = document.createElement("canvas"); ???
-
 class WordCloudCanvas extends React.Component<Props, State> {
   _canvas: React.RefObject<HTMLCanvasElement>;
-  _hitCanvas: React.RefObject<HTMLCanvasElement>;
   _mounted: boolean;
   _customBase: HTMLElement;
+  _spatialIndex: typeof Flatbush | null;
   _timer: d3.Timer | null;
-  _colorToNodeMap: { [key: string]: D3WordCloudNode };
 
   constructor(props: Props) {
     super(props);
     this._canvas = React.createRef();
-    this._hitCanvas = React.createRef();
     this._mounted = true;
     this.state = { d3Nodes: [], bounds: [], dataVersion: 0 };
     this._customBase = document.createElement("custom");
+    this._spatialIndex = null;
     this._timer = null;
-    this._colorToNodeMap = {};
   }
 
   componentDidMount() {
     const { width, height } = this.props;
     this.resizeCanvas(this._canvas.current!, width, height);
-    this.resizeCanvas(this._hitCanvas.current!, width, height);
     if (!(width > 0) || !(height > 0)) {
       return;
     }
@@ -73,7 +68,6 @@ class WordCloudCanvas extends React.Component<Props, State> {
 
     if (dimensionsChanged) {
       this.resizeCanvas(this._canvas.current!, width, height);
-      this.resizeCanvas(this._hitCanvas.current!, width, height);
     }
 
     if (dimensionsChanged || nodesChanged || offsetOriginChanged) {
@@ -84,7 +78,6 @@ class WordCloudCanvas extends React.Component<Props, State> {
       this.drawWithAnimation();
     } else if (dimensionsChanged) {
       this.draw();
-      this.drawHit();
     }
   }
 
@@ -92,8 +85,8 @@ class WordCloudCanvas extends React.Component<Props, State> {
     this._mounted = false;
     if (this._timer) {
       this._timer.stop();
+      this._timer = null;
     }
-    this._timer = null;
   }
 
   private async calculateAsync() {
@@ -105,6 +98,7 @@ class WordCloudCanvas extends React.Component<Props, State> {
       selectedNodeIds,
       onCalculationCompleted
     } = this.props;
+
     const dataVersion = Date.now();
     this.setState({ dataVersion });
     const { d3Nodes, bounds } = await calculateWordCloudData(
@@ -119,11 +113,13 @@ class WordCloudCanvas extends React.Component<Props, State> {
     if (onCalculationCompleted) {
       onCalculationCompleted();
     }
+
     if (originXOffset !== 0) {
       d3Nodes.forEach(node => {
         node.x = (node.x || 0) + originXOffset;
       });
     }
+
     if (this._mounted) {
       this.setState(state =>
         state.dataVersion === dataVersion
@@ -134,7 +130,9 @@ class WordCloudCanvas extends React.Component<Props, State> {
   }
 
   private drawWithAnimation() {
+    this._spatialIndex = null;
     this.dataBind();
+    this.createSpatialIndex();
 
     if (this._timer) {
       this._timer.stop();
@@ -146,14 +144,12 @@ class WordCloudCanvas extends React.Component<Props, State> {
         if (this._timer) {
           this._timer.stop();
         }
-        this.drawHit();
       }
     });
   }
 
   private dataBind() {
     const custom = d3.select(this._customBase);
-    const colorToNodeMap = this._colorToNodeMap;
 
     let join = custom
       .selectAll<HTMLElement, D3WordCloudNode>("custom.word")
@@ -161,10 +157,6 @@ class WordCloudCanvas extends React.Component<Props, State> {
 
     join
       .exit()
-      .each((_d, i, nodes) => {
-        const key = d3.select(nodes[i]).attr("hitColor");
-        delete colorToNodeMap[key];
-      })
       .transition()
       .duration(DURATION_MS)
       .attr("opacity", 1e-6)
@@ -179,12 +171,7 @@ class WordCloudCanvas extends React.Component<Props, State> {
       .attr("y", d => d.y || 0)
       .attr("width", d => d.width || 0)
       .attr("height", d => d.height || 0)
-      .attr("fontSize", d => d.size || 0)
-      .attr("hitColor", d => {
-        const hitColor = generateColor();
-        this._colorToNodeMap[hitColor] = d;
-        return hitColor;
-      });
+      .attr("fontSize", d => d.size || 0);
 
     // @ts-ignore
     join = enterSelection.merge(join);
@@ -197,11 +184,7 @@ class WordCloudCanvas extends React.Component<Props, State> {
       .attr("x", d => d.x || 0)
       .attr("y", d => d.y || 0)
       .attr("width", d => d.width || 0)
-      .attr("height", d => d.size || 0)
-      .each((d, i, nodes) => {
-        const hitColor = d3.select(nodes[i]).attr("hitColor");
-        this._colorToNodeMap[hitColor] = d;
-      });
+      .attr("height", d => d.size || 0);
   }
 
   private draw() {
@@ -233,37 +216,28 @@ class WordCloudCanvas extends React.Component<Props, State> {
     ctx.restore();
   }
 
-  private drawHit() {
-    const { width, height } = this.props;
-    const canvas = this._hitCanvas.current!;
-    const ctx = canvas.getContext("2d")!;
-    ctx.save();
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.translate(width * 0.5, height * 0.5);
+  private createSpatialIndex() {
+    const nodes = this.state.d3Nodes;
+    if (!nodes.length) {
+      return;
+    }
 
-    const custom = d3.select(this._customBase);
-    const elements = custom.selectAll<HTMLElement, D3WordCloudNode>(
-      "custom.word"
-    );
+    this._spatialIndex = new Flatbush(nodes.length);
 
-    elements.each((d, i: number, nodes) => {
-      const node = d3.select(nodes[i]);
-      ctx.beginPath();
-      ctx.fillStyle = node.attr("hitColor");
-      const x = +node.attr("x");
-      const y = +node.attr("y");
-      const width = +node.attr("width");
-      const fontSize = +node.attr("fontSize");
-      ctx.rect(
-        x + (d.x0 || 0) + Math.floor(width * 0.15),
-        y - Math.floor(fontSize * 0.8),
-        width - Math.floor(width * 0.3),
-        Math.floor(fontSize)
+    nodes.forEach(node => {
+      const width = node.width || 0;
+      const fontSize = node.size || 0;
+      const minX = (node.x || 0) + (node.x0 || 0) + Math.floor(width * 0.15);
+      const minY = (node.y || 0) - Math.floor(fontSize * 0.8);
+      this._spatialIndex.add(
+        minX,
+        minY,
+        minX + (width - Math.floor(width * 0.3)),
+        minY + Math.floor(fontSize)
       );
-      ctx.fill();
     });
 
-    ctx.restore();
+    this._spatialIndex.finish();
   }
 
   private resizeCanvas(
@@ -282,22 +256,35 @@ class WordCloudCanvas extends React.Component<Props, State> {
     ctx.scale(deviceScale, deviceScale);
   }
 
-  private getNode(event: React.MouseEvent<HTMLCanvasElement, MouseEvent>) {
-    const canvas = this._hitCanvas.current!;
-    const ctx = canvas.getContext("2d")!;
-    const color = ctx.getImageData(
-      event.nativeEvent.offsetX * 2,
-      event.nativeEvent.offsetY * 2,
-      1,
-      1
-    ).data;
-    const key = "rgb(" + color[0] + "," + color[1] + "," + color[2] + ")";
-    const node = this._colorToNodeMap[key];
-    return node;
+  private getNode(offsetX: number, offsetY: number) {
+    if (!this._spatialIndex) {
+      return null;
+    }
+
+    const { width, height } = this.props;
+    const { d3Nodes } = this.state;
+    const searchX = offsetX - width * 0.5;
+    const searchY = offsetY - height * 0.5;
+
+    const indexes = this._spatialIndex.search(
+      searchX,
+      searchY,
+      searchX,
+      searchY
+    );
+
+    if (!indexes.length) {
+      return null;
+    }
+
+    return d3Nodes.length > indexes[0] ? d3Nodes[indexes[0]] : null;
   }
 
   handleClick = (event: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
-    const node = this.getNode(event);
+    const node = this.getNode(
+      event.nativeEvent.offsetX,
+      event.nativeEvent.offsetY
+    );
     if (node) {
       this.props.onToggleNode(node);
     }
@@ -306,12 +293,19 @@ class WordCloudCanvas extends React.Component<Props, State> {
   handleMouseMove = (
     event: React.MouseEvent<HTMLCanvasElement, MouseEvent>
   ) => {
+    this.debouncedHandleMouseMove(
+      event.nativeEvent.offsetX,
+      event.nativeEvent.offsetY
+    );
+  };
+
+  debouncedHandleMouseMove = debounce((offsetX: number, offsetY: number) => {
     const { width, height, onShowTooltip, onHideTooltip } = this.props;
-    const node = this.getNode(event);
+    const node = this.getNode(offsetX, offsetY);
     if (!!node) {
       const boundingRect = this._canvas.current!.getBoundingClientRect();
-      const yInContainer = +(node.y || 0) + boundingRect.top + height * 0.5;
-      const xInContainer = +(node.x || 0) + boundingRect.left + width * 0.5;
+      const yInContainer = (node.y || 0) + boundingRect.top + height * 0.5;
+      const xInContainer = (node.x || 0) + boundingRect.left + width * 0.5;
 
       onShowTooltip(node, {
         top: yInContainer,
@@ -322,26 +316,22 @@ class WordCloudCanvas extends React.Component<Props, State> {
     } else {
       onHideTooltip();
     }
-  };
+  }, 30);
 
   handleMouseOut = () => {
     this.props.onHideTooltip();
   };
 
   render() {
-    const className = classNames(styles.container, this.props.className);
     return (
-      <>
-        <canvas
-          ref={this._canvas}
-          className={className}
-          role="img"
-          onClick={this.handleClick}
-          onMouseMove={this.handleMouseMove}
-          onMouseOut={this.handleMouseOut}
-        />
-        <canvas ref={this._hitCanvas} className={styles.hidden} />
-      </>
+      <canvas
+        ref={this._canvas}
+        className={classNames(styles.container, this.props.className)}
+        role="img"
+        onClick={this.handleClick}
+        onMouseMove={this.handleMouseMove}
+        onMouseOut={this.handleMouseOut}
+      />
     );
   }
 }

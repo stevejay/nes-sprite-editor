@@ -1,0 +1,32 @@
+.container {
+  display: flex;
+  width: 100%;
+  flex-grow: 1;
+  height: 300px;
+}
+
+.chartContainer {
+  display: flex;
+  flex-grow: 1;
+  overflow: hidden;
+  position: relative;
+  background-color: #444;
+}
+
+.chartContainer svg {
+  position: relative;
+}
+
+.chartContainer svg polyline {
+  // opacity: 0.3;
+  stroke: white; // black;
+  stroke-width: 1px;
+  fill: none;
+}
+
+.chartContainer svg text {
+  fill: white;
+  font-size: 12px;
+  font-family: sans-serif;
+  // line-height: 1.3;
+}
