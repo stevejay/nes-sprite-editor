@@ -24,7 +24,7 @@ storiesOf("TextInput", module)
         <TextInput
           value={state.value}
           disabled={boolean("Disabled", false)}
-          onChange={value => store.set({ value })}
+          onChange={event => store.set({ value: event.target.value })}
         />
       )}
     </State>

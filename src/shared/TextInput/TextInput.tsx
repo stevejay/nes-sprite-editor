@@ -8,7 +8,7 @@ export type Props = {
   id?: string;
   name?: string;
   autosOff?: boolean;
-  onChange: (event: React.ChangeEvent<any>) => void;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 const TextInput = ({
