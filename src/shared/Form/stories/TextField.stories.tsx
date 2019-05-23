@@ -24,7 +24,9 @@ storiesOf("Form/TextField", module)
         <TextField
           label="The label"
           value={state.value}
-          onChange={(value: any) => store.set({ value })}
+          onChange={(event: React.ChangeEvent<any>) =>
+            store.set({ value: event.target.value })
+          }
           name="foo"
           disabled={boolean("Disabled", false)}
         />

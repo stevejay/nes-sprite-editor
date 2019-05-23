@@ -25,5 +25,5 @@ export default function useSizedCanvasEffect(
 
     const ctx = canvas.getContext("2d")!;
     ctx.scale(deviceScale, deviceScale);
-  }, [widthLogicalPx, heightLogicalPx, scale]);
+  }, [widthLogicalPx, heightLogicalPx, scale, canvasRef]);
 }

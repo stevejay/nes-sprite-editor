@@ -39,7 +39,7 @@ const RenameEntityModal = ({ isOpen, name, onRename, onClose }: Props) => {
               <Field
                 name="name"
                 render={({ input }) => (
-                  <TextField {...input} label="Collection name:" />
+                  <TextField {...input} type="text" label="Collection name:" />
                 )}
               />
             </ModalDialog.Content>

@@ -64,7 +64,7 @@ const PointingModalContainerInner = ({
     ref.current.style.top = position.top + "px";
     ref.current.classList.add(position.basicPosition);
     ref.current.style.setProperty("--pointer-position", position.pointer + "%");
-  }, []);
+  }, [containerElement, originElement]);
 
   return (
     <div ref={ref} className={styles.container} style={style}>

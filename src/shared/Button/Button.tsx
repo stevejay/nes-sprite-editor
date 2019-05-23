@@ -1,8 +1,8 @@
 import React from "react";
 import styles from "./Button.module.scss";
-import { IconType } from "react-icons/lib/iconBase";
 import classNames from "classnames";
 import { isNil } from "lodash";
+import { IconType } from "react-icons/lib/cjs";
 
 export type Props = {
   type?: "button" | "submit";

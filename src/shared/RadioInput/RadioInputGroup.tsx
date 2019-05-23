@@ -1,5 +1,4 @@
 import React from "react";
-import { uniqueId } from "lodash";
 import RadioInput from "./RadioInput";
 import styles from "./RadioInputGroup.module.scss";
 import useId from "../utils/use-id";

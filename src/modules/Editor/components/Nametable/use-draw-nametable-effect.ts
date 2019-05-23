@@ -58,5 +58,5 @@ export default function useDrawNametableEffect(
         );
       }
     }
-  }, [nametable, patternTiles, palettes, renderCanvasPositioning]);
+  }, [nametable, patternTiles, palettes, renderCanvasPositioning, canvasRef]);
 }

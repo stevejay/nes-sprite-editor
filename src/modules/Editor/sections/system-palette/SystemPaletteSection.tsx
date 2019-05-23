@@ -3,7 +3,6 @@ import { connect } from "react-redux";
 import { SelectField } from "../../../../shared/Form";
 import Section from "../../../../shared/Section";
 import {
-  Action,
   SystemPalette,
   EditorStateSlice,
   selectCurrentSystemPalette,

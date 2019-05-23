@@ -11,7 +11,7 @@ const TextFieldWithState = () => {
     <TextField
       label="The label:"
       value={value}
-      onChange={(value: string) => setValue(value)}
+      onChange={(event: React.ChangeEvent<any>) => setValue(event.target.value)}
     />
   );
 };

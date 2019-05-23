@@ -18,5 +18,5 @@ export default function useAriaHidden(isActive: boolean, id: string = "root") {
     return () => {
       appRoot && appRoot.setAttribute(ATTR_NAME, "false");
     };
-  }, [isActive]);
+  }, [isActive, id]);
 }

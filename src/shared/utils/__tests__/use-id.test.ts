@@ -1,11 +1,10 @@
-import { testHook, cleanup } from "react-testing-library";
-import useId from "../use-id";
+import { renderHook } from "react-hooks-testing-library";
 
-afterEach(cleanup);
+import useId from "../use-id";
 
 test("creates a stable id", () => {
   let id = null;
-  const { rerender } = testHook(() => (id = useId()));
+  const { rerender } = renderHook(() => (id = useId()));
   expect(id).toEqual(expect.stringMatching(/^id_[0-9]+$/));
   const lastId = id;
   rerender();
@@ -14,7 +13,7 @@ test("creates a stable id", () => {
 
 test("creates a stable id with a custom prefix", () => {
   let id = null;
-  const { rerender } = testHook(() => (id = useId("custom-prefix_")));
+  const { rerender } = renderHook(() => (id = useId("custom-prefix_")));
   expect(id).toEqual(expect.stringMatching(/^custom-prefix_[0-9]+$/));
   const lastId = id;
   rerender();

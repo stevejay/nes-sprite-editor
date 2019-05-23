@@ -8,7 +8,7 @@ export default function useOpenDialog(): [boolean, () => void, () => void] {
     if (!isOpen) {
       setIsOpen(true);
     }
-  }, []);
+  }, [isOpen]);
 
   const handleClose = React.useCallback(() => {
     setIsOpen(false);

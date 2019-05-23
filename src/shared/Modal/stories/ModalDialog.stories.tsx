@@ -64,7 +64,7 @@ storiesOf("Modal/ModalDialog", module)
             isOpen={state.isOpen}
             onClose={() => store.set({ isOpen: false })}
           >
-            <a href="#">Focus should start here</a>
+            <button>Focus should start here</button>
             <p>
               A very long line in this modal that goes on a long time and goes
               on a long time and goes on a long time and goes on a long time.
