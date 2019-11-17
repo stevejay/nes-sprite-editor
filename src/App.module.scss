@@ -30,3 +30,7 @@
     border-bottom: none;
   }
 }
+
+.main > .row > .column:first-of-type {
+  width: 300px;
+}

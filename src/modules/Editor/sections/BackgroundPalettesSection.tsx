@@ -1,10 +1,10 @@
 import React from "react";
 import { connect } from "react-redux";
-import Section from "../../../../shared/Section";
-import EntityManagementToolbar from "../../components/EntityManagementToolbar";
-import PaletteCollection from "../../components/PaletteCollection";
+import Section from "shared/Section";
+import EntitySelectionToolbar from "modules/editor/components/EntitySelectionToolbar";
+import PaletteCollection from "modules/editor/components/PaletteCollection";
 import {
-  addNewSpritePaletteCollection,
+  addNewBackgroundPaletteCollection,
   changePaletteColor,
   copyPaletteCollection,
   deletePaletteCollection,
@@ -12,31 +12,31 @@ import {
   GamePaletteCollection,
   GamePaletteCollectionWithColors,
   renamePaletteCollection,
-  selectCurrentSpritePaletteCollection,
+  selectBackgroundPaletteCollections,
+  selectCurrentBackgroundPaletteCollection,
   selectCurrentSystemPalette,
-  selectSpritePaletteCollections,
   setPaletteCollection,
   SystemPalette
-} from "../../store";
+} from "modules/editor/store";
 
 type Props = {
   systemPalette: SystemPalette;
   paletteCollections: Array<GamePaletteCollection>;
   currentCollection: GamePaletteCollectionWithColors | null;
   setPaletteCollection: typeof setPaletteCollection;
-  addNewSpritePaletteCollection: typeof addNewSpritePaletteCollection;
+  addNewBackgroundPaletteCollection: typeof addNewBackgroundPaletteCollection;
   copyPaletteCollection: typeof copyPaletteCollection;
   deletePaletteCollection: typeof deletePaletteCollection;
   renamePaletteCollection: typeof renamePaletteCollection;
   changePaletteColor: typeof changePaletteColor;
 };
 
-const SpritePalettesSection = ({
+const BackgroundPalettesSection = ({
   systemPalette,
   paletteCollections,
   currentCollection,
   setPaletteCollection,
-  addNewSpritePaletteCollection,
+  addNewBackgroundPaletteCollection,
   copyPaletteCollection,
   deletePaletteCollection,
   renamePaletteCollection,
@@ -44,22 +44,22 @@ const SpritePalettesSection = ({
 }: Props) => (
   <Section>
     <header>
-      <h2>Sprite Palettes</h2>
+      <h2>Background Palettes</h2>
     </header>
     <h3>Current Collection</h3>
-    <EntityManagementToolbar
+    <EntitySelectionToolbar
       entities={paletteCollections}
       currentEntity={currentCollection}
-      entityName="Sprite Palette"
+      entityName="Background Palette"
       onSelected={setPaletteCollection}
-      onNewEntity={addNewSpritePaletteCollection}
+      onNewEntity={addNewBackgroundPaletteCollection}
       onCopyEntity={copyPaletteCollection}
       onDeleteEntity={deletePaletteCollection}
       onRenameEntity={renamePaletteCollection}
     />
     <h3>Collection Palettes</h3>
     <PaletteCollection
-      type="sprite"
+      type="background"
       systemPalette={systemPalette}
       currentCollection={currentCollection}
       onChangePaletteColor={changePaletteColor}
@@ -70,12 +70,12 @@ const SpritePalettesSection = ({
 export default connect(
   (state: EditorStateSlice) => ({
     systemPalette: selectCurrentSystemPalette(state),
-    paletteCollections: selectSpritePaletteCollections(state),
-    currentCollection: selectCurrentSpritePaletteCollection(state)
+    paletteCollections: selectBackgroundPaletteCollections(state),
+    currentCollection: selectCurrentBackgroundPaletteCollection(state)
   }),
   {
     setPaletteCollection,
-    addNewSpritePaletteCollection,
+    addNewBackgroundPaletteCollection,
     copyPaletteCollection,
     deletePaletteCollection,
     renamePaletteCollection,
@@ -83,7 +83,7 @@ export default connect(
   }
 )(
   React.memo(
-    SpritePalettesSection,
+    BackgroundPalettesSection,
     (prevProps, nextProps) =>
       prevProps.systemPalette === nextProps.systemPalette &&
       prevProps.paletteCollections === nextProps.paletteCollections &&

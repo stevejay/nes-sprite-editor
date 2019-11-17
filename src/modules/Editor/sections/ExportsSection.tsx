@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
-import Button from "../../../../shared/Button";
-import Section from "../../../../shared/Section";
+import Button from "../../../shared/Button";
+import Section from "../../../shared/Section";
 import {
   EditorStateSlice,
   exportCurrentState,
@@ -11,7 +11,7 @@ import {
   selectCurrentBackgroundPaletteCollection,
   selectCurrentBackgroundPatternTable,
   selectCurrentNametable
-} from "../../store";
+} from "../store";
 
 type Props = {
   nametable: NametableType | null;

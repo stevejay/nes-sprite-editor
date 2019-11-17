@@ -6,14 +6,12 @@ import {
   Action as ViewportAction
 } from "./viewport-reducer";
 import { State as ToolState } from "./tool-reducer";
-import { ViewportSize } from "./experiment";
 import { Nametable, GamePaletteWithColors, PatternTable } from "../../store";
 import NametableCanvas from "./NametableCanvas";
 
 const DRAG_POSITION = { x: 0, y: 0 };
 
 type Props = {
-  viewportSize: ViewportSize;
   nametable: Nametable;
   gamePalettes: Array<GamePaletteWithColors>;
   patternTable: PatternTable;
@@ -23,7 +21,6 @@ type Props = {
 };
 
 const DraggableNametableCanvas = ({
-  viewportSize,
   nametable,
   patternTable,
   gamePalettes,
@@ -44,7 +41,6 @@ const DraggableNametableCanvas = ({
       }}
     >
       <NametableCanvas
-        viewportSize={viewportSize}
         renderCanvasPositioning={viewportState}
         nametable={nametable}
         patternTiles={patternTable.tiles}

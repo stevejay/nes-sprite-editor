@@ -1,11 +1,11 @@
 import React from "react";
 import { render, cleanup } from "react-testing-library";
 import "jest-dom/extend-expect";
-import SystemPaletteSection from "..";
+import SystemPaletteSection from "../SystemPaletteSection";
 import { Provider } from "react-redux";
 import { createStore, combineReducers } from "redux";
-import { State, reducer, EditorStateSlice } from "../../../store";
-import { SYSTEM_PALETTE_OPTIONS } from "../../../constants";
+import { State, reducer, EditorStateSlice } from "../../store";
+import { SYSTEM_PALETTE_OPTIONS } from "../../constants";
 
 const initialState: State = {
   nametables: [],
@@ -15,7 +15,8 @@ const initialState: State = {
   paletteCollections: [],
   selectedPaletteCollectionIds: { background: null, sprite: null },
   patternTables: [],
-  selectedPatternTableIds: { background: null, sprite: null }
+  selectedPatternTableIds: { background: null, sprite: null },
+  selectedPatternTableTileIndex: 0
 };
 
 const rootReducer = combineReducers<EditorStateSlice>({

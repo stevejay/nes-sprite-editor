@@ -9,6 +9,7 @@ This is an in-progress tool to aid with my learning of Nintendo NES games progra
 ## TODO
 
 - Use `useTransition` hook for `react-spring` library when v8.0.6 is release that has the fixed TypeScript typings
+- When V5.1 of Storybook is released, it should support baseUrl and so I can get rid of NODE_PATH (https://github.com/storybooks/storybook/issues/6574)
 
 ## Resources
 

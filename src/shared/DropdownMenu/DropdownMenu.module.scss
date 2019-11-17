@@ -1,0 +1,55 @@
+@import "styles/_base.scss";
+
+.container {
+  display: inline-block;
+}
+
+.toggleButton.toggleButton {
+  text-align: left;
+  padding-right: rem(40);
+}
+
+.toggleButton::after {
+  content: "\25BE";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: rem(8);
+  color: $md-grey-800;
+  pointer-events: none;
+}
+
+.toggleButton:disabled::after {
+  color: $md-grey-300;
+}
+
+.menuContainer {
+  z-index: 100;
+  margin: rem(5) 0;
+  box-shadow: $box-shadow;
+}
+
+.menu {
+  padding: 0;
+  margin: 0;
+  background-color: $md-white;
+  border-radius: rem(3);
+  border-style: solid;
+  border-width: 1px;
+  border-color: $md-grey-300;
+  max-height: rem(30 * 5);
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+.menu li {
+  list-style: none;
+  padding: rem(6) rem(10);
+  margin: 0;
+  cursor: pointer;
+  user-select: none;
+}
+
+.menu li.highlighted {
+  background-color: $md-grey-200;
+}

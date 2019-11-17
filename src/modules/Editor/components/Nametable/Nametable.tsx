@@ -93,7 +93,6 @@ const Nametable = ({
       <TileCanvas.Container>
         <div className={styles.background} style={VIEWPORT_SIZE}>
           <DraggableNametableCanvas
-            viewportSize={VIEWPORT_SIZE}
             viewportState={viewportState}
             patternTable={patternTable}
             currentTool={toolState.currentTool}

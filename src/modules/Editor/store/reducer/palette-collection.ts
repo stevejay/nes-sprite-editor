@@ -6,7 +6,7 @@ export const initialState: Partial<State> = {
   paletteCollections: [
     {
       type: "background",
-      id: "0",
+      id: "0a",
       label: "Backgrounds #0",
       gamePalettes: [
         { colorIndexes: [0x0f, 19, 20, 21] },
@@ -17,7 +17,7 @@ export const initialState: Partial<State> = {
     },
     {
       type: "sprite",
-      id: "1",
+      id: "1a",
       label: "Sprites #0",
       gamePalettes: [
         { colorIndexes: [0x0f, 1, 20, 5] },
@@ -28,8 +28,8 @@ export const initialState: Partial<State> = {
     }
   ],
   selectedPaletteCollectionIds: {
-    background: "0",
-    sprite: "1"
+    background: "0a",
+    sprite: "1a"
   }
 };
 

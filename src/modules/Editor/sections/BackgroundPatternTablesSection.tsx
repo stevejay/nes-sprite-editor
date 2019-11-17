@@ -1,9 +1,8 @@
 import React from "react";
 import { connect } from "react-redux";
-import Section from "../../../../shared/Section";
-import EntityManagementToolbar from "../../components/EntityManagementToolbar";
-import PatternTable from "../../components/PatternTable";
-import PatternTableTileDetail from "../../components/PatternTableTileDetail";
+import Section from "../../../shared/Section";
+import PatternTable from "../components/PatternTable";
+import PatternTableTileDetail from "../components/PatternTableTileDetail";
 import {
   addNewBackgroundPatternTable,
   changePatternTableTileLock,
@@ -21,7 +20,8 @@ import {
   PatternTable as PatternTableType,
   selectSelectedPatternTableTileIndex,
   updateSelectedPatternTableTileIndex
-} from "../../store";
+} from "../store";
+import EntitySelectionToolbar from "../components/EntitySelectionToolbar";
 
 type Props = {
   patternTables: Array<PatternTableType>;
@@ -62,7 +62,7 @@ const BackgroundPatternTablesSection = ({
         <h2>Background Pattern Tables</h2>
       </header>
       <h3>Current Pattern Table</h3>
-      <EntityManagementToolbar
+      <EntitySelectionToolbar
         entities={patternTables}
         currentEntity={currentPatternTable}
         entityName="Pattern Table"

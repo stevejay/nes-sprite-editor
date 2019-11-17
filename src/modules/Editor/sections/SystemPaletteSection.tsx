@@ -1,14 +1,14 @@
 import React from "react";
 import { connect } from "react-redux";
-import { SelectField } from "../../../../shared/Form";
-import Section from "../../../../shared/Section";
+import Section from "../../../shared/Section";
 import {
   SystemPalette,
   EditorStateSlice,
   selectCurrentSystemPalette,
   selectSystemPalettes,
   setSystemPalette
-} from "../../store";
+} from "../store";
+import SelectInput from "shared/SelectInput";
 
 type Props = {
   systemPalettes: Array<SystemPalette>;
@@ -24,8 +24,8 @@ const SystemPaletteSection = ({
     <header>
       <h2>System Palette</h2>
     </header>
-    <SelectField<string>
-      label="System palette to use:"
+    <h3>Current Palette</h3>
+    <SelectInput
       options={systemPalettes}
       value={currentSystemPalette.id}
       onChange={setSystemPalette}

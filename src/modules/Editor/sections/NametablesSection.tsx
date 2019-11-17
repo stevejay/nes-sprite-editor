@@ -1,8 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
-import Section from "../../../../shared/Section";
-import EntityManagementToolbar from "../../components/EntityManagementToolbar";
-import Nametable from "../../components/Nametable";
+import Section from "../../../shared/Section";
+import Nametable from "../components/Nametable";
 import {
   Action,
   addNewNametable,
@@ -22,7 +21,8 @@ import {
   selectNametables,
   setNametable,
   selectSelectedPatternTableTileIndex
-} from "../../store";
+} from "../store";
+import EntitySelectionToolbar from "../components/EntitySelectionToolbar";
 
 type Props = {
   nametables: Array<NametableType>;
@@ -60,7 +60,7 @@ const NametablesSection = ({
       <h2>Nametables</h2>
     </header>
     <h3>Current Nametable</h3>
-    <EntityManagementToolbar
+    <EntitySelectionToolbar
       entities={nametables}
       currentEntity={currentNametable}
       entityName="Nametable"
