@@ -1,10 +1,8 @@
 import React from "react";
-import { render, cleanup } from "react-testing-library";
+import { render } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import ModalHeader from "../ModalHeader";
-import userEvent from "user-event";
 import { noop } from "lodash";
-
-afterEach(cleanup);
 
 test("displays correctly", async () => {
   const { container } = render(

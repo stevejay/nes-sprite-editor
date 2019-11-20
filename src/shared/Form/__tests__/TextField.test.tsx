@@ -1,9 +1,7 @@
 import React from "react";
-import { render, cleanup } from "react-testing-library";
-import userEvent from "user-event";
+import { render } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { TextField } from "..";
-
-afterEach(cleanup);
 
 const TextFieldWithState = () => {
   const [value, setValue] = React.useState("initial value");

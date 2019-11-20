@@ -1,8 +1,6 @@
 import React from "react";
-import { render, cleanup } from "react-testing-library";
+import { render } from "@testing-library/react";
 import Dropdown from "..";
-
-afterEach(cleanup);
 
 const options = [
   { id: 0, label: "Some text label #0" },
@@ -22,13 +20,13 @@ const DropdownWithState = () => {
 };
 
 test("displays correctly initially", async () => {
-  const { getByLabelText, getByRole } = render(<DropdownWithState />);
+  const { getByRole } = render(<DropdownWithState />);
 
   const container = getByRole("combobox");
   expect(container).toBeTruthy();
   expect(container.getAttribute("aria-expanded")).toEqual("false");
 
-  const button = getByLabelText("The label:");
+  const button = getByRole("button");
   expect(button).toBeTruthy();
   expect(button.textContent).toEqual("Some text label #1");
 
@@ -37,11 +35,9 @@ test("displays correctly initially", async () => {
 });
 
 test("displays correctly when opened", async () => {
-  const { getByLabelText, getByRole, getAllByRole, container } = render(
-    <DropdownWithState />
-  );
+  const { getByRole, getAllByRole } = render(<DropdownWithState />);
 
-  const button = getByLabelText("The label:");
+  const button = getByRole("button");
   button.click();
 
   const combobox = getByRole("combobox");
@@ -54,14 +50,14 @@ test("displays correctly when opened", async () => {
 });
 
 test("updates when option selected", async () => {
-  const { getByLabelText, getAllByRole } = render(<DropdownWithState />);
+  const { getAllByRole, getByRole } = render(<DropdownWithState />);
 
-  let button = getByLabelText("The label:");
+  let button = getByRole("button");
   button.click();
 
   const options = getAllByRole("option");
   options[0].click();
 
-  button = getByLabelText("The label:");
+  button = getByRole("button");
   expect(button.textContent).toEqual("Some text label #0");
 });

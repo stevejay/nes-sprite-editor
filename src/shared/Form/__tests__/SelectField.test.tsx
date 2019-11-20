@@ -1,8 +1,6 @@
 import React from "react";
-import { render, cleanup } from "react-testing-library";
+import { render } from "@testing-library/react";
 import { SelectField } from "..";
-
-afterEach(cleanup);
 
 const options = [
   { id: "1", label: "Some text 1" },

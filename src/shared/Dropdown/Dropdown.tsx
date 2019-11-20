@@ -33,6 +33,7 @@ const Dropdown = <P extends string | number>({
 }: Props<P>) => {
   // need to apply htmlFor id on label to toggle button,
   // so have to manage this manually:
+  // TODO this looks the wrong approach.
   const inputId = useId();
   return (
     <Downshift
@@ -73,9 +74,11 @@ const Dropdown = <P extends string | number>({
                 const containerClassName = classNames(styles.menuContainer, {
                   [styles.open]: isOpen
                 });
+
                 const menuClassName = classNames(styles.menu, {
                   [styles.noScrollbar]: !showScrollbar
                 });
+
                 return (
                   <div
                     style={style}
@@ -90,6 +93,7 @@ const Dropdown = <P extends string | number>({
                             [styles.highlighted]: highlightedIndex === index,
                             [styles.selected]: selectedItem === option
                           });
+
                           return (
                             <li
                               {...getItemProps({

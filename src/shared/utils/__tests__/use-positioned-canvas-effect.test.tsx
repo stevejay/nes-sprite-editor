@@ -1,5 +1,5 @@
 import React from "react";
-import { render, cleanup } from "react-testing-library";
+import { render } from "@testing-library/react";
 import usePositionedCanvasEffect from "../use-positioned-canvas-effect";
 
 const Wrapper = () => {
@@ -7,8 +7,6 @@ const Wrapper = () => {
   usePositionedCanvasEffect(canvasRef, 5, 20, 2);
   return <canvas ref={canvasRef} data-testid="canvas" />;
 };
-
-afterEach(cleanup);
 
 test("positions a canvas", () => {
   const { getByTestId } = render(<Wrapper />);
