@@ -1,6 +1,6 @@
 import React from "react";
-import { render, cleanup } from "react-testing-library";
-import "jest-dom/extend-expect";
+import { render } from "@testing-library/react";
+import "@testing-library/jest-dom/extend-expect";
 import SystemPaletteSection from "..";
 import { Provider } from "react-redux";
 import { createStore, combineReducers } from "redux";
@@ -32,8 +32,6 @@ const renderComponent = (mergeState: Partial<State>) =>
       <SystemPaletteSection />
     </Provider>
   );
-
-afterEach(cleanup);
 
 test("displays the system palette section", async () => {
   const { container, getByLabelText } = renderComponent({});

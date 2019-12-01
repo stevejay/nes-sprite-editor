@@ -1,8 +1,6 @@
 import React from "react";
-import { render, cleanup, fireEvent } from "react-testing-library";
+import { render, fireEvent } from "@testing-library/react";
 import InteractionTracker from "../InteractionTracker";
-
-afterEach(cleanup);
 
 const Child = () => (
   <div data-testid="child" style={{ width: 90, height: 180 }} />

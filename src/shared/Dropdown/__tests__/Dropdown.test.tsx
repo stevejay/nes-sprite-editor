@@ -1,8 +1,6 @@
 import React from "react";
-import { render, cleanup } from "react-testing-library";
+import { render } from "@testing-library/react";
 import Dropdown from "..";
-
-afterEach(cleanup);
 
 const options = [
   { id: 0, label: "Some text label #0" },

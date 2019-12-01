@@ -1,9 +1,7 @@
 import React from "react";
 import { noop } from "lodash";
-import { render, cleanup } from "react-testing-library";
+import { render } from "@testing-library/react";
 import TextInput from "../TextInput";
-
-afterEach(cleanup);
 
 test("displays correctly", async () => {
   const { container } = render(

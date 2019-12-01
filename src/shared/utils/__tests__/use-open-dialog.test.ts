@@ -1,19 +1,13 @@
-import { testHook, cleanup, act } from "react-testing-library";
+import { renderHook, act } from "@testing-library/react-hooks";
 import useOpenDialog from "../use-open-dialog";
 
-afterEach(cleanup);
-
 test("can control opening and closing of a dialog", () => {
-  let isOpen: boolean | null = null;
-  let handleOpen: (() => void) | null = null;
-  let handleClose: (() => void) | null = null;
+  const { result } = renderHook(() => useOpenDialog());
+  expect(result.current[0]).toEqual(false);
 
-  testHook(() => ([isOpen, handleOpen, handleClose] = useOpenDialog()));
-  expect(isOpen).toEqual(false);
+  act(() => result.current[1]());
+  expect(result.current[0]).toEqual(true);
 
-  act(() => handleOpen!());
-  expect(isOpen).toEqual(true);
-
-  act(() => handleClose!());
-  expect(isOpen).toEqual(false);
+  act(() => result.current[2]());
+  expect(result.current[0]).toEqual(false);
 });

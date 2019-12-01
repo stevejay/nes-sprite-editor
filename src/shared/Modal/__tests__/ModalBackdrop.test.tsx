@@ -1,9 +1,7 @@
 import React from "react";
-import { render, cleanup } from "react-testing-library";
-import userEvent from "user-event";
+import { render } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import ModalBackdrop from "../ModalBackdrop";
-
-afterEach(cleanup);
 
 test("displays correctly", async () => {
   const { container } = render(<ModalBackdrop opacity={0.5} />);

@@ -1,16 +1,15 @@
-import { testHook, cleanup, act } from "react-testing-library";
+import { renderHook, act } from "@testing-library/react-hooks";
 import useVersion from "../use-version";
 
-afterEach(cleanup);
-
 test("incrementing the version", () => {
-  let version = null;
-  let incrementVersion: (() => void) | null = null;
-  testHook(() => ([version, incrementVersion] = useVersion()));
+  const { result } = renderHook(() => useVersion());
 
-  expect(version).toBeGreaterThanOrEqual(0);
-  const lastVersion = version;
+  expect(result.current[0]).toBeGreaterThanOrEqual(0);
+  const lastVersion = result.current[0];
 
-  act(() => incrementVersion!());
-  expect(version).toEqual(lastVersion! + 1);
+  act(() => {
+    result.current[1]();
+  });
+
+  expect(result.current[0]).toEqual(lastVersion + 1);
 });

@@ -1,10 +1,8 @@
 import React from "react";
-import { render, cleanup } from "react-testing-library";
+import { render } from "@testing-library/react";
 import { noop } from "lodash";
-import userEvent from "user-event";
+import userEvent from "@testing-library/user-event";
 import RadioInput from "..";
-
-afterEach(cleanup);
 
 const options = [
   { id: 1, label: "First option" },

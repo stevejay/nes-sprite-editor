@@ -7,7 +7,7 @@ import {
   D3LinkEntity
 } from "../../NetworkGraph/types";
 import { cloneDeep, isNil, includes } from "lodash";
-import { Transition, animated } from "react-spring/renderprops";
+import { Transition, animated } from "react-spring";
 import networkGraphFakeWorkerAsync from "./network-graph-fake-worker-async";
 import classNames from "classnames";
 import { CommunicationsNode } from "../../CommsNetworkGraph";
@@ -151,7 +151,6 @@ class ReactNetworkGraphSVG extends React.PureComponent<Props, State> {
         <g className="links-group">
           {!isNil(d3Links) && (
             <Transition
-              native
               config={CONFIG}
               items={d3Links}
               keys={LINK_KEYS}
@@ -176,7 +175,6 @@ class ReactNetworkGraphSVG extends React.PureComponent<Props, State> {
         <g className="nodes-group">
           {!isNil(d3Nodes) && (
             <Transition
-              native
               config={CONFIG}
               items={d3Nodes}
               keys={NODE_KEYS}

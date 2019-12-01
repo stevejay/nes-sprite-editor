@@ -1,6 +1,6 @@
 import React from "react";
 import { Portal } from "react-portal";
-import { Transition } from "react-spring/renderprops";
+import { Transition } from "react-spring";
 
 // const MOUNT_CONFIG = { duration: 150, delay: 500 };
 // const OTHER_CONFIG = { duration: 150 };

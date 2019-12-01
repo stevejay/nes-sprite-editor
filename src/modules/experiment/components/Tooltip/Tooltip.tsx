@@ -1,6 +1,6 @@
 import React from "react";
 import { Portal } from "react-portal";
-import { Transition } from "react-spring/renderprops";
+import { Transition } from "react-spring";
 import TooltipInner from "./TooltipInner";
 import { TooltipData } from "./types";
 

@@ -1,8 +1,6 @@
 import React from "react";
-import { render, cleanup } from "react-testing-library";
+import { render } from "@testing-library/react";
 import useAriaHidden from "../use-aria-hidden";
-
-afterEach(cleanup);
 
 const Wrapper = ({ active }: { active: boolean }) => {
   useAriaHidden(active, "wrapper");

@@ -1,8 +1,6 @@
 import React from "react";
-import { render, cleanup } from "react-testing-library";
+import { render } from "@testing-library/react";
 import usePreventBodyScroll from "../use-prevent-body-scroll";
-
-afterEach(cleanup);
 
 const Wrapper = ({ active }: { active: boolean }) => {
   usePreventBodyScroll(active);

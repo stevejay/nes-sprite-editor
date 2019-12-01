@@ -1,7 +1,7 @@
 import FocusTrap from "focus-trap-react";
 import React from "react";
 import { Portal } from "react-portal";
-import { Transition } from "react-spring/renderprops"; // TODO change to hook?
+import { Transition } from "react-spring"; // TODO change to hook?
 import { useAriaHidden, usePreventBodyScroll, ModalBackdrop } from ".";
 import styles from "./ModalDialog.module.scss";
 

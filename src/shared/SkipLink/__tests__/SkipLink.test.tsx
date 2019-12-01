@@ -1,8 +1,6 @@
 import React from "react";
-import { render, cleanup } from "react-testing-library";
+import { render } from "@testing-library/react";
 import SkipLink from "../SkipLink";
-
-afterEach(cleanup);
 
 test("displays correctly", async () => {
   const { container } = render(
