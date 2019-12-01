@@ -92,7 +92,7 @@ export default function d3NetworkGraph(
   let nodes: Array<D3NodeEntity> = [];
   let links: Array<D3LinkEntity> = [];
 
-  function renderer(selectedIds: Array<NodeEntity["id"]>, durationMs = 250) {
+  function renderer(selectedIds: Array<NodeEntity["id"]>, durationMs = 500) {
     // update the container size:
     const svg = d3
       .select<SVGElement, null>(svgElement)

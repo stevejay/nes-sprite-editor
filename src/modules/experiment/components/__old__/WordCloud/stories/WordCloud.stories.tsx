@@ -4,7 +4,7 @@ import { storiesOf } from "@storybook/react";
 import { includes } from "lodash";
 import * as React from "react";
 import { host } from "storybook-host";
-import "../../../../../index.scss";
+import "../../../../../../index.scss";
 import { WordCloudNode } from "../types";
 import WordCloud from "../WordCloud";
 import generateWordCloudNodes from "./words";

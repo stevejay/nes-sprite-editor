@@ -1,14 +1,20 @@
 import React from "react";
 import styles from "./ReactNetworkGraphSVG.module.scss";
-import { NodeEntity, LinkEntity, D3NodeEntity, D3LinkEntity } from "./types";
+import {
+  NodeEntity,
+  LinkEntity,
+  D3NodeEntity,
+  D3LinkEntity
+} from "../../NetworkGraph/types";
 import { cloneDeep, isNil, includes } from "lodash";
 import { Transition, animated } from "react-spring/renderprops";
 import networkGraphFakeWorkerAsync from "./network-graph-fake-worker-async";
 import classNames from "classnames";
-import { CommunicationsNode } from "./NetworkGraph";
+import { CommunicationsNode } from "../../CommsNetworkGraph";
 
-const MIN_RADIUS = 8;
-const MAX_RADIUS = 13;
+const MIN_RADIUS = 12;
+const MAX_RADIUS = 18;
+// 13;
 const MAIN_CONFIG = { clamp: true }; // { duration: 250 };
 const LEAVE_CONFIG = { clamp: true }; // { duration: MAIN_CONFIG.duration + 50 };
 const CONFIG = (_item: any, state: any) =>

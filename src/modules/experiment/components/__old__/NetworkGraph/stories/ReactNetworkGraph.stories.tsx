@@ -5,7 +5,7 @@ import { includes } from "lodash";
 import delay from "delay";
 import * as React from "react";
 import { host } from "storybook-host";
-import "../../../../../index.scss";
+import "./index.scss";
 import {
   CommunicationsNode,
   CommunicationsLink
@@ -232,6 +232,8 @@ function getChildDataForNode(
   return result;
 }
 
+let counter = 0;
+
 async function getData(
   rootParticipantId: CommunicationsNode["id"],
   rootParticipantName: CommunicationsNode["name"],
@@ -281,8 +283,11 @@ async function getData(
   // callback({ nodes: [...result.nodes], links: [...result.links] });
 
   // TODO get second-level data from server
+  ++counter;
+  const secondLevelResponses =
+    counter % 2 === 0 ? [RESPONSE_1_0] : [RESPONSE_1_1];
 
-  [RESPONSE_1_0, RESPONSE_1_1].forEach((response, index) => {
+  secondLevelResponses.forEach((response, index) => {
     const { nodes: resultNodes, links } = getChildDataForNode(
       nodes[index],
       nodesById,
@@ -318,7 +323,7 @@ const store = new Store<{
   selectedIds: []
 });
 
-storiesOf("SE_OLD/CommsNetworkGraph", module)
+storiesOf("SE_OLD/ReactNetworkGraph", module)
   .addDecorator(storyHost)
   .addDecorator(withKnobs)
   .add("Basic", () => (

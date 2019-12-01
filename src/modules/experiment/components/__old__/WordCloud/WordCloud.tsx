@@ -1,8 +1,8 @@
 import React from "react";
 import styles from "./WordCloud.module.scss";
 import Measure from "react-measure";
-import ModelessDialog from "../__old__/HeatMap/ModelessDialog";
-import Tooltip from "../__old__/HeatMap/Tooltip";
+import ModelessDialog from "../HeatMap/ModelessDialog";
+import Tooltip from "../HeatMap/Tooltip";
 import { WordCloudNode } from "./types";
 import WordCloudHtml from "./WordCloudHtml";
 

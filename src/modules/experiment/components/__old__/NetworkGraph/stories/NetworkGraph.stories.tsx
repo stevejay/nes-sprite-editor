@@ -5,7 +5,7 @@ import { includes } from "lodash";
 import delay from "delay";
 import * as React from "react";
 import { host } from "storybook-host";
-import "../../../../../index.scss";
+import "./index.scss";
 import { default as NetworkGraph } from "../NetworkGraph";
 import {
   CommunicationsNode,
@@ -318,7 +318,7 @@ const store = new Store<{
   selectedIds: []
 });
 
-storiesOf("SE_OLD/CommsNetworkGraph", module)
+storiesOf("SE_OLD/NetworkGraph", module)
   .addDecorator(storyHost)
   .addDecorator(withKnobs)
   .add("Basic", () => (

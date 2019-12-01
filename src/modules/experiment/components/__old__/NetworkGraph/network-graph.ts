@@ -1,14 +1,14 @@
 import * as d3 from "d3";
 import { includes } from "lodash";
-import forceDrag from "./___force-drag";
-import networkGraphForceSimulation from "../__old__/NetworkGraph/network-graph-force-simulation";
+import forceDrag from "./force-drag";
+import networkGraphForceSimulation from "./network-graph-force-simulation";
 import {
   GetOrSet,
   NodeEntity,
   LinkEntity,
   D3NodeEntity,
   D3LinkEntity
-} from "./types";
+} from "../../NetworkGraph/types";
 
 export interface INetworkGraph {
   (

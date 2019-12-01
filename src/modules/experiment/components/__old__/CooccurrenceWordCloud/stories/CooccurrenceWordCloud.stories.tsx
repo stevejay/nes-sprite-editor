@@ -4,7 +4,7 @@ import { storiesOf } from "@storybook/react";
 import { random, sortBy, reverse, sampleSize, includes, isNil } from "lodash";
 import * as React from "react";
 import { host } from "storybook-host";
-import "../../../../../index.scss";
+import "./index.scss";
 import { WordCloudNode } from "../../WordCloud/types";
 import CooccurrenceWordCloud from "../CooccurrenceWordCloud";
 

@@ -1,0 +1,101 @@
+@import "styles/_base.scss";
+
+// ----------------------------
+// RESET
+// ----------------------------
+
+// Body resets
+
+body {
+  margin: 0;
+  padding: 0;
+  font-size: 1rem;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// Default box sizing
+
+html {
+  box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+// No top margins
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+ol,
+ul,
+dl,
+pre,
+blockquote,
+figure,
+fieldset {
+  margin-top: 0;
+}
+
+// ----------------------------
+// GLOBAL CLASSES
+// ----------------------------
+
+.screen-reader-only {
+  @include screen-reader-only();
+}
+
+.no-user-select {
+  user-select: none;
+}
+
+// ----------------------------
+// GLOBAL STYLING
+// ----------------------------
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: $font-family-display;
+  // user-select: none;
+}
+
+body {
+  font-family: $font-family-body;
+  overscroll-behavior: none;
+  min-width: 1280px;
+}
+
+header > h1 {
+  font-size: 1.4rem;
+}
+
+// Fast tapping by default
+// https://webkit.org/blog/5610/more-responsive-tapping-on-ios/
+[role="button"],
+a,
+area,
+button,
+input,
+label,
+select,
+summary,
+textarea {
+  touch-action: manipulation;
+}
+
+a {
+  text-decoration: underline;
+  text-decoration-skip-ink: auto;
+}

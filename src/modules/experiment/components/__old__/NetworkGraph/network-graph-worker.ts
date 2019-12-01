@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import boundsForce from "./bounds-force";
+import { boundsForce } from "../../NetworkGraph";
 import { forceManyBodyReuse } from "d3-force-reuse";
 import { random } from "lodash";
 
@@ -21,7 +21,10 @@ onmessage = function(event) {
   const simulation = d3
     .forceSimulation()
     .nodes(nodes)
-    .force("link", d3.forceLink(links).id((d: any) => d.id))
+    .force(
+      "link",
+      d3.forceLink(links).id((d: any) => d.id)
+    )
     .force(
       "inner radial degree",
       d3
@@ -36,7 +39,10 @@ onmessage = function(event) {
     )
     .force("center", d3.forceCenter(width * 0.5, height * 0.5))
     .force("bounds", boundsForce(width, height, maxRadius))
-    .force("collision", d3.forceCollide().radius(() => maxRadius + 10))
+    .force(
+      "collision",
+      d3.forceCollide().radius(() => maxRadius + 10)
+    )
     .force("charge", forceManyBodyReuse())
     .stop();
 
@@ -63,5 +69,5 @@ onmessage = function(event) {
     simulation.tick();
   }
 
-  postMessage({ type: "end", nodes, links, version });
+  postMessage({ type: "end", nodes, links, version }, "*");
 };
