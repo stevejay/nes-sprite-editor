@@ -1,6 +1,6 @@
 import React from "react";
 import Button, { Props as ButtonProps } from "./Button";
-import { useRovingTabindex, useFocusEffect } from "react-roving-tabindex";
+import { useRovingTabIndex, useFocusEffect } from "react-roving-tabindex";
 
 type Props = {
   type?: ButtonProps["type"];
@@ -22,7 +22,7 @@ const ButtonWithRovingTabIndex = ({
 }: Props) => {
   const buttonRef = React.useRef<HTMLButtonElement>(null);
 
-  const [tabIndex, focused, onKeyDown, onClick] = useRovingTabindex(
+  const [tabIndex, focused, onKeyDown, onClick] = useRovingTabIndex(
     buttonRef,
     disabled
   );

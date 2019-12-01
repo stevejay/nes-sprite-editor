@@ -1,17 +1,18 @@
-import { addDecorator, configure } from "@storybook/react";
-import { withBackgrounds } from "@storybook/addon-backgrounds";
+import { addParameters, configure } from "@storybook/react";
 
-addDecorator(
-  withBackgrounds([
+addParameters({
+  backgrounds: [
     { name: "main", value: "#fff", default: true },
     { name: "header", value: "rgba(178, 255, 89, 0.25)" }
-  ])
-);
+  ]
+});
 
-const req = require.context("../src", true, /\.stories\.tsx?$/);
+// const req = require.context("../src", true, /\.stories\.tsx?$/);
 
-function loadStories() {
-  req.keys().forEach(filename => req(filename));
-}
+// function loadStories() {
+//   req.keys().forEach(filename => req(filename));
+// }
 
-configure(loadStories, module);
+// configure(loadStories, module);
+
+configure(require.context("../src", true, /\.stories\.tsx?$/), module);

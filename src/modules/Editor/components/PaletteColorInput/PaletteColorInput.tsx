@@ -1,5 +1,5 @@
 import React from "react";
-import { useFocusEffect, useRovingTabindex } from "react-roving-tabindex";
+import { useFocusEffect, useRovingTabIndex } from "react-roving-tabindex";
 import useOpenDialog from "../../../../shared/utils/use-open-dialog";
 import { Color, SystemPalette } from "../../store";
 import ColorPickerModal from "./ColorPickerModal";
@@ -14,7 +14,7 @@ type Props = {
 
 const PaletteColorInput = ({ color, systemPalette, onChange }: Props) => {
   const buttonRef = React.useRef<HTMLButtonElement>(null);
-  const [tabIndex, focused, onKeyDown, onClick] = useRovingTabindex(
+  const [tabIndex, focused, onKeyDown, onClick] = useRovingTabIndex(
     buttonRef,
     false
   );

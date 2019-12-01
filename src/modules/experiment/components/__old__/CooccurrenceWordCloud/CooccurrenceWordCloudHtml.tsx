@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "../WordCloud/WordCloudHtml.module.scss";
-import { cloneDeep, isNil } from "lodash";
+import { isNil } from "lodash";
 import { WordCloudNode } from "../WordCloud/types";
 import cooccurrenceWordCloudGraph, {
   ICooccurrenceWordCloudGraph
@@ -70,10 +70,7 @@ class CooccurrenceWordCloudHtml extends React.PureComponent<Props, State> {
     };
   }
 
-  private handleShowTooltip = (
-    value: WordCloudNode,
-    target: ClientRect
-  ) => {
+  private handleShowTooltip = (value: WordCloudNode, target: ClientRect) => {
     this.props.onShowTooltip(value, target);
   };
 

@@ -30,7 +30,9 @@ const PaletteColor = ({
       {!isTransparent && (
         <span className={styles.label}>{formatByteAsHex(color.id)}</span>
       )}
-      <span className="screen-reader-only">{screenReaderLabel || name}</span>
+      <span className="screen-reader-only">
+        {screenReaderLabel || color.id}
+      </span>
     </div>
   );
 };

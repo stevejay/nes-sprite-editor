@@ -28,14 +28,18 @@
   "typescript.extension.sortImports.quoteStyle": "double",
   "typescript.extension.sortImports.sortOnSave": false,
   "cSpell.words": [
+    "cancelable",
     "cloud",
     "comms",
     "cooccurrence",
+    "debounced",
     "graph",
     "network",
     "polyfill",
     "renderprops",
     "sambego",
+    "state",
+    "use",
     "word"
   ]
 }

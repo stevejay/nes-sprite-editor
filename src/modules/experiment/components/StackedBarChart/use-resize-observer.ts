@@ -1,7 +1,9 @@
-import { RefObject, useEffect, useState } from "react";
+import { RefObject, useEffect } from "react";
 import ResizeObserver from "resize-observer-polyfill";
+import { useDebouncedState } from "./use-debounced-state";
 
-type Callback = (dimensions: Pick<DOMRectReadOnly, "width" | "height">) => void;
+type Dimensions = Pick<DOMRectReadOnly, "width" | "height">;
+type Callback = (dimensions: Dimensions) => void;
 
 const callbackLookup = new WeakMap<Element, Callback>();
 
@@ -10,7 +12,10 @@ const resizeObserverCallback: ResizeObserverCallback = entries => {
     const callback = callbackLookup.get(entry.target);
 
     if (callback) {
-      callback(entry.contentRect);
+      callback({
+        width: Math.round(entry.contentRect.width),
+        height: Math.round(entry.contentRect.height)
+      });
     }
   }
 };
@@ -22,13 +27,16 @@ function observe(element: Element, callback: Callback) {
   callbackLookup.set(element, callback);
 }
 
-function unobserve(element) {
+function unobserve(element: Element) {
   resizeObserver.unobserve(element);
   callbackLookup.delete(element);
 }
 
-const useResizeObserver = (ref: RefObject<Element>) => {
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+const useResizeObserver = (ref: RefObject<Element>, debounceMs: number = 0) => {
+  const [dimensions, setDimensions] = useDebouncedState<Dimensions>(
+    { width: 0, height: 0 },
+    debounceMs
+  );
 
   useEffect(() => {
     if (!ref || !ref.current) {
@@ -49,7 +57,7 @@ const useResizeObserver = (ref: RefObject<Element>) => {
     return () => {
       unobserve(element);
     };
-  }, [ref, ref.current, setDimensions]);
+  }, [ref, setDimensions]);
 
   return dimensions;
 };
