@@ -33,6 +33,7 @@
     "cooccurrence",
     "graph",
     "network",
+    "polyfill",
     "renderprops",
     "sambego",
     "word"
